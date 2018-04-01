@@ -2,5 +2,3 @@ __pycache__
 /.idea
 *.pyc
 discordtoken.py
-tests
-Data
