@@ -62,7 +62,7 @@ class CombatTeamTests(unittest.TestCase):
         # TODO
 
     def test_bench(self):
-        error = "CombatTeam incorrectly included the active CombatElemental in its bench"
+        error = "CombatTeam incorrectly included the active CombatElemental in get_bench()"
         bench = self.combat_team.get_bench()
         self.assertEquals(len(bench), 1, error)
         self.assertEquals(bench[0].id, 2, error)  # Loksy's id, see setUp

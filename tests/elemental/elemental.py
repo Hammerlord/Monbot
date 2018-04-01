@@ -87,6 +87,18 @@ class ElementalTests(unittest.TestCase):
         elemental.reset_nickname()
         self.assertEquals(elemental.nickname, "Richard", error)
 
+    def test_set_note(self):
+        error = "Elemental note couldn't be set"
+        note = "+PDEF +PATT +SPEED bruiser"
+        self.elemental.set_note(note)
+        self.assertEquals(self.elemental.note, note, error)
+
+    def test_note_max_length(self):
+        error = "Elemental note can incorrectly be set to more than 50 characters"
+        self.elemental.set_note(error)
+        name_length = len(self.elemental.note)
+        self.assertLessEqual(name_length, 50, error)
+
     def test_gain_stats(self):
         error = "Elemental stat increase level doesn't match its Species' growth rate"
         elemental = ElementalBuilder().with_level(1).with_species(self.get_species()).build()
