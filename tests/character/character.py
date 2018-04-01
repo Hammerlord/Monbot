@@ -19,9 +19,9 @@ class CharacterTests(unittest.TestCase):
 
     def test_gain_exp(self):
         error = "Character couldn't acquire experience"
-        self.character.add_exp(10)
+        self.character.add_exp(4)
         exp_gained = self.character.get_current_exp()
-        self.assertEqual(exp_gained, 10, error)
+        self.assertEqual(exp_gained, 4, error)
 
     def test_level_exp_cap(self):
         error = "Instantiating a character didn't give it an exp requirement to level"
@@ -53,7 +53,8 @@ class CharacterTests(unittest.TestCase):
     def test_max_level_current_exp(self):
         error = "Character's current exp wasn't set to 0 at max level"
         character = CharacterBuilder().with_level(59).build()
-        character.add_exp(100000)
+        exp = character.get_exp_to_level() + 5
+        character.add_exp(exp)
         self.assertEqual(character.get_current_exp(), 0, error)
 
     def test_set_nickname(self):

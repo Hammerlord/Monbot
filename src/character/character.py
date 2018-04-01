@@ -53,7 +53,7 @@ class Character:
         return self._is_npc
 
     def add_exp(self, amount: int) -> None:
-        if not self._can_level_up():
+        if self._is_max_level():
             return
         self._current_exp += amount
         self._check_level_up()
@@ -70,21 +70,22 @@ class Character:
 
     def _check_level_up(self) -> None:
         while self._current_exp >= self._exp_to_level:
-            if not self._can_level_up():
-                self._current_exp = 0
+            if self._is_max_level():
                 return
             self._level_up()
 
-    def _can_level_up(self) -> bool:
-        return self._level < self._max_level
+    def _is_max_level(self) -> bool:
+        return self._level == self._max_level
 
     def _level_up(self) -> None:
         self._current_exp -= self._exp_to_level
         self._level += 1
         self._increase_exp_to_level()
+        if self._is_max_level():
+            self._current_exp = 0
 
     def _increase_exp_to_level(self) -> None:
-        self._exp_to_level += math.floor(self._exp_to_level / 5)
+        self._exp_to_level += math.floor(self._exp_to_level / 10) + 5
 
     @staticmethod
     def _validate_nickname(name: str) -> str:
