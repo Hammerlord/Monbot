@@ -60,6 +60,33 @@ class ElementalTests(unittest.TestCase):
         after_level = self.elemental.level
         self.assertGreater(after_level, before_level + 1, error)
 
+    def test_default_nickname(self):
+        error = "Nickname must be the Species name by default"
+        species = SpeciesBuilder().with_name("Richard").build()
+        elemental = ElementalBuilder().with_species(species).build()
+        self.assertEquals(elemental.nickname, "Richard", error)
+
+    def test_set_nickname(self):
+        error = "Elemental nickname couldn't be set"
+        name = "Monze"
+        self.elemental.set_nickname(name)
+        self.assertEquals(self.elemental.nickname, name, error)
+
+    def test_nickname_max_length(self):
+        error = "Elemental nickname can incorrectly be set to more than 15 characters"
+        self.elemental.set_nickname("dsadadaifjasifjasfdsd")
+        name_length = len(self.elemental.nickname)
+        self.assertLessEqual(name_length, 15, error)
+
+    def test_reset_nickname(self):
+        error = "Elemental nickname couldn't be reset"
+        species = SpeciesBuilder().with_name("Richard").build()
+        elemental = ElementalBuilder().with_species(species).build()
+        name = "Logi"
+        elemental.set_nickname(name)
+        elemental.reset_nickname()
+        self.assertEquals(elemental.nickname, "Richard", error)
+
     def test_gain_stats(self):
         error = "Elemental stat increase level doesn't match its Species' growth rate"
         elemental = ElementalBuilder().with_level(1).with_species(self.get_species()).build()
@@ -80,10 +107,10 @@ class ElementalTests(unittest.TestCase):
         self.elemental.add_exp(exp)
         self.assertEquals(species.base_physical_att, 15, error)
         self.assertEquals(species.base_magic_att, 15, error)
-        self.assertEquals(species.physical_def, 15, error)
-        self.assertEquals(species.magic_def, 10, error)
-        self.assertEquals(species.speed, 5, error)
-        self.assertEquals(species.max_hp, 50, error)
+        self.assertEquals(species.base_physical_def, 15, error)
+        self.assertEquals(species.base_magic_def, 10, error)
+        self.assertEquals(species.base_speed, 5, error)
+        self.assertEquals(species.base_max_hp, 50, error)
 
     def test_has_attribute_manager(self):
         error = "Elemental didn't get an AttributeManager on instantiation"

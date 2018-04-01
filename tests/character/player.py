@@ -16,7 +16,7 @@ class PlayerTests(unittest.TestCase):
         self.assertEquals(self.user.name, "Dopple", error)
 
     def test_nickname_max_length(self):
-        error = "Nickname can incorrectly be set to more than 15 characters"
+        error = "Player nickname can incorrectly be set to more than 15 characters"
         self.player.set_nickname("dsadadaifjasifjasfdsd")
         name_length = len(self.player.nickname)
         self.assertLessEqual(name_length, 15, error)
