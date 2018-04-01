@@ -64,13 +64,13 @@ class ElementalTests(unittest.TestCase):
         error = "Nickname must be the Species name by default"
         species = SpeciesBuilder().with_name("Richard").build()
         elemental = ElementalBuilder().with_species(species).build()
-        self.assertEquals(elemental.nickname, "Richard", error)
+        self.assertEqual(elemental.nickname, "Richard", error)
 
     def test_set_nickname(self):
         error = "Elemental nickname couldn't be set"
         name = "Monze"
         self.elemental.set_nickname(name)
-        self.assertEquals(self.elemental.nickname, name, error)
+        self.assertEqual(self.elemental.nickname, name, error)
 
     def test_nickname_max_length(self):
         error = "Elemental nickname can incorrectly be set to more than 15 characters"
@@ -85,13 +85,13 @@ class ElementalTests(unittest.TestCase):
         name = "Logi"
         elemental.set_nickname(name)
         elemental.reset_nickname()
-        self.assertEquals(elemental.nickname, "Richard", error)
+        self.assertEqual(elemental.nickname, "Richard", error)
 
     def test_set_note(self):
         error = "Elemental note couldn't be set"
         note = "+PDEF +PATT +SPEED bruiser"
         self.elemental.set_note(note)
-        self.assertEquals(self.elemental.note, note, error)
+        self.assertEqual(self.elemental.note, note, error)
 
     def test_note_max_length(self):
         error = "Elemental note can incorrectly be set to more than 50 characters"
@@ -104,12 +104,12 @@ class ElementalTests(unittest.TestCase):
         elemental = ElementalBuilder().with_level(1).with_species(self.get_species()).build()
         exp = self.elemental.exp_to_level
         self.elemental.add_exp(exp)
-        self.assertEquals(elemental.physical_att, 16, error)  # See get_species()
-        self.assertEquals(elemental.magic_att, 16, error)
-        self.assertEquals(elemental.physical_def, 16, error)
-        self.assertEquals(elemental.magic_def, 11, error)
-        self.assertEquals(elemental.speed, 7, error)
-        self.assertEquals(elemental.max_hp, 53, error)
+        self.assertEqual(elemental.physical_att, 16, error)  # See get_species()
+        self.assertEqual(elemental.magic_att, 16, error)
+        self.assertEqual(elemental.physical_def, 16, error)
+        self.assertEqual(elemental.magic_def, 11, error)
+        self.assertEqual(elemental.speed, 7, error)
+        self.assertEqual(elemental.max_hp, 53, error)
 
     def test_species_static(self):
         error = "Species' stats should not change when Elemental levels!"
@@ -117,12 +117,12 @@ class ElementalTests(unittest.TestCase):
         elemental = ElementalBuilder().with_level(1).with_species(species).build()
         exp = self.elemental.exp_to_level
         self.elemental.add_exp(exp)
-        self.assertEquals(species.base_physical_att, 15, error)
-        self.assertEquals(species.base_magic_att, 15, error)
-        self.assertEquals(species.base_physical_def, 15, error)
-        self.assertEquals(species.base_magic_def, 10, error)
-        self.assertEquals(species.base_speed, 5, error)
-        self.assertEquals(species.base_max_hp, 50, error)
+        self.assertEqual(species.base_physical_att, 15, error)
+        self.assertEqual(species.base_magic_att, 15, error)
+        self.assertEqual(species.base_physical_def, 15, error)
+        self.assertEqual(species.base_magic_def, 10, error)
+        self.assertEqual(species.base_speed, 5, error)
+        self.assertEqual(species.base_max_hp, 50, error)
 
     def test_has_attribute_manager(self):
         error = "Elemental didn't get an AttributeManager on instantiation"
@@ -182,7 +182,7 @@ class ElementalTests(unittest.TestCase):
         elemental.raise_attribute(0)
         attributes = elemental.get_attributes()
         attribute_level = attributes[0].get_level()
-        self.assertEquals(attribute_level, 1, error)
+        self.assertEqual(attribute_level, 1, error)
 
     def test_attribute_gives_stats(self):
         error = "No stats gained from raising an attribute"

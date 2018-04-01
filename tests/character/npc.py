@@ -76,4 +76,4 @@ class NPCTests(unittest.TestCase):
     def test_researcher_name(self):
         error = "A Researcher is not called a Researcher as his nickname"
         researcher = NPCBuilder().researcher()
-        self.assertEquals(researcher.nickname, "Researcher", error)
+        self.assertEqual(researcher.nickname, "Researcher", error)

@@ -2,9 +2,12 @@ import copy
 import math
 from typing import List
 
+from src.character.inventory import Inventory
+from src.elemental.elemental import Elemental
+from src.team.team import Team
+
 
 class Character:
-
     """
     Base class of NPCs and Players (Discord user avatars).
     """
@@ -12,14 +15,15 @@ class Character:
     def __init__(self):
         self._nickname = 'Anonymous'  # TBD
         self._level = 1
+        self._max_level = 60
         self._gold = 0
         self._current_exp = 0
         self._exp_to_level = 10
-        self.location = 0  # TODO
+        self._location = 0  # TODO
         self._team = Team()
-        self.is_npc = False
-        self._elementals = []  #  List[Elemental]. All Elementals owned by this Character, including ones not on Team.
-        self.inventory = Inventory()
+        self._is_npc = False
+        self._elementals = []  # List[Elemental]. All Elementals owned by this Character, including ones not on Team.
+        self._inventory = Inventory()
 
     def get_all_elementals(self) -> List[Elemental]:
         return copy.deepcopy(self._elementals)  # Defensive copy
@@ -33,6 +37,9 @@ class Character:
     def get_team(self) -> Team:
         return self._team
 
+    def get_inventory(self) -> Inventory:
+        return self._inventory
+
     def get_level(self) -> int:
         return self._level
 
@@ -42,7 +49,12 @@ class Character:
     def get_exp_to_level(self) -> int:
         return self._exp_to_level
 
+    def is_npc(self) -> bool:
+        return self._is_npc
+
     def add_exp(self, amount: int) -> None:
+        if not self._can_level_up():
+            return
         self._current_exp += amount
         self._check_level_up()
 
@@ -58,7 +70,13 @@ class Character:
 
     def _check_level_up(self) -> None:
         while self._current_exp >= self._exp_to_level:
+            if not self._can_level_up():
+                self._current_exp = 0
+                return
             self._level_up()
+
+    def _can_level_up(self) -> bool:
+        return self._level < self._max_level
 
     def _level_up(self) -> None:
         self._current_exp -= self._exp_to_level
@@ -75,4 +93,3 @@ class Character:
         if len(name) > max_length:
             return name[:max_length]
         return name
-

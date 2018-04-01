@@ -26,13 +26,13 @@ class CombatElementalTests(unittest.TestCase):
         error = "CombatElemental didn't have the correct amount of starting mana"
         combat_elemental_mana = self.combat_elemental.get_current_mana()
         expected_mana = self.elemental.get_starting_mana()
-        self.assertEquals(combat_elemental_mana, expected_mana, error)
+        self.assertEqual(combat_elemental_mana, expected_mana, error)
 
     def test_starting_hp(self):
         error = "CombatElemental's HP didn't refer to its Elemental's HP"
         combat_elemental_hp = self.combat_elemental.get_current_hp()
         expected_hp = self.elemental.get_current_hp()
-        self.assertEquals(combat_elemental_hp, expected_hp, error)
+        self.assertEqual(combat_elemental_hp, expected_hp, error)
 
     def test_defend_charges(self):
         error = "CombatElemental's Defend charges didn't refer to its Elemental's"
@@ -56,14 +56,14 @@ class CombatElementalTests(unittest.TestCase):
         self.combat_elemental.receive_damage(2)
         current_hp = self.elemental.get_current_hp()
         expected_hp = 3
-        self.assertEquals(current_hp, expected_hp, error)
+        self.assertEqual(current_hp, expected_hp, error)
 
     def test_heal(self):
         error = "Reference Elemental didn't heal when CombatElemental healed"
         self.combat_elemental.heal(5)
         current_hp = self.elemental.get_current_hp()
         expected_hp = 10
-        self.assertEquals(current_hp, expected_hp, error)
+        self.assertEqual(current_hp, expected_hp, error)
 
     def test_stat_change(self):
         error = "Reference Elemental's stats incorrectly changed when CombatElemental's stats changed"
@@ -74,14 +74,14 @@ class CombatElementalTests(unittest.TestCase):
         self.combat_elemental.receive_damage(12)
         current_hp = self.elemental.get_current_hp()
         expected_hp = 0
-        self.assertEquals(current_hp, expected_hp, error)
+        self.assertEqual(current_hp, expected_hp, error)
 
     def test_overheal(self):
         error = "Elemental's HP didn't set to max HP on overheal"
         self.combat_elemental.heal(100)
         current_hp = self.elemental.get_current_hp()
         expected_hp = 50
-        self.assertEquals(current_hp, expected_hp, error)
+        self.assertEqual(current_hp, expected_hp, error)
 
     def test_knockout_flag(self):
         error = "CombatElemental wasn't flagged as knocked out at 0 HP"

@@ -27,7 +27,7 @@ class CombatTeamTests(unittest.TestCase):
         team.add_elemental(smurggle)
         team.add_elemental(loksy)
         combat_team = CombatTeamBuilder().with_team(team).build()
-        self.assertEquals(combat_team.get_active().id, loksy.id, error)
+        self.assertEqual(combat_team.get_active().id, loksy.id, error)
 
     def test_is_npc(self):
         error = "CombatTeam didn't flag itself as NPC when its owner was an NPC"
@@ -36,8 +36,8 @@ class CombatTeamTests(unittest.TestCase):
     def test_bench(self):
         error = "CombatTeam incorrectly included the active CombatElemental in get_bench()"
         bench = self.combat_team.get_bench()
-        self.assertEquals(len(bench), 1, error)
-        self.assertEquals(bench[0].id, 2, error)  # Loksy's id, see setUp
+        self.assertEqual(len(bench), 1, error)
+        self.assertEqual(bench[0].id, 2, error)  # Loksy's id, see setUp
 
     def test_switch(self):
         error = "CombatTeam incorrectly allowed a knocked out CombatElemental to be switched in"
@@ -48,4 +48,4 @@ class CombatTeamTests(unittest.TestCase):
         team.add_elemental(loksy)
         combat_team = CombatTeamBuilder().with_team(team).build()
         combat_team.switch(0)  # smurggle's position
-        self.assertEquals(combat_team.get_active().id, loksy.id, error)
+        self.assertEqual(combat_team.get_active().id, loksy.id, error)

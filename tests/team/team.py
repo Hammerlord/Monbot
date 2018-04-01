@@ -14,8 +14,8 @@ class TeamTests(unittest.TestCase):
         for i in range(5):
             elemental = ElementalBuilder().build()
             self.team.add_elemental(elemental)
-        self.assertEquals(self.team.get_size(), 4, error)
-        self.assertEquals(self.team.is_space_available(), False, error)
+        self.assertEqual(self.team.get_size(), 4, error)
+        self.assertEqual(self.team.is_space_available(), False, error)
 
     def test_reorder_elementals(self):
         error = "Failed to reorder Elementals in a Team"
@@ -25,5 +25,5 @@ class TeamTests(unittest.TestCase):
         team.add_elemental(elemental_a)  # Position 0
         team.add_elemental(elemental_b)  # Position 1
         team.reorder(0, 1)
-        self.assertEquals(elemental_a.id, team.get_elemental(1).id, error)
-        self.assertEquals(elemental_b.id, team.get_elemental(0).id, error)
+        self.assertEqual(elemental_a.id, team.get_elemental(1).id, error)
+        self.assertEqual(elemental_b.id, team.get_elemental(0).id, error)
