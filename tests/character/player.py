@@ -45,15 +45,20 @@ class PlayerTests(unittest.TestCase):
 
     def test_is_busy_combat(self):
         error = "Player is incorrectly able to enter combat while busy"
+        # TODO
 
     def test_is_busy_home(self):
         error = "Player is incorrectly able to view their Home while busy"
+        # TODO
 
     def test_is_busy_elemental(self):
         error = "Player is incorrectly able to rank, fuse, etc... elementals while busy"
+        # TODO
 
     def test_is_busy_travel(self):
         error = "Player is incorrectly able to travel while busy"
+        # TODO
 
     def test_is_busy_shop(self):
         error = "Player is incorrectly able to shop while busy"
+        # TODO
