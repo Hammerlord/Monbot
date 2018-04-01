@@ -13,20 +13,7 @@ class PlayerTests(unittest.TestCase):
 
     def test_default_nickname(self):
         error = "Player nickname must be the user's name by default"
-        self.assertEquals(self.user.name, "Dopple", error)
-
-    def test_nickname_max_length(self):
-        error = "Player nickname can incorrectly be set to more than 15 characters"
-        self.player.set_nickname("dsadadaifjasifjasfdsd")
-        name_length = len(self.player.nickname)
-        self.assertLessEqual(name_length, 15, error)
-
-    def test_nickname_spaces(self):
-        error = "Setting a nickname must strip the beginning and ending spaces"
-        self.player.set_nickname("   hello")
-        name_length = len(self.player.nickname)
-        self.assertEquals(name_length, 5, error)
-        self.assertEquals(self.player.nickname, "hello", error)
+        self.assertEquals(self.player.get_nickname(), "Dopple", error)
 
     def test_starter_creation(self):
         error = "A starter elemental must be created with the Player"
