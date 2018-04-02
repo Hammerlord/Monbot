@@ -1,22 +1,6 @@
-from enum import Enum
 from typing import List
 
-
-class Elements(Enum):
-
-    """
-    Element typing for Elementals and Abilities.
-    """
-
-    NONE = 0
-    LIGHTNING = 1
-    WATER = 2
-    FIRE = 3
-    EARTH = 4
-    WIND = 5
-    LIGHT = 6
-    DARK = 7
-    CHAOS = 8
+from src.core.elements import Elements
 
 
 class StatsInterface:

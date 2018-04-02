@@ -3,6 +3,9 @@ from enum import Enum
 from src.character.character import Character
 from random import randint
 
+from src.elemental.elemental import Elemental
+from src.elemental.species import Species
+
 
 class Professions(Enum):
     NONE = 0
