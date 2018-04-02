@@ -1,11 +1,10 @@
 from typing import Type, List
 
-from src.character.character import Character
 from src.elemental.elemental import Elemental
 
 
 class Team:
-    def __init__(self, owner: Character or Type[Character]):
+    def __init__(self, owner):
         self._elementals = []  # List[Elemental]
         self._nickname = None
         self._note = None
@@ -20,7 +19,10 @@ class Team:
         return self._elementals
 
     @property
-    def owner(self) -> Type[Character]:
+    def owner(self):
+        """
+        :return: Character or Type[Character]
+        """
         return self._owner
 
     def is_space_available(self) -> bool:
