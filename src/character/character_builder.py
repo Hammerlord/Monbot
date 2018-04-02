@@ -1,3 +1,5 @@
+from typing import Type
+
 from src.character.character import Character
 from src.character.npc import NPC
 from src.character.player import Player
@@ -30,6 +32,6 @@ class NPCBuilder:
             self.npc.add_exp(exp)
         return self
 
-    def with_opponent(self, player: Player) -> 'NPCBuilder':
-        self.npc.generate_team(player)
+    def with_opponent(self, opponent: Type[Character]) -> 'NPCBuilder':
+        self.npc.generate_team(opponent)
         return self

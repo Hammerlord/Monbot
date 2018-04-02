@@ -1,9 +1,12 @@
 from enum import Enum
+from typing import Type
 
 from src.character.character import Character
 from random import randint
 
+from src.character.player import Player
 from src.elemental.elemental import Elemental
+from src.elemental.elemental_builder import ElementalBuilder
 from src.elemental.species import Species
 
 
@@ -25,7 +28,7 @@ class NPC(Character):
         self.profession = Professions.NONE  # TBD by descendants
         self._potential_species = []  # List[Species] -- TBD by descendants
 
-    def generate_team(self, opponent: Character) -> None:
+    def generate_team(self, opponent: 'NPC' or Player) -> None:
         """
         Generates a randomized Team based on the opponent's level and Team size.
         """
@@ -35,7 +38,13 @@ class NPC(Character):
             elemental = self._get_random_elemental()
             self._team.add_elemental(elemental)
 
-    def _generate_level(self, opponent: Character) -> None:
+    def generate_random_team(self):
+        """
+        TODO Generates a random Team, not based off of an opponent.
+        """
+        pass
+
+    def _generate_level(self, opponent: 'NPC' or Player) -> None:
         """
         :param opponent: This NPC's upcoming opponent, usually a Player.
         When called, the NPC's level will be based off of the opponent's.
@@ -45,7 +54,7 @@ class NPC(Character):
         self._level = randint(min_level, max_level)
 
     @staticmethod
-    def _roll_team_size(opponent: Character) -> int:
+    def _roll_team_size(opponent: 'NPC' or Player) -> int:
         """
         Generates a Team size that is not larger than the opponent's.
         """
@@ -72,9 +81,3 @@ class NPC(Character):
         """
         pick = randint(0, len(self._potential_species) - 1)
         return self._potential_species[pick]
-
-    def _generate_random_team(self):
-        """
-        TODO Generates a random Team, not based off of an opponent.
-        """
-        pass
