@@ -8,7 +8,7 @@ class Player(Character):
         self._is_busy = False
         self._current_interface = None  # TODO
         self.id = user.id
-        self._nickname(user.name)
+        self._nickname = user.name
 
     @staticmethod
     def create_player(user, starter: Elemental) -> 'Player':

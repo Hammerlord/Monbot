@@ -1,5 +1,7 @@
 import unittest
 
+from src.elemental.elemental_builder import ElementalBuilder
+
 
 class CombatElementalTests(unittest.TestCase):
     """
@@ -10,7 +12,6 @@ class CombatElementalTests(unittest.TestCase):
         self.elemental = ElementalBuilder() \
             .with_current_hp(5) \
             .with_max_hp(50) \
-            .with_starting_mana(25) \
             .build()
         self.combat_elemental = CombatElementalBuilder() \
             .with_elemental(self.elemental) \

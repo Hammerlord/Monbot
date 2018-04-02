@@ -59,7 +59,7 @@ class NPCTests(unittest.TestCase):
         for i in range(100):
             npc = NPCBuilder().build()
             team = npc.team
-            for elemental in team.get_elementals():
+            for elemental in team.elementals:
                 self.assertLessEqual(elemental.level, npc.level, error)
 
     def test_profession_elementals(self):
