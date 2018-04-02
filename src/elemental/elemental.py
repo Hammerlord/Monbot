@@ -18,11 +18,11 @@ class Elemental:
         self._physical_def = species.physical_def
         self._magic_def = species.magic_def
         self._speed = species.speed
-        self._defend_potency = 0.5  # float. Percentage of damage blocked by Defend.
+        self._defend_potency = 0.5  # Percentage of damage blocked by Defend.
         self._current_exp = 0
         self._exp_to_level = 20
         self._owner = None
-        self._nickname = None
+        self._nickname = species.name
         self._note = None
         self._left_icon = None  # str. This Elemental's emote, facing right.
         self._right_icon = None  # str. This Elemental's emote, facing left.
