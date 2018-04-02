@@ -1,6 +1,6 @@
 import unittest
 
-from src.character.character_builder import NPCBuilder
+from src.character.character_builder import NPCBuilder, PlayerBuilder
 
 
 class NPCTests(unittest.TestCase):

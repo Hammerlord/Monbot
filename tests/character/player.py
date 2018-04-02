@@ -1,11 +1,14 @@
 import unittest
 
+from src.character.character_builder import PlayerBuilder
+from tests.test_user import UserBuilder
+
 
 class PlayerTests(unittest.TestCase):
 
     def setUp(self):
         self.user = UserBuilder().with_name("Dopple").build()
-        self.player = PlayerBuilder().with_user(user).build()
+        self.player = PlayerBuilder().with_user(self.user).build()
 
     def tearDown(self):
         self.player.dispose()

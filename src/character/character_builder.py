@@ -38,7 +38,7 @@ class NPCBuilder:
         self._level = level
         return self
 
-    def with_opponent(self, opponent: Type[Character]) -> 'NPCBuilder':
+    def with_opponent(self, opponent: NPC or Player) -> 'NPCBuilder':
         self.opponent = opponent
         return self
 
@@ -54,3 +54,11 @@ class PlayerBuilder:
             exp = player.exp_to_level
             player.add_exp(exp)
         return player
+
+    def with_level(self, level: int) -> 'PlayerBuilder':
+        self._level = level
+        return self
+
+    def with_user(self, user) -> 'PlayerBuilder':
+        self.user = user
+        return self
