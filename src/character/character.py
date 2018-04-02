@@ -25,41 +25,50 @@ class Character:
         self._elementals = []  # List[Elemental]. All Elementals owned by this Character, including ones not on Team.
         self._inventory = Inventory()
 
-    def get_all_elementals(self) -> List[Elemental]:
+    def copy_elementals(self) -> List[Elemental]:
         return copy.deepcopy(self._elementals)  # Defensive copy
 
-    def get_nickname(self) -> str:
+    @property
+    def nickname(self) -> str:
         return self._nickname
 
-    def set_nickname(self, name: str) -> None:
+    @nickname.setter
+    def nickname(self, name: str) -> None:
         self._nickname = self._validate_nickname(name)
 
-    def get_team(self) -> Team:
+    @property
+    def team(self) -> Team:
         return self._team
 
-    def get_inventory(self) -> Inventory:
+    @property
+    def inventory(self) -> Inventory:
         return self._inventory
 
-    def get_level(self) -> int:
+    @property
+    def level(self) -> int:
         return self._level
 
-    def get_current_exp(self) -> int:
+    @property
+    def current_exp(self) -> int:
         return self._current_exp
 
-    def get_exp_to_level(self) -> int:
+    @property
+    def exp_to_level(self) -> int:
         return self._exp_to_level
 
+    @property
     def is_npc(self) -> bool:
         return self._is_npc
+
+    @property
+    def gold(self) -> int:
+        return self._gold
 
     def add_exp(self, amount: int) -> None:
         if self._is_max_level():
             return
         self._current_exp += amount
         self._check_level_up()
-
-    def get_gold(self) -> int:
-        return self._gold
 
     def update_gold(self, amount: int) -> None:
         self._gold += amount

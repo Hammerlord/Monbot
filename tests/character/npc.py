@@ -1,5 +1,7 @@
 import unittest
 
+from src.character.character_builder import NPCBuilder
+
 
 class NPCTests(unittest.TestCase):
 
@@ -12,12 +14,12 @@ class NPCTests(unittest.TestCase):
     def test_is_npc(self):
         error = "NPC wasn't flagged as an npc"
         npc = NPCBuilder().build()
-        self.assertTrue(npc.is_npc)
+        self.assertTrue(npc.is_npc, error)
 
     def test_team(self):
         error = "NPC team didn't start with any elementals"
         npc = NPCBuilder().build()
-        npc_team_size = npc.get_team().get_size()
+        npc_team_size = npc.team.get_size()
         self.assertGreater(npc_team_size, 0, error)
 
     def test_team_size(self):
@@ -25,8 +27,8 @@ class NPCTests(unittest.TestCase):
         for i in range(100):
             player = PlayerBuilder().build()
             npc = NPCBuilder().with_opponent(player).build()
-            player_team_size = player.get_team().get_size()
-            npc_team_size = npc.get_team().get_size()
+            player_team_size = player.team.get_size()
+            npc_team_size = npc.team.get_size()
             self.assertLessEqual(npc_team_size, player_team_size, error)
 
     def test_max_level(self):
@@ -56,14 +58,14 @@ class NPCTests(unittest.TestCase):
         error = "NPC's elemental levels are potentially higher than his own level"
         for i in range(100):
             npc = NPCBuilder().build()
-            team = npc.get_team()
+            team = npc.team
             for elemental in team.get_elementals():
                 self.assertLessEqual(elemental.level, npc.level, error)
 
     def test_profession_elementals(self):
         error = "A Researcher's elementals don't match his profession"
         researcher = NPCBuilder().researcher()
-        team = researcher.get_team()
+        team = researcher.team
         pool = researcher.potential_elementals()
         for elemental in team.get_elementals():
             self.assertIn(elemental, pool, error)

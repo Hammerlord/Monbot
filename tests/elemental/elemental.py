@@ -181,7 +181,7 @@ class ElementalTests(unittest.TestCase):
         elemental = ElementalBuilder().with_level(10).with_rank(2).build()
         elemental.raise_attribute(0)
         attributes = elemental.get_attributes()
-        attribute_level = attributes[0].get_level()
+        attribute_level = attributes[0].level
         self.assertEqual(attribute_level, 1, error)
 
     def test_attribute_gives_stats(self):

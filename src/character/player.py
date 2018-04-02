@@ -1,4 +1,5 @@
 from src.character.character import Character
+from src.elemental.elemental import Elemental
 
 
 class Player(Character):
@@ -7,7 +8,7 @@ class Player(Character):
         self._is_busy = False
         self._current_interface = None  # TODO
         self.id = user.id
-        self.set_nickname(user.name)
+        self._nickname(user.name)
 
     @staticmethod
     def create_player(user, starter: Elemental) -> 'Player':

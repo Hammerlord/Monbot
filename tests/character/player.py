@@ -13,11 +13,11 @@ class PlayerTests(unittest.TestCase):
 
     def test_default_nickname(self):
         error = "Player nickname must be the user's name by default"
-        self.assertEqual(self.player.get_nickname(), "Dopple", error)
+        self.assertEqual(self.player.nickname(), "Dopple", error)
 
     def test_starter_creation(self):
         error = "A starter elemental must be created with the Player"
-        team_size = self.player.get_team().get_size()
+        team_size = self.player.team.get_size()
         self.assertEqual(team_size, 1, error)
 
     def test_has_home(self):
