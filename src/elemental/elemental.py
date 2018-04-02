@@ -1,7 +1,9 @@
+import math
+
 from src.elemental.species import StatsInterface, Species, Elements
 
 
-class Elemental():
+class Elemental:
     def __init__(self, species: Species):
         super().__init__()
         self._species = species  # TBD by descendants
@@ -17,6 +19,8 @@ class Elemental():
         self._magic_def = species.magic_def
         self._speed = species.speed
         self._defend_potency = 0.5  # float. Percentage of damage blocked by Defend.
+        self._current_exp = 0
+        self._exp_to_level = 20
         self._owner = None
         self._nickname = None
         self._note = None
@@ -90,15 +94,38 @@ class Elemental():
     def nickname(self, name: str) -> None:
         self._nickname = self._validate_nickname(name)
 
-    def get_max_level(self) -> int:
-        if self._owner:
-            return self._owner.get_max_level()
-
     def reset_note(self) -> None:
         """
         TODO Sets the note based on the Elemental's Attributes.
         """
         pass
+
+    def _check_level_up(self) -> None:
+        while self._current_exp >= self._exp_to_level:
+            if self._is_level_cap():
+                return
+            self._level_up()
+
+    def add_exp(self, amount: int) -> None:
+        if self._is_level_cap():
+            return
+        self._current_exp += amount
+        self._check_level_up()
+
+    def _level_up(self) -> None:
+        self._current_exp -= self._exp_to_level
+        self._level += 1
+        self._increase_exp_to_level()
+
+    def _is_level_cap(self) -> bool:
+        """
+        Elemental can't grow to a higher level than its owner.
+        """
+        if self._owner:
+            return self._level == self._owner.level
+
+    def _increase_exp_to_level(self) -> None:
+        self._exp_to_level += math.floor(self._exp_to_level / 10) + 5
 
     @staticmethod
     def _validate_nickname(name: str) -> str:
