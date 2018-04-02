@@ -20,7 +20,7 @@ class Character:
         self._current_exp = 0
         self._exp_to_level = 10
         self._location = 0  # TODO
-        self._team = Team()
+        self._team = Team(self)
         self._is_npc = False
         self._elementals = []  # List[Elemental]. All Elementals owned by this Character, including ones not on Team.
         self._inventory = Inventory()
