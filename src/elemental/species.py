@@ -71,7 +71,7 @@ class Species(StatsInterface):
         self._max_hp = 50
         self._starting_mana = 20
         self._max_mana = 50
-        self._growth_rate = GrowthRate()
+        self._growth_rate = GrowthRate()  # Must be overridden to customize the stat growth!
         self._abilities = []  # List[LearnableAbility]. TBD by descendants.
 
     @property
@@ -87,10 +87,7 @@ class Species(StatsInterface):
 
     @property
     def growth_rate(self) -> GrowthRate:
-        """
-        Must be overridden to customize the stat growth!
-        """
-        raise NotImplementedError
+        return self._growth_rate
 
     @property
     def learnable_abilities(self) -> List['LearnableAbility']:
