@@ -80,6 +80,13 @@ class Elemental:
         """
         return self._owner
 
+    @owner.setter
+    def owner(self, owner):
+        """
+        :param owner: NPC or Player
+        """
+        self._owner = owner
+
     @property
     def rank(self):
         return self._attributes.rank
