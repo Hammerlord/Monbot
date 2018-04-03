@@ -1,5 +1,8 @@
 import unittest
 
+from src.character.character_builder import PlayerBuilder
+from src.elemental.elemental_builder import ElementalBuilder, SpeciesBuilder
+
 
 class ElementalTests(unittest.TestCase):
     def setUp(self):
@@ -82,8 +85,7 @@ class ElementalTests(unittest.TestCase):
         error = "Elemental nickname couldn't be reset"
         species = SpeciesBuilder().with_name("Richard").build()
         elemental = ElementalBuilder().with_species(species).build()
-        name = "Logi"
-        elemental.set_nickname(name)
+        elemental.nickname = "Logi"
         elemental.reset_nickname()
         self.assertEqual(elemental.nickname, "Richard", error)
 
