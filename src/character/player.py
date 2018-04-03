@@ -15,3 +15,11 @@ class Player(Character):
         new_profile = Player(user)
         new_profile.add_elemental(starter)
         return new_profile
+
+    @property
+    def is_busy(self) -> bool:
+        return self._is_busy
+
+    @is_busy.setter
+    def is_busy(self, set_busy: bool) -> None:
+        self._is_busy = set_busy
