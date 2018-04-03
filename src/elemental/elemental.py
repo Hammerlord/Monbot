@@ -18,7 +18,8 @@ class Elemental:
         self._physical_def = species.physical_def
         self._magic_def = species.magic_def
         self._speed = species.speed
-        self._defend_potency = 0.5  # Percentage of damage blocked by Defend.
+        self._defend_potency = 0.6  # Percentage of damage blocked by Defend.
+        self._defend_charges = species.defend_charges
         self._current_exp = 0
         self._exp_to_level = 20
         self._owner = None
@@ -70,8 +71,34 @@ class Elemental:
         return self._max_hp + self._attributes.max_hp
 
     @property
+    def defend_potency(self) -> float:
+        return self._defend_potency + self._attributes.defend_potency
+
+    @property
+    def defend_charges(self) -> int:
+        return self._defend_charges + self._attributes.defend_charges
+
+    def heal(self, amount: int) -> None:
+        self._current_hp += amount
+        if self._current_hp > self.max_hp:
+            self._current_hp = self.max_hp
+
+    def receive_damage(self, amount: int) -> None:
+        self._current_hp -= amount
+        if self._current_hp < 0:
+            self._current_hp = 0
+
+    @property
     def starting_mana(self) -> int:
         return self._starting_mana + self._attributes.starting_mana
+
+    @property
+    def current_exp(self) -> int:
+        return self._current_exp
+
+    @property
+    def exp_to_level(self) -> int:
+        return self._exp_to_level
 
     @property
     def owner(self):
