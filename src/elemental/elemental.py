@@ -140,6 +140,14 @@ class Elemental:
     def nickname(self, name: str) -> None:
         self._nickname = self._validate_nickname(name)
 
+    @property
+    def note(self) -> str:
+        return self._note
+
+    @note.setter
+    def note(self, message: str) -> None:
+        self._note = self._validate_note(message)
+
     def reset_note(self) -> None:
         """
         TODO Sets the note based on the Elemental's Attributes.
