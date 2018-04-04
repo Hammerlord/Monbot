@@ -68,7 +68,9 @@ class ElementalBuilder:
         self._level = 1
         self._current_hp = 50
         self._max_hp = 50
+        self._rank = 1
         self._owner = Player(UserBuilder().build())
+        self._attribute_manager = AttributeFactory.create_manager()
 
     def with_current_hp(self, amount: int) -> 'ElementalBuilder':
         self._current_hp = amount
@@ -90,9 +92,24 @@ class ElementalBuilder:
         self._owner = owner
         return self
 
+    def with_attribute_manager(self, manager) -> 'ElementalBuilder':
+        self._attribute_manager = manager
+        return self
+
+    def with_rank(self, rank: int) -> 'ElementalBuilder':
+        self._rank = rank
+        return self
+
     def build(self) -> 'Elemental':
         elemental = Elemental(self._species,
-                              AttributeFactory.create_manager())
+                              self._attribute_manager)
         elemental._current_hp = self._current_hp
         elemental._max_hp = self._max_hp
+        self._level_elemental(elemental)
         return elemental
+
+    def _level_elemental(self, elemental: Elemental) -> None:
+        # Because the Elemental actually levels up, this method adds stats to its profile.
+        while elemental.level < self._level:
+            exp = elemental.exp_to_level
+            elemental.add_exp(exp)
