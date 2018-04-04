@@ -11,7 +11,6 @@ class PlayerTests(unittest.TestCase):
         self.player = PlayerBuilder().with_user(self.user).build()
 
     def tearDown(self):
-        self.player.dispose()
         self.player = None
 
     def test_default_nickname(self):

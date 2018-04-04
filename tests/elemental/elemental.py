@@ -75,12 +75,12 @@ class ElementalTests(unittest.TestCase):
     def test_set_nickname(self):
         error = "Elemental nickname couldn't be set"
         name = "Monze"
-        self.elemental.set_nickname(name)
+        self.elemental.nickname = name
         self.assertEqual(self.elemental.nickname, name, error)
 
     def test_nickname_max_length(self):
         error = "Elemental nickname can incorrectly be set to more than 15 characters"
-        self.elemental.set_nickname("dsadadaifjasifjasfdsd")
+        self.elemental.nickname = "dsadadaifjasifjasfdsd"
         name_length = len(self.elemental.nickname)
         self.assertLessEqual(name_length, 15, error)
 
