@@ -24,7 +24,7 @@ class AttributeManager:
         self._starting_mana = 0
         self._points_remaining = 0
 
-    def add_attribute(self, attribute: Type[Attribute]) -> None:
+    def add_attribute(self, attribute: Attribute) -> None:
         self._attributes.append(attribute)
 
     @property
@@ -109,8 +109,8 @@ class AttributeManager:
         self._rank += 1
         self._points_remaining += 1
 
-    def raise_attribute(self, i: int):
-        attribute = self._attributes[i]
+    def raise_attribute(self, position: int):
+        attribute = self._attributes[position]
         if self._are_points_available() and attribute.can_level_up():
             attribute.level_up()
             self._points_remaining -= 1

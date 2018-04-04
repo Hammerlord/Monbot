@@ -7,7 +7,9 @@ from src.elemental.species import Species, Elements
 
 
 class Elemental:
-    def __init__(self, species: Species, attribute_manager: AttributeManager):
+    def __init__(self,
+                 species: Species,
+                 attribute_manager: AttributeManager):
         super().__init__()
         self._species = species  # TBD by descendants
         self._level = 1
@@ -159,6 +161,7 @@ class Elemental:
     def _check_raise_rank(self) -> None:
         """
         Elementals gain a rank at level 10, 20 ...
+        TODO: Item requirements.
         """
         if self._level % 10 == 0:
             self._attribute_manager.raise_rank()
