@@ -74,6 +74,7 @@ class Character:
         self._gold += amount
 
     def add_elemental(self, elemental: Elemental) -> None:
+        elemental.owner = self
         self._team.add_elemental(elemental)
         self._elementals.append(elemental)
 
