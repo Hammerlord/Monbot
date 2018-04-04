@@ -219,7 +219,7 @@ class Elemental:
 
     @staticmethod
     def _validate_note(note: str) -> str:
-        max_length = 60
+        max_length = 75
         note = note.strip()
         if len(note) > max_length:
             return note[:max_length]

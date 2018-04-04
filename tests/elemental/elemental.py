@@ -99,10 +99,10 @@ class ElementalTests(unittest.TestCase):
         self.assertEqual(self.elemental.note, note, error)
 
     def test_note_max_length(self):
-        error = "Elemental note can incorrectly be set to more than 60 characters"
+        error = "Elemental note can incorrectly be set to more than 75 characters"
         self.elemental.note = error
         name_length = len(self.elemental.note)
-        self.assertLessEqual(name_length, 60, error)
+        self.assertLessEqual(name_length, 75, error)
 
     def test_gain_stats(self):
         error = "Elemental stat increase level doesn't match its Species' growth rate"
