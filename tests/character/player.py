@@ -29,7 +29,7 @@ class PlayerTests(unittest.TestCase):
 
     def test_set_busy_flag(self):
         error = "Busy flag couldn't be set"
-        self.player.set_busy(True)
+        self.player.is_busy = True
         self.assertIs(self.player.is_busy, True, error)
 
     def test_is_busy_combat(self):
