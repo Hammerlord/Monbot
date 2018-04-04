@@ -9,9 +9,9 @@ class AttributeManager:
     which increase the Elemental's stats and grant other bonuses.
     """
 
-    def __init__(self, attributes: List[Type[Attribute]]):
+    def __init__(self):
         self._rank = 1
-        self._attributes = self._initialize_attributes(attributes)
+        self._attributes = []
         self._physical_att = 0
         self._magic_att = 0
         self._physical_def = 0
@@ -24,9 +24,8 @@ class AttributeManager:
         self._starting_mana = 0
         self._points_remaining = 0
 
-    def _initialize_attributes(self, attributes: List[Type[Attribute]]) -> List[Attribute]:
-        # Instantiate the Attributes.
-        return [attribute(self) for attribute in attributes]
+    def add_attribute(self, attribute: Type[Attribute]) -> None:
+        self._attributes.append(attribute)
 
     @property
     def rank(self) -> int:
