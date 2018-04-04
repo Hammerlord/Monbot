@@ -162,7 +162,26 @@ class Elemental:
     def _level_up(self) -> None:
         self._current_exp -= self._exp_to_level
         self._level += 1
+        self._gain_stats()
         self._increase_exp_to_level()
+
+    def _gain_stats(self) -> None:
+        """
+        Gain stats based on the Species' GrowthRate.
+        """
+        growth_rate = self._species.growth_rate
+        self._max_hp += growth_rate.hp + self._bonus_stat()
+        self._physical_att += growth_rate.physical_att + self._bonus_stat()
+        self._magic_att += growth_rate.magic_att + self._bonus_stat()
+        self._physical_def += growth_rate.physical_def + self._bonus_stat()
+        self._magic_def += growth_rate.magic_def + self._bonus_stat()
+
+    def _bonus_stat(self) -> int:
+        """
+        Every 20 levels, Elemental gains +1 additional of each stat.
+        """
+        bonus = math.floor(self._level / 20)
+        return int(bonus)
 
     def _check_raise_rank(self) -> None:
         """
