@@ -87,6 +87,12 @@ class Elemental:
     def attributes(self) -> List[Attribute]:
         return self._attribute_manager.attributes
 
+    def raise_attribute(self, position: int) -> None:
+        try:
+            self._attribute_manager.raise_attribute(position)
+        except IndexError:
+            raise Exception("Tried to raise an Attribute, but it was out of bounds:", position)
+
     def heal(self, amount: int) -> None:
         self._current_hp += amount
         if self._current_hp > self.max_hp:
