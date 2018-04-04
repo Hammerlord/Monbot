@@ -1,10 +1,13 @@
 import math
+from typing import List
 
-from src.elemental.species import StatsInterface, Species, Elements
+from src.elemental.attribute.attribute import Attribute
+from src.elemental.attribute.attribute_manager import AttributeManager
+from src.elemental.species import Species, Elements
 
 
 class Elemental:
-    def __init__(self, species: Species):
+    def __init__(self, species: Species, attribute_manager: AttributeManager):
         super().__init__()
         self._species = species  # TBD by descendants
         self._level = 1
@@ -28,27 +31,27 @@ class Elemental:
         self._left_icon = None  # str. This Elemental's emote, facing right.
         self._right_icon = None  # str. This Elemental's emote, facing left.
         self._portrait = None
-        self._attributes = AttributeFactory.build_manager()
+        self._attribute_manager = attribute_manager
 
     @property
     def physical_att(self) -> int:
-        return self._physical_att + self._attributes.physical_att
+        return self._physical_att + self._attribute_manager.physical_att
 
     @property
     def magic_att(self) -> int:
-        return self._magic_att + self._attributes.magic_att
+        return self._magic_att + self._attribute_manager.magic_att
 
     @property
     def physical_def(self) -> int:
-        return self._physical_def + self._attributes.physical_def
+        return self._physical_def + self._attribute_manager.physical_def
 
     @property
     def magic_def(self) -> int:
-        return self._magic_def + self._attributes.magic_def
+        return self._magic_def + self._attribute_manager.magic_def
 
     @property
     def speed(self) -> int:
-        return self._speed + self._attributes.speed
+        return self._speed + self._attribute_manager.speed
 
     @property
     def level(self) -> int:
@@ -68,15 +71,19 @@ class Elemental:
 
     @property
     def max_hp(self) -> int:
-        return self._max_hp + self._attributes.max_hp
+        return self._max_hp + self._attribute_manager.max_hp
 
     @property
     def defend_potency(self) -> float:
-        return self._defend_potency + self._attributes.defend_potency
+        return self._defend_potency + self._attribute_manager.defend_potency
 
     @property
     def defend_charges(self) -> int:
-        return self._defend_charges + self._attributes.defend_charges
+        return self._defend_charges + self._attribute_manager.defend_charges
+
+    @property
+    def attributes(self) -> List[Attribute]:
+        return self._attribute_manager.attributes
 
     def heal(self, amount: int) -> None:
         self._current_hp += amount
@@ -90,7 +97,7 @@ class Elemental:
 
     @property
     def starting_mana(self) -> int:
-        return self._starting_mana + self._attributes.starting_mana
+        return self._starting_mana + self._attribute_manager.starting_mana
 
     @property
     def current_exp(self) -> int:
@@ -116,10 +123,7 @@ class Elemental:
 
     @property
     def rank(self):
-        return self._attributes.rank
-
-    def raise_rank(self) -> None:
-        self._attributes.raise_rank()
+        return self._attribute_manager.rank
 
     def reset_nickname(self):
         self._nickname = self._species.name
@@ -139,6 +143,7 @@ class Elemental:
             if self._is_level_cap():
                 return
             self._level_up()
+            self._check_raise_rank()
 
     def add_exp(self, amount: int) -> None:
         if self._is_level_cap():
@@ -150,6 +155,13 @@ class Elemental:
         self._current_exp -= self._exp_to_level
         self._level += 1
         self._increase_exp_to_level()
+
+    def _check_raise_rank(self) -> None:
+        """
+        Elementals gain a rank at level 10, 20 ...
+        """
+        if self._level % 10 == 0:
+            self._attribute_manager.raise_rank()
 
     def _is_level_cap(self) -> bool:
         """

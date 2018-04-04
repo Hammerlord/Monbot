@@ -1,6 +1,8 @@
 import unittest
 
 from src.character.character_builder import PlayerBuilder
+from src.elemental.attribute.attribute_factory import AttributeFactory
+from src.elemental.attribute.attribute_manager import AttributeManager
 from src.elemental.elemental_builder import ElementalBuilder, SpeciesBuilder
 
 
@@ -9,7 +11,6 @@ class ElementalTests(unittest.TestCase):
         self.elemental = ElementalBuilder().with_level(1).build()
 
     def tearDown(self):
-        self.elemental.dispose()
         self.elemental = None
 
     def get_species(self) -> 'Species':
@@ -30,9 +31,9 @@ class ElementalTests(unittest.TestCase):
             }).build()
 
     def get_predetermined_attributes(self):
-        return [AttributeFactory.physical_att_attribute(),
-                AttributeFactory.magic_att_attribute(),
-                AttributeFactory.hp_attribute()]
+        return [AttributeFactory.ferocity(),
+                AttributeFactory.sturdiness(),
+                AttributeFactory.resolve()]
 
     def test_gain_exp(self):
         error = "Elemental couldn't acquire experience"
@@ -126,10 +127,6 @@ class ElementalTests(unittest.TestCase):
         self.assertEqual(species.base_speed, 5, error)
         self.assertEqual(species.base_max_hp, 50, error)
 
-    def test_has_attribute_manager(self):
-        error = "Elemental didn't get an AttributeManager on instantiation"
-        self.assertIsInstance(self.elemental.attributes, AttributeManager, error)
-
     def test_has_ability_manager(self):
         error = "Elemental didn't get an AbilityManager on instantiation"
         self.assertIsInstance(self.elemental.abilities, AbilityManager, error)
@@ -167,14 +164,14 @@ class ElementalTests(unittest.TestCase):
     def test_num_attributes(self):
         error = "Elemental must have three attributes"
         elemental = ElementalBuilder().build()
-        num_attributes = len(elemental.get_attributes())
+        num_attributes = len(elemental.attributes)
         self.assertEqual(num_attributes, 3, error)
 
     def test_create_unique_attributes(self):
         error = "Elemental can incorrectly have a duplicate attribute"
         for i in range(100):
             elemental = ElementalBuilder().build()
-            attributes = elemental.get_attributes()
+            attributes = elemental.attributes
             no_duplicates = len(attributes) == len(set(attributes))
             self.assertIs(no_duplicates, True, error)
 
@@ -188,8 +185,8 @@ class ElementalTests(unittest.TestCase):
 
     def test_attribute_gives_stats(self):
         error = "No stats gained from raising an attribute"
-        from_attributes = self.get_predetermined_attributes()  # Physical attack Attribute is guaranteed
-        manager = AttributeFactory().create_manager(from_attributes)
+        attributes = self.get_predetermined_attributes()  # Physical attack Attribute is guaranteed
+        manager = AttributeFactory().create_manager_from_attributes(attributes)
         elemental = ElementalBuilder().with_attribute_manager(manager).with_level(10).with_rank(2).build()
         p_att_before = elemental.get_physical_att()
         elemental.raise_attribute(0)

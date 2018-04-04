@@ -1,7 +1,5 @@
 from enum import Enum
 
-from src.elemental.attribute.attribute_manager import AttributeManager
-
 
 class AttributeType(Enum):
     NONE = 0
@@ -39,12 +37,72 @@ class Attribute:
 
 class Ferocity(Attribute):
     def __init__(self, attribute_manager):
-        self._stat_type = AttributeType.PHYSICAL_ATT
         super().__init__(attribute_manager)
+        self._stat_type = AttributeType.PHYSICAL_ATT
         self._name = "Ferocity"
         self._description = "Increases physical attack power."
 
     def level_up(self):
         super().level_up()
         self._attribute_manager.add_physical_att(10)
+
+
+class Attunement(Attribute):
+    def __init__(self, attribute_manager):
+        super().__init__(attribute_manager)
+        self._stat_type = AttributeType.MAGIC_ATT
+        self._name = "Attunement"
+        self._description = "Increases magic attack power."
+
+    def level_up(self):
+        super().level_up()
+        self._attribute_manager.add_magic_att(10)
+
+
+class Sturdiness(Attribute):
+    def __init__(self, attribute_manager):
+        super().__init__(attribute_manager)
+        self._stat_type = AttributeType.PHYSICAL_DEF
+        self._name = "Sturdiness"
+        self._description = "Increases physical defence."
+
+    def level_up(self):
+        super().level_up()
+        self._attribute_manager.add_physical_def(10)
+
+
+class Resolve(Attribute):
+    def __init__(self, attribute_manager):
+        super().__init__(attribute_manager)
+        self._stat_type = AttributeType.HP
+        self._name = "Resolve"
+        self._description = "Increases maximum health."
+
+    def level_up(self):
+        super().level_up()
+        self._attribute_manager.add_max_hp(20)
+
+
+class Resistance(Attribute):
+    def __init__(self, attribute_manager):
+        super().__init__(attribute_manager)
+        self._stat_type = AttributeType.MAGIC_DEF
+        self._name = "Resistance"
+        self._description = "Increases magic defence."
+
+    def level_up(self):
+        super().level_up()
+        self._attribute_manager.add_magic_def(10)
+
+
+class Swiftness(Attribute):
+    def __init__(self, attribute_manager):
+        super().__init__(attribute_manager)
+        self._stat_type = AttributeType.SPEED
+        self._name = "Swiftness"
+        self._description = "Increases speed."
+
+    def level_up(self):
+        super().level_up()
+        self._attribute_manager.add_speed(10)
 

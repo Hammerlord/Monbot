@@ -1,9 +1,9 @@
-from src.character.character_builder import PlayerBuilder
-from src.character.npc import NPC
 from src.character.player import Player
 from src.core.elements import Elements
+from src.elemental.attribute.attribute_factory import AttributeFactory
 from src.elemental.elemental import Elemental
 from src.elemental.species import Species, GrowthRate
+from tests.test_user import UserBuilder
 
 
 class TestGrowthRate(GrowthRate):
@@ -74,12 +74,13 @@ class ElementalBuilder:
         self._species = species
         return self
 
-    def with_owner(self, owner: NPC or Player) -> 'ElementalBuilder':
+    def with_owner(self, owner) -> 'ElementalBuilder':
         self._owner = owner
         return self
 
     def build(self) -> 'Elemental':
-        elemental = Elemental(self._species)
+        elemental = Elemental(self._species,
+                              AttributeFactory.create_manager())
         elemental._current_hp = self._current_hp
         elemental._max_hp = self._max_hp
         return elemental
