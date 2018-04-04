@@ -30,10 +30,12 @@ class ElementalTests(unittest.TestCase):
                 'hp': 3
             }).build()
 
-    def get_predetermined_attributes(self):
-        return [AttributeFactory.ferocity(),
-                AttributeFactory.sturdiness(),
-                AttributeFactory.resolve()]
+    def get_preset_manager(self) -> AttributeManager:
+        manager = AttributeFactory.create_empty_manager()
+        AttributeFactory.add_ferocity(manager)
+        AttributeFactory.add_attunement(manager)
+        AttributeFactory.add_resolve(manager)
+        return manager
 
     def test_gain_exp(self):
         error = "Elemental couldn't acquire experience"
@@ -177,20 +179,19 @@ class ElementalTests(unittest.TestCase):
 
     def test_raise_attribute(self):
         error = "Elemental who met requirements couldn't raise an attribute"
-        elemental = ElementalBuilder().with_level(10).with_rank(2).build()
+        elemental = ElementalBuilder().with_level(10).build()
         elemental.raise_attribute(0)
-        attributes = elemental.get_attributes()
+        attributes = elemental.attributes
         attribute_level = attributes[0].level
         self.assertEqual(attribute_level, 1, error)
 
     def test_attribute_gives_stats(self):
         error = "No stats gained from raising an attribute"
-        attributes = self.get_predetermined_attributes()  # Physical attack Attribute is guaranteed
-        manager = AttributeFactory().create_manager_from_attributes(attributes)
-        elemental = ElementalBuilder().with_attribute_manager(manager).with_level(10).with_rank(2).build()
-        p_att_before = elemental.get_physical_att()
+        manager = self.get_preset_manager()  # Physical attack Attribute is guaranteed in the first slot
+        elemental = ElementalBuilder().with_attribute_manager(manager).with_level(10).build()
+        p_att_before = elemental.physical_att
         elemental.raise_attribute(0)
-        p_att_after = elemental.get_physical_att()
+        p_att_after = elemental.physical_att
         self.assertGreater(p_att_after, p_att_before, error)
 
     def test_initial_abilities(self):
