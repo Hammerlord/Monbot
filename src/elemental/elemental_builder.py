@@ -36,6 +36,20 @@ class SpeciesBuilder:
         self._element = Elements.LIGHT
         self._growth_rate = TestGrowthRate()
         self._abilities = [TestLearnableAbility(), TestLearnableAbility()]
+        self._physical_att = 1
+        self._physical_def = 1
+
+    def with_name(self, name: str) -> 'SpeciesBuilder':
+        self._name = name
+        return self
+
+    def with_physical_att(self, amount: int) -> 'SpeciesBuilder':
+        self._physical_att = amount
+        return self
+
+    def with_physical_def(self, amount: int) -> 'SpeciesBuilder':
+        self._physical_def = amount
+        return self
 
     def build(self) -> Species:
         species = Species()
@@ -43,11 +57,9 @@ class SpeciesBuilder:
         species._element = self._element
         species._growth_rate = self._growth_rate
         species._abilities = self._abilities
+        species._physical_att = self._physical_att
+        species._physical_def = self._physical_def
         return species
-
-    def with_name(self, name: str) -> 'SpeciesBuilder':
-        self._name = name
-        return self
 
 
 class ElementalBuilder:
