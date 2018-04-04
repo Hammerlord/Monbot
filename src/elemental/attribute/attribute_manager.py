@@ -123,6 +123,11 @@ class AttributeManager:
     def _are_points_available(self) -> bool:
         return self._points_remaining > 0
 
+    def _recalculate_ranks(self) -> None:
+        self._reset_stat_bonuses()
+        for attribute in self._attributes:
+            attribute.readd_stats()
+
     def _reset_stat_bonuses(self):
         self._physical_att = 0
         self._magic_att = 0
