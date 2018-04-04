@@ -68,7 +68,7 @@ class ElementalBuilder:
         self._level = 1
         self._current_hp = 50
         self._max_hp = 50
-        self._owner = PlayerBuilder().build()
+        self._owner = Player(UserBuilder().build())
 
     def with_current_hp(self, amount: int) -> 'ElementalBuilder':
         self._current_hp = amount
