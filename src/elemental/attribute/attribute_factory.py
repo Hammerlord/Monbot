@@ -9,31 +9,18 @@ from src.elemental.attribute.attribute_manager import AttributeManager
 class AttributeFactory:
 
     @staticmethod
-    def get_potential_attributes() -> List[Type[Attribute]]:
+    def get_potential_attributes(manager: AttributeManager) -> List[Attribute]:
         """
-        :return: References to all the Attribute subclasses.
+        :return: Attribute subclasses.
         """
         return [
-            Ferocity,
-            Sturdiness,
-            Resolve,
-            Attunement,
-            Resistance,
-            Swiftness
+            Ferocity(manager),
+            Sturdiness(manager),
+            Resolve(manager),
+            Attunement(manager),
+            Resistance(manager),
+            Swiftness(manager)
         ]
-
-    @staticmethod
-    def get_random_attributes() -> List[Type[Attribute]]:
-        """
-        :return: References to three random Attribute subclasses.
-        """
-        attribute_pool = AttributeFactory.get_potential_attributes()
-
-        def get_random_attribute() -> Type[Attribute]:
-            pick = randint(0, len(attribute_pool) - 1)
-            return attribute_pool.pop(pick)
-
-        return [get_random_attribute() for i in range(3)]
 
     @staticmethod
     def create_empty_manager() -> AttributeManager:
@@ -47,88 +34,40 @@ class AttributeFactory:
         """
         :return: An AttributeManager with three random Attributes.
         """
-        attributes = AttributeFactory.get_random_attributes()
-        return AttributeFactory.create_preset_manager(attributes)
-
-    @staticmethod
-    def create_preset_manager(attributes: List[Type[Attribute]]) -> AttributeManager:
-        """
-        :param attributes: A list of Attribute references.
-        """
         manager = AttributeManager()
-        for attribute in attributes:
-            attribute(manager)
+        attribute_pool = AttributeFactory.get_potential_attributes(manager)
+        for i in range(3):
+            pick = randint(0, len(attribute_pool) - 1)
+            attribute = attribute_pool.pop(pick)
             manager.add_attribute(attribute)
         return manager
 
     @staticmethod
-    def ferocity() -> Type[Attribute]:
-        """
-        :return: Physical attack Attribute.
-        """
-        return Ferocity
-
-    @staticmethod
-    def sturdiness() -> Type[Attribute]:
-        """
-        :return: Physical defence Attribute.
-        """
-        return Sturdiness
-
-    @staticmethod
-    def resolve() -> Type[Attribute]:
-        """
-        :return: Max HP Attribute.
-        """
-        return Resolve
-
-    @staticmethod
-    def attunement() -> Type[Attribute]:
-        """
-        :return: Magic attack Attribute.
-        """
-        return Attunement
-
-    @staticmethod
-    def resistance() -> Type[Attribute]:
-        """
-        :return: Magic defence Attribute.
-        """
-        return Resistance
-
-    @staticmethod
-    def swiftness() -> Type[Attribute]:
-        """
-        :return: Speed Attribute.
-        """
-        return Swiftness
-
-    @staticmethod
-    def add_ferocity(manager: AttributeManager):
+    def add_ferocity(manager: AttributeManager) -> None:
         attribute = Ferocity(manager)
         manager.add_attribute(attribute)
 
     @staticmethod
-    def add_sturdiness(manager: AttributeManager):
+    def add_sturdiness(manager: AttributeManager) -> None:
         attribute = Sturdiness(manager)
         manager.add_attribute(attribute)
 
     @staticmethod
-    def add_resolve(manager: AttributeManager):
+    def add_resolve(manager: AttributeManager) -> None:
         attribute = Resolve(manager)
         manager.add_attribute(attribute)
 
     @staticmethod
-    def add_attunement(manager: AttributeManager):
+    def add_attunement(manager: AttributeManager) -> None:
         attribute = Attunement(manager)
         manager.add_attribute(attribute)
 
     @staticmethod
-    def add_resistance(manager: AttributeManager):
+    def add_resistance(manager: AttributeManager) -> None:
         attribute = Resistance(manager)
         manager.add_attribute(attribute)
 
     @staticmethod
-    def add_swiftness(manager: AttributeManager):
+    def add_swiftness(manager: AttributeManager) -> None:
         attribute = Swiftness(manager)
         manager.add_attribute(attribute)
