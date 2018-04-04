@@ -26,6 +26,7 @@ class Attribute:
 
     def level_up(self) -> None:
         self._current_level += 1
+        self.add_stats()
 
     @property
     def level(self) -> int:
@@ -33,6 +34,16 @@ class Attribute:
 
     def reset(self) -> None:
         self._current_level = 0
+
+    def add_stats(self) -> None:
+        raise NotImplementedError
+
+    def readd_stats(self) -> None:
+        """
+        If AttributeManager stats have been reset and need to be recalculated.
+        """
+        for i in range(self._current_level):
+            self.add_stats()
 
 
 class Ferocity(Attribute):
@@ -42,8 +53,7 @@ class Ferocity(Attribute):
         self._name = "Ferocity"
         self._description = "Increases physical attack power."
 
-    def level_up(self):
-        super().level_up()
+    def add_stats(self):
         self._attribute_manager.add_physical_att(10)
 
 
@@ -54,8 +64,7 @@ class Attunement(Attribute):
         self._name = "Attunement"
         self._description = "Increases magic attack power."
 
-    def level_up(self):
-        super().level_up()
+    def add_stats(self):
         self._attribute_manager.add_magic_att(10)
 
 
@@ -66,8 +75,7 @@ class Sturdiness(Attribute):
         self._name = "Sturdiness"
         self._description = "Increases physical defence."
 
-    def level_up(self):
-        super().level_up()
+    def add_stats(self):
         self._attribute_manager.add_physical_def(10)
 
 
@@ -78,8 +86,7 @@ class Resolve(Attribute):
         self._name = "Resolve"
         self._description = "Increases maximum health."
 
-    def level_up(self):
-        super().level_up()
+    def add_stats(self):
         self._attribute_manager.add_max_hp(20)
 
 
@@ -90,8 +97,7 @@ class Resistance(Attribute):
         self._name = "Resistance"
         self._description = "Increases magic defence."
 
-    def level_up(self):
-        super().level_up()
+    def add_stats(self):
         self._attribute_manager.add_magic_def(10)
 
 
@@ -102,7 +108,6 @@ class Swiftness(Attribute):
         self._name = "Swiftness"
         self._description = "Increases speed."
 
-    def level_up(self):
-        super().level_up()
+    def add_stats(self):
         self._attribute_manager.add_speed(10)
 
