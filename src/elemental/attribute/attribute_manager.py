@@ -25,6 +25,7 @@ class AttributeManager:
         self._points_remaining = 0
 
     def add_attribute(self, attribute: Attribute) -> None:
+        attribute.set_attribute_manager(self)
         self._attributes.append(attribute)
 
     @property

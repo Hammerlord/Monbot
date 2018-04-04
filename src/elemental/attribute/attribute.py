@@ -13,13 +13,16 @@ class AttributeType(Enum):
 
 
 class Attribute:
-    def __init__(self, attribute_manager: 'AttributeManager'):
+    def __init__(self):
         self._stat_type = AttributeType.NONE
-        self._attribute_manager = attribute_manager
+        self._attribute_manager = None
         self._name = None  # Str. TBD by descendants.
         self._description = None  # Str. TBD by descendants.
         self._current_level = 0
         self._max_level = 3
+
+    def set_attribute_manager(self, manager: 'AttributeManager'):
+        self._attribute_manager = manager
 
     def can_level_up(self) -> bool:
         return self._current_level < self._max_level
@@ -47,8 +50,8 @@ class Attribute:
 
 
 class Ferocity(Attribute):
-    def __init__(self, attribute_manager):
-        super().__init__(attribute_manager)
+    def __init__(self):
+        super().__init__()
         self._stat_type = AttributeType.PHYSICAL_ATT
         self._name = "Ferocity"
         self._description = "Increases physical attack power."
@@ -58,8 +61,8 @@ class Ferocity(Attribute):
 
 
 class Attunement(Attribute):
-    def __init__(self, attribute_manager):
-        super().__init__(attribute_manager)
+    def __init__(self):
+        super().__init__()
         self._stat_type = AttributeType.MAGIC_ATT
         self._name = "Attunement"
         self._description = "Increases magic attack power."
@@ -69,8 +72,8 @@ class Attunement(Attribute):
 
 
 class Sturdiness(Attribute):
-    def __init__(self, attribute_manager):
-        super().__init__(attribute_manager)
+    def __init__(self):
+        super().__init__()
         self._stat_type = AttributeType.PHYSICAL_DEF
         self._name = "Sturdiness"
         self._description = "Increases physical defence."
@@ -80,8 +83,8 @@ class Sturdiness(Attribute):
 
 
 class Resolve(Attribute):
-    def __init__(self, attribute_manager):
-        super().__init__(attribute_manager)
+    def __init__(self):
+        super().__init__()
         self._stat_type = AttributeType.HP
         self._name = "Resolve"
         self._description = "Increases maximum health."
@@ -91,8 +94,8 @@ class Resolve(Attribute):
 
 
 class Resistance(Attribute):
-    def __init__(self, attribute_manager):
-        super().__init__(attribute_manager)
+    def __init__(self):
+        super().__init__()
         self._stat_type = AttributeType.MAGIC_DEF
         self._name = "Resistance"
         self._description = "Increases magic defence."
@@ -102,8 +105,8 @@ class Resistance(Attribute):
 
 
 class Swiftness(Attribute):
-    def __init__(self, attribute_manager):
-        super().__init__(attribute_manager)
+    def __init__(self):
+        super().__init__()
         self._stat_type = AttributeType.SPEED
         self._name = "Swiftness"
         self._description = "Increases speed."
