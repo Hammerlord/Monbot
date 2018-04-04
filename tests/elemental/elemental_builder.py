@@ -105,6 +105,7 @@ class ElementalBuilder:
                               self._attribute_manager)
         elemental._current_hp = self._current_hp
         elemental._max_hp = self._max_hp
+        elemental.owner = self._owner
         self._level_elemental(elemental)
         return elemental
 

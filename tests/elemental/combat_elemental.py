@@ -1,6 +1,6 @@
 import unittest
 
-from src.elemental.elemental_builder import ElementalBuilder
+from tests.elemental.elemental_builder import ElementalBuilder
 
 
 class CombatElementalTests(unittest.TestCase):

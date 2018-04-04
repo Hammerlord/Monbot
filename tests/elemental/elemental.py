@@ -1,9 +1,9 @@
 import unittest
 
-from src.character.character_builder import PlayerBuilder
 from src.elemental.attribute.attribute_factory import AttributeFactory
 from src.elemental.attribute.attribute_manager import AttributeManager
-from src.elemental.elemental_builder import ElementalBuilder, SpeciesBuilder
+from tests.character.character_builder import PlayerBuilder
+from tests.elemental.elemental_builder import ElementalBuilder, SpeciesBuilder
 
 
 class ElementalTests(unittest.TestCase):

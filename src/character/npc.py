@@ -1,13 +1,11 @@
 from enum import Enum
-from typing import Type
-
-from src.character.character import Character
 from random import randint
 
+from src.character.character import Character
 from src.character.player import Player
 from src.elemental.elemental import Elemental
-from src.elemental.elemental_builder import ElementalBuilder
 from src.elemental.species import Species
+from tests.elemental.elemental_builder import ElementalBuilder
 
 
 class Professions(Enum):

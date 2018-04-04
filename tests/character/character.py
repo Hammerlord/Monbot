@@ -1,8 +1,8 @@
 import unittest
 
-from src.character.character_builder import CharacterBuilder
 from src.character.inventory import Inventory
 from src.team.team import Team
+from tests.character.character_builder import CharacterBuilder
 
 
 class CharacterTests(unittest.TestCase):

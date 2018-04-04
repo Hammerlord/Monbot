@@ -1,6 +1,6 @@
 import unittest
 
-from src.character.character_builder import PlayerBuilder
+from tests.character.character_builder import PlayerBuilder
 from tests.test_user import UserBuilder
 
 
