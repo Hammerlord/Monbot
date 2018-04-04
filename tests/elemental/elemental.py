@@ -53,9 +53,9 @@ class ElementalTests(unittest.TestCase):
 
     def test_level_exp_cap(self):
         error = "Leveling up didn't increase the Elemental's required exp"
-        lower_requirement = self.elemental.current_exp
+        lower_requirement = self.elemental.exp_to_level
         higher_level_elemental = ElementalBuilder().with_level(2).build()
-        higher_requirement = higher_level_elemental.current_exp
+        higher_requirement = higher_level_elemental.exp_to_level
         self.assertGreater(higher_requirement, lower_requirement, error)
 
     def test_multi_level_up(self):
@@ -95,12 +95,12 @@ class ElementalTests(unittest.TestCase):
     def test_set_note(self):
         error = "Elemental note couldn't be set"
         note = "+PDEF +PATT +SPEED bruiser"
-        self.elemental.set_note(note)
+        self.elemental.note = note
         self.assertEqual(self.elemental.note, note, error)
 
     def test_note_max_length(self):
         error = "Elemental note can incorrectly be set to more than 50 characters"
-        self.elemental.set_note(error)
+        self.elemental.note = error
         name_length = len(self.elemental.note)
         self.assertLessEqual(name_length, 50, error)
 
