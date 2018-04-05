@@ -25,21 +25,15 @@ class CharacterBuilder:
 class NPCBuilder:
     def __init__(self):
         self._level = 1
-        self.opponent = PlayerBuilder().build()
+        self._opponent = PlayerBuilder().build()
 
     def build(self) -> NPC:
         npc = NPC()
-        while npc.level < self._level:
-            exp = npc.exp_to_level
-            npc.add_exp(exp)
+        npc.generate_team(self._opponent)
         return npc
 
-    def with_level(self, level: int) -> 'NPCBuilder':
-        self._level = level
-        return self
-
     def with_opponent(self, opponent: NPC or Player) -> 'NPCBuilder':
-        self.opponent = opponent
+        self._opponent = opponent
         return self
 
 
