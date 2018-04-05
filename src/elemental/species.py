@@ -11,6 +11,7 @@ class StatsInterface:
     """
 
     def __init__(self):
+        self._max_hp = 0
         self._physical_att = 0
         self._magic_att = 0
         self._physical_def = 0
@@ -37,6 +38,10 @@ class StatsInterface:
     def speed(self) -> int:
         return self._speed
 
+    @property
+    def max_hp(self) -> int:
+        return self._max_hp
+
 
 class GrowthRate(StatsInterface):
 
@@ -46,16 +51,12 @@ class GrowthRate(StatsInterface):
 
     def __init__(self):
         super().__init__()
-        self._hp = 3
-        self._physical_att = 2
-        self._magic_att = 2
-        self._physical_def = 2
-        self._magic_def = 2
-        self._speed = 1
-
-    @property
-    def hp(self) -> int:
-        return self._hp
+        self._max_hp = 3
+        self._physical_att = 3
+        self._magic_att = 3
+        self._physical_def = 3
+        self._magic_def = 3
+        self._speed = 3
 
 
 class Species(StatsInterface):
@@ -93,10 +94,6 @@ class Species(StatsInterface):
     @property
     def learnable_abilities(self) -> List['LearnableAbility']:
         return self._abilities
-
-    @property
-    def max_hp(self) -> int:
-        return self._max_hp
 
     @property
     def starting_mana(self) -> int:

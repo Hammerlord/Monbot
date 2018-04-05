@@ -3,7 +3,7 @@ import unittest
 from src.elemental.attribute.attribute_factory import AttributeFactory
 from src.elemental.attribute.attribute_manager import AttributeManager
 from tests.character.character_builder import PlayerBuilder
-from tests.elemental.elemental_builder import ElementalBuilder, SpeciesBuilder
+from tests.elemental.elemental_builder import ElementalBuilder, SpeciesBuilder, StatsBuilder
 
 
 class ElementalTests(unittest.TestCase):
@@ -13,6 +13,16 @@ class ElementalTests(unittest.TestCase):
     def tearDown(self):
         self.elemental = None
 
+    def get_growth_rate(self) -> 'GrowthRate':
+        return StatsBuilder() \
+            .with_physical_att(1) \
+            .with_magic_att(1) \
+            .with_physical_def(1) \
+            .with_magic_def(1) \
+            .with_speed(2) \
+            .with_max_hp(3) \
+            .build()
+
     def get_species(self) -> 'Species':
         return SpeciesBuilder() \
             .with_physical_att(15) \
@@ -20,15 +30,9 @@ class ElementalTests(unittest.TestCase):
             .with_physical_def(15) \
             .with_magic_def(10) \
             .with_speed(5) \
-            .with_hp(50) \
-            .with_growth_rate({
-                'physical_att': 1,
-                'magic_att': 1,
-                'physical_def': 1,
-                'magic_def': 1,
-                'speed': 2,
-                'hp': 3
-            }).build()
+            .with_max_hp(50) \
+            .with_growth_rate(self.get_growth_rate()) \
+            .build()
 
     def get_preset_manager(self) -> AttributeManager:
         manager = AttributeFactory.create_empty_manager()
@@ -45,9 +49,8 @@ class ElementalTests(unittest.TestCase):
 
     def test_level_up(self):
         error = "Elemental couldn't level"
-        exp_to_level = self.elemental.exp_to_level
         before_level = self.elemental.level
-        self.elemental.add_exp(exp_to_level)
+        self.elemental.add_exp(self.elemental.exp_to_level)
         after_level = self.elemental.level
         self.assertGreater(after_level, before_level, error)
 
@@ -120,14 +123,14 @@ class ElementalTests(unittest.TestCase):
         error = "Species' stats should not change when Elemental levels!"
         species = self.get_species()
         elemental = ElementalBuilder().with_level(1).with_species(species).build()
-        exp = self.elemental.exp_to_level
+        exp = elemental.exp_to_level
         self.elemental.add_exp(exp)
-        self.assertEqual(species.base_physical_att, 15, error)
-        self.assertEqual(species.base_magic_att, 15, error)
-        self.assertEqual(species.base_physical_def, 15, error)
-        self.assertEqual(species.base_magic_def, 10, error)
-        self.assertEqual(species.base_speed, 5, error)
-        self.assertEqual(species.base_max_hp, 50, error)
+        self.assertEqual(species._physical_att, 15, error)
+        self.assertEqual(species._magic_att, 15, error)
+        self.assertEqual(species._physical_def, 15, error)
+        self.assertEqual(species._magic_def, 10, error)
+        self.assertEqual(species._speed, 5, error)
+        self.assertEqual(species._max_hp, 50, error)
 
     def test_has_ability_manager(self):
         error = "Elemental didn't get an AbilityManager on instantiation"
