@@ -56,6 +56,30 @@ class Elemental:
         return self._speed + self._attribute_manager.speed
 
     @property
+    def ferocity(self) -> int:
+        return self._attribute_manager.ferocity
+
+    @property
+    def attunement(self) -> int:
+        return self._attribute_manager.attunement
+
+    @property
+    def sturdiness(self) -> int:
+        return self._attribute_manager.sturdiness
+
+    @property
+    def resolve(self) -> int:
+        return self._attribute_manager.resolve
+
+    @property
+    def resistance(self) -> int:
+        return self._attribute_manager.resistance
+
+    @property
+    def swiftness(self) -> int:
+        return self._attribute_manager.swiftness
+
+    @property
     def level(self) -> int:
         return self._level
 

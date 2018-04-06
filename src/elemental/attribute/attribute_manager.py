@@ -23,10 +23,40 @@ class AttributeManager:
         self._mana_per_turn = 0
         self._starting_mana = 0
         self._points_remaining = 0
+        self._ferocity = 0
+        self._attunement = 0
+        self._sturdiness = 0
+        self._resolve = 0
+        self._resistance = 0
+        self._swiftness = 0
 
     def add_attribute(self, attribute: Attribute) -> None:
         attribute.set_attribute_manager(self)
         self._attributes.append(attribute)
+
+    @property
+    def ferocity(self) -> int:
+        return self._ferocity
+
+    @property
+    def attunement(self) -> int:
+        return self._attunement
+
+    @property
+    def sturdiness(self) -> int:
+        return self._sturdiness
+
+    @property
+    def resolve(self) -> int:
+        return self._resolve
+
+    @property
+    def resistance(self) -> int:
+        return self._resistance
+
+    @property
+    def swiftness(self) -> int:
+        return self._swiftness
 
     @property
     def rank(self) -> int:
