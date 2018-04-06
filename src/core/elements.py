@@ -16,3 +16,14 @@ class Elements(Enum):
     LIGHT = 6
     DARK = 7
     CHAOS = 8
+
+
+class Category(Enum):
+
+    """
+    Physical or magic.
+    """
+
+    NONE = 0
+    PHYSICAL = 1
+    MAGIC = 2
