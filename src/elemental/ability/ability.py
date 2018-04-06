@@ -9,6 +9,7 @@ class Ability:
 
     def __init__(self):
         self.name = None  # Str. TBD by descendants
+        self.description = None  # Str. TBD by descendants
         self.id = 0  # Int. TBD by descendants
         self.element = Elements.NONE
         self.category = Category.NONE
@@ -18,7 +19,10 @@ class Ability:
         self.turn_priority = 0
 
     def execute(self, target: 'CombatElemental'):
-        pass
+        """
+        What happens when you use this ability.
+        """
+        raise NotImplementedError
 
     def targeting(self):
         pass
