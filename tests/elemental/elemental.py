@@ -109,9 +109,7 @@ class ElementalTests(unittest.TestCase):
 
     def test_gain_stats(self):
         error = "Elemental stat increase level doesn't match its Species' growth rate"
-        elemental = ElementalBuilder().with_level(1).with_species(self.get_species()).build()
-        exp = self.elemental.exp_to_level
-        self.elemental.add_exp(exp)
+        elemental = ElementalBuilder().with_level(2).with_species(self.get_species()).build()
         self.assertEqual(elemental.physical_att, 16, error)  # See get_species()
         self.assertEqual(elemental.magic_att, 16, error)
         self.assertEqual(elemental.physical_def, 16, error)

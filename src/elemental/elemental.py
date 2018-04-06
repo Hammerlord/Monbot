@@ -183,6 +183,7 @@ class Elemental:
         self._magic_att += growth_rate.magic_att + self._bonus_stat()
         self._physical_def += growth_rate.physical_def + self._bonus_stat()
         self._magic_def += growth_rate.magic_def + self._bonus_stat()
+        self._speed += growth_rate.speed + self._bonus_stat()
 
     def _bonus_stat(self) -> int:
         """

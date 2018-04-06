@@ -60,12 +60,12 @@ class StatsBuilder:
 
     def build(self) -> GrowthRate:
         growth_rate = GrowthRate()
-        growth_rate._max_hp = 5
-        growth_rate._physical_att = 2
-        growth_rate._magic_att = 5
-        growth_rate._physical_def = 5
-        growth_rate._magic_def = 3
-        growth_rate._speed = 3
+        growth_rate._max_hp = self._max_hp
+        growth_rate._physical_att = self._physical_att
+        growth_rate._magic_att = self._magic_att
+        growth_rate._physical_def = self._physical_def
+        growth_rate._magic_def = self._magic_def
+        growth_rate._speed = self._speed
         return growth_rate
 
 
