@@ -20,21 +20,20 @@ class Attribute:
 
     def __init__(self):
         self._stat_type = AttributeType.NONE
-        self._attribute_manager = None
         self._name = None  # Str. TBD by descendants.
         self._description = None  # Str. TBD by descendants.
         self._current_level = 0
         self._max_level = 3
 
-    def set_attribute_manager(self, manager: 'AttributeManager'):
-        self._attribute_manager = manager
-
     def can_level_up(self) -> bool:
         return self._current_level < self._max_level
 
-    def level_up(self) -> None:
+    def level_up(self, attribute_manager) -> None:
+        """
+        :param attribute_manager: The AttributeManager that owns this Attribute.
+        """
         self._current_level += 1
-        self.add_stats()
+        self.add_stats(attribute_manager)
 
     @property
     def level(self) -> int:
@@ -43,15 +42,15 @@ class Attribute:
     def reset(self) -> None:
         self._current_level = 0
 
-    def add_stats(self) -> None:
+    def add_stats(self, attribute_manager) -> None:
         raise NotImplementedError
 
-    def readd_stats(self) -> None:
+    def readd_stats(self, attribute_manager) -> None:
         """
         If AttributeManager stats have been reset and need to be recalculated.
         """
         for i in range(self._current_level):
-            self.add_stats()
+            self.add_stats(attribute_manager)
 
 
 class Ferocity(Attribute):
@@ -61,8 +60,8 @@ class Ferocity(Attribute):
         self._name = "Ferocity"
         self._description = "Increases physical attack power."
 
-    def add_stats(self):
-        self._attribute_manager.add_physical_att(10)
+    def add_stats(self, attribute_manager):
+        attribute_manager.add_physical_att(10)
 
 
 class Attunement(Attribute):
@@ -72,8 +71,8 @@ class Attunement(Attribute):
         self._name = "Attunement"
         self._description = "Increases magic attack power."
 
-    def add_stats(self):
-        self._attribute_manager.add_magic_att(10)
+    def add_stats(self, attribute_manager):
+        attribute_manager.add_magic_att(10)
 
 
 class Sturdiness(Attribute):
@@ -83,8 +82,8 @@ class Sturdiness(Attribute):
         self._name = "Sturdiness"
         self._description = "Increases physical defence."
 
-    def add_stats(self):
-        self._attribute_manager.add_physical_def(10)
+    def add_stats(self, attribute_manager):
+        attribute_manager.add_physical_def(10)
 
 
 class Resolve(Attribute):
@@ -94,8 +93,8 @@ class Resolve(Attribute):
         self._name = "Resolve"
         self._description = "Increases maximum health."
 
-    def add_stats(self):
-        self._attribute_manager.add_max_hp(20)
+    def add_stats(self, attribute_manager):
+        attribute_manager.add_max_hp(20)
 
 
 class Resistance(Attribute):
@@ -105,8 +104,8 @@ class Resistance(Attribute):
         self._name = "Resistance"
         self._description = "Increases magic defence."
 
-    def add_stats(self):
-        self._attribute_manager.add_magic_def(10)
+    def add_stats(self, attribute_manager):
+        attribute_manager.add_magic_def(10)
 
 
 class Swiftness(Attribute):
@@ -116,6 +115,6 @@ class Swiftness(Attribute):
         self._name = "Swiftness"
         self._description = "Increases speed."
 
-    def add_stats(self):
-        self._attribute_manager.add_speed(10)
+    def add_stats(self, attribute_manager):
+        attribute_manager.add_speed(10)
 

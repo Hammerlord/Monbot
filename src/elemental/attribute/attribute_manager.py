@@ -32,7 +32,6 @@ class AttributeManager:
         self._swiftness = 0
 
     def add_attribute(self, attribute: Attribute) -> None:
-        attribute.set_attribute_manager(self)
         self._attributes.append(attribute)
 
     @property
@@ -151,7 +150,7 @@ class AttributeManager:
     def raise_attribute(self, position: int):
         attribute = self._attributes[position]
         if self._are_points_available() and attribute.can_level_up():
-            attribute.level_up()
+            attribute.level_up(self)
             self._points_remaining -= 1
 
     def reset_attributes(self) -> None:
@@ -165,7 +164,7 @@ class AttributeManager:
     def _recalculate_ranks(self) -> None:
         self._reset_stat_bonuses()
         for attribute in self._attributes:
-            attribute.readd_stats()
+            attribute.readd_stats(self)
 
     def _reset_stat_bonuses(self):
         self._physical_att = 0
