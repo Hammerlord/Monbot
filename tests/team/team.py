@@ -48,8 +48,8 @@ class TeamTests(unittest.TestCase):
         error = "Incorrectly reordered an Elemental into an empty slot"
         monze = ElementalBuilder().with_id(1).build()
         self.team.add_elemental(monze)
+        self.team.reorder(0, 3)
         self.assertEqual(monze.id, self.team.get_elemental(0).id, error)
-        self.assertRaises(IndexError, self.team.reorder(0, 3), error)
 
     def test_remove_elemental(self):
         error = "Failed to remove an Elemental from the Team"

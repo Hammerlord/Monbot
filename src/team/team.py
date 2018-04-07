@@ -56,10 +56,12 @@ class Team:
         """
         You can only switch slots if both hold an Elemental.
         """
-        try:
-            self._elementals[first], self._elementals[second] = self._elementals[second], self._elementals[first]
-        except IndexError:
-            print("Tried to reorder Elementals, but one or more positions were out of range:", first, second)
+        if not self._is_valid_reorder(first, second):
+            return
+        self._elementals[first], self._elementals[second] = self._elementals[second], self._elementals[first]
+
+    def _is_valid_reorder(self, first: int, second: int) -> bool:
+        return self._is_valid_slot(first) and self._is_valid_slot(second)
 
     def _is_valid_slot(self, slot: int) -> bool:
         """
