@@ -6,7 +6,7 @@ from tests.team.team_builder import TeamBuilder
 
 class TeamTests(unittest.TestCase):
     def setUp(self):
-        self.team = TeamBuilder().build()
+        self.team = TeamBuilder().build()  # Empty Team
 
     def tearDown(self):
         self.team = None
@@ -16,16 +16,39 @@ class TeamTests(unittest.TestCase):
         for i in range(5):
             elemental = ElementalBuilder().build()
             self.team.add_elemental(elemental)
-        self.assertEqual(self.team.get_size(), 4, error)
+        self.assertEqual(self.team.size, 4, error)
         self.assertEqual(self.team.is_space_available(), False, error)
 
     def test_reorder_elementals(self):
         error = "Failed to reorder Elementals in a Team"
-        elemental_a = ElementalBuilder().with_id(1).build()
-        elemental_b = ElementalBuilder().with_id(2).build()
-        team = TeamBuilder().build()
-        team.add_elemental(elemental_a)  # Position 0
-        team.add_elemental(elemental_b)  # Position 1
-        team.reorder(0, 1)
-        self.assertEqual(elemental_a.id, team.get_elemental(1).id, error)
-        self.assertEqual(elemental_b.id, team.get_elemental(0).id, error)
+        monze = ElementalBuilder().with_id(1).build()
+        lofy = ElementalBuilder().with_id(2).build()
+        self.team.add_elemental(monze)  # Position 0
+        self.team.add_elemental(lofy)  # Position 1
+        self.team.reorder(0, 1)
+        self.assertEqual(monze.id, self.team.get_elemental(1).id, error)
+        self.assertEqual(lofy.id, self.team.get_elemental(0).id, error)
+
+    def test_swap_elemental(self):
+        error = "Failed to swap Elementals in a valid Team slot"
+        monze = ElementalBuilder().with_id(1).build()
+        lofy = ElementalBuilder().with_id(2).build()
+        self.team.add_elemental(monze)  # Position 0
+        self.team.swap(slot=0, elemental=lofy)
+        self.assertEqual(lofy.id, self.team.get_elemental(0).id, error)
+
+    def test_invalid_swap(self):
+        error = "Incorrectly swapped in an Elemental to an invalid Team slot"
+        monze = ElementalBuilder().with_id(1).build()
+        self.team.swap(slot=-1, elemental=monze)
+        self.team.swap(slot=5, elemental=monze)
+        self.assertEqual(self.team.size, 0, error)
+
+    def test_swap_empty(self):
+        error = "Failed to remove an Elemental from the Team"
+        monze = ElementalBuilder().with_id(1).build()
+        lofy = ElementalBuilder().with_id(2).build()
+        self.team.add_elemental(monze)  # Position 0
+        self.team.add_elemental(lofy)  # Position 1
+        self.team.remove(0)  # Remove monze
+        self.assertEqual(lofy.id, self.team.get_elemental(0).id, error)

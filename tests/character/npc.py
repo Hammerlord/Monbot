@@ -19,7 +19,7 @@ class NPCTests(unittest.TestCase):
     def test_team(self):
         error = "NPC team didn't start with any elementals"
         npc = NPCBuilder().build()
-        npc_team_size = npc.team.get_size()
+        npc_team_size = npc.team.size
         self.assertGreater(npc_team_size, 0, error)
 
     def test_team_size(self):
@@ -27,8 +27,8 @@ class NPCTests(unittest.TestCase):
         for i in range(100):
             player = PlayerBuilder().build()
             npc = NPCBuilder().with_opponent(player).build()
-            player_team_size = player.team.get_size()
-            npc_team_size = npc.team.get_size()
+            player_team_size = player.team.size
+            npc_team_size = npc.team.size
             self.assertLessEqual(npc_team_size, player_team_size, error)
 
     def test_max_level(self):

@@ -28,16 +28,25 @@ class Team:
     def is_space_available(self) -> bool:
         return len(self._elementals) < self._max_size
 
-    def get_size(self) -> int:
+    @property
+    def size(self) -> int:
         return len(self._elementals)
+
+    def swap(self, slot: int, elemental: Elemental):
+        """
+        Swap an external Elemental into the a slot on the Team.
+        """
+        if not self._is_valid_slot(slot):
+            return
+        self._elementals[slot] = elemental
 
     def add_elemental(self, elemental: Elemental) -> None:
         if not self.is_space_available():
             return
         self._elementals.append(elemental)
 
-    def remove_elemental(self, position: int) -> None:
-        self._elementals.pop(position)
+    def remove_elemental(self, slot: int) -> None:
+        self._elementals.pop(slot)
 
     def get_elemental(self, position: int) -> Elemental or None:
         try:
@@ -51,3 +60,9 @@ class Team:
         except IndexError:
             raise Exception("Tried to swap Team Elemental positions, but one or more was out of range:",
                             first, second)
+
+    def _is_valid_slot(self, slot: int) -> bool:
+        """
+        Check if the impending position is a valid slot on the Team.
+        """
+        return 0 <= slot < self._max_size

@@ -57,7 +57,7 @@ class NPC(Character):
         Generates a Team size that is not larger than the opponent's.
         """
         min_team_size = 1
-        max_team_size = opponent.team.get_size()
+        max_team_size = opponent.team.size
         return randint(min_team_size, max_team_size)
 
     def _get_random_elemental(self) -> 'Elemental':
