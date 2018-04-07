@@ -74,6 +74,9 @@ class Species(StatsInterface):
         self._max_mana = 50
         self._mana_per_turn = 5
         self._defend_charges = 2
+        self._left_icon = None  # str. This Elemental's emote, facing right.
+        self._right_icon = None  # str. This Elemental's emote, facing left.
+        self._portrait = None
         self._growth_rate = GrowthRate()  # Must be overridden to customize the stat growth!
         self._abilities = []  # List[LearnableAbility]. TBD by descendants.
 

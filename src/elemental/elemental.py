@@ -33,9 +33,6 @@ class Elemental:
         self._owner = None
         self._nickname = species.name
         self._note = None
-        self._left_icon = None  # str. This Elemental's emote, facing right.
-        self._right_icon = None  # str. This Elemental's emote, facing left.
-        self._portrait = None
         self._attribute_manager = attribute_manager
         self._ability_manager = AbilityManager(self)
 
