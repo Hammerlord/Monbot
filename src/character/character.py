@@ -80,9 +80,9 @@ class Character:
 
     def _check_level_up(self) -> None:
         while self._current_exp >= self._exp_to_level:
+            self._level_up()
             if self._is_max_level():
                 return
-            self._level_up()
 
     def _is_max_level(self) -> bool:
         return self._level == self._max_level
