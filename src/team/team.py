@@ -14,14 +14,14 @@ class Team:
     @property
     def elementals(self) -> List[Elemental]:
         """
-        :return: A reference to this Team's _elementals
+        :return: A reference to this Team's Elementals
         """
         return self._elementals
 
     @property
     def owner(self):
         """
-        :return: Character or Type[Character]
+        :return: Player or NPC
         """
         return self._owner
 
@@ -33,7 +33,7 @@ class Team:
     def size(self) -> int:
         return len(self._elementals)
 
-    def swap(self, slot: int, elemental: Elemental):
+    def swap(self, slot: int, elemental: Elemental) -> None:
         """
         Swap an external Elemental into a slot on the Team.
         """
