@@ -197,21 +197,21 @@ class ElementalTests(unittest.TestCase):
 
     def test_initial_abilities(self):
         error = "Elemental didn't learn abilities on creation"
-        num_abilities = len(self.elemental.abilities)
+        num_abilities = len(self.elemental.active_abilities)
         self.assertGreater(num_abilities, 1, error)
 
     def test_learn_abilities_by_level(self):
         error = "Elemental couldn't learn an ability by leveling"
-        initial_num_abilities = len(self.elemental.abilities)
+        initial_num_abilities = len(self.elemental.active_abilities)
         exp = self.elemental.exp_to_level * 500  # Arbitrary large amount of exp to reach level 10
         self.elemental.add_exp(exp)
-        leveled_num_abilities = len(self.elemental.abilities)
+        leveled_num_abilities = len(self.elemental.active_abilities)
         self.assertGreater(leveled_num_abilities, initial_num_abilities, error)
 
     def test_learn_defend(self):
         error = "Elemental must learn Defend as a basic ability"
         has_defend = False
-        for ability in self.elemental.abilities:
+        for ability in self.elemental.active_abilities:
             if ability.id == Defend.id:
                 has_defend = True
         self.assertIs(has_defend, True, error)

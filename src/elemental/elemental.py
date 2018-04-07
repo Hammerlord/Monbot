@@ -1,6 +1,8 @@
 import math
 from typing import List
 
+from src.elemental.ability.ability import Ability
+from src.elemental.ability.ability_manager import AbilityManager
 from src.elemental.attribute.attribute import Attribute
 from src.elemental.attribute.attribute_manager import AttributeManager
 from src.elemental.species import Species, Elements
@@ -35,6 +37,11 @@ class Elemental:
         self._right_icon = None  # str. This Elemental's emote, facing left.
         self._portrait = None
         self._attribute_manager = attribute_manager
+        self._ability_manager = AbilityManager(self)
+
+    @property
+    def species(self) -> Species:
+        return self._species
 
     @property
     def physical_att(self) -> int:
@@ -163,6 +170,17 @@ class Elemental:
         self._owner = owner
 
     @property
+    def active_abilities(self) -> List[Ability]:
+        """
+        :return: Extract Ability from AbilityManager's LearnableAbilities.
+        """
+        return [learnable.ability for learnable in self._ability_manager.active_abilities]
+
+    @property
+    def available_abilities(self) -> List[Ability]:
+        return [learnable.ability for learnable in self._ability_manager.available_abilities]
+
+    @property
     def rank(self):
         return self._attribute_manager.rank
 
@@ -193,6 +211,7 @@ class Elemental:
                 return
             self._level_up()
             self._check_raise_rank()
+            self._ability_manager.check_learnable_abilities()
 
     def add_exp(self, amount: int) -> None:
         if self._is_level_cap():
@@ -232,6 +251,7 @@ class Elemental:
         """
         if self._level % 10 == 0:
             self._attribute_manager.raise_rank()
+            self._ability_manager.check_learnable_abilities()
 
     def _is_level_cap(self) -> bool:
         """
