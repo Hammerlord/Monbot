@@ -21,9 +21,9 @@ class TestLearnableAbility:
 
 
 class StatsBuilder:
-    """
-    A builder for items that use the main stats:
 
+    """
+    A builder for entities that use the main stats, eg. GrowthRate, Species.
     """
 
     def __init__(self):
