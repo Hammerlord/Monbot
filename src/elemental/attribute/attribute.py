@@ -23,7 +23,7 @@ class Attribute:
         self._name = None  # Str. TBD by descendants.
         self._description = None  # Str. TBD by descendants.
         self._current_level = 0
-        self._max_level = 3
+        self._max_level = 6
 
     def can_level_up(self) -> bool:
         return self._current_level < self._max_level
