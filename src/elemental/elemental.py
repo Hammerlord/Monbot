@@ -145,6 +145,10 @@ class Elemental:
         return self._max_mana + self._attribute_manager.max_mana
 
     @property
+    def id(self) -> int:
+        return self._id
+
+    @property
     def current_exp(self) -> int:
         return self._current_exp
 
