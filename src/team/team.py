@@ -25,6 +25,7 @@ class Team:
         """
         return self._owner
 
+    @property
     def is_space_available(self) -> bool:
         return len(self._elementals) < self._max_size
 
@@ -41,7 +42,7 @@ class Team:
         self._elementals[slot] = elemental
 
     def add_elemental(self, elemental: Elemental) -> None:
-        if not self.is_space_available():
+        if not self.is_space_available:
             return
         self._elementals.append(elemental)
 

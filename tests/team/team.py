@@ -17,7 +17,7 @@ class TeamTests(unittest.TestCase):
             elemental = ElementalBuilder().build()
             self.team.add_elemental(elemental)
         self.assertEqual(self.team.size, 4, error)
-        self.assertEqual(self.team.is_space_available(), False, error)
+        self.assertEqual(self.team.is_space_available, False, error)
 
     def test_reorder_elementals(self):
         error = "Failed to reorder Elementals in a Team"
