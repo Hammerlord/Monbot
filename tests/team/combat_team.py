@@ -1,5 +1,9 @@
 import unittest
 
+from src.elemental.combat_elemental import CombatElemental
+from tests.elemental.elemental_builder import ElementalBuilder
+from tests.team.team_builder import TeamBuilder
+
 
 class CombatTeamTests(unittest.TestCase):
 
@@ -43,7 +47,7 @@ class CombatTeamTests(unittest.TestCase):
         error = "CombatTeam incorrectly allowed a knocked out CombatElemental to be switched in"
         team = TeamBuilder().build()
         smurggle = ElementalBuilder().with_id(1).with_current_hp(0).build()
-        loksy = ElementalBuilder().with_id_(2).build()
+        loksy = ElementalBuilder().with_id(2).build()
         team.add_elemental(smurggle)
         team.add_elemental(loksy)
         combat_team = CombatTeamBuilder().with_team(team).build()
