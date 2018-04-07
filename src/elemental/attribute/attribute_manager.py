@@ -22,6 +22,7 @@ class AttributeManager:
         self._defend_charges = 0
         self._mana_per_turn = 0
         self._starting_mana = 0
+        self._max_mana = 0
         self._points_remaining = 0
         self._ferocity = 0
         self._attunement = 0
@@ -135,6 +136,13 @@ class AttributeManager:
 
     def add_starting_mana(self, amount: int) -> None:
         self._starting_mana += amount
+
+    @property
+    def max_mana(self) -> int:
+        return self._max_mana
+
+    def add_max_mana(self, amount: int) -> None:
+        self._max_mana += amount
 
     def raise_rank(self):
         self._rank += 1

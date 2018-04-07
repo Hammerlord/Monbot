@@ -72,6 +72,7 @@ class Species(StatsInterface):
         self._max_hp = 50
         self._starting_mana = 20
         self._max_mana = 50
+        self._mana_per_turn = 5
         self._defend_charges = 2
         self._growth_rate = GrowthRate()  # Must be overridden to customize the stat growth!
         self._abilities = []  # List[LearnableAbility]. TBD by descendants.
@@ -102,6 +103,10 @@ class Species(StatsInterface):
     @property
     def max_mana(self) -> int:
         return self._max_mana
+
+    @property
+    def mana_per_turn(self) -> int:
+        return self._mana_per_turn
 
     @property
     def defend_charges(self) -> int:

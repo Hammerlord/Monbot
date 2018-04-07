@@ -13,6 +13,11 @@ class AttributeType(Enum):
 
 
 class Attribute:
+
+    """
+    Each Elemental has three random Attributes, which can be ranked up to gain stats and unlock abilities.
+    """
+
     def __init__(self):
         self._stat_type = AttributeType.NONE
         self._attribute_manager = None

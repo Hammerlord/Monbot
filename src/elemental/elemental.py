@@ -22,6 +22,7 @@ class Elemental:
         self._magic_att = species.magic_att
         self._physical_def = species.physical_def
         self._magic_def = species.magic_def
+        self._mana_per_turn = species.mana_per_turn
         self._speed = species.speed
         self._defend_potency = 0.6  # Percentage of damage blocked by Defend.
         self._defend_charges = species.defend_charges
@@ -130,6 +131,14 @@ class Elemental:
     @property
     def starting_mana(self) -> int:
         return self._starting_mana + self._attribute_manager.starting_mana
+
+    @property
+    def mana_per_turn(self) -> int:
+        return self._mana_per_turn + self._attribute_manager.mana_per_turn
+
+    @property
+    def max_mana(self) -> int:
+        return self._max_mana + self._attribute_manager.max_mana
 
     @property
     def current_exp(self) -> int:
