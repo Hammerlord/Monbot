@@ -34,7 +34,7 @@ class Team:
 
     def swap(self, slot: int, elemental: Elemental):
         """
-        Swap an external Elemental into the a slot on the Team.
+        Swap an external Elemental into a slot on the Team.
         """
         if not self._is_valid_slot(slot):
             return
@@ -49,20 +49,19 @@ class Team:
         self._elementals.pop(slot)
 
     def get_elemental(self, position: int) -> Elemental or None:
-        try:
-            return self._elementals[position]
-        except IndexError:
-            return None
+        return self._elementals[position]
 
     def reorder(self, first: int, second: int) -> None:
+        """
+        You can only switch slots if both hold an Elemental.
+        """
         try:
             self._elementals[first], self._elementals[second] = self._elementals[second], self._elementals[first]
         except IndexError:
-            raise Exception("Tried to swap Team Elemental positions, but one or more was out of range:",
-                            first, second)
+            print("Tried to reorder Elementals, but one or more positions were out of range:", first, second)
 
     def _is_valid_slot(self, slot: int) -> bool:
         """
         Check if the impending position is a valid slot on the Team.
         """
-        return 0 <= slot < self._max_size
+        return 0 <= slot < self.size

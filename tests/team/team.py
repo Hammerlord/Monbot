@@ -37,18 +37,25 @@ class TeamTests(unittest.TestCase):
         self.team.swap(slot=0, elemental=lofy)
         self.assertEqual(lofy.id, self.team.get_elemental(0).id, error)
 
-    def test_invalid_swap(self):
-        error = "Incorrectly swapped in an Elemental to an invalid Team slot"
-        monze = ElementalBuilder().with_id(1).build()
+    def test_out_of_bounds_swap(self):
+        error = "Incorrectly swapped in an Elemental to an out of bounds Team slot"
+        monze = ElementalBuilder().build()
         self.team.swap(slot=-1, elemental=monze)
         self.team.swap(slot=5, elemental=monze)
         self.assertEqual(self.team.size, 0, error)
 
-    def test_swap_empty(self):
+    def test_reorder_empty(self):
+        error = "Incorrectly reordered an Elemental into an empty slot"
+        monze = ElementalBuilder().with_id(1).build()
+        self.team.add_elemental(monze)
+        self.assertEqual(monze.id, self.team.get_elemental(0).id, error)
+        self.assertRaises(IndexError, self.team.reorder(0, 3), error)
+
+    def test_remove_elemental(self):
         error = "Failed to remove an Elemental from the Team"
         monze = ElementalBuilder().with_id(1).build()
         lofy = ElementalBuilder().with_id(2).build()
         self.team.add_elemental(monze)  # Position 0
         self.team.add_elemental(lofy)  # Position 1
-        self.team.remove(0)  # Remove monze
+        self.team.remove_elemental(0)  # Remove monze
         self.assertEqual(lofy.id, self.team.get_elemental(0).id, error)
