@@ -1,5 +1,6 @@
 import unittest
 
+from src.elemental.ability.ability import LearnableAbility
 from src.elemental.attribute.attribute_factory import AttributeFactory
 from src.elemental.attribute.attribute_manager import AttributeManager
 from tests.character.character_builder import PlayerBuilder
@@ -130,21 +131,21 @@ class ElementalTests(unittest.TestCase):
         self.assertEqual(species._speed, 5, error)
         self.assertEqual(species._max_hp, 50, error)
 
-    def test_has_ability_manager(self):
-        error = "Elemental didn't get an AbilityManager on instantiation"
-        self.assertIsInstance(self.elemental.abilities, AbilityManager, error)
+    def test_has_ability(self):
+        error = "Elemental didn't get LearnableAbilities on instantiation"
+        self.assertIsInstance(self.elemental.active_abilities[0], LearnableAbility, error)
 
     def test_owner_restricts_level(self):
         error = "Elemental shouldn't be able to level past its owner"
         player = PlayerBuilder().with_level(15).build()
-        elemental = ElementalBuilder().with_level(14).with_rank(2).with_owner(player).build()
+        elemental = ElementalBuilder().with_level(14).with_owner(player).build()
         exp = self.elemental.exp_to_level * 5  # Arbitrary large amount of exp
         elemental.add_exp(exp)
         self.assertEqual(player.level, elemental.level, error)
 
     def test_rank_restricts_level(self):
         error = "Elemental must have be rank 2 to grow past level 10"
-        elemental = ElementalBuilder().with_level(10).with_rank(1).build()
+        elemental = ElementalBuilder().with_level(10).build()
         exp = self.elemental.exp_to_level * 5  # Arbitrary large amount of exp
         elemental.add_exp(exp)
         self.assertEqual(elemental.level, 10, error)
@@ -161,7 +162,6 @@ class ElementalTests(unittest.TestCase):
         elemental = ElementalBuilder().with_level(10).with_rank(1).build()
         exp = self.elemental.exp_to_level * 5  # Arbitrary large amount of exp
         elemental.add_exp(exp)
-        # elemental.on_rank_up()
         self.assertGreater(elemental.level, 10, error)
 
     def test_num_attributes(self):

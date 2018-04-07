@@ -1,23 +1,10 @@
 from src.character.player import Player
 from src.core.elements import Elements
+from src.elemental.ability.ability import LearnableAbility, Ability
 from src.elemental.attribute.attribute_factory import AttributeFactory
 from src.elemental.elemental import Elemental
 from src.elemental.species import Species, GrowthRate
 from tests.test_user import UserBuilder
-
-
-
-class Ability:
-    def __init__(self):
-        # Temporary stub
-        pass
-
-
-class TestLearnableAbility:
-    def __init__(self):
-        super().__init__()
-        # Temporary stub
-        pass
 
 
 class StatsBuilder:
@@ -75,7 +62,7 @@ class SpeciesBuilder(StatsBuilder):
         self._name = "Thefaketofu"
         self._element = Elements.LIGHT
         self._growth_rate = StatsBuilder().build()
-        self._abilities = [TestLearnableAbility(), TestLearnableAbility()]
+        self._abilities = [LearnableAbility(Ability()), LearnableAbility(Ability())]
 
     def with_name(self, name: str) -> 'SpeciesBuilder':
         self._name = name
