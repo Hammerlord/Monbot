@@ -44,3 +44,10 @@ class Team:
             return self._elementals[position]
         except IndexError:
             return None
+
+    def reorder(self, first: int, second: int) -> None:
+        try:
+            self._elementals[first], self._elementals[second] = self._elementals[second], self._elementals[first]
+        except IndexError:
+            raise Exception("Tried to swap Team Elemental positions, but one or more was out of range:",
+                            first, second)
