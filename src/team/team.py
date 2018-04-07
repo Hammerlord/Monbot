@@ -26,7 +26,7 @@ class Team:
         return self._owner
 
     def is_space_available(self) -> bool:
-        return len(self._elementals) <= self._max_size
+        return len(self._elementals) < self._max_size
 
     def get_size(self) -> int:
         return len(self._elementals)
