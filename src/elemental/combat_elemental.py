@@ -60,7 +60,12 @@ class CombatElemental:
         return self._elemental.current_hp == 0
 
     def on_turn_start(self) -> None:
-        self._current_mana += self._mana_per_turn
+        self.gain_mana(self._mana_per_turn)
+
+    def gain_mana(self, amount: int) -> None:
+        self._current_mana += amount
+        if self.current_mana > self._max_mana:
+            self._current_mana = self._max_mana
 
     @property
     def last_action(self):

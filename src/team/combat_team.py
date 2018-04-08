@@ -30,7 +30,7 @@ class CombatTeam:
         return [elemental for elemental in self.team if elemental != self._active]
 
     @property
-    def eligible(self) -> List[CombatElemental]:
+    def eligible_bench(self) -> List[CombatElemental]:
         """
         Returns the benched CombatElementals that aren't knocked out (ie. have more than 0 HP).
         """
@@ -48,6 +48,13 @@ class CombatTeam:
         """
         return all(elemental.is_knocked_out for elemental in self.team)
 
+    def on_turn_start(self) -> None:
+        """
+        All eligible (not dead, not active) Elementals gain +2 mana per turn.
+        """
+        for elemental in self.eligible_bench:
+            elemental.gain_mana(2)
+
     def set_next_active(self) -> CombatElemental:
         """
         The next Elemental eligible to be active (HP > 0), meaning it is sent to the battlefield.
@@ -58,7 +65,7 @@ class CombatTeam:
         """
         Switch the active Elemental with an Elemental on CombatTeam.eligible.
         """
-        eligible_elementals = self.eligible
+        eligible_elementals = self.eligible_bench
         can_switch = 0 <= slot < len(eligible_elementals) - 1  # Valid slot?
         if not can_switch:
             return
