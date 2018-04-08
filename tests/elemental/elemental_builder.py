@@ -3,7 +3,7 @@ from src.core.elements import Elements
 from src.elemental.ability.ability import LearnableAbility, Ability
 from src.elemental.attribute.attribute_factory import AttributeFactory
 from src.elemental.elemental import Elemental
-from src.elemental.species import Species, GrowthRate
+from src.elemental.species.species import GrowthRate, Species
 from tests.test_user import UserBuilder
 
 

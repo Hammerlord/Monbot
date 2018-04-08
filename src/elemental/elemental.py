@@ -1,11 +1,12 @@
 import math
 from typing import List
 
+from src.core.elements import Elements
 from src.elemental.ability.ability import Ability
 from src.elemental.ability.ability_manager import AbilityManager
 from src.elemental.attribute.attribute import Attribute
 from src.elemental.attribute.attribute_manager import AttributeManager
-from src.elemental.species import Species, Elements
+from src.elemental.species.species import Species
 
 
 class Elemental:

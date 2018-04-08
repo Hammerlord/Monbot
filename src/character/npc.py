@@ -4,7 +4,7 @@ from random import randint
 from src.character.character import Character
 from src.character.player import Player
 from src.elemental.elemental import Elemental
-from src.elemental.species import Species
+from src.elemental.species.species import Species
 from tests.elemental.elemental_builder import ElementalBuilder
 
 
