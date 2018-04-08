@@ -67,7 +67,7 @@ class NPCTests(unittest.TestCase):
         researcher = NPCBuilder().researcher()
         team = researcher.team
         pool = researcher.potential_elementals()
-        for elemental in team.get_elementals():
+        for elemental in team.elementals:
             self.assertIn(elemental, pool, error)
 
     def test_default_nickname(self):

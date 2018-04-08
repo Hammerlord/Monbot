@@ -17,12 +17,11 @@ class CombatTeamTests(unittest.TestCase):
         self.combat_team = CombatTeam(team)
 
     def tearDown(self):
-        self.combat_team.dispose()
         self.combat_team = None
 
     def test_setup_active(self):
         error = "CombatTeam didn't assign an active CombatElemental when created"
-        self.assertIsInstance(self.combat_team.get_active(), CombatElemental, error)
+        self.assertIsInstance(self.combat_team.active, CombatElemental, error)
 
     def test_skip_ko_active(self):
         error = "CombatTeam incorrectly set a 0 HP Elemental as the active Elemental"
@@ -39,8 +38,8 @@ class CombatTeamTests(unittest.TestCase):
         # TODO
 
     def test_bench(self):
-        error = "CombatTeam incorrectly included the active CombatElemental in get_bench()"
-        bench = self.combat_team.get_bench()
+        error = "CombatTeam incorrectly included the active CombatElemental in bench"
+        bench = self.combat_team.bench
         self.assertEqual(len(bench), 1, error)
         self.assertEqual(bench[0].id, 2, error)  # Loksy's id, see setUp
 
