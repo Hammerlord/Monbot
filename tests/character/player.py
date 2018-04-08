@@ -22,11 +22,6 @@ class PlayerTests(unittest.TestCase):
         team_size = self.player.team.size
         self.assertEqual(team_size, 1, error)
 
-    def test_has_home(self):
-        error = "Player didn't set up a HomeManager on instantiation"
-        home = self.player.home
-        self.assertIsInstance(home, HomeManager, error)
-
     def test_set_busy_flag(self):
         error = "Busy flag couldn't be set"
         self.player.is_busy = True
@@ -34,6 +29,10 @@ class PlayerTests(unittest.TestCase):
 
     def test_is_busy_combat(self):
         error = "Player is incorrectly able to enter combat while busy"
+        # TODO
+
+    def test_invalid_combat(self):
+        error = "Player is incorrectly able to enter combat while all their Elementals are KOed"
         # TODO
 
     def test_is_busy_home(self):
