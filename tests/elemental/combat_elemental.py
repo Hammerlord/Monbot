@@ -2,6 +2,7 @@ import unittest
 
 from src.elemental.ability.ability import Ability
 from src.elemental.combat_elemental import CombatElemental
+from src.elemental.elemental import Elemental
 from tests.elemental.elemental_builder import ElementalBuilder
 
 
@@ -11,15 +12,25 @@ class CombatElementalTests(unittest.TestCase):
     """
 
     def setUp(self):
-        self.elemental = ElementalBuilder() \
-            .with_current_hp(5) \
-            .with_max_hp(50) \
-            .build()
+        self.elemental = self.get_elemental()
         self.combat_elemental = CombatElemental(self.elemental)
 
     def tearDown(self):
         self.combat_elemental = None
         self.elemental = None
+
+    def get_elemental(self) -> Elemental:
+        return ElementalBuilder() \
+            .with_current_hp(5) \
+            .with_max_hp(50) \
+            .build()
+
+    def get_combat_elemental(self) -> CombatElemental:
+        elemental = ElementalBuilder() \
+            .with_current_hp(5) \
+            .with_max_hp(50) \
+            .build()
+        return CombatElemental(elemental)
 
     def test_starting_mana(self):
         error = "CombatElemental didn't have the correct amount of starting mana"
@@ -45,14 +56,9 @@ class CombatElementalTests(unittest.TestCase):
         self.assertGreater(len(abilities), 0, error)
         self.assertIsInstance(abilities[0], Ability, error)
 
-    def test_has_status_manager(self):
-        error = "CombatElemental didn't instantiate a StatusEffectManager"
-        manager = self.combat_elemental._status_effects
-        self.assertIsInstance(manager, StatusEffectManager, error)
-
     def test_take_damage(self):
         error = "Reference Elemental didn't take damage when CombatElemental took damage"
-        self.combat_elemental.receive_damage(2)
+        self.combat_elemental.receive_damage(2, self.get_combat_elemental())
         current_hp = self.elemental.current_hp
         expected_hp = 3
         self.assertEqual(current_hp, expected_hp, error)
@@ -70,7 +76,7 @@ class CombatElementalTests(unittest.TestCase):
 
     def test_overkill(self):
         error = "Elemental's HP didn't set to 0 on overkill"
-        self.combat_elemental.receive_damage(12)
+        self.combat_elemental.receive_damage(200, self.get_combat_elemental())
         current_hp = self.elemental.current_hp
         expected_hp = 0
         self.assertEqual(current_hp, expected_hp, error)
@@ -84,7 +90,7 @@ class CombatElementalTests(unittest.TestCase):
 
     def test_knockout_flag(self):
         error = "CombatElemental wasn't flagged as knocked out at 0 HP"
-        self.combat_elemental.receive_damage(12)
+        self.combat_elemental.receive_damage(12, self.get_combat_elemental())
         knocked_out = self.combat_elemental.is_knocked_out
         self.assertIs(knocked_out, True, error)
 
