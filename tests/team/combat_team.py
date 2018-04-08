@@ -2,26 +2,28 @@ import unittest
 
 from src.elemental.combat_elemental import CombatElemental
 from src.team.combat_team import CombatTeam
+from tests.character.character_builder import NPCBuilder
 from tests.elemental.elemental_builder import ElementalBuilder
 from tests.team.team_builder import TeamBuilder
 
 
 class CombatTeamTests(unittest.TestCase):
 
-    def setUp(self):
+    @staticmethod
+    def get_combat_team() -> CombatTeam:
+        """
+        :return: A test CombatTeam with two Elementals.
+        """
         team = TeamBuilder().build()
         smurggle = ElementalBuilder().with_id(1).build()
         loksy = ElementalBuilder().with_id(2).build()
         team.add_elemental(smurggle)
         team.add_elemental(loksy)
-        self.combat_team = CombatTeam(team)
-
-    def tearDown(self):
-        self.combat_team = None
+        return CombatTeam(team)
 
     def test_setup_active(self):
         error = "CombatTeam didn't assign an active CombatElemental when created"
-        self.assertIsInstance(self.combat_team.active, CombatElemental, error)
+        self.assertIsInstance(self.get_combat_team().active, CombatElemental, error)
 
     def test_skip_ko_active(self):
         error = "CombatTeam incorrectly set a 0 HP Elemental as the active Elemental"
@@ -35,11 +37,14 @@ class CombatTeamTests(unittest.TestCase):
 
     def test_is_npc(self):
         error = "CombatTeam didn't flag itself as NPC when its owner was an NPC"
-        # TODO
+        npc = NPCBuilder().build()
+        team = TeamBuilder().with_owner(npc).build()
+        combat_team = CombatTeam(team)
+        self.assertIs(combat_team.is_npc, True, error)
 
     def test_bench(self):
         error = "CombatTeam incorrectly included the active CombatElemental in bench"
-        bench = self.combat_team.bench
+        bench = self.get_combat_team().bench
         self.assertEqual(len(bench), 1, error)
         self.assertEqual(bench[0].id, 2, error)  # Loksy's id, see setUp
 
