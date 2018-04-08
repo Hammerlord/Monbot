@@ -78,7 +78,7 @@ class Species(StatsInterface):
         self._right_icon = None  # str. This Elemental's emote, facing left.
         self._portrait = None
         self._growth_rate = GrowthRate()  # Must be overridden to customize the stat growth!
-        self._abilities = []  # List[LearnableAbility]. TBD by descendants.
+        self._learnable_abilities = []  # List[LearnableAbility]. TBD by descendants.
 
     @property
     def name(self) -> str:
@@ -97,7 +97,7 @@ class Species(StatsInterface):
 
     @property
     def learnable_abilities(self) -> List['LearnableAbility']:
-        return self._abilities
+        return self._learnable_abilities
 
     @property
     def starting_mana(self) -> int:

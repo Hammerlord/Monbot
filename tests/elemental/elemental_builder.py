@@ -77,7 +77,7 @@ class SpeciesBuilder(StatsBuilder):
         species._name = self._name
         species._element = self._element
         species._growth_rate = self._growth_rate
-        species._abilities = self._abilities
+        species._learnable_abilities = self._abilities
         species._max_hp = self._max_hp
         species._physical_att = self._physical_att
         species._physical_def = self._physical_def

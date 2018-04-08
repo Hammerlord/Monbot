@@ -13,6 +13,7 @@ class AbilityManager:
         self._available_abilities = []
         self._active_abilities = []
         self._max_active = 5
+        self.check_learnable_abilities()
 
     @property
     def active_abilities(self) -> List[LearnableAbility]:
@@ -36,6 +37,9 @@ class AbilityManager:
         return [ability for ability in self._available_abilities if ability not in self._active_abilities]
 
     def check_learnable_abilities(self) -> None:
+        """
+        Check the requirements of the learnable abilities, and add them to the "available" container.
+        """
         for ability in self._learnable_abilities:
             if self._can_learn(ability):
                 self._learn_ability(ability)

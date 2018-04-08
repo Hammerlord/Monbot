@@ -1,6 +1,6 @@
 import unittest
 
-from src.elemental.ability.ability import LearnableAbility
+from src.elemental.ability.ability import Ability
 from src.elemental.attribute.attribute_factory import AttributeFactory
 from src.elemental.attribute.attribute_manager import AttributeManager
 from tests.character.character_builder import PlayerBuilder
@@ -132,8 +132,8 @@ class ElementalTests(unittest.TestCase):
         self.assertEqual(species._max_hp, 50, error)
 
     def test_has_ability(self):
-        error = "Elemental didn't get LearnableAbilities on instantiation"
-        self.assertIsInstance(self.elemental.active_abilities[0], LearnableAbility, error)
+        error = "Elemental didn't get Abilities on instantiation"
+        self.assertIsInstance(self.elemental.active_abilities[0], Ability, error)
 
     def test_owner_restricts_level(self):
         error = "Elemental shouldn't be able to level past its owner"
