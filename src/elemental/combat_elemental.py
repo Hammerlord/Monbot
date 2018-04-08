@@ -19,8 +19,9 @@ class CombatElemental:
         self._physical_def = self._elemental.physical_def
         self._magic_def = self._elemental.magic_def
         self._speed = self._elemental.speed
+        self._defend_potency = self._elemental.defend_potency
         self._status_effects = []  # List[StatusEffect]
-        self._actions = []  # List[CombatAction]  A record of the actions taken by this CombatElemental.
+        self._actions = []  # List[ActionLog]  A record of the actions taken by this CombatElemental.
         self._abilities = elemental.active_abilities
 
     @property
@@ -86,7 +87,6 @@ class CombatElemental:
 
     def on_turn_start(self) -> None:
         self.gain_mana(self._mana_per_turn)
-        self.recalculate_effects()
 
     def gain_mana(self, amount: int) -> None:
         self._current_mana += amount
@@ -110,12 +110,21 @@ class CombatElemental:
     def on_turn_end(self) -> None:
         for effect in self._status_effects:
             effect.on_turn_end()
-            effect.reduce_duration()
             self._check_effect_end(effect)
+        self.recalculate_effect_stats()
 
     def _check_effect_end(self, effect: StatusEffect) -> None:
+        effect.reduce_duration()
         if effect.duration_ended:
             self._status_effects.remove(effect)
+
+    def on_receive_ability(self, ability: Ability, actor: 'CombatElemental') -> None:
+        """
+        :param ability: The incoming Ability being received.
+        :param actor: The CombatElemental performing the ability.
+        """
+        for effect in self._status_effects:
+            effect.on_receive_ability(ability, actor)
 
     def receive_damage(self, amount: int, actor: 'CombatElemental') -> None:
         """
@@ -129,7 +138,7 @@ class CombatElemental:
     def heal(self, amount: int) -> None:
         self._elemental.heal(amount)
 
-    def recalculate_effects(self):
+    def recalculate_effect_stats(self):
         """
         Recalculate stat bonuses/penalties from effects, due to changes in status effects on a per-turn basis.
         """
@@ -147,3 +156,5 @@ class CombatElemental:
         self._physical_def = self._elemental.physical_def
         self._magic_def = self._elemental.magic_def
         self._speed = self._elemental.speed
+        self._mana_per_turn = self._elemental.mana_per_turn
+        self._defend_potency = self._elemental.defend_potency

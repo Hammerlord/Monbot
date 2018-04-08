@@ -55,6 +55,9 @@ class StatusEffect:
     def on_knockout(self):
         pass
 
+    def on_receive_ability(self, ability: 'Ability', actor: 'CombatElemental'):
+        pass
+
     def on_receive_damage(self, amount: int, actor: 'CombatElemental'):
         pass
 
