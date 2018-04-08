@@ -33,6 +33,14 @@ class Team:
     def size(self) -> int:
         return len(self._elementals)
 
+    @property
+    def is_all_knocked_out(self) -> bool:
+        """
+        :return: If all Elementals on the Team have been knocked out (0 HP).
+        Game over if true.
+        """
+        return all(elemental.is_knocked_out for elemental in self.elementals)
+
     def swap(self, slot: int, elemental: Elemental) -> None:
         """
         Swap an external Elemental into a slot on the Team.

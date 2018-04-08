@@ -83,7 +83,7 @@ class CombatElemental:
 
     @property
     def is_knocked_out(self) -> bool:
-        return self._elemental.current_hp == 0
+        return self._elemental.is_knocked_out
 
     def on_turn_start(self) -> None:
         self.gain_mana(self._mana_per_turn)

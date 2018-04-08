@@ -117,6 +117,10 @@ class Elemental:
     def attributes(self) -> List[Attribute]:
         return self._attribute_manager.attributes
 
+    @property
+    def is_knocked_out(self) -> bool:
+        return self.current_hp == 0
+
     def raise_attribute(self, position: int) -> None:
         try:
             self._attribute_manager.raise_attribute(position)
