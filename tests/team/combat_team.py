@@ -43,6 +43,16 @@ class CombatTeamTests(unittest.TestCase):
         self.assertEqual(len(bench), 1, error)
         self.assertEqual(bench[0].id, 2, error)  # Loksy's id, see setUp
 
+    def test_eligible_bench(self):
+        error = "CombatTeam incorrectly included knocked out CombatElementals in the eligible bench"
+        team = TeamBuilder().build()
+        smurggle = ElementalBuilder().with_current_hp(0).build()
+        loksy = ElementalBuilder().build()
+        team.add_elemental(smurggle)
+        team.add_elemental(loksy)  # Loksy should be considered active
+        bench = CombatTeam(team).eligible_bench
+        self.assertEqual(len(bench), 0, error)
+
     def test_switch(self):
         error = "CombatTeam incorrectly allowed a knocked out CombatElemental to be switched in"
         team = TeamBuilder().build()

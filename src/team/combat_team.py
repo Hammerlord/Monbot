@@ -50,7 +50,7 @@ class CombatTeam:
 
     def on_turn_start(self) -> None:
         """
-        All eligible (not dead, not active) Elementals gain +2 mana per turn.
+        All eligible bench (not dead, not active) Elementals gain +2 mana per turn.
         """
         for elemental in self.eligible_bench:
             elemental.gain_mana(2)
