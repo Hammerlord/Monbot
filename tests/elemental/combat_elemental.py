@@ -2,7 +2,6 @@ import unittest
 
 from src.elemental.ability.ability import Ability
 from src.elemental.combat_elemental import CombatElemental
-from src.elemental.status_effect.status_effect_manager import StatusEffectManager
 from tests.elemental.elemental_builder import ElementalBuilder
 
 

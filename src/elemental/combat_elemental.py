@@ -2,7 +2,7 @@ from typing import List
 
 from src.elemental.ability.ability import Ability
 from src.elemental.elemental import Elemental
-from src.elemental.status_effect.status_effect_manager import StatusEffectManager
+from src.elemental.status_effect.status_effect import StatusEffect
 
 
 class CombatElemental:
@@ -14,7 +14,12 @@ class CombatElemental:
         self._defend_charges = elemental.defend_charges
         self._can_switch = True
         self._is_active = False
-        self._status_effects = StatusEffectManager(self)
+        self._physical_att = self._elemental.physical_att
+        self._magic_att = self._elemental.magic_att
+        self._physical_def = self._elemental.physical_def
+        self._magic_def = self._elemental.magic_def
+        self._speed = self._elemental.speed
+        self._status_effects = []  # List[StatusEffect]
         self._actions = []  # List[CombatAction]  A record of the actions taken by this CombatElemental.
         self._abilities = elemental.active_abilities
 
@@ -30,6 +35,26 @@ class CombatElemental:
     @property
     def max_hp(self) -> int:
         return self._elemental.max_hp
+
+    @property
+    def physical_att(self) -> int:
+        return self._physical_att
+
+    @property
+    def magic_att(self) -> int:
+        return self._magic_att
+
+    @property
+    def physical_def(self) -> int:
+        return self._physical_def
+
+    @property
+    def magic_def(self) -> int:
+        return self._magic_def
+
+    @property
+    def speed(self) -> int:
+        return self._speed
 
     @property
     def defend_charges(self) -> int:
@@ -48,8 +73,8 @@ class CombatElemental:
         return self._can_switch
 
     @can_switch.setter
-    def can_switch(self, set: bool) -> None:
-        self._can_switch = set
+    def can_switch(self, set_switchable: bool) -> None:
+        self._can_switch = set_switchable
 
     @property
     def abilities(self) -> List[Ability]:
@@ -61,6 +86,7 @@ class CombatElemental:
 
     def on_turn_start(self) -> None:
         self.gain_mana(self._mana_per_turn)
+        self.recalculate_effects()
 
     def gain_mana(self, amount: int) -> None:
         self._current_mana += amount
@@ -76,15 +102,48 @@ class CombatElemental:
         # TODO
         pass
 
+    def add_status_effect(self, status_effect: StatusEffect):
+        status_effect.target(self)
+        self._status_effects.append(status_effect)
+        status_effect.on_effect_start()
+
     def on_turn_end(self) -> None:
-        pass
+        for effect in self._status_effects:
+            effect.on_turn_end()
+            effect.reduce_duration()
+            self._check_effect_end(effect)
 
-    def on_receive_damage(self, amount: int) -> None:
-        pass
+    def _check_effect_end(self, effect: StatusEffect) -> None:
+        if effect.duration_ended:
+            self._status_effects.remove(effect)
 
-    def receive_damage(self, amount: int) -> None:
+    def receive_damage(self, amount: int, actor: 'CombatElemental') -> None:
+        """
+        :param amount: The final amount of damage received.
+        :param actor: The CombatElemental dealing the damage.
+        """
         self._elemental.receive_damage(amount)
-        self.on_receive_damage(amount)
+        for effect in self._status_effects:
+            effect.on_receive_damage(amount, actor)
 
     def heal(self, amount: int) -> None:
         self._elemental.heal(amount)
+
+    def recalculate_effects(self):
+        """
+        Recalculate stat bonuses/penalties from effects, due to changes in status effects on a per-turn basis.
+        """
+        self._reset_stats()
+        for effect in self._status_effects:
+            effect.apply_stat_changes()
+
+    def _reset_stats(self) -> None:
+        """
+        Resets the CombatElemental's main stats to the referenced Elemental's stats.
+        Used when recalculating stat changes from StatusEffects.
+        """
+        self._physical_att = self._elemental.physical_att
+        self._magic_att = self._elemental.magic_att
+        self._physical_def = self._elemental.physical_def
+        self._magic_def = self._elemental.magic_def
+        self._speed = self._elemental.speed
