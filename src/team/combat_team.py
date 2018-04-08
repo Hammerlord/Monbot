@@ -18,11 +18,16 @@ class CombatTeam:
         self.status_effects = []  # Team-wide status effects, eg. weather.
         self.actions = []  # A stack of CombatActions taken by this team.
 
-    def set_next_active(self) -> CombatElemental:
+    @property
+    def active(self) -> CombatElemental:
+        return self._active
+
+    @property
+    def bench(self) -> List[CombatElemental]:
         """
-        The next Elemental eligible to be active (HP > 0), meaning it is sent to the battlefield.
+        Returns the team CombatElementals minus the active one.
         """
-        return next((elemental for elemental in self.team if not elemental.is_knocked_out), None)
+        return [elemental for elemental in self.team if elemental != self._active]
 
     @property
     def is_npc(self) -> bool:
@@ -36,6 +41,12 @@ class CombatTeam:
         """
         return all(elemental.is_knocked_out for elemental in self.team)
 
+    def set_next_active(self) -> CombatElemental:
+        """
+        The next Elemental eligible to be active (HP > 0), meaning it is sent to the battlefield.
+        """
+        return next((elemental for elemental in self.team if not elemental.is_knocked_out), None)
+
     def switch(self, slot: int) -> None:
         """
         Switch the active Elemental with an Elemental on CombatTeam.bench.
@@ -43,17 +54,6 @@ class CombatTeam:
         if not self.can_switch(slot):
             return
         self._active = self.bench[slot]
-
-    @property
-    def active(self) -> CombatElemental:
-        return self._active
-
-    @property
-    def bench(self) -> List[CombatElemental]:
-        """
-        Returns the team CombatElementals minus the active one.
-        """
-        return [elemental for elemental in self.team if elemental != self._active]
 
     def can_switch(self, slot: int) -> bool:
         """
