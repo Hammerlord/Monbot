@@ -1,6 +1,7 @@
 import unittest
 
 from src.elemental.combat_elemental import CombatElemental
+from src.team.combat_team import CombatTeam
 from tests.elemental.elemental_builder import ElementalBuilder
 from tests.team.team_builder import TeamBuilder
 
@@ -13,7 +14,7 @@ class CombatTeamTests(unittest.TestCase):
         loksy = ElementalBuilder().with_id(2).build()
         team.add_elemental(smurggle)
         team.add_elemental(loksy)
-        self.combat_team = CombatTeamBuilder().with_team(team).build()
+        self.combat_team = CombatTeam(team)
 
     def tearDown(self):
         self.combat_team.dispose()
@@ -30,8 +31,8 @@ class CombatTeamTests(unittest.TestCase):
         loksy = ElementalBuilder().with_id(2).build()
         team.add_elemental(smurggle)
         team.add_elemental(loksy)
-        combat_team = CombatTeamBuilder().with_team(team).build()
-        self.assertEqual(combat_team.get_active().id, loksy.id, error)
+        combat_team = CombatTeam(team)
+        self.assertEqual(combat_team.active.id, loksy.id, error)
 
     def test_is_npc(self):
         error = "CombatTeam didn't flag itself as NPC when its owner was an NPC"
@@ -50,6 +51,6 @@ class CombatTeamTests(unittest.TestCase):
         loksy = ElementalBuilder().with_id(2).build()
         team.add_elemental(smurggle)
         team.add_elemental(loksy)
-        combat_team = CombatTeamBuilder().with_team(team).build()
+        combat_team = CombatTeam(team)
         combat_team.switch(0)  # smurggle's position
-        self.assertEqual(combat_team.get_active().id, loksy.id, error)
+        self.assertEqual(combat_team.active.id, loksy.id, error)

@@ -19,6 +19,10 @@ class CombatElemental:
         self._abilities = elemental.active_abilities
 
     @property
+    def id(self) -> int:
+        return self._elemental.id
+
+    @property
     def current_hp(self) -> int:
         # HP is based on the Elemental's.
         return self._elemental.current_hp
