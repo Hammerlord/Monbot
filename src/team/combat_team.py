@@ -30,6 +30,13 @@ class CombatTeam:
         return [elemental for elemental in self.team if elemental != self._active]
 
     @property
+    def eligible(self) -> List[CombatElemental]:
+        """
+        Returns the benched CombatElementals that aren't knocked out (ie. have more than 0 HP).
+        """
+        return [elemental for elemental in self.team if elemental != self._active and not elemental.is_knocked_out]
+
+    @property
     def is_npc(self) -> bool:
         return self.owner.is_npc
 
@@ -49,15 +56,10 @@ class CombatTeam:
 
     def switch(self, slot: int) -> None:
         """
-        Switch the active Elemental with an Elemental on CombatTeam.bench.
+        Switch the active Elemental with an Elemental on CombatTeam.eligible.
         """
-        if not self.can_switch(slot):
+        eligible_elementals = self.eligible
+        can_switch = 0 <= slot < len(eligible_elementals) - 1  # Valid slot?
+        if not can_switch:
             return
-        self._active = self.bench[slot]
-
-    def can_switch(self, slot: int) -> bool:
-        """
-        Check if the impending position is a valid slot.
-        """
-        max_slots = len(self.team) - 1  # The number of Elementals on the team minus the active one.
-        return 0 <= slot < max_slots
+        self._active = eligible_elementals[slot]
