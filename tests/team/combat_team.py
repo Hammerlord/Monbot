@@ -68,3 +68,20 @@ class CombatTeamTests(unittest.TestCase):
         combat_team = CombatTeam(team)
         combat_team.switch(0)  # smurggle's position
         self.assertEqual(combat_team.active.id, loksy.id, error)
+
+    def test_all_knocked_out(self):
+        error = "CombatTeam.is_all_knocked_out didn't resolve correctly"
+        team = TeamBuilder().build()
+        smurggle = ElementalBuilder().with_id(1).with_current_hp(0).build()
+        team.add_elemental(smurggle)
+        combat_team = CombatTeam(team)
+        self.assertIs(combat_team.is_all_knocked_out, True, error)
+
+    def test_mana_per_turn(self):
+        error = "CombatTeam eligible Elementals on the bench didn't gain mana on turn start"
+        combat_team = self.get_combat_team()
+        bench = combat_team.eligible_bench
+        starting_mana = bench[0].current_mana
+        combat_team.on_turn_start()
+        resultant_mana = bench[0].current_mana
+        self.assertGreater(resultant_mana, starting_mana, error)
