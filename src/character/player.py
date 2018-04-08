@@ -1,5 +1,5 @@
 from src.character.character import Character
-from src.elemental.elemental import Elemental
+from src.elemental.elemental_factory import ElementalFactory
 
 
 class Player(Character):
@@ -10,12 +10,6 @@ class Player(Character):
         self.id = user.id
         self._nickname = user.name
 
-    @staticmethod
-    def create_player(user, starter: Elemental) -> 'Player':
-        new_profile = Player(user)
-        new_profile.add_elemental(starter)
-        return new_profile
-
     @property
     def is_busy(self) -> bool:
         return self._is_busy
@@ -23,3 +17,34 @@ class Player(Character):
     @is_busy.setter
     def is_busy(self, set_busy: bool) -> None:
         self._is_busy = set_busy
+
+
+class NewPlayer:
+    """
+    Factory for creating new players.
+    """
+
+    @staticmethod
+    def empty_profile(user) -> 'Player':
+        return Player(user)
+
+    @staticmethod
+    def create_with_rainatu(user) -> 'Player':
+        new_profile = Player(user)
+        elemental = ElementalFactory.rainatu()
+        new_profile.add_elemental(elemental)
+        return new_profile
+
+    @staticmethod
+    def create_with_sithel(user) -> 'Player':
+        new_profile = Player(user)
+        elemental = ElementalFactory.sithel()
+        new_profile.add_elemental(elemental)
+        return new_profile
+
+    @staticmethod
+    def create_with_mithus(user) -> 'Player':
+        new_profile = Player(user)
+        elemental = ElementalFactory.mithus()
+        new_profile.add_elemental(elemental)
+        return new_profile
