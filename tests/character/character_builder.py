@@ -3,6 +3,7 @@ from typing import Type
 from src.character.character import Character
 from src.character.npc import NPC
 from src.character.player import Player
+from tests.elemental.elemental_builder import ElementalBuilder
 from tests.test_user import UserBuilder
 
 
@@ -44,6 +45,7 @@ class PlayerBuilder:
 
     def build(self) -> Player:
         player = Player(self.user)
+        player.add_elemental(ElementalBuilder().build())
         while player.level < self._level:
             exp = player.exp_to_level
             player.add_exp(exp)

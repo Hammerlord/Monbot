@@ -220,4 +220,7 @@ class ElementalTests(unittest.TestCase):
         error = "Elemental can incorrectly have more than 5 abilities active"
         # TODO
 
+    def test_swap_defend(self):
+        error = "Elemental can incorrectly swap out Defend for another ability"
+        # TODO
 

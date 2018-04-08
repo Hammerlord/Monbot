@@ -1,6 +1,7 @@
 import unittest
 
 from tests.character.character_builder import NPCBuilder, PlayerBuilder
+from tests.elemental.elemental_builder import ElementalBuilder
 
 
 class NPCTests(unittest.TestCase):
@@ -11,13 +12,22 @@ class NPCTests(unittest.TestCase):
     2) fits their profession (eg. Researcher, Enthusiast, Adventurer)
     """
 
+    def get_player(self):
+        """
+        :return: A Player object with 2 Elementals on their Team.
+        """
+        player = PlayerBuilder().with_level(10).build()
+        player.add_elemental(ElementalBuilder().build())
+        player.add_elemental(ElementalBuilder().build())
+        return player
+
     def test_is_npc(self):
         error = "NPC wasn't flagged as an npc"
         npc = NPCBuilder().build()
         self.assertTrue(npc.is_npc, error)
 
     def test_team(self):
-        error = "NPC team didn't start with any elementals"
+        error = "NPC team didn't start with any Elementals"
         npc = NPCBuilder().build()
         npc_team_size = npc.team.size
         self.assertGreater(npc_team_size, 0, error)
@@ -25,7 +35,7 @@ class NPCTests(unittest.TestCase):
     def test_team_size(self):
         error = "NPC team size is potentially larger than the opponent's"
         for i in range(100):
-            player = PlayerBuilder().build()
+            player = self.get_player()
             npc = NPCBuilder().with_opponent(player).build()
             player_team_size = player.team.size
             npc_team_size = npc.team.size
@@ -34,7 +44,7 @@ class NPCTests(unittest.TestCase):
     def test_max_level(self):
         error = "NPC level is potentially too much higher than the opponent's"
         for i in range(100):
-            player = PlayerBuilder().with_level(10).build()
+            player = self.get_player()
             npc = NPCBuilder().with_opponent(player).build()
             accepted_max_level = player.level + 1
             self.assertLessEqual(npc.level, accepted_max_level, error)
@@ -42,7 +52,7 @@ class NPCTests(unittest.TestCase):
     def test_min_level(self):
         error = "NPC level is potentially too much lower than the opponent's"
         for i in range(100):
-            player = PlayerBuilder().with_level(10).build()
+            player = self.get_player()
             npc = NPCBuilder().with_opponent(player).build()
             accepted_min_level = player.level - 2
             self.assertGreaterEqual(npc.level, accepted_min_level, error)
@@ -50,7 +60,7 @@ class NPCTests(unittest.TestCase):
     def test_valid_level(self):
         error = "NPC level is potentially less than 1"
         for i in range(100):
-            player = PlayerBuilder().with_level(1).build()
+            player = self.get_player()
             npc = NPCBuilder().with_opponent(player).build()
             self.assertGreaterEqual(npc.level, 1, error)
 
