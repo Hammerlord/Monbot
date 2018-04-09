@@ -11,8 +11,8 @@ class StatusEffect:
         self._description = None  # Str. TBD by descendants.
         self._target = None  # The CombatElemental this StatusEffect is applied to.
         self._applier = None  # The CombatElemental that applied this StatusEffect.
-        self._max_duration = 0
-        self._duration_remaining = 0  # Set to -1 if no duration.
+        self._max_duration = 0  # Set to -1 if no duration.
+        self._duration_remaining = 0
         self.is_dispellable = True
         self.fades_on_switch = True
         self.can_stack = False  # Ie. can we apply multiple instances of this effect?

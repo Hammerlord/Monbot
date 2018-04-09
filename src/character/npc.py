@@ -30,7 +30,7 @@ class NPC(Character):
         super().__init__()
         self._is_npc = True
         self.profession = Professions.NONE  # TBD by descendants
-        self._potential_species = []  # List[Species] -- TBD by descendants
+        self._potential_species = []  # List[Species] -- TBD by descendants. TODO: put this in a factory
 
     def generate_team(self, opponent: 'NPC' or Player) -> None:
         """

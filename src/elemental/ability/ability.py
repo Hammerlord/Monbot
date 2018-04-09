@@ -25,6 +25,9 @@ class Ability:
         raise NotImplementedError
 
     def targeting(self):
+        """
+        What kind of targeting (self, foe, multiple foes) this ability uses. TODO
+        """
         pass
 
 
