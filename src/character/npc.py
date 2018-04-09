@@ -11,6 +11,12 @@ from tests.elemental.elemental_builder import ElementalBuilder
 class Professions(Enum):
     NONE = 0
     RESEARCHER = 1
+    EXPLORER = 2
+    ADVENTURER = 3
+    ARCHAEOLOGIST = 4
+    CULTIST = 5
+    PALADIN = 6
+    ENFORCER = 7
 
 
 class NPC(Character):
