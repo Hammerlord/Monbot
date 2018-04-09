@@ -59,4 +59,3 @@ class AbilityManager:
         if len(self._active_abilities) < self._max_active:
             self._active_abilities.append(ability)
         self._available_abilities.append(ability)
-
