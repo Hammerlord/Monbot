@@ -130,9 +130,22 @@ class CombatElemental:
         pass
 
     def add_status_effect(self, status_effect: StatusEffect):
-        status_effect.target = self
-        self._status_effects.append(status_effect)
-        status_effect.on_effect_start()
+        equivalent_effect = self._effect_exists(status_effect)
+        if not equivalent_effect or status_effect.can_stack:
+            status_effect.target = self
+            self._status_effects.append(status_effect)
+            status_effect.on_effect_start()
+        else:
+            equivalent_effect.refresh_duration()
+
+    def _effect_exists(self, status_effect: StatusEffect) -> StatusEffect or None:
+        """
+        Check if an equivalent StatusEffect is already on this CombatElemental by ID.
+        :return The StatusEffect if it exists, None if not.
+        """
+        for effect in self._status_effects:
+            if effect.id == status_effect.id:
+                return effect
 
     def dispel_all(self, dispeller: 'CombatElemental'):
         for effect in self._status_effects:
