@@ -17,7 +17,7 @@ class StatusEffectTests(unittest.TestCase):
         error = "StatusEffect couldn't be added"
         self.combat_elemental.add_status_effect(GenericBuff())
         num_effects = self.combat_elemental.num_status_effects
-        self.assertEquals(num_effects, 1, error)
+        self.assertEqual(num_effects, 1, error)
 
     def test_effect_duration_decrement(self):
         error = "StatusEffect duration didn't decrement on turn end"
@@ -35,14 +35,14 @@ class StatusEffectTests(unittest.TestCase):
         for i in range(buff.duration_remaining):
             self.combat_elemental.on_turn_end()
         num_effects = self.combat_elemental.num_status_effects
-        self.assertEquals(num_effects, 0, error)
+        self.assertEqual(num_effects, 0, error)
 
     def test_unstackable_effect(self):
         error = "A StatusEffect was incorrectly able to stack when added"
         self.combat_elemental.add_status_effect(GenericBuff())
         self.combat_elemental.add_status_effect(GenericBuff())
         num_effects = self.combat_elemental.num_status_effects
-        self.assertEquals(num_effects, 1, error)
+        self.assertEqual(num_effects, 1, error)
 
     def test_unstackable_effect_refresh(self):
         error = "An unstackable StatusEffect didn't refresh its effect's duration when reapplied"
@@ -53,7 +53,7 @@ class StatusEffectTests(unittest.TestCase):
         self.combat_elemental.on_turn_end()
         self.combat_elemental.add_status_effect(same_buff)
         duration_after = buff.duration_remaining
-        self.assertEquals(duration_before, duration_after, error)
+        self.assertEqual(duration_before, duration_after, error)
 
     def test_effect_stats(self):
         error = "Physical attack StatusEffect didn't add any physical attack"
@@ -71,7 +71,7 @@ class StatusEffectTests(unittest.TestCase):
         for i in range(buff.duration_remaining):
             self.combat_elemental.on_turn_end()  # Remove the effect via duration end
         physical_att_after = self.combat_elemental.physical_att
-        self.assertEquals(physical_att_before, physical_att_after, error)
+        self.assertEqual(physical_att_before, physical_att_after, error)
 
     def test_effect_stats_consistency(self):
         error = "Stats gained from a buff incorrectly changed across its duration"
@@ -80,7 +80,7 @@ class StatusEffectTests(unittest.TestCase):
         physical_att_before = self.combat_elemental.physical_att
         self.combat_elemental.on_turn_end()  # Remove the effect via duration end
         physical_att_after = self.combat_elemental.physical_att
-        self.assertEquals(physical_att_before, physical_att_after, error)
+        self.assertEqual(physical_att_before, physical_att_after, error)
 
     def test_perma_buff(self):
         error = "A StatusEffect with no duration could incorrectly be decremented"
