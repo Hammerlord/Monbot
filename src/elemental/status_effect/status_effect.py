@@ -15,6 +15,7 @@ class StatusEffect:
         self._duration_remaining = 0  # Set to -1 if no duration.
         self.is_dispellable = True
         self.fades_on_switch = True
+        self.can_stack = False  # Ie. can we apply multiple instances of this effect?
 
     @property
     def name(self) -> str:
