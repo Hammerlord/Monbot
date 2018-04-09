@@ -20,6 +20,7 @@ class CombatElemental:
         self._magic_def = self._elemental.magic_def
         self._speed = self._elemental.speed
         self._defend_potency = self._elemental.defend_potency
+        self._damage_reduction = 0  # Float. Percentage of damage reduced on incoming attacks.
         self._status_effects = []  # List[StatusEffect]
         self._actions = []  # List[ActionLog]  A record of the actions taken by this CombatElemental.
         self._abilities = elemental.active_abilities
@@ -74,6 +75,13 @@ class CombatElemental:
 
     def update_mana_per_turn(self, amount: int) -> None:
         self._mana_per_turn += amount
+
+    @property
+    def damage_reduction(self) -> float:
+        return self._damage_reduction
+
+    def update_damage_reduction(self, amount: float) -> None:
+        self._damage_reduction += amount
 
     @property
     def defend_charges(self) -> int:
@@ -205,3 +213,4 @@ class CombatElemental:
         self._speed = self._elemental.speed
         self._mana_per_turn = self._elemental.mana_per_turn
         self._defend_potency = self._elemental.defend_potency
+        self._damage_reduction = 0
