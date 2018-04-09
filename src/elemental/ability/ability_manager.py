@@ -1,6 +1,7 @@
 from typing import List
 
 from src.elemental.ability.ability import LearnableAbility
+from src.elemental.ability.ability_factory import AbilityFactory
 
 
 class AbilityManager:
@@ -9,7 +10,7 @@ class AbilityManager:
         :param elemental: The Elemental to whom this Manager belongs.
         """
         self.elemental = elemental
-        self._learnable_abilities = elemental.species.learnable_abilities  # List[LearnableAbility]
+        self._learnable_abilities = self._initialize_abilities()  # List[LearnableAbility]
         self._available_abilities = []
         self._active_abilities = []
         self._max_active = 5
@@ -59,3 +60,8 @@ class AbilityManager:
         if len(self._active_abilities) < self._max_active:
             self._active_abilities.append(ability)
         self._available_abilities.append(ability)
+
+    def _initialize_abilities(self) -> List[LearnableAbility]:
+        abilities = self.elemental.species.learnable_abilities
+        abilities.append(AbilityFactory.defend())  # All Elementals learn Defend
+        return abilities
