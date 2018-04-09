@@ -3,7 +3,7 @@ import unittest
 from src.elemental.ability.ability import Ability
 from src.elemental.combat_elemental import CombatElemental
 from src.elemental.elemental import Elemental
-from tests.elemental.elemental_builder import ElementalBuilder
+from tests.elemental.elemental_builder import ElementalBuilder, CombatElementalBuilder
 
 
 class CombatElementalTests(unittest.TestCase):
@@ -13,7 +13,7 @@ class CombatElementalTests(unittest.TestCase):
 
     def setUp(self):
         self.elemental = self.get_elemental()
-        self.combat_elemental = CombatElemental(self.elemental)
+        self.combat_elemental = CombatElementalBuilder().with_elemental(self.elemental).build()
 
     def tearDown(self):
         self.combat_elemental = None
@@ -26,11 +26,7 @@ class CombatElementalTests(unittest.TestCase):
             .build()
 
     def get_combat_elemental(self) -> CombatElemental:
-        elemental = ElementalBuilder() \
-            .with_current_hp(5) \
-            .with_max_hp(50) \
-            .build()
-        return CombatElemental(elemental)
+        return CombatElementalBuilder().with_elemental(self.get_elemental()).build()
 
     def test_starting_mana(self):
         error = "CombatElemental didn't have the correct amount of starting mana"

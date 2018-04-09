@@ -2,6 +2,7 @@ from src.character.player import Player
 from src.core.elements import Elements
 from src.elemental.ability.ability import LearnableAbility, Ability
 from src.elemental.attribute.attribute_factory import AttributeFactory
+from src.elemental.combat_elemental import CombatElemental
 from src.elemental.elemental import Elemental
 from src.elemental.species.species import GrowthRate, Species
 from tests.test_user import UserBuilder
@@ -151,3 +152,15 @@ class ElementalBuilder:
         while elemental.level < self._level:
             exp = elemental.exp_to_level
             elemental.add_exp(exp)
+
+
+class CombatElementalBuilder:
+    def __init__(self):
+        self._elemental = ElementalBuilder().build()
+
+    def with_elemental(self, elemental: Elemental) -> 'CombatElementalBuilder':
+        self._elemental = elemental
+        return self
+
+    def build(self):
+        return CombatElemental(self._elemental)

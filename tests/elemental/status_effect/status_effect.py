@@ -1,26 +1,17 @@
 import unittest
 
-from src.elemental.combat_elemental import CombatElemental
-from src.elemental.elemental import Elemental
-from tests.elemental.elemental_builder import ElementalBuilder
+from tests.elemental.elemental_builder import CombatElementalBuilder
 from tests.elemental.status_effect.test_effects import GenericBuff
 
 
 class StatusEffectTests(unittest.TestCase):
 
     def setUp(self):
-        self.elemental = self.get_elemental()
-        self.combat_elemental = CombatElemental(self.elemental)
+        self.combat_elemental = CombatElementalBuilder().build()
 
     def tearDown(self):
         self.combat_elemental = None
         self.elemental = None
-
-    def get_elemental(self) -> Elemental:
-        return ElementalBuilder() \
-            .with_current_hp(5) \
-            .with_max_hp(50) \
-            .build()
 
     def test_add_status_effect(self):
         error = "StatusEffect couldn't be added"
