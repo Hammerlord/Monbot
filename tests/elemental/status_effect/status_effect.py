@@ -1,7 +1,7 @@
 import unittest
 
 from tests.elemental.elemental_builder import CombatElementalBuilder
-from tests.elemental.status_effect.test_effects import GenericBuff
+from tests.elemental.status_effect.test_effects import GenericBuff, PermaBuff
 
 
 class StatusEffectTests(unittest.TestCase):
@@ -29,7 +29,7 @@ class StatusEffectTests(unittest.TestCase):
         self.assertLess(duration_after, duration_before, error)
 
     def test_effect_end(self):
-        error = "StatusEffect wasn't removed upon duration ended"
+        error = "StatusEffect wasn't removed upon duration end"
         buff = GenericBuff()
         self.combat_elemental.add_status_effect(buff)
         for i in range(buff.duration_remaining):
@@ -37,3 +37,72 @@ class StatusEffectTests(unittest.TestCase):
         num_effects = self.combat_elemental.num_status_effects
         self.assertEquals(num_effects, 0, error)
 
+    def test_unstackable_effect(self):
+        error = "A StatusEffect was incorrectly able to stack when added"
+        self.combat_elemental.add_status_effect(GenericBuff())
+        self.combat_elemental.add_status_effect(GenericBuff())
+        num_effects = self.combat_elemental.num_status_effects
+        self.assertEquals(num_effects, 1, error)
+
+    def test_unstackable_effect_refresh(self):
+        error = "An unstackable StatusEffect didn't refresh its effect's duration when reapplied"
+        buff = GenericBuff()
+        same_buff = GenericBuff()
+        self.combat_elemental.add_status_effect(buff)
+        duration_before = buff.duration_remaining
+        self.combat_elemental.on_turn_end()
+        self.combat_elemental.add_status_effect(same_buff)
+        duration_after = buff.duration_remaining
+        self.assertEquals(duration_before, duration_after, error)
+
+    def test_effect_stats(self):
+        error = "Physical attack StatusEffect didn't add any physical attack"
+        physical_att_before = self.combat_elemental.physical_att
+        buff = GenericBuff()
+        self.combat_elemental.add_status_effect(buff)
+        physical_att_after = self.combat_elemental.physical_att
+        self.assertGreater(physical_att_after, physical_att_before, error)
+
+    def test_effect_stats_end(self):
+        error = "Stats change persisted even after the effect ended"
+        physical_att_before = self.combat_elemental.physical_att
+        buff = GenericBuff()
+        self.combat_elemental.add_status_effect(buff)
+        for i in range(buff.duration_remaining):
+            self.combat_elemental.on_turn_end()  # Remove the effect via duration end
+        physical_att_after = self.combat_elemental.physical_att
+        self.assertEquals(physical_att_before, physical_att_after, error)
+
+    def test_effect_stats_consistency(self):
+        error = "Stats gained from a buff incorrectly changed across its duration"
+        buff = GenericBuff()
+        self.combat_elemental.add_status_effect(buff)
+        physical_att_before = self.combat_elemental.physical_att
+        self.combat_elemental.on_turn_end()  # Remove the effect via duration end
+        physical_att_after = self.combat_elemental.physical_att
+        self.assertEquals(physical_att_before, physical_att_after, error)
+
+    def test_perma_buff(self):
+        error = "A StatusEffect with no duration could incorrectly be decremented"
+        buff = PermaBuff()
+        self.combat_elemental.add_status_effect(buff)
+        duration_before = buff.duration_remaining
+        self.combat_elemental.on_turn_end()
+        duration_after = buff.duration_remaining
+        self.assertEqual(duration_after, duration_before, error)
+
+    def test_dispellable_buff(self):
+        error = "A dispellable effect could not be dispelled"
+        buff = GenericBuff()
+        self.combat_elemental.add_status_effect(buff)
+        self.combat_elemental.dispel_all()
+        num_effects = self.combat_elemental.num_status_effects
+        self.assertEqual(num_effects, 0, error)
+
+    def test_undispellable_buff(self):
+        error = "An undispellable effect was incorrectly able to be dispelled"
+        buff = PermaBuff()
+        self.combat_elemental.add_status_effect(buff)
+        self.combat_elemental.dispel_all()
+        num_effects = self.combat_elemental.num_status_effects
+        self.assertEqual(num_effects, 1, error)
