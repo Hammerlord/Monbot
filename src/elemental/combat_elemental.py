@@ -134,10 +134,11 @@ class CombatElemental:
         self._status_effects.append(status_effect)
         status_effect.on_effect_start()
 
-    def dispel_all(self):
+    def dispel_all(self, dispeller: 'CombatElemental'):
         for effect in self._status_effects:
             if effect.is_dispellable:
                 self._status_effects.remove(effect)
+                effect.on_dispel(dispeller)
 
     def on_turn_end(self) -> None:
         for effect in self._status_effects:
