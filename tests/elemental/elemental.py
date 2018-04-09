@@ -4,7 +4,8 @@ from src.elemental.ability.ability import Ability
 from src.elemental.attribute.attribute_factory import AttributeFactory
 from src.elemental.attribute.attribute_manager import AttributeManager
 from tests.character.character_builder import PlayerBuilder
-from tests.elemental.elemental_builder import ElementalBuilder, SpeciesBuilder, StatsBuilder
+from tests.elemental.elemental_builder import ElementalBuilder, SpeciesBuilder
+from tests.elemental.species_builder import StatsBuilder
 
 
 class ElementalTests(unittest.TestCase):
