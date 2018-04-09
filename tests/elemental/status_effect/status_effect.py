@@ -95,7 +95,7 @@ class StatusEffectTests(unittest.TestCase):
         error = "A dispellable effect could not be dispelled"
         buff = GenericBuff()
         self.combat_elemental.add_status_effect(buff)
-        self.combat_elemental.dispel_all()
+        self.combat_elemental.dispel_all(self.combat_elemental)
         num_effects = self.combat_elemental.num_status_effects
         self.assertEqual(num_effects, 0, error)
 
@@ -103,6 +103,6 @@ class StatusEffectTests(unittest.TestCase):
         error = "An undispellable effect was incorrectly able to be dispelled"
         buff = PermaBuff()
         self.combat_elemental.add_status_effect(buff)
-        self.combat_elemental.dispel_all()
+        self.combat_elemental.dispel_all(self.combat_elemental)
         num_effects = self.combat_elemental.num_status_effects
         self.assertEqual(num_effects, 1, error)
