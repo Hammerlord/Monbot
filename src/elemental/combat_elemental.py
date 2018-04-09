@@ -41,21 +41,39 @@ class CombatElemental:
     def physical_att(self) -> int:
         return self._physical_att
 
+    def update_physical_att(self, amount: int) -> None:
+        self._physical_att += amount
+
     @property
     def magic_att(self) -> int:
         return self._magic_att
+
+    def update_magic_att(self, amount: int) -> None:
+        self._magic_att += amount
 
     @property
     def physical_def(self) -> int:
         return self._physical_def
 
+    def update_physical_def(self, amount: int) -> None:
+        self._physical_def += amount
+
     @property
     def magic_def(self) -> int:
         return self._magic_def
 
+    def update_magic_def(self, amount: int) -> None:
+        self._magic_def += amount
+
     @property
     def speed(self) -> int:
         return self._speed
+
+    def update_speed(self, amount: int) -> None:
+        self._speed += amount
+
+    def update_mana_per_turn(self, amount: int) -> None:
+        self._mana_per_turn += amount
 
     @property
     def defend_charges(self) -> int:
@@ -82,6 +100,15 @@ class CombatElemental:
         return self._abilities
 
     @property
+    def status_effects(self) -> List[StatusEffect]:
+        return self._status_effects
+
+    @property
+    def num_status_effects(self) -> int:
+        # TODO num buffs and debuffs
+        return len(self._status_effects)
+
+    @property
     def is_knocked_out(self) -> bool:
         return self._elemental.is_knocked_out
 
@@ -103,7 +130,7 @@ class CombatElemental:
         pass
 
     def add_status_effect(self, status_effect: StatusEffect):
-        status_effect.target(self)
+        status_effect.target = self
         self._status_effects.append(status_effect)
         status_effect.on_effect_start()
 
@@ -130,6 +157,7 @@ class CombatElemental:
         """
         :param amount: The final amount of damage received.
         :param actor: The CombatElemental dealing the damage.
+        TODO merge with heal
         """
         self._elemental.receive_damage(amount)
         for effect in self._status_effects:

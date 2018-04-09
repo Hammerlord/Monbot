@@ -6,39 +6,78 @@ class StatusEffect:
     """
 
     def __init__(self):
-        self.id = 0
-        self.name = None  # Str. TBD by descendants.
-        self.description = None  # Str. TBD by descendants.
-        self.target = None  # The CombatElemental this StatusEffect is attached to
-        self.applier = None  # The CombatElemental that applied this StatusEffect
-        self.max_duration = 0
-        self.duration_remaining = 0  # Set to -1 if no duration.
+        self._id = 0
+        self._name = None  # Str. TBD by descendants.
+        self._description = None  # Str. TBD by descendants.
+        self._target = None  # The CombatElemental this StatusEffect is applied to.
+        self._applier = None  # The CombatElemental that applied this StatusEffect.
+        self._max_duration = 0
+        self._duration_remaining = 0  # Set to -1 if no duration.
         self.is_dispellable = True
         self.fades_on_switch = True
 
-    def set_target(self, elemental):
+    @property
+    def name(self) -> str:
+        return self._name
+
+    @property
+    def description(self) -> str:
+        return self._description
+
+    @property
+    def id(self) -> int:
+        return self._id
+
+    @property
+    def max_duration(self) -> int:
+        return self._max_duration
+
+    @property
+    def duration_remaining(self) -> int:
+        return self._duration_remaining
+
+    @property
+    def target(self):
+        """
+        :return: The CombatElemental this StatusEffect is applied to.
+        """
+        return self._target
+
+    @target.setter
+    def target(self, elemental) -> None:
         """
         :param elemental: CombatElemental
         """
-        self.target = elemental
+        self._target = elemental
 
-    def set_applier(self, elemental):
+    @property
+    def applier(self):
+        """
+        :return: The CombatElemental that applied this StatusEffect.
+        """
+        return self._applier
+
+    @applier.setter
+    def applier(self, elemental) -> None:
         """
         :param elemental: CombatElemental
         """
-        self.applier = elemental
+        self._applier = elemental
 
-    def reduce_duration(self):
+    def refresh_duration(self) -> None:
+        self._duration_remaining = self._max_duration
+
+    def reduce_duration(self) -> None:
         if self.can_reduce_duration:
-            self.duration_remaining -= 1
+            self._duration_remaining -= 1
 
     @property
     def can_reduce_duration(self) -> bool:
-        return self.duration_remaining > 0
+        return self._duration_remaining > 0
 
     @property
     def duration_ended(self) -> bool:
-        return self.duration_remaining == 0
+        return self._duration_remaining == 0
 
     def on_turn_start(self):
         pass
@@ -55,10 +94,18 @@ class StatusEffect:
     def on_knockout(self):
         pass
 
-    def on_receive_ability(self, ability: 'Ability', actor: 'CombatElemental'):
+    def on_receive_ability(self, ability, actor) -> None:
+        """
+        :param ability: The incoming Ability.
+        :param actor: The CombatElemental using the Ability.
+        """
         pass
 
-    def on_receive_damage(self, amount: int, actor: 'CombatElemental'):
+    def on_receive_damage(self, amount: int, actor) -> None:
+        """
+        :param amount: The damage received.
+        :param actor: The CombatElemental dealing the damage.
+        """
         pass
 
     def on_damage_dealt(self):
