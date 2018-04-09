@@ -198,7 +198,7 @@ class ElementalTests(unittest.TestCase):
     def test_initial_abilities(self):
         error = "Elemental didn't learn abilities on creation"
         num_abilities = len(self.elemental.active_abilities)
-        self.assertGreater(num_abilities, 1, error)
+        self.assertGreater(num_abilities, 0, error)
 
     def test_learn_abilities_by_level(self):
         error = "Elemental couldn't learn an ability by leveling"

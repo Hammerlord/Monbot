@@ -57,13 +57,22 @@ class StatsBuilder:
         return growth_rate
 
 
+class Level3Ability(LearnableAbility):
+    """
+    A test ability with a level 3 requirement.
+    """
+    def __init__(self, ability: Ability):
+        super().__init__(ability)
+        self._level_requirement = 3
+
+
 class SpeciesBuilder(StatsBuilder):
     def __init__(self):
         super().__init__()
         self._name = "Thefaketofu"
         self._element = Elements.LIGHT
         self._growth_rate = StatsBuilder().build()
-        self._abilities = [LearnableAbility(Ability()), LearnableAbility(Ability())]
+        self._abilities = [LearnableAbility(Ability()), Level3Ability(Ability())]
 
     def with_name(self, name: str) -> 'SpeciesBuilder':
         self._name = name

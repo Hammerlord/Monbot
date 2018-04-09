@@ -44,15 +44,15 @@ class LearnableAbility:
 
     def __init__(self, ability: Ability):
         self._ability = ability
+        self._level_requirement = 1
 
     @property
     def ability(self) -> Ability:
         return self._ability
 
-    @staticmethod
-    def are_requirements_fulfilled(elemental: 'Elemental') -> bool:
+    def are_requirements_fulfilled(self, elemental: 'Elemental') -> bool:
         """
         Override this method to customize the requirements.
         :param elemental: The Elemental trying to learn this ability.
         """
-        return elemental.level > 0
+        return elemental.level >= self._level_requirement
