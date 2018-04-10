@@ -11,7 +11,10 @@ from tests.elemental.species_builder import StatsBuilder
 
 class ElementalTests(unittest.TestCase):
     def setUp(self):
-        self.elemental = ElementalBuilder().with_level(1).build()
+        self.elemental = ElementalBuilder() \
+            .with_level(1) \
+            .with_species(self.get_species()) \
+            .build()
 
     def tearDown(self):
         self.elemental = None
@@ -26,6 +29,14 @@ class ElementalTests(unittest.TestCase):
             .with_max_hp(3) \
             .build()
 
+    def get_learnable_ability(self, level: int) -> LearnableAbility:
+        """
+        Returns a test LearnableAbility for checking requirements.
+        """
+        learnable = LearnableAbility(Ability())
+        learnable.level_required = level
+        return learnable
+
     def get_species(self) -> 'Species':
         return SpeciesBuilder() \
             .with_physical_att(15) \
@@ -35,11 +46,11 @@ class ElementalTests(unittest.TestCase):
             .with_speed(5) \
             .with_max_hp(50) \
             .with_growth_rate(self.get_growth_rate()) \
-            .with_abilities([LearnableAbility(Ability(), level_req=1),
-                             LearnableAbility(Ability(), level_req=2),
-                             LearnableAbility(Ability(), level_req=3),
-                             LearnableAbility(Ability(), level_req=4),
-                             LearnableAbility(Ability(), level_req=5)
+            .with_abilities([self.get_learnable_ability(level=1),
+                             self.get_learnable_ability(level=2),
+                             self.get_learnable_ability(level=3),
+                             self.get_learnable_ability(level=4),
+                             self.get_learnable_ability(level=5)
                              ]) \
             .build()
 
@@ -197,7 +208,10 @@ class ElementalTests(unittest.TestCase):
     def test_attribute_gives_stats(self):
         error = "No stats gained from raising an attribute"
         manager = self.get_preset_manager()  # Physical attack Attribute is guaranteed in the first slot
-        elemental = ElementalBuilder().with_attribute_manager(manager).with_level(10).build()
+        elemental = ElementalBuilder() \
+            .with_attribute_manager(manager) \
+            .with_level(10) \
+            .build()
         p_att_before = elemental.physical_att
         elemental.raise_attribute(0)
         p_att_after = elemental.physical_att

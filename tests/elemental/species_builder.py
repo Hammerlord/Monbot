@@ -60,8 +60,7 @@ class SpeciesBuilder(StatsBuilder):
         self._name = "Thefaketofu"
         self._element = Elements.LIGHT
         self._growth_rate = StatsBuilder().build()
-        self._abilities = [LearnableAbility(Ability()),
-                           LearnableAbility(Ability(), level_req=3)]
+        self._abilities = [LearnableAbility(Ability())]
 
     def with_name(self, name: str) -> 'SpeciesBuilder':
         self._name = name
