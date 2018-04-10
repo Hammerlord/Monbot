@@ -187,6 +187,17 @@ class Elemental:
         return [learnable.ability for learnable in self._ability_manager.available_abilities]
 
     @property
+    def eligible_abilities(self) -> List[Ability]:
+        """
+        Return available abilities that aren't already active.
+        """
+        return [learnable.ability for learnable in self._ability_manager.available_abilities
+                if learnable not in self._ability_manager.active_abilities]
+
+    def swap_ability(self, active_position: int, available_position: int) -> None:
+        self._ability_manager.swap_ability(active_position, available_position)
+
+    @property
     def rank(self):
         return self._attribute_manager.rank
 

@@ -47,9 +47,12 @@ class AbilityManager:
 
     def swap_ability(self, active_position: int, available_position: int) -> None:
         """
-        Replaces a LearnableAbility in active_abilities with one from available_abilities.
+        Replaces a LearnableAbility in active_abilities with one from eligible_abilities.
         Uses position in the respective lists.
         """
+        if self._active_abilities[active_position].ability_id == 1:
+            # Defend, which is ability id 1, is not swappable.
+            return
         self._active_abilities[active_position] = self.eligible_abilities[available_position]
 
     def _can_learn(self, ability: LearnableAbility) -> bool:
@@ -58,10 +61,10 @@ class AbilityManager:
 
     def _learn_ability(self, ability: LearnableAbility) -> None:
         if len(self._active_abilities) < self._max_active:
-            self._active_abilities.append(ability)
+            self._active_abilities.insert(0, ability)  # Keep Defend last in the list.
         self._available_abilities.append(ability)
 
     def _initialize_abilities(self) -> List[LearnableAbility]:
         abilities = self.elemental.species.learnable_abilities
-        abilities.append(AbilityFactory.defend())  # All Elementals learn Defend
+        abilities.insert(0, AbilityFactory.defend())  # All Elementals learn Defend
         return abilities

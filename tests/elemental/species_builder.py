@@ -1,3 +1,5 @@
+from typing import List
+
 from src.core.elements import Elements
 from src.elemental.ability.ability import LearnableAbility, Ability
 from src.elemental.species.species import GrowthRate, Species
@@ -52,22 +54,14 @@ class StatsBuilder:
         return growth_rate
 
 
-class Level3Ability(LearnableAbility):
-    """
-    A test ability with a level 3 requirement.
-    """
-    def __init__(self, ability: Ability):
-        super().__init__(ability)
-        self._level_requirement = 3
-
-
 class SpeciesBuilder(StatsBuilder):
     def __init__(self):
         super().__init__()
         self._name = "Thefaketofu"
         self._element = Elements.LIGHT
         self._growth_rate = StatsBuilder().build()
-        self._abilities = [LearnableAbility(Ability()), Level3Ability(Ability())]
+        self._abilities = [LearnableAbility(Ability()),
+                           LearnableAbility(Ability(), level_req=3)]
 
     def with_name(self, name: str) -> 'SpeciesBuilder':
         self._name = name
@@ -75,6 +69,10 @@ class SpeciesBuilder(StatsBuilder):
 
     def with_growth_rate(self, growth_rate: GrowthRate) -> 'SpeciesBuilder':
         self._growth_rate = growth_rate
+        return self
+
+    def with_abilities(self, abilities: List[LearnableAbility]) -> 'SpeciesBuilder':
+        self._abilities = abilities
         return self
 
     def build(self) -> Species:

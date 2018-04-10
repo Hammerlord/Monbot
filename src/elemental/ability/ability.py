@@ -45,9 +45,19 @@ class LearnableAbility:
     elemental.swiftness
     """
 
-    def __init__(self, ability: Ability):
+    def __init__(self,
+                 ability: Ability,
+                 level_req=1):
         self._ability = ability
-        self._level_requirement = 1
+        self._level_requirement = level_req
+
+    @property
+    def ability_id(self) -> int:
+        return self._ability.id
+
+    @property
+    def name(self) -> str:
+        return self._ability.name
 
     @property
     def ability(self) -> Ability:
