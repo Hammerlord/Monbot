@@ -11,7 +11,8 @@ class StatusEffect:
         self._description = None  # Str. TBD by descendants.
         self._target = None  # The CombatElemental this StatusEffect is applied to.
         self._applier = None  # The CombatElemental that applied this StatusEffect.
-        self._max_duration = 0  # Set to -1 if no duration.
+        self._base_duration = 0  # Duration in number of the affected Elemental's turns. -1 if no duration.
+        self._max_duration = self._calculate_duration()
         self._duration_remaining = 0
         self.is_dispellable = True
         self.fades_on_switch = True
@@ -141,3 +142,12 @@ class StatusEffect:
         Summarize the effect in a string.
         """
         raise NotImplementedError
+
+    def _calculate_duration(self):
+        """
+         *2 for decrementing on enemy turn end and self turn end, so that effects can end after
+         your Elemental's turn, or after your enemy's turn.
+         +1 to account for the initial on_turn_end when the effect is applied, ie. so that your 1 turn duration
+         effect doesn't just end immediately.
+        """
+        return self._base_duration * 2 + 1

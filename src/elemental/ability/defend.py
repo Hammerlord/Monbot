@@ -5,7 +5,7 @@ from src.elemental.status_effect.status_effect import StatusEffect
 class DefendEffect(StatusEffect):
     def __init__(self):
         super().__init__()
-        self._max_duration = 2  # TODO doesn't end until end of next turn
+        self._base_duration = 0.5  # Until the end of the opponent's turn
 
     def on_effect_start(self):
         self.apply_stat_changes()
