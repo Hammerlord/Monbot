@@ -177,22 +177,18 @@ class Elemental:
 
     @property
     def active_abilities(self) -> List[Ability]:
-        """
-        :return: Extract Ability from AbilityManager's LearnableAbilities.
-        """
-        return [learnable.ability for learnable in self._ability_manager.active_abilities]
+        return self._ability_manager.active_abilities
 
     @property
     def available_abilities(self) -> List[Ability]:
-        return [learnable.ability for learnable in self._ability_manager.available_abilities]
+        return self._ability_manager.available_abilities
 
     @property
     def eligible_abilities(self) -> List[Ability]:
         """
         Return available abilities that aren't already active.
         """
-        return [learnable.ability for learnable in self._ability_manager.available_abilities
-                if learnable not in self._ability_manager.active_abilities]
+        return self._ability_manager.eligible_abilities
 
     def swap_ability(self, active_position: int, available_position: int) -> None:
         self._ability_manager.swap_ability(active_position, available_position)
