@@ -238,6 +238,13 @@ class ElementalTests(unittest.TestCase):
                 has_defend = True
         self.assertIs(has_defend, True, error)
 
+    def test_duplicate_abilities(self):
+        error = "Elemental can incorrectly learn the same ability"
+        species = SpeciesBuilder().with_abilities([self.get_learnable_ability(level=1)]).build()
+        elemental = ElementalBuilder().with_level(5).with_species(species).build()
+        num_abilities = len(elemental.active_abilities)  # Should be 2 because of the default ability Defend
+        self.assertEqual(num_abilities, 2, error)
+
     def test_num_active_abilities(self):
         error = "Elemental can incorrectly have more than 5 abilities active"
         species = self.get_species()
