@@ -2,9 +2,9 @@ from src.character.player import Player
 from src.elemental.attribute.attribute_factory import AttributeFactory
 from src.elemental.combat_elemental import CombatElemental
 from src.elemental.elemental import Elemental
-from src.elemental.species.species import GrowthRate, Species
+from src.elemental.species.species import Species
+from tests.character.test_user import UserBuilder
 from tests.elemental.species_builder import SpeciesBuilder
-from tests.test_user import UserBuilder
 
 
 class ElementalBuilder:

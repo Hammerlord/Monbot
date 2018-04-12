@@ -1,10 +1,8 @@
-from typing import Type
-
 from src.character.character import Character
 from src.character.npc import NPC
 from src.character.player import Player
+from tests.character.test_user import UserBuilder
 from tests.elemental.elemental_builder import ElementalBuilder
-from tests.test_user import UserBuilder
 
 
 class CharacterBuilder:

@@ -1,5 +1,5 @@
 from src.team.team import Team
-from tests.test_user import UserBuilder
+from tests.character.test_user import UserBuilder
 
 
 class TeamBuilder:

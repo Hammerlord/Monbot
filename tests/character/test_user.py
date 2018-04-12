@@ -10,8 +10,7 @@ class UserBuilder:
         return self.test_user
 
 
-
-class TestUser():
+class TestUser:
     def __init__(self):
-        self.id = 444444
+        self.id = '444444'
         self.name = "A test user"

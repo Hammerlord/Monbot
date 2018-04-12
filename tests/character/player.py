@@ -1,7 +1,7 @@
 import unittest
 
 from tests.character.character_builder import PlayerBuilder
-from tests.test_user import UserBuilder
+from tests.character.test_user import UserBuilder
 
 
 class PlayerTests(unittest.TestCase):
