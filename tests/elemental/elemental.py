@@ -10,15 +10,6 @@ from tests.elemental.species_builder import StatsBuilder
 
 
 class ElementalTests(unittest.TestCase):
-    def setUp(self):
-        self.elemental = ElementalBuilder() \
-            .with_level(1) \
-            .with_species(self.get_species()) \
-            .build()
-
-    def tearDown(self):
-        self.elemental = None
-
     def get_growth_rate(self) -> 'GrowthRate':
         return StatsBuilder() \
             .with_physical_att(1) \
@@ -61,32 +52,43 @@ class ElementalTests(unittest.TestCase):
         AttributeFactory.add_resolve(manager)
         return manager
 
+    def level_up(self, elemental) -> None:
+        """
+        Levels up an Elemental by granting it an amount of exp = exp_to_level
+        :param elemental: Elemental
+        """
+        elemental.add_exp(elemental.exp_to_level)
+
     def test_gain_exp(self):
         error = "Elemental couldn't acquire experience"
-        self.elemental.add_exp(10)
-        exp_gained = self.elemental.current_exp
+        elemental = ElementalBuilder().with_level(1).build()
+        elemental.add_exp(10)
+        exp_gained = elemental.current_exp
         self.assertEqual(exp_gained, 10, error)
 
     def test_level_up(self):
         error = "Elemental couldn't level"
-        before_level = self.elemental.level
-        self.elemental.add_exp(self.elemental.exp_to_level)
-        after_level = self.elemental.level
+        elemental = ElementalBuilder().with_level(1).build()
+        before_level = elemental.level
+        self.level_up(elemental)
+        after_level = elemental.level
         self.assertGreater(after_level, before_level, error)
 
     def test_level_exp_cap(self):
         error = "Leveling up didn't increase the Elemental's required exp"
-        lower_requirement = self.elemental.exp_to_level
-        higher_level_elemental = ElementalBuilder().with_level(2).build()
-        higher_requirement = higher_level_elemental.exp_to_level
+        elemental = ElementalBuilder().with_level(1).build()
+        lower_requirement = elemental.exp_to_level
+        self.level_up(elemental)
+        higher_requirement = elemental.exp_to_level
         self.assertGreater(higher_requirement, lower_requirement, error)
 
     def test_multi_level_up(self):
         error = "Elemental failed to level up multiple times with multiple levels' worth of experience"
-        exp_gained = self.elemental.exp_to_level * 5  # Arbitrary large amount of exp
-        before_level = self.elemental.level
-        self.elemental.add_exp(exp_gained)
-        after_level = self.elemental.level
+        elemental = ElementalBuilder().with_level(1).build()
+        before_level = elemental.level
+        exp_gained = elemental.exp_to_level * 5  # Arbitrary large amount of exp
+        elemental.add_exp(exp_gained)
+        after_level = elemental.level
         self.assertGreater(after_level, before_level + 1, error)
 
     def test_default_nickname(self):
@@ -98,13 +100,15 @@ class ElementalTests(unittest.TestCase):
     def test_set_nickname(self):
         error = "Elemental nickname couldn't be set"
         name = "Monze"
-        self.elemental.nickname = name
-        self.assertEqual(self.elemental.nickname, name, error)
+        elemental = ElementalBuilder().build()
+        elemental.nickname = name
+        self.assertEqual(elemental.nickname, name, error)
 
     def test_nickname_max_length(self):
         error = "Elemental nickname can incorrectly be set to more than 15 characters"
-        self.elemental.nickname = "dsadadaifjasifjasfdsd"
-        name_length = len(self.elemental.nickname)
+        elemental = ElementalBuilder().build()
+        elemental.nickname = "dsadadaifjasifjasfdsd"
+        name_length = len(elemental.nickname)
         self.assertLessEqual(name_length, 15, error)
 
     def test_reset_nickname(self):
@@ -118,13 +122,15 @@ class ElementalTests(unittest.TestCase):
     def test_set_note(self):
         error = "Elemental note couldn't be set"
         note = "+PDEF +PATT +SPEED bruiser"
-        self.elemental.note = note
-        self.assertEqual(self.elemental.note, note, error)
+        elemental = ElementalBuilder().build()
+        elemental.note = note
+        self.assertEqual(elemental.note, note, error)
 
     def test_note_max_length(self):
         error = "Elemental note can incorrectly be set to more than 75 characters"
-        self.elemental.note = error
-        name_length = len(self.elemental.note)
+        elemental = ElementalBuilder().build()
+        elemental.note = error
+        name_length = len(elemental.note)
         self.assertLessEqual(name_length, 75, error)
 
     def test_gain_stats(self):
@@ -141,8 +147,7 @@ class ElementalTests(unittest.TestCase):
         error = "Species' stats should not change when Elemental levels!"
         species = self.get_species()
         elemental = ElementalBuilder().with_level(1).with_species(species).build()
-        exp = elemental.exp_to_level
-        self.elemental.add_exp(exp)
+        self.level_up(elemental)
         self.assertEqual(species._physical_att, 15, error)
         self.assertEqual(species._magic_att, 15, error)
         self.assertEqual(species._physical_def, 15, error)
@@ -152,7 +157,8 @@ class ElementalTests(unittest.TestCase):
 
     def test_has_ability(self):
         error = "Elemental didn't get Abilities on instantiation"
-        self.assertIsInstance(self.elemental.active_abilities[0], Ability, error)
+        elemental = ElementalBuilder().build()
+        self.assertIsInstance(elemental.active_abilities[0], Ability, error)
 
     def test_owner_restricts_level(self):
         error = "Elemental shouldn't be able to level past its owner"
@@ -219,21 +225,27 @@ class ElementalTests(unittest.TestCase):
 
     def test_initial_abilities(self):
         error = "Elemental didn't learn abilities on creation"
-        num_abilities = len(self.elemental.active_abilities)
+        elemental = ElementalBuilder().build()
+        num_abilities = len(elemental.active_abilities)
         self.assertGreater(num_abilities, 0, error)
 
     def test_learn_abilities_by_level(self):
         error = "Elemental couldn't learn an ability by leveling"
-        initial_num_abilities = len(self.elemental.active_abilities)
-        exp = self.elemental.exp_to_level * 500  # Arbitrary large amount of exp to reach level 10
-        self.elemental.add_exp(exp)
-        leveled_num_abilities = len(self.elemental.active_abilities)
+        elemental = ElementalBuilder() \
+            .with_level(1) \
+            .with_species(self.get_species()) \
+            .build()
+        initial_num_abilities = len(elemental.active_abilities)
+        exp = elemental.exp_to_level * 500  # Arbitrary large amount of exp
+        elemental.add_exp(exp)
+        leveled_num_abilities = len(elemental.active_abilities)
         self.assertGreater(leveled_num_abilities, initial_num_abilities, error)
 
     def test_learn_defend(self):
         error = "Elemental must learn Defend as a basic ability"
+        elemental = ElementalBuilder().build()
         has_defend = False
-        for ability in self.elemental.active_abilities:
+        for ability in elemental.active_abilities:
             if ability.id == Defend().id:
                 has_defend = True
         self.assertIs(has_defend, True, error)
