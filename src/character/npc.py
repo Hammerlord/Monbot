@@ -4,8 +4,8 @@ from random import randint
 from src.character.character import Character
 from src.character.player import Player
 from src.elemental.elemental import Elemental
+from src.elemental.elemental_factory import ElementalInitializer
 from src.elemental.species.species import Species
-from tests.elemental.elemental_builder import ElementalBuilder
 
 
 class Professions(Enum):
@@ -69,10 +69,7 @@ class NPC(Character):
     def _get_random_elemental(self) -> 'Elemental':
         species = self._get_random_species()
         level = self._roll_elemental_level()
-        return ElementalBuilder() \
-            .with_species(species) \
-            .with_level(level) \
-            .build()
+        return ElementalInitializer().make(species, level)
 
     def _roll_elemental_level(self) -> int:
         min_level = max(1, self._level - 2)  # Cannot be below 1
