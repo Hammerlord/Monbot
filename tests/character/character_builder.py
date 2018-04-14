@@ -1,5 +1,6 @@
 from src.character.character import Character
 from src.character.npc import NPC
+from src.character.npc_initializer import NPCInitializer
 from src.character.player import Player
 from tests.character.test_user import UserBuilder
 from tests.elemental.elemental_builder import ElementalBuilder
@@ -23,11 +24,10 @@ class CharacterBuilder:
 
 class NPCBuilder:
     def __init__(self):
-        self._level = 1
         self._opponent = PlayerBuilder().build()
 
     def build(self) -> NPC:
-        npc = NPC()
+        npc = NPCInitializer.adventurer()
         npc.generate_team(self._opponent)
         return npc
 

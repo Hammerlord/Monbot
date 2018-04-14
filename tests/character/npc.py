@@ -73,19 +73,14 @@ class NPCTests(unittest.TestCase):
                 self.assertLessEqual(elemental.level, npc.level, error)
 
     def test_profession_elementals(self):
-        error = "A Researcher's elementals don't match his profession"
-        researcher = NPCBuilder().researcher()
-        team = researcher.team
-        pool = researcher.potential_elementals()
+        error = "An NPC's elementals don't match potential species"
+        npc = NPCBuilder().build()
+        team = npc.team
+        pool = npc._potential_species
         for elemental in team.elementals:
-            self.assertIn(elemental, pool, error)
+            self.assertIn(elemental.species, pool, error)
 
     def test_default_nickname(self):
-        error = "NPC nickname must default to a string"
-        npc = NPCBuilder().random()
+        error = "NPC nickname doesn't get set"
+        npc = NPCBuilder().build()
         self.assertIsInstance(npc.nickname, str, error)
-
-    def test_researcher_name(self):
-        error = "A Researcher is not called a Researcher as his nickname"
-        researcher = NPCBuilder().researcher()
-        self.assertEqual(researcher.nickname, "Researcher", error)

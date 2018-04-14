@@ -1,4 +1,3 @@
-from enum import Enum
 from random import randint
 
 from src.character.character import Character
@@ -8,29 +7,23 @@ from src.elemental.elemental_factory import ElementalInitializer
 from src.elemental.species.species import Species
 
 
-class Professions(Enum):
-    NONE = 0
-    RESEARCHER = 1
-    EXPLORER = 2
-    ADVENTURER = 3
-    ARCHAEOLOGIST = 4
-    CULTIST = 5
-    PALADIN = 6
-    ENFORCER = 7
-
-
 class NPC(Character):
-
     """
     A non-player character with a Team of Elementals that a Player can battle.
     The profession of NPCs influence what Elementals appear on their Team.
     """
 
-    def __init__(self):
+    def __init__(self,
+                 nickname: str,
+                 potential_species):
+        """
+        :param nickname: Eg. 'Adventurer'
+        :param potential_species: List[Species]
+        """
         super().__init__()
         self._is_npc = True
-        self.profession = Professions.NONE  # TBD by descendants
-        self._potential_species = []  # List[Species] -- TBD by descendants. TODO: put this in a factory
+        self._nickname = nickname
+        self._potential_species = potential_species
 
     def generate_team(self, opponent: 'NPC' or Player) -> None:
         """
