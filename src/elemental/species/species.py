@@ -70,6 +70,7 @@ class Species(StatsInterface):
     def __init__(self):
         super().__init__()
         self._name = 'Anonymous Species'
+        self._description = 'Something interesting here.'
         self._element = Elements.NONE
         self._max_hp = 50
         self._starting_mana = 20

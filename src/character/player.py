@@ -1,5 +1,5 @@
 from src.character.character import Character
-from src.elemental.elemental_factory import ElementalFactory
+from src.elemental.elemental_factory import ElementalInitializer
 
 
 class Player(Character):
@@ -31,20 +31,20 @@ class NewPlayer:
     @staticmethod
     def create_with_rainatu(user) -> 'Player':
         new_profile = Player(user)
-        elemental = ElementalFactory.rainatu()
+        elemental = ElementalInitializer.rainatu()
         new_profile.add_elemental(elemental)
         return new_profile
 
     @staticmethod
     def create_with_sithel(user) -> 'Player':
         new_profile = Player(user)
-        elemental = ElementalFactory.sithel()
+        elemental = ElementalInitializer.sithel()
         new_profile.add_elemental(elemental)
         return new_profile
 
     @staticmethod
     def create_with_mithus(user) -> 'Player':
         new_profile = Player(user)
-        elemental = ElementalFactory.mithus()
+        elemental = ElementalInitializer.mithus()
         new_profile.add_elemental(elemental)
         return new_profile

@@ -2,7 +2,6 @@ from src.core.elements import Elements, Category
 
 
 class Ability:
-
     """
     Basic information about an ability.
     """
@@ -32,7 +31,6 @@ class Ability:
 
 
 class LearnableAbility:
-
     """
     Wraps an Ability with requirements, learnable by a particular Elemental.
     The requirements can be one or more of the following:

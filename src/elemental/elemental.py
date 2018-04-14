@@ -212,6 +212,23 @@ class Elemental:
     def note(self, message: str) -> None:
         self._note = self._validate_note(message)
 
+    def add_exp(self, amount: int) -> None:
+        if self._is_level_cap():
+            return
+        self._current_exp += amount
+        self._check_level_up()
+
+    def level_to(self, level: int) -> None:
+        """
+        Eg. to generate level-appropriate Elementals or test Elementals.
+        """
+        while self.level < level:
+            self._level += 1
+            self._gain_stats()
+            self._increase_exp_to_level()
+            self._check_raise_rank()
+            self._ability_manager.check_learnable_abilities()
+
     def reset_note(self) -> None:
         """
         TODO Sets the note based on the Elemental's Attributes.
@@ -225,12 +242,6 @@ class Elemental:
             self._level_up()
             self._check_raise_rank()
             self._ability_manager.check_learnable_abilities()
-
-    def add_exp(self, amount: int) -> None:
-        if self._is_level_cap():
-            return
-        self._current_exp += amount
-        self._check_level_up()
 
     def _level_up(self) -> None:
         self._current_exp -= self._exp_to_level
