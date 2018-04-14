@@ -13,11 +13,22 @@ class StatusEffect:
         self._applier = None  # The CombatElemental that applied this StatusEffect.
 
         # Pass duration in number of the affected Elemental's turns. -1 if no duration:
-        self._max_duration = self._calculate_duration(num_turns=0)
+        self._max_duration = self._calculate_duration(self._base_duration)
         self._duration_remaining = 0
         self.is_dispellable = True
         self.fades_on_switch = True
         self.can_stack = False  # Ie. can we apply multiple instances of this effect?
+
+    @property
+    def _base_duration(self) -> float:
+        """
+        :return: The number of turns this status effect lasts, in terms of your Elemental's turns.
+        Examples:
+        0.5 = Lasts until the start of your next turn
+        2 = Lasts for two full turns
+        See _calculate_duration.
+        """
+        return 0
 
     @property
     def name(self) -> str:
@@ -145,11 +156,11 @@ class StatusEffect:
         raise NotImplementedError
 
     @staticmethod
-    def _calculate_duration(num_turns: int):
+    def _calculate_duration(num_turns: float) -> int:
         """
          *2 for decrementing on enemy turn end and self turn end, so that effects can end after
          your Elemental's turn, or after your enemy's turn.
          +1 to account for the initial on_turn_end when the effect is applied, ie. so that your 1 turn duration
          effect doesn't just end immediately.
         """
-        return num_turns * 2 + 1
+        return int(num_turns * 2 + 1)
