@@ -11,6 +11,7 @@ class TeamBuilder:
         :param owner: Player or NPC
         """
         self._owner = owner
+        return self
 
     def build(self) -> Team:
         return Team(self._owner)
