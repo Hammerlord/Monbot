@@ -21,6 +21,7 @@ class AttributeManager:
         self._defend_potency = 0  # Float. Bonus percentage of damage blocked by Defend.
         self._defend_charges = 0
         self._mana_per_turn = 0
+        self._bench_mana_per_turn = 0
         self._starting_mana = 0
         self._max_mana = 0
         self._points_remaining = 0
@@ -128,6 +129,13 @@ class AttributeManager:
 
     def add_mana_per_turn(self, amount: int) -> None:
         self._mana_per_turn += amount
+
+    @property
+    def bench_mana_per_turn(self) -> int:
+        return self._bench_mana_per_turn
+
+    def add_bench_mana_per_turn(self, amount: int) -> None:
+        self._bench_mana_per_turn += amount
 
     @property
     def starting_mana(self) -> int:

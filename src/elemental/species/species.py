@@ -76,6 +76,7 @@ class Species(StatsInterface):
         self._starting_mana = 20
         self._max_mana = 50
         self._mana_per_turn = 5
+        self._bench_mana_per_turn = 2
         self._defend_charges = 2
         self._left_icon = None  # str. This Elemental's emote, facing right.
         self._right_icon = None  # str. This Elemental's emote, facing left.
@@ -113,6 +114,10 @@ class Species(StatsInterface):
     @property
     def mana_per_turn(self) -> int:
         return self._mana_per_turn
+
+    @property
+    def bench_mana_per_turn(self) -> int:
+        return self._bench_mana_per_turn
 
     @property
     def defend_charges(self) -> int:

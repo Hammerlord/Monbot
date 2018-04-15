@@ -11,6 +11,7 @@ class CombatElemental:
         self._current_mana = elemental.starting_mana
         self._max_mana = elemental.max_mana
         self._mana_per_turn = elemental.mana_per_turn
+        self._bench_mana_per_turn = elemental._bench_mana_per_turn
         self._defend_charges = elemental.defend_charges
         self._can_switch = True
         self._is_active = False
@@ -122,6 +123,12 @@ class CombatElemental:
 
     def on_turn_start(self) -> None:
         self.gain_mana(self._mana_per_turn)
+
+    def gain_bench_mana(self) -> None:
+        """
+        All eligible bench (not dead, not active) Elementals gain mana per turn.
+        """
+        self.gain_mana(self._bench_mana_per_turn)
 
     def gain_mana(self, amount: int) -> None:
         self._current_mana += amount
