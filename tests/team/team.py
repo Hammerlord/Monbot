@@ -21,8 +21,8 @@ class TeamTests(unittest.TestCase):
 
     def test_reorder_elementals(self):
         error = "Failed to reorder Elementals in a Team"
-        monze = ElementalBuilder().with_id(1).build()
-        lofy = ElementalBuilder().with_id(2).build()
+        monze = ElementalBuilder().build()
+        lofy = ElementalBuilder().build()
         self.team.add_elemental(monze)  # Position 0
         self.team.add_elemental(lofy)  # Position 1
         self.team.reorder(0, 1)
@@ -31,8 +31,8 @@ class TeamTests(unittest.TestCase):
 
     def test_swap_elemental(self):
         error = "Failed to swap Elementals in a valid Team slot"
-        monze = ElementalBuilder().with_id(1).build()
-        lofy = ElementalBuilder().with_id(2).build()
+        monze = ElementalBuilder().build()
+        lofy = ElementalBuilder().build()
         self.team.add_elemental(monze)  # Position 0
         self.team.swap(slot=0, elemental=lofy)
         self.assertEqual(lofy.id, self.team.get_elemental(0).id, error)
@@ -46,15 +46,15 @@ class TeamTests(unittest.TestCase):
 
     def test_reorder_empty(self):
         error = "Incorrectly reordered an Elemental into an empty slot"
-        monze = ElementalBuilder().with_id(1).build()
+        monze = ElementalBuilder().build()
         self.team.add_elemental(monze)
         self.team.reorder(0, 3)
         self.assertEqual(monze.id, self.team.get_elemental(0).id, error)
 
     def test_remove_elemental(self):
         error = "Failed to remove an Elemental from the Team"
-        monze = ElementalBuilder().with_id(1).build()
-        lofy = ElementalBuilder().with_id(2).build()
+        monze = ElementalBuilder().build()
+        lofy = ElementalBuilder().build()
         self.team.add_elemental(monze)  # Position 0
         self.team.add_elemental(lofy)  # Position 1
         self.team.remove_elemental(0)  # Remove monze

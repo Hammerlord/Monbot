@@ -16,8 +16,8 @@ class CombatTeamTests(unittest.TestCase):
         :return: A test CombatTeam with two Elementals.
         """
         team = TeamBuilder().build()
-        smurggle = ElementalBuilder().with_id(1).build()
-        loksy = ElementalBuilder().with_id(2).build()
+        smurggle = ElementalBuilder().build()
+        loksy = ElementalBuilder().build()
         team.add_elemental(smurggle)
         team.add_elemental(loksy)
         return CombatTeam(team)
@@ -29,8 +29,8 @@ class CombatTeamTests(unittest.TestCase):
     def test_skip_ko_active(self):
         error = "CombatTeam incorrectly set a 0 HP Elemental as the active Elemental"
         team = TeamBuilder().build()
-        smurggle = ElementalBuilder().with_id(1).with_current_hp(0).build()
-        loksy = ElementalBuilder().with_id(2).build()
+        smurggle = ElementalBuilder().with_current_hp(0).build()
+        loksy = ElementalBuilder().build()
         team.add_elemental(smurggle)
         team.add_elemental(loksy)
         combat_team = CombatTeam(team)
@@ -45,9 +45,15 @@ class CombatTeamTests(unittest.TestCase):
 
     def test_bench(self):
         error = "CombatTeam incorrectly included the active CombatElemental in bench"
-        bench = self.get_combat_team().bench
+        team = TeamBuilder().build()
+        smurggle = ElementalBuilder().build()
+        loksy = ElementalBuilder().build()
+        team.add_elemental(smurggle)
+        team.add_elemental(loksy)
+        combat_team = CombatTeam(team)
+        bench = combat_team.bench
         self.assertEqual(len(bench), 1, error)
-        self.assertEqual(bench[0].id, 2, error)  # Loksy's id, see setUp
+        self.assertEqual(bench[0].id, loksy.id, error)
 
     def test_eligible_bench(self):
         error = "CombatTeam incorrectly included knocked out CombatElementals in the eligible bench"
@@ -62,8 +68,8 @@ class CombatTeamTests(unittest.TestCase):
     def test_switch_ko(self):
         error = "CombatTeam incorrectly allowed a knocked out CombatElemental to be switched in"
         team = TeamBuilder().build()
-        smurggle = ElementalBuilder().with_id(1).with_current_hp(0).build()
-        loksy = ElementalBuilder().with_id(2).build()
+        smurggle = ElementalBuilder().with_current_hp(0).build()
+        loksy = ElementalBuilder().build()
         team.add_elemental(smurggle)
         team.add_elemental(loksy)
         combat_team = CombatTeam(team)
@@ -87,7 +93,7 @@ class CombatTeamTests(unittest.TestCase):
     def test_all_knocked_out(self):
         error = "CombatTeam.is_all_knocked_out didn't resolve correctly"
         team = TeamBuilder().build()
-        smurggle = ElementalBuilder().with_id(1).with_current_hp(0).build()
+        smurggle = ElementalBuilder().with_current_hp(0).build()
         team.add_elemental(smurggle)
         combat_team = CombatTeam(team)
         self.assertIs(combat_team.is_all_knocked_out, True, error)

@@ -11,7 +11,6 @@ class ElementalBuilder:
     def __init__(self):
         self._species = SpeciesBuilder().build()
         self._level = 1
-        self._id = 0
         self._nickname = None
         self._current_hp = 50
         self._max_hp = 50
@@ -49,10 +48,6 @@ class ElementalBuilder:
         self._rank = rank
         return self
 
-    def with_id(self, id: int) -> 'ElementalBuilder':
-        self._id = id
-        return self
-
     def with_nickname(self, nickname: str) -> 'ElementalBuilder':
         self._nickname = nickname
         return self
@@ -69,7 +64,6 @@ class ElementalBuilder:
         elemental.owner = self._owner
         if self._nickname:
             elemental.nickname = self._nickname
-        elemental._id = self._id  # TODO dependency?
         self._level_elemental(elemental)
         return elemental
 

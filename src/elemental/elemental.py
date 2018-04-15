@@ -1,4 +1,5 @@
 import math
+import uuid
 from typing import List
 
 from src.core.elements import Elements
@@ -16,7 +17,7 @@ class Elemental:
         super().__init__()
         self._species = species  # TBD by descendants
         self._level = 1
-        self._id = 0
+        self._id = uuid.uuid4().int
         self._max_hp = species.max_hp
         self._current_hp = species.max_hp
         self._starting_mana = species.starting_mana
