@@ -4,18 +4,6 @@ from src.elemental.ability.ability import Target, Ability
 from src.elemental.combat_elemental import CombatElemental
 
 
-class CombatAction:
-    """
-    An action taken by a CombatElemental.
-    TODO: Switching, items
-    """
-    def __init__(self,
-                 actor: CombatElemental,
-                 ability: Ability):
-        self.actor = actor
-        self.ability = ability
-
-
 class Combat:
     def __init__(self):
         self.history = []  # A list[CombatAction] of actions taken by participants
@@ -28,17 +16,18 @@ class Combat:
         :param combat_team: CombatTeam
         """
         self.teams.append(combat_team)
+        if combat_team.owner:
+            self.players.append(combat_team.owner)
 
-    def get_target(self, action: CombatAction) -> CombatElemental:
+    def get_target(self, ability: Ability, actor: CombatElemental) -> CombatElemental:
         """
-        :param action: The Action being used.
         :return: The CombatElemental the Ability should affect, based on the Ability's targeting enum.
         """
-        target = action.ability.targeting
+        target = ability.targeting
         if target == Target.SELF:
-            return action.actor
+            return actor
         elif target == Target.ENEMY:
-            return self.get_active_enemy(action.actor)
+            return self.get_active_enemy(actor)
 
     def get_active_enemy(self, actor: CombatElemental) -> CombatElemental:
         """
