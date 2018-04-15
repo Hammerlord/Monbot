@@ -1,5 +1,6 @@
 from typing import List
 
+from src.combat.combat import CombatAction
 from src.elemental.combat_elemental import CombatElemental
 from src.team.team import Team
 
@@ -8,15 +9,30 @@ class CombatTeam:
 
     """
     Wrapper class for a Team in battle. Generates CombatElemental instances of the Team's Elementals.
+    The player controls the CombatTeam to manipulate Combat.
     TODO entering combat should fail if all Elementals have been knocked out.
     """
 
-    def __init__(self, team: Team):
+    def __init__(self,
+                 team: Team):
+        """
+        :param team: The non-combat Team.
+        """
+        self.combat = None
         self.team = [CombatElemental(elemental) for elemental in team.elementals]
         self.owner = team.owner
         self._active = self.set_next_active()
         self.status_effects = []  # Team-wide status effects, eg. weather.
-        self.actions = []  # A stack of CombatActions taken by this team.
+        self.actions = []  # list[CombatAction] taken by this team.
+        self.recap = []
+
+    def set_combat(self, combat):
+        """
+        :param combat: The battle this Team is joining.
+        :return:
+        """
+        self.combat = combat
+        self.combat.join_battle(self)
 
     @property
     def active(self) -> CombatElemental:
@@ -28,6 +44,10 @@ class CombatTeam:
         Returns the team CombatElementals minus the active one.
         """
         return [elemental for elemental in self.team if elemental != self._active]
+
+    @property
+    def can_switch(self) -> bool:
+        return len(self.eligible_bench) > 0
 
     @property
     def eligible_bench(self) -> List[CombatElemental]:
@@ -48,12 +68,19 @@ class CombatTeam:
         """
         return all(elemental.is_knocked_out for elemental in self.team)
 
+    def use_ability(self, action: CombatAction) -> None:
+        if self.active.is_knocked_out:
+            return
+        target = self.combat.get_target(action)
+        action.ability.execute(target)
+        self.active.on_ability()
+        self.active.on_turn_end()
+        self.combat.check_end()
+
     def on_turn_start(self) -> None:
-        """
-        All eligible bench (not dead, not active) Elementals gain +2 mana per turn.
-        """
+        self.active.on_turn_start()
         for elemental in self.eligible_bench:
-            elemental.gain_mana(2)
+            elemental.gain_bench_mana()
 
     def set_next_active(self) -> CombatElemental:
         """
