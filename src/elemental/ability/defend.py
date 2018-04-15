@@ -5,6 +5,7 @@ from src.elemental.status_effect.status_effect import StatusEffect
 class DefendEffect(StatusEffect):
     def __init__(self):
         super().__init__()
+        self._icon = ':shield:'
 
     @property
     def _base_duration(self) -> float:
@@ -13,11 +14,11 @@ class DefendEffect(StatusEffect):
     def on_effect_start(self):
         self.apply_stat_changes()
 
-    def apply_stat_changes(self):
-        self.target.update_damage_reduction(self.target.defend_potency)
-
-    def get_recap(self) -> str:
+    def on_receive_damage(self, amount: int, actor) -> str:
         return f"{self.target.nickname} is defending!"
+
+    def apply_stat_changes(self) -> None:
+        self.target.update_damage_reduction(self.target.defend_potency)
 
 
 class Defend(Ability):

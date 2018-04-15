@@ -11,6 +11,7 @@ class StatusEffect:
         self._description = None  # Str. TBD by descendants.
         self._target = None  # The CombatElemental this StatusEffect is applied to.
         self._applier = None  # The CombatElemental that applied this StatusEffect.
+        self._icon = ''  # The emote that represents the effect.
 
         # Pass duration in number of the affected Elemental's turns. -1 if no duration:
         self._max_duration = self._calculate_duration(self._base_duration)
@@ -33,6 +34,10 @@ class StatusEffect:
     @property
     def name(self) -> str:
         return self._name
+
+    @property
+    def icon(self) -> str:
+        return self._icon
 
     @property
     def description(self) -> str:
