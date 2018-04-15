@@ -24,7 +24,7 @@ class CombatTeam:
         self.owner = team.owner
         self._active = self.set_next_active()
         self.status_effects = []  # Team-wide status effects, eg. weather.
-        self.actions = []  # list[Action] taken by this team.
+        self._actions = []  # list[Action] taken by this team.
         self.turn_log = []  # list[list[str]], detailing status effects at each stage of the turn, actions...
 
     def set_combat(self, combat):
@@ -69,6 +69,11 @@ class CombatTeam:
         """
         return all(elemental.is_knocked_out for elemental in self.team)
 
+    @property
+    def last_action(self):
+        previous = len(self._actions) - 1
+        return self._actions[previous]
+
     def use_ability(self, ability: Ability) -> None:
         if self.active.is_knocked_out:
             self.handle_knockout()
@@ -84,7 +89,7 @@ class CombatTeam:
             self.handle_knockout()
 
     def handle_knockout(self) -> None:
-        self.actions.append(KnockedOut(self._active))
+        self._actions.append(KnockedOut(self._active))
 
     def make_action(self, ability: Ability) -> None:
         """
@@ -97,7 +102,7 @@ class CombatTeam:
             target=self.combat.get_target(ability, self.active)
         )
         action.execute()
-        self.actions.append(action)
+        self._actions.append(action)
         self._active.add_action(action)
 
     def on_turn_start(self) -> None:
@@ -116,10 +121,10 @@ class CombatTeam:
         Switch the active Elemental with an Elemental on CombatTeam.eligible.
         """
         eligible_elementals = self.eligible_bench
-        valid_slot = 0 <= slot < len(eligible_elementals) - 1  # Valid slot?
+        valid_slot = 0 <= slot < len(eligible_elementals)  # Valid slot?
         if not valid_slot:
             return
-        self.actions.append(Switch(
+        self._actions.append(Switch(
             character=self.owner,
             old_active=self.active,
             new_active=eligible_elementals[slot]

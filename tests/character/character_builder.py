@@ -40,17 +40,30 @@ class PlayerBuilder:
     def __init__(self):
         self._level = 1
         self.user = UserBuilder().build()
+        self.elementals = [ElementalBuilder().build()]
+        self._nickname = None
 
     def build(self) -> Player:
         player = Player(self.user)
-        player.add_elemental(ElementalBuilder().build())
+        if self._nickname:
+            player.nickname = self._nickname
+        for elemental in self.elementals:
+            player.add_elemental(elemental)
         while player.level < self._level:
             exp = player.exp_to_level
             player.add_exp(exp)
         return player
 
+    def with_elementals(self, elementals: list) -> 'PlayerBuilder':
+        self.elementals = elementals
+        return self
+
     def with_level(self, level: int) -> 'PlayerBuilder':
         self._level = level
+        return self
+
+    def with_nickname(self, nickname: str) -> 'PlayerBuilder':
+        self._nickname = nickname
         return self
 
     def with_user(self, user) -> 'PlayerBuilder':

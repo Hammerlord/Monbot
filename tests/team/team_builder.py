@@ -1,10 +1,10 @@
 from src.team.team import Team
-from tests.character.test_user import UserBuilder
+from tests.character.character_builder import PlayerBuilder
 
 
 class TeamBuilder:
     def __init__(self):
-        self._owner = UserBuilder().build()
+        self._owner = PlayerBuilder().with_elementals([]).build()
 
     def with_owner(self, owner) -> 'TeamBuilder':
         """

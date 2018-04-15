@@ -1,8 +1,9 @@
 import unittest
 
+from src.combat.combat_actions import Switch
 from src.elemental.combat_elemental import CombatElemental
 from src.team.combat_team import CombatTeam
-from tests.character.character_builder import NPCBuilder
+from tests.character.character_builder import NPCBuilder, PlayerBuilder
 from tests.elemental.elemental_builder import ElementalBuilder
 from tests.team.team_builder import TeamBuilder
 
@@ -58,7 +59,7 @@ class CombatTeamTests(unittest.TestCase):
         bench = CombatTeam(team).eligible_bench
         self.assertEqual(len(bench), 0, error)
 
-    def test_switch(self):
+    def test_switch_ko(self):
         error = "CombatTeam incorrectly allowed a knocked out CombatElemental to be switched in"
         team = TeamBuilder().build()
         smurggle = ElementalBuilder().with_id(1).with_current_hp(0).build()
@@ -68,6 +69,20 @@ class CombatTeamTests(unittest.TestCase):
         combat_team = CombatTeam(team)
         combat_team.switch(0)  # smurggle's position
         self.assertEqual(combat_team.active.id, loksy.id, error)
+
+    def test_switch_log(self):
+        error = "Switching didn't create a log as the most recent action"
+        owner = PlayerBuilder().with_nickname('Dopple').build()
+        team = TeamBuilder().with_owner(owner).build()
+        smurggle = ElementalBuilder().with_nickname('smurggle').build()
+        loksy = ElementalBuilder().with_nickname('loksy').build()
+        team.add_elemental(smurggle)
+        team.add_elemental(loksy)
+        combat_team = CombatTeam(team)
+        combat_team.switch(0)
+        action = combat_team.last_action
+        self.assertIsInstance(action, Switch, error)
+        self.assertEqual(action.recap, 'Dopple recalled smurggle and sent out loksy!', error)
 
     def test_all_knocked_out(self):
         error = "CombatTeam.is_all_knocked_out didn't resolve correctly"
