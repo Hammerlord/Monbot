@@ -173,12 +173,12 @@ class CombatElemental:
 
     def add_status_effect(self, status_effect: StatusEffect):
         equivalent_effect = self._effect_exists(status_effect)
-        if not equivalent_effect or status_effect.can_stack:
-            status_effect.target = self
-            self._status_effects.append(status_effect)
-            status_effect.on_effect_start()
-        else:
+        if equivalent_effect and not status_effect.can_stack:
             equivalent_effect.refresh_duration()
+            return
+        status_effect.target = self
+        self._status_effects.append(status_effect)
+        status_effect.on_effect_start()
 
     def _effect_exists(self, status_effect: StatusEffect) -> StatusEffect or None:
         """
