@@ -1,4 +1,16 @@
+from enum import Enum
+
 from src.core.elements import Elements, Category
+
+
+class Target(Enum):
+    SELF = 0
+    ENEMY = 1
+    ENEMY_CLEAVE = 2
+    ENEMY_AOE = 3
+    ENEMY_TEAM = 4
+    SELF_CLEAVE = 5
+    SELF_AOE = 6
 
 
 class Ability:
@@ -16,18 +28,13 @@ class Ability:
         self.mana_cost = 0
         self.defend_cost = 0
         self.turn_priority = 0
+        self.targeting = Target.ENEMY
 
-    def execute(self, target: 'CombatElemental'):
+    def execute(self, target: 'CombatElemental' or 'CombatTeam'):
         """
         What happens when you use this ability.
         """
         raise NotImplementedError
-
-    def targeting(self):
-        """
-        What kind of targeting (self, foe, multiple foes) this ability uses. TODO
-        """
-        pass
 
 
 class LearnableAbility:

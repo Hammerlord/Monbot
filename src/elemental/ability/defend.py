@@ -1,4 +1,4 @@
-from src.elemental.ability.ability import Ability
+from src.elemental.ability.ability import Ability, Target
 from src.elemental.status_effect.status_effect import StatusEffect
 
 
@@ -27,6 +27,7 @@ class Defend(Ability):
         self.name = "Defend"
         self.description = "Block incoming damage until the next turn. Gain +10 mana."
         self.turn_priority = 1
+        self.targeting = Target.SELF
 
     def execute(self, target: 'CombatElemental'):
         target.add_status_effect(DefendEffect())
