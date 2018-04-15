@@ -23,7 +23,7 @@ class CombatElemental:
         self._defend_potency = self._elemental.defend_potency
         self._damage_reduction = 0  # Float. Percentage of damage reduced on incoming attacks.
         self._status_effects = []  # List[StatusEffect]
-        self._actions = []  # List[ActionLog]  A record of the actions taken by this CombatElemental.
+        self._actions = []  # List[ElementalAction]  A record of the actions taken by this CombatElemental.
         self._abilities = elemental.active_abilities
 
     @property
@@ -154,7 +154,13 @@ class CombatElemental:
         previous = len(self._actions) - 1
         return self._actions[previous]
 
-    def on_ability(self) -> None:
+    def add_action(self, action) -> None:
+        """
+        :param action: ElementalAction
+        """
+        self._actions.append(action)
+
+    def on_ability(self, ability: Ability) -> None:
         # TODO
         pass
 
