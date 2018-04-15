@@ -27,6 +27,10 @@ class CombatElemental:
         self._abilities = elemental.active_abilities
 
     @property
+    def nickname(self) -> str:
+        return self._elemental.nickname
+
+    @property
     def id(self) -> int:
         return self._elemental.id
 
@@ -105,6 +109,13 @@ class CombatElemental:
         self._can_switch = set_switchable
 
     @property
+    def available_abilities(self) -> List[Ability]:
+        """
+        :return: A list of Abilities where the resource (eg. mana) requirements are met.
+        """
+        return [ability for ability in self._abilities if self.can_use_ability(ability)]
+
+    @property
     def abilities(self) -> List[Ability]:
         return self._abilities
 
@@ -120,6 +131,9 @@ class CombatElemental:
     @property
     def is_knocked_out(self) -> bool:
         return self._elemental.is_knocked_out
+
+    def can_use_ability(self, ability: Ability) -> bool:
+        return self.current_mana >= ability.mana_cost and self.defend_charges >= ability.defend_cost
 
     def on_turn_start(self) -> None:
         self.gain_mana(self._mana_per_turn)
