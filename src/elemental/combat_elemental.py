@@ -14,13 +14,13 @@ class CombatElemental:
         self._bench_mana_per_turn = elemental.bench_mana_per_turn
         self._defend_charges = elemental.defend_charges
         self._can_switch = True
-        self._is_active = False
         self._physical_att = self._elemental.physical_att
         self._magic_att = self._elemental.magic_att
         self._physical_def = self._elemental.physical_def
         self._magic_def = self._elemental.magic_def
         self._speed = self._elemental.speed
         self._defend_potency = self._elemental.defend_potency
+        self._stun_effects = 0  # int. The number of incapacitating effects on the Elemental. 0 = not stunned
         self._damage_reduction = 0  # Float. Percentage of damage reduced on incoming attacks.
         self._status_effects = []  # List[StatusEffect]
         self._actions = []  # List[ElementalAction]  A record of the actions taken by this CombatElemental.
@@ -33,6 +33,13 @@ class CombatElemental:
     @property
     def id(self) -> int:
         return self._elemental.id
+
+    @property
+    def is_stunned(self) -> bool:
+        """
+        :return: Whether to skip the Elemental's turn or not.
+        """
+        return self._stun_effects > 0
 
     @property
     def current_hp(self) -> int:
