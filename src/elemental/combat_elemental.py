@@ -11,7 +11,7 @@ class CombatElemental:
         self._current_mana = elemental.starting_mana
         self._max_mana = elemental.max_mana
         self._mana_per_turn = elemental.mana_per_turn
-        self._bench_mana_per_turn = elemental._bench_mana_per_turn
+        self._bench_mana_per_turn = elemental.bench_mana_per_turn
         self._defend_charges = elemental.defend_charges
         self._can_switch = True
         self._is_active = False
