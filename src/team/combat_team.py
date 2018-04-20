@@ -22,10 +22,11 @@ class CombatTeam:
         self.combat = None
         self.team = [CombatElemental(elemental) for elemental in team.elementals]
         self.owner = team.owner
-        self._active = self.set_next_active()
+        self._active = None
         self.status_effects = []  # Team-wide status effects, eg. weather.
         self._actions = []  # list[Action] taken by this team.
         self.turn_log = []  # list[list[str]], detailing status effects at each stage of the turn, actions...
+        self.switch(0)  # The first eligible (HP > 0) Elemental in the team
 
     def set_combat(self, combat):
         """
@@ -110,18 +111,12 @@ class CombatTeam:
         for elemental in self.eligible_bench:
             elemental.gain_bench_mana()
 
-    def set_next_active(self) -> CombatElemental:
-        """
-        The next Elemental eligible to be active (HP > 0), meaning it is sent to the battlefield.
-        """
-        return next((elemental for elemental in self.team if not elemental.is_knocked_out), None)
-
     def switch(self, slot: int) -> None:
         """
         Switch the active Elemental with an Elemental on CombatTeam.eligible.
         """
         eligible_elementals = self.eligible_bench
-        valid_slot = 0 <= slot < len(eligible_elementals)  # Valid slot?
+        valid_slot = 0 <= slot < len(eligible_elementals)
         if not valid_slot:
             return
         self._actions.append(Switch(
