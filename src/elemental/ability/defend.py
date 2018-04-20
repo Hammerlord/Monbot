@@ -3,6 +3,7 @@ from src.elemental.status_effect.status_effect import StatusEffect
 
 
 class DefendEffect(StatusEffect):
+
     def __init__(self):
         super().__init__()
         self._icon = ':shield:'
@@ -11,7 +12,7 @@ class DefendEffect(StatusEffect):
     def _base_duration(self) -> float:
         return 0.5  # Until the end of the opponent's turn
 
-    def on_effect_start(self):
+    def on_effect_start(self) -> None:
         self.apply_stat_changes()
 
     def on_receive_damage(self, amount: int, actor) -> str:

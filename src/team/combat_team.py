@@ -10,7 +10,7 @@ class CombatTeam:
 
     """
     Wrapper class for a Team in battle. Generates CombatElemental instances of the Team's Elementals.
-    The player controls the CombatTeam to manipulate Combat.
+    The player controls the CombatTeam.
     TODO entering combat should fail if all Elementals have been knocked out.
     """
 

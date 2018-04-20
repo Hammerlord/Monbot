@@ -218,7 +218,6 @@ class CombatElemental:
         """
         :param amount: The final amount of damage received.
         :param actor: The CombatElemental dealing the damage.
-        TODO merge with heal
         """
         self._elemental.receive_damage(amount)
         for effect in self._status_effects:

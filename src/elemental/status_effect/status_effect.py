@@ -98,19 +98,19 @@ class StatusEffect:
     def duration_ended(self) -> bool:
         return self._duration_remaining == 0
 
-    def on_turn_start(self):
+    def on_turn_start(self) -> None:
         pass
 
-    def on_turn_end(self):
+    def on_turn_end(self) -> None:
         pass
 
-    def on_switch_in(self):
+    def on_switch_in(self) -> None:
         pass
 
-    def on_switch_out(self):
+    def on_switch_out(self) -> None:
         pass
 
-    def on_knockout(self):
+    def on_knockout(self) -> None:
         pass
 
     def on_receive_ability(self, ability, actor) -> None:
@@ -127,10 +127,10 @@ class StatusEffect:
         """
         pass
 
-    def on_damage_dealt(self):
+    def on_damage_dealt(self) -> None:
         pass
 
-    def on_effect_start(self):
+    def on_effect_start(self) -> None:
         pass
 
     def apply_stat_changes(self) -> None:
@@ -139,26 +139,17 @@ class StatusEffect:
         """
         pass
 
-    def on_effect_end(self):
+    def on_effect_end(self) -> None:
         pass
 
-    def on_dispel(self, dispeller):
+    def on_dispel(self, dispeller) -> None:
         """
         :param dispeller: The CombatElemental who dispelled the StatusEffect
         """
         pass
 
-    def on_combat_start(self):
+    def on_combat_start(self) -> None:
         pass
-
-    def on_combat_end(self):
-        pass
-
-    def get_recap(self) -> str:
-        """
-        Summarize the effect in a string.
-        """
-        raise NotImplementedError
 
     @staticmethod
     def _calculate_duration(num_turns: float) -> int:

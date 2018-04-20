@@ -5,6 +5,11 @@ from src.elemental.combat_elemental import CombatElemental
 
 
 class Combat:
+
+    """
+    How two CombatTeams communicate.
+    """
+
     def __init__(self):
         self.history = []  # A list[CombatAction] of actions taken by participants
         self.recap = []  # A list[list[str]] of events that go on in the match
