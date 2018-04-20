@@ -38,7 +38,7 @@ class Combat:
         """
         :return: The active CombatElemental that is not currently requesting a target.
         """
-        return next(team.active for team in self.teams if team.active != actor)
+        return next(team.active_elemental for team in self.teams if team.active_elemental != actor)
 
     def check_end(self):
         for team in self.teams:

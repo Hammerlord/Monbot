@@ -22,7 +22,7 @@ class CombatTeam:
         self.combat = None
         self.team = [CombatElemental(elemental) for elemental in team.elementals]
         self.owner = team.owner
-        self._active = None
+        self._active_elemental = None
         self.status_effects = []  # Team-wide status effects, eg. weather.
         self._actions = []  # list[Action] taken by this team.
         self.turn_log = []  # list[list[str]], detailing status effects at each stage of the turn, actions...
@@ -37,15 +37,15 @@ class CombatTeam:
         self.combat.join_battle(self)
 
     @property
-    def active(self) -> CombatElemental:
-        return self._active
+    def active_elemental(self) -> CombatElemental:
+        return self._active_elemental
 
     @property
     def bench(self) -> List[CombatElemental]:
         """
         Returns the team CombatElementals minus the active one.
         """
-        return [elemental for elemental in self.team if elemental != self._active]
+        return [elemental for elemental in self.team if elemental != self._active_elemental]
 
     @property
     def can_switch(self) -> bool:
@@ -56,7 +56,7 @@ class CombatTeam:
         """
         Returns the benched CombatElementals that aren't knocked out (ie. have more than 0 HP).
         """
-        return [elemental for elemental in self.team if elemental != self._active and not elemental.is_knocked_out]
+        return [elemental for elemental in self.team if elemental != self._active_elemental and not elemental.is_knocked_out]
 
     @property
     def is_npc(self) -> bool:
@@ -75,8 +75,24 @@ class CombatTeam:
         previous = len(self._actions) - 1
         return self._actions[previous]
 
-    def use_ability(self, ability: Ability) -> None:
-        if self.active.is_knocked_out:
+    @property
+    def available_abilities(self) -> List[Ability]:
+        return self.active_elemental.available_abilities
+
+    def select_ability(self, i: int) -> None:
+        """
+        Uses one of the active Elemental's abilities.
+        TODO Check if the Elemental is incapacitated for the turn.
+        :param i: The position of the ability in the active Elemental's abilities list.
+        """
+        is_valid_selection = 0 <= i < len(self.active_elemental.available_abilities)
+        if not is_valid_selection:
+            return
+        selected_ability = self.active_elemental.abilities[i]
+        self._use_ability(selected_ability)
+
+    def _use_ability(self, ability: Ability) -> None:
+        if self.active_elemental.is_knocked_out:
             self.handle_knockout()
         else:
             self.make_action(ability)
@@ -84,13 +100,13 @@ class CombatTeam:
         self.combat.check_end()
 
     def end_turn(self) -> None:
-        self.active.on_turn_end()
+        self.active_elemental.on_turn_end()
         # Check knocked out again in case a debuff, etc. finished off the Elemental
-        if self.active.is_knocked_out:
+        if self.active_elemental.is_knocked_out:
             self.handle_knockout()
 
     def handle_knockout(self) -> None:
-        self._actions.append(KnockedOut(self._active))
+        self._actions.append(KnockedOut(self._active_elemental))
 
     def make_action(self, ability: Ability) -> None:
         """
@@ -98,16 +114,16 @@ class CombatTeam:
         """
         action = ElementalAction(
             character=self.owner,
-            actor=self.active,
+            actor=self.active_elemental,
             ability=ability,
-            target=self.combat.get_target(ability, self.active)
+            target=self.combat.get_target(ability, self.active_elemental)
         )
         action.execute()
         self._actions.append(action)
-        self._active.add_action(action)
+        self._active_elemental.add_action(action)
 
     def on_turn_start(self) -> None:
-        self.active.on_turn_start()
+        self.active_elemental.on_turn_start()
         for elemental in self.eligible_bench:
             elemental.gain_bench_mana()
 
@@ -121,7 +137,7 @@ class CombatTeam:
             return
         self._actions.append(Switch(
             character=self.owner,
-            old_active=self.active,
+            old_active=self.active_elemental,
             new_active=eligible_elementals[slot]
         ))
-        self._active = eligible_elementals[slot]
+        self._active_elemental = eligible_elementals[slot]
