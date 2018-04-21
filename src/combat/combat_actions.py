@@ -61,7 +61,7 @@ class Switch(Action):
 
     def __init__(self,
                  character,
-                 old_active: CombatElemental,
+                 old_active: CombatElemental or None,
                  new_active: CombatElemental):
         self.character = character
         self.old_active = old_active
@@ -76,9 +76,9 @@ class Switch(Action):
         character_name = self.character.nickname
         previous_elemental = self.old_active.nickname
         new_elemental = self.new_active.nickname
-        if not self.old_active.is_knocked_out:
-            return f"{character_name} recalled {previous_elemental} and sent out {new_elemental}!"
-        return f"{character_name} sent out {new_elemental}!"
+        if not self.old_active or self.old_active.is_knocked_out:
+            return f"{character_name} sent out {new_elemental}!"
+        return f"{character_name} recalled {previous_elemental} and sent out {new_elemental}!"
 
 
 class KnockedOut(Action):
