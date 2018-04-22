@@ -50,12 +50,13 @@ class DamageCalculator:
             return self.actor.magic_att // 3
         return 0
 
-    def check_same_element_bonus(self, raw_damage: int) -> None:
+    def check_same_element_bonus(self, raw_damage: int) -> int:
         """
         If the ability has the same element as its user, gain 1.25x damage.
         """
         if self.ability.element == self.actor.element:
             raw_damage += raw_damage * 0.25
+        return raw_damage
 
     def get_effectiveness_multiplier(self) -> float:
         """
