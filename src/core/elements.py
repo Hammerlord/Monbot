@@ -55,7 +55,9 @@ class Effectiveness:
 
     def is_resistant(self) -> bool:
         # Is the ability not very effective against the target's element?
-        return self.check_elements(self.ability_element, self.target_element)
+        # Chaos has no resistances or weaknesses.
+        return self.check_elements(self.ability_element, self.target_element) or \
+               (self.ability_element == self.target_element and self.ability_element is not Elements.CHAOS)
 
     def is_effective(self) -> bool:
         # Is the ability super effective against the target's element?
