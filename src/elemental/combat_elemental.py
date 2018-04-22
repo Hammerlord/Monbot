@@ -1,5 +1,6 @@
 from typing import List
 
+from src.core.elements import Elements
 from src.elemental.ability.ability import Ability
 from src.elemental.elemental import Elemental
 from src.elemental.status_effect.status_effect import StatusEffect
@@ -33,6 +34,10 @@ class CombatElemental:
     @property
     def id(self) -> int:
         return self._elemental.id
+
+    @property
+    def element(self) -> Elements:
+        return self._elemental.element
 
     @property
     def is_stunned(self) -> bool:
