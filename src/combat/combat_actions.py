@@ -44,17 +44,46 @@ class ElementalAction(Action):
         self.damage_calculator = DamageCalculator(self.target,
                                                   self.actor,
                                                   self.ability)
+        self.status_effect_applied = None
+
+    @property
+    def final_damage(self) -> int:
+        return self.damage_calculator.final_damage
+
+    @property
+    def damage_blocked(self) -> int:
+        return self.damage_calculator.damage_blocked
+
+    @property
+    def damage_defended(self) -> int:
+        return self.damage_calculator.damage_defended
+
+    @property
+    def is_effective(self) -> bool:
+        return self.damage_calculator.is_effective
+
+    @property
+    def is_resisted(self) -> bool:
+        return self.damage_calculator.is_resisted
 
     def execute(self) -> None:
         self.actor.on_ability(self.ability)
         self.target.on_receive_ability(self.ability, self.actor)
         self.check_damage_dealt()
+        self.check_status_effect_application()
 
-    def check_damage_dealt(self):
+    def check_damage_dealt(self) -> None:
         if self.ability.type == AbilityType.DAMAGE:
             # Only run calculate() and deal damage if the Ability is meant to do damage.
             self.damage_calculator.calculate()
+            damage = self.damage_calculator.final_damage
+            self.target.receive_damage(damage, self.actor)
 
+    def check_status_effect_application(self) -> None:
+        status_effect = self.ability.get_status_effect()
+        if status_effect:
+            self.status_effect_applied = status_effect
+            self.target.add_status_effect(status_effect)
 
     @property
     def action_type(self) -> int:

@@ -38,7 +38,7 @@ class Ability:
         self.targeting = Target.ENEMY
         self.type = AbilityType.DAMAGE
 
-    def apply_effect(self) -> StatusEffect or None:
+    def get_status_effect(self) -> StatusEffect or None:
         """
         Override this operation if the ability applies a status effect.
         """
