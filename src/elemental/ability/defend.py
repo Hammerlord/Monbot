@@ -16,6 +16,11 @@ class DefendEffect(StatusEffect):
         self.apply_stat_changes()
 
     def on_receive_damage(self, amount: int, actor) -> str:
+        """
+        :param amount: The amount of damage taken.
+        :param actor: The CombatElemental attacking the owner of this buff.
+        :return: Str recap of this effect.
+        """
         return f"{self.target.nickname} is defending!"
 
     def apply_stat_changes(self) -> None:
@@ -31,5 +36,5 @@ class Defend(Ability):
         self.turn_priority = 1
         self.targeting = Target.SELF
 
-    def execute(self, target: 'CombatElemental'):
-        target.add_status_effect(DefendEffect())
+    def apply_effect(self) -> DefendEffect:
+        return DefendEffect()

@@ -1,4 +1,5 @@
-from src.elemental.ability.ability import Ability
+from src.elemental.ability.ability import Ability, AbilityType
+from src.elemental.ability.damage_calculator import DamageCalculator
 from src.elemental.combat_elemental import CombatElemental
 
 
@@ -30,6 +31,7 @@ class ElementalAction(Action):
     """
     An action taken by a CombatElemental.
     """
+
     def __init__(self,
                  character,
                  actor: CombatElemental,
@@ -39,11 +41,20 @@ class ElementalAction(Action):
         self.actor = actor
         self.ability = ability
         self.target = target
+        self.damage_calculator = DamageCalculator(self.target,
+                                                  self.actor,
+                                                  self.ability)
 
     def execute(self) -> None:
         self.actor.on_ability(self.ability)
         self.target.on_receive_ability(self.ability, self.actor)
-        self.ability.execute(self.target)
+        self.check_damage_dealt()
+
+    def check_damage_dealt(self):
+        if self.ability.type == AbilityType.DAMAGE:
+            # Only run calculate() and deal damage if the Ability is meant to do damage.
+            self.damage_calculator.calculate()
+
 
     @property
     def action_type(self) -> int:

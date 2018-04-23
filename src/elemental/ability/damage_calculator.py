@@ -1,8 +1,7 @@
-import math
-import random
-
 from src.core.elements import Category, Effectiveness
+from src.elemental.ability.ability import Ability
 from src.elemental.combat_elemental import CombatElemental
+from src.elemental.status_effect.status_effect import StatusEffect
 
 
 class DamageCalculator:
@@ -17,73 +16,88 @@ class DamageCalculator:
     Elemental weakness/resistance: +/-50%
     """
 
-    def __init__(self, actor: CombatElemental,
+    def __init__(self,
                  target: CombatElemental,
-                 ability):
+                 actor: CombatElemental,
+                 damage_source: Ability or StatusEffect):
         self.actor = actor
         self.target = target
-        self.ability = ability
-        self.raw_damage = self.get_raw_damage()
-        self.damage_reduced = self.get_damage_reduced()
+        self.damage_source = damage_source
+        self.effectiveness_multiplier = 1
+        self.raw_damage = 0
+        self.damage_blocked = 0
+        self.damage_defended = 0
         self.final_damage = 0
-        self.is_effective = False
-        self.is_resisted = False
+
+    @property
+    def is_effective(self) -> bool:
+        return self.effectiveness_multiplier > 1
+
+    @property
+    def is_resisted(self) -> bool:
+        return self.effectiveness_multiplier < 1
 
     def calculate(self) -> None:
-        final_difference = self.raw_damage - self.damage_reduced
+        """
+        Run this method if damage should be calculated.
+        All attacks have a damage calculation (even if it's zero).
+        """
+        self.raw_damage = self.__get_raw_damage()
+        self.damage_blocked = self.__get_damage_blocked()
+        self.damage_defended = self.__get_damage_defended()  # From stats
+        final_difference = self.raw_damage - self.damage_blocked - self.damage_defended
         if final_difference < 1:
             self.final_damage = 1
         self.final_damage = final_difference
 
-    def get_raw_damage(self):
-        raw_damage = self.ability.base_power
-        raw_damage += self.get_attack_power()
-        raw_damage += self.check_same_element_bonus(raw_damage)
-        raw_damage *= self.get_effectiveness_multiplier()
+    def __get_raw_damage(self):
+        raw_damage = self.damage_source.base_power
+        raw_damage += self.__get_attack_power()
+        raw_damage += self.__check_same_element_bonus(raw_damage)
+        raw_damage *= self.__get_effectiveness_multiplier()
         return raw_damage
 
-    def get_attack_power(self) -> int:
+    def __get_attack_power(self) -> int:
         # Match the ability to the actor's physical or magic attack.
-        if self.ability.category == Category.PHYSICAL:
+        if self.damage_source.category == Category.PHYSICAL:
             return self.actor.physical_att // 3
-        if self.ability.category == Category.MAGIC:
+        if self.damage_source.category == Category.MAGIC:
             return self.actor.magic_att // 3
         return 0
 
-    def check_same_element_bonus(self, raw_damage: int) -> int:
+    def __check_same_element_bonus(self, raw_damage: int) -> int:
         """
         If the ability has the same element as its user, gain 1.25x damage.
         """
-        if self.ability.element == self.actor.element:
+        if self.damage_source.element == self.actor.element:
             raw_damage += raw_damage * 0.25
         return raw_damage
 
-    def get_effectiveness_multiplier(self) -> float:
+    def __get_effectiveness_multiplier(self) -> float:
         """
         Check if we have a damage reduction or bonus from ability.element vs target.element.
         Eg. the lightning target is weak to earth, so an earth ability does 1.5x damage and is marked as effective.
         Eg. the wind target is strong to fire, so a fire ability does 0.5x damage and is marked as resisted.
-        :return:
         """
-        effectiveness = Effectiveness(self.ability.element, self.target.element)
+        effectiveness = Effectiveness(self.damage_source.element, self.target.element)
         multiplier = effectiveness.calculate()
-        if multiplier < 1:
-            self.is_resisted = True
-        elif multiplier > 1:
-            self.is_effective = True
         return multiplier
 
-    def get_damage_reduced(self) -> int:
-        # target.damage_reduction is a percentage of damage blocked by the enemy.
-        damage_reduced = self.raw_damage * self.target.damage_reduction
-        damage_reduced += self.get_defense_value()
-        return int(damage_reduced)
+    def __get_damage_blocked(self) -> int:
+        """
+        target.damage_reduction is a percentage of damage blocked by the enemy.
+        :return: Int damage reduced by damage_reduction.
+        """
+        return int(self.raw_damage * self.target.damage_reduction)
 
-    def get_defense_value(self) -> int:
-        # Match the target's defensive stat against the incoming ability.
-        # Defenses scale worse than attack power.
-        if self.ability.category == Category.PHYSICAL:
+    def __get_damage_defended(self) -> int:
+        """
+        Match the target's defensive stat against the incoming ability and return
+        Defenses scale worse than attack power.
+        :return: Int damage reduced by defenses.
+        """
+        if self.damage_source.category == Category.PHYSICAL:
             return self.target.physical_att // 4
-        if self.ability.category == Category.MAGIC:
+        if self.damage_source.category == Category.MAGIC:
             return self.target.magic_att // 4
         return 0
