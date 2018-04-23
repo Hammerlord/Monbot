@@ -1,5 +1,6 @@
 from typing import List
 
+from src.character.character import Character
 from src.elemental.ability.ability import Target, Ability
 from src.elemental.combat_elemental import CombatElemental
 
@@ -40,11 +41,18 @@ class Combat:
         """
         return next(team.active_elemental for team in self.teams if team.active_elemental != actor)
 
-    def check_end(self):
+    def check_end(self) -> None:
         for team in self.teams:
             if team.is_all_knocked_out:
                 self.end_combat()
 
-    def end_combat(self):
+    def end_combat(self) -> None:
         for player in self.players:
             player.is_busy = False
+
+    def is_previous_turn_knockout(self) -> List[Character]:
+        """
+        Return team owners whose active Elemental was knocked out last turn.
+        We then wait for them to send out a new one.
+        """
+        return [team.owner for team in self.teams if team.active.is_knocked_out]
