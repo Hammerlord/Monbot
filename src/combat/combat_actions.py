@@ -80,7 +80,7 @@ class ElementalAction(Action):
             self.target.receive_damage(damage, self.actor)
 
     def check_status_effect_application(self) -> None:
-        status_effect = self.ability.get_status_effect()
+        status_effect = self.ability.status_effect
         if status_effect:
             self.status_effect_applied = status_effect
             self.target.add_status_effect(status_effect)

@@ -36,5 +36,6 @@ class Defend(Ability):
         self.turn_priority = 1
         self.targeting = Target.SELF
 
-    def apply_effect(self) -> DefendEffect:
+    @property
+    def status_effect(self) -> DefendEffect:
         return DefendEffect()

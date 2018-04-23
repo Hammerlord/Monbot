@@ -38,11 +38,12 @@ class Ability:
         self.targeting = Target.ENEMY
         self.type = AbilityType.DAMAGE
 
-    def get_status_effect(self) -> StatusEffect or None:
+    @property
+    def status_effect(self) -> StatusEffect or None:
         """
         Override this operation if the ability applies a status effect.
         """
-        pass
+        return
 
 
 class LearnableAbility:
