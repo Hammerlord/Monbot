@@ -1,6 +1,7 @@
 from enum import Enum
 
 from src.core.elements import Elements, Category
+from src.elemental.status_effect.status_effect import StatusEffect
 
 
 class Target(Enum):
@@ -11,6 +12,12 @@ class Target(Enum):
     ENEMY_TEAM = 4
     SELF_CLEAVE = 5
     SELF_AOE = 6
+
+
+class AbilityType(Enum):
+    DAMAGE = 0
+    HEALING = 1
+    STATUS_EFFECT = 2
 
 
 class Ability:
@@ -29,12 +36,13 @@ class Ability:
         self.defend_cost = 0
         self.turn_priority = 0
         self.targeting = Target.ENEMY
+        self.type = AbilityType.DAMAGE
 
-    def execute(self, target: 'CombatElemental' or 'CombatTeam'):
+    def apply_effect(self) -> StatusEffect or None:
         """
-        What happens when you use this ability.
+        Override this operation if the ability applies a status effect.
         """
-        raise NotImplementedError
+        pass
 
 
 class LearnableAbility:
