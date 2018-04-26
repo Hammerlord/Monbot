@@ -20,7 +20,7 @@ class StatusManager:
         self.m_def_stages = 0
         self.speed_stages = 0
         self._mana_per_turn = 0
-        self.damage_reduction = 0  # Float. Percentage of damage reduced on incoming attacks.
+        self._damage_reduction = 0  # Float. Percentage of damage reduced on incoming attacks.
         self._status_effects = []  # List[StatusEffect]
 
     @property
@@ -153,14 +153,19 @@ class StatusManager:
         How much bonus stat you receive from buffs is measured in stages. The product is +25% / stage.
         Reset your stages and recalculate them from changes in buffs. Eg. when a buff or debuff falls off.
         """
-        self.__reset_stages()
+        self.__reset_status()
         for effect in self._status_effects:
             effect.apply_stat_changes()
 
-    def __reset_stages(self):
+    def __reset_status(self):
+        self.num_stuns = 0
+        self.num_freezes = 0
+        self.num_chills = 0
+        self.num_blocks = 0
         self.p_att_stages = 0
         self.p_def_stages = 0
         self.m_att_stages = 0
         self.m_def_stages = 0
         self.speed_stages = 0
         self._mana_per_turn = 0
+        self._damage_reduction = 0

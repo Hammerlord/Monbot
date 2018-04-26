@@ -78,7 +78,7 @@ class CombatElemental:
 
     @property
     def damage_reduction(self) -> float:
-        return self._damage_reduction + self._status_manager.damage_reduction
+        return self._damage_reduction + self._status_manager._damage_reduction
 
     @property
     def defend_charges(self) -> int:
