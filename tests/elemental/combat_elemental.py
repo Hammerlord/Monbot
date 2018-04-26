@@ -90,11 +90,6 @@ class CombatElementalTests(unittest.TestCase):
         knocked_out = self.combat_elemental.is_knocked_out
         self.assertIs(knocked_out, True, error)
 
-    def test_can_switch_flag(self):
-        error = "Flag for switch availability could not be set on CombatElemental"
-        self.combat_elemental.can_switch = False
-        self.assertIs(self.combat_elemental.can_switch, False, error)
-
     def test_gain_mana(self):
         error = "CombatElemental didn't gain mana on turn start"
         mana_before_turn = self.combat_elemental.current_mana

@@ -10,20 +10,15 @@ from src.elemental.status_effect.status_manager import StatusManager
 class CombatElemental:
     def __init__(self, elemental: Elemental):
         self._elemental = elemental
+        self.base_physical_att = elemental.physical_att
+        self.base_magic_att = elemental.magic_att
+        self.base_physical_def = elemental.physical_def
+        self.base_magic_def = elemental.magic_def
+        self.base_speed = elemental.speed
         self._current_mana = elemental.starting_mana
-        self._max_mana = elemental.max_mana
+        self._defend_charges = elemental.defend_charges
         self._mana_per_turn = elemental.mana_per_turn
         self._bench_mana_per_turn = elemental.bench_mana_per_turn
-        self._defend_charges = elemental.defend_charges
-        self._can_switch = True
-        self._physical_att = self._elemental.physical_att
-        self._magic_att = self._elemental.magic_att
-        self._physical_def = self._elemental.physical_def
-        self._magic_def = self._elemental.magic_def
-        self._speed = self._elemental.speed
-        self._defend_potency = self._elemental.defend_potency
-        self._stun_effects = 0  # int. The number of incapacitating effects on the Elemental. 0 = not stunned
-        self._damage_reduction = 0  # Float. Percentage of damage reduced on incoming attacks.
         self._status_manager = StatusManager(self)
         self._actions = []  # List[ElementalAction]  A record of the actions taken by this CombatElemental.
         self._abilities = elemental.active_abilities
@@ -37,15 +32,28 @@ class CombatElemental:
         return self._elemental.id
 
     @property
+    def level(self) -> int:
+        return self._elemental.level
+
+    @property
     def element(self) -> Elements:
         return self._elemental.element
 
     @property
     def is_stunned(self) -> bool:
-        """
-        :return: Whether to skip the Elemental's turn or not.
-        """
-        return self._stun_effects > 0
+        return self._status_manager.is_stunned
+
+    @property
+    def is_frozen(self) -> bool:
+        return self._status_manager.is_frozen
+
+    @property
+    def is_chilled(self) -> bool:
+        return self._status_manager.is_chilled
+
+    @property
+    def is_blocking(self) -> bool:
+        return self._status_manager.is_blocking
 
     @property
     def current_hp(self) -> int:
@@ -58,27 +66,27 @@ class CombatElemental:
 
     @property
     def physical_att(self) -> int:
-        return self._physical_att + self._status_manager.bonus_physical_att
+        return self.base_physical_att + self._status_manager.bonus_physical_att
 
     @property
     def magic_att(self) -> int:
-        return self._magic_att + self._status_manager.bonus_magic_att
+        return self.base_magic_att + self._status_manager.bonus_magic_att
 
     @property
     def physical_def(self) -> int:
-        return self._physical_def + self._status_manager.bonus_physical_att
+        return self.base_physical_def + self._status_manager.bonus_physical_att
 
     @property
     def magic_def(self) -> int:
-        return self._magic_def + self._status_manager.bonus_magic_def
+        return self.base_magic_def + self._status_manager.bonus_magic_def
 
     @property
     def speed(self) -> int:
-        return self._speed + self._status_manager.bonus_speed
+        return self.base_speed + self._status_manager.bonus_speed
 
     @property
     def damage_reduction(self) -> float:
-        return self._damage_reduction + self._status_manager._damage_reduction
+        return self._status_manager.damage_reduction
 
     @property
     def defend_charges(self) -> int:
@@ -94,11 +102,7 @@ class CombatElemental:
 
     @property
     def can_switch(self) -> bool:
-        return self._can_switch
-
-    @can_switch.setter
-    def can_switch(self, set_switchable: bool) -> None:
-        self._can_switch = set_switchable
+        return self._status_manager.can_switch
 
     @property
     def available_abilities(self) -> List[Ability]:
@@ -137,8 +141,8 @@ class CombatElemental:
 
     def gain_mana(self, amount: int) -> None:
         self._current_mana += amount
-        if self.current_mana > self._max_mana:
-            self._current_mana = self._max_mana
+        if self.current_mana > self._elemental.max_mana:
+            self._current_mana = self._elemental.max_mana
 
     @property
     def last_action(self):
@@ -150,6 +154,9 @@ class CombatElemental:
         :param action: ElementalAction
         """
         self._actions.append(action)
+
+    def dispel_all(self, dispeller: 'CombatElemental'):
+        self._status_manager.dispel_all(dispeller)
 
     def on_ability(self, ability: Ability) -> None:
         # TODO

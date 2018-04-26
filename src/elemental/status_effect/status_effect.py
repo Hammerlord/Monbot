@@ -1,7 +1,9 @@
 class StatusEffect:
 
     """
-    A status effect applied onto an Elemental.
+    A status effect applied onto a CombatElemental.
+    **Most effects are temporary, so they mutate the CombatElemental's
+    StatusManager rather than the CombatElemental directly.**
     Many methods are no-op by default, that should be overridden to the desired effect.
     """
 
@@ -9,7 +11,7 @@ class StatusEffect:
         self._id = 0
         self._name = None  # Str. TBD by descendants.
         self._description = None  # Str. TBD by descendants.
-        self._target = None  # The CombatElemental this StatusEffect is applied to.
+        self._target = None  # The StatusManager this StatusEffect is applied to.
         self._applier = None  # The CombatElemental that applied this StatusEffect.
         self._icon = ''  # The emote that represents the effect.
 
@@ -58,16 +60,16 @@ class StatusEffect:
     @property
     def target(self):
         """
-        :return: The CombatElemental this StatusEffect is applied to.
+        :return: The CombatElemental.StatusManager this StatusEffect is applied to.
         """
         return self._target
 
     @target.setter
-    def target(self, elemental) -> None:
+    def target(self, status_manager) -> None:
         """
-        :param elemental: CombatElemental
+        :param status_manager: CombatElemental.StatusManager
         """
-        self._target = elemental
+        self._target = status_manager
 
     @property
     def applier(self):
@@ -83,13 +85,6 @@ class StatusEffect:
         """
         self._applier = elemental
 
-    def refresh_duration(self) -> None:
-        self._duration_remaining = self._max_duration
-
-    def reduce_duration(self) -> None:
-        if self.can_reduce_duration:
-            self._duration_remaining -= 1
-
     @property
     def can_reduce_duration(self) -> bool:
         return self._duration_remaining > 0
@@ -97,6 +92,13 @@ class StatusEffect:
     @property
     def duration_ended(self) -> bool:
         return self._duration_remaining == 0
+
+    def refresh_duration(self) -> None:
+        self._duration_remaining = self._max_duration
+
+    def reduce_duration(self) -> None:
+        if self.can_reduce_duration:
+            self._duration_remaining -= 1
 
     def on_turn_start(self) -> None:
         pass
@@ -133,6 +135,9 @@ class StatusEffect:
     def apply_stat_changes(self) -> None:
         """
         Alter the stages on the StatusManager, if applicable.
+        Call self.add_<stat>_stages to make the stat changes so that we don't have to keep constant track
+        of the target structure.
+        See update_p_att_stages.
         """
         pass
 
@@ -147,6 +152,21 @@ class StatusEffect:
 
     def on_combat_start(self) -> None:
         pass
+
+    def _update_p_att_stages(self, amount: int) -> None:
+        self.target.p_att_stages += amount
+
+    def _update_m_att_stages(self, amount: int) -> None:
+        self.target.m_att_stages += amount
+
+    def _update_p_def_stages(self, amount: int) -> None:
+        self.target.p_def_stages += amount
+
+    def _update_m_def_stages(self, amount: int) -> None:
+        self.target.m_def_stages += amount
+
+    def _update_speed_stages(self, amount: int) -> None:
+        self.target.speed_stages += amount
 
     @staticmethod
     def _calculate_duration(num_turns: float) -> int:

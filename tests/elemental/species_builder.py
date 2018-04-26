@@ -13,11 +13,11 @@ class StatsBuilder:
 
     def __init__(self):
         self._max_hp = 50
-        self._physical_att = 1
-        self._physical_def = 1
-        self._magic_att = 1
-        self._magic_def = 1
-        self._speed = 1
+        self._physical_att = 10
+        self._physical_def = 10
+        self._magic_att = 10
+        self._magic_def = 10
+        self._speed = 10
 
     def with_max_hp(self, amount: int) -> 'StatsBuilder':
         self._max_hp = amount

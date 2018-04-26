@@ -14,6 +14,7 @@ class StatusManager:
         self.num_freezes = 0
         self.num_chills = 0
         self.num_blocks = 0  # How many "blocking damage" buffs there are
+        self.switch_disabled = 0  # The number of "switch-preventing" debuffs
         self.p_att_stages = 0
         self.p_def_stages = 0
         self.m_att_stages = 0
@@ -40,6 +41,10 @@ class StatusManager:
         return self.num_blocks > 0
 
     @property
+    def can_switch(self) -> bool:
+        return self.switch_disabled == 0
+
+    @property
     def status_effects(self) -> List[StatusEffect]:
         return self._status_effects
 
@@ -52,27 +57,31 @@ class StatusManager:
 
     @property
     def bonus_physical_att(self) -> int:
-        return self.__calculate_stages(self.p_att_stages, self.combat_elemental.physical_att)
+        return self.__calculate_stages(self.p_att_stages, self.combat_elemental.base_physical_att)
 
     @property
     def bonus_magic_att(self) -> int:
-        return self.__calculate_stages(self.m_att_stages, self.combat_elemental.magic_att)
+        return self.__calculate_stages(self.m_att_stages, self.combat_elemental.base_magic_att)
 
     @property
     def bonus_physical_def(self) -> int:
-        return self.__calculate_stages(self.p_def_stages, self.combat_elemental.physical_def)
+        return self.__calculate_stages(self.p_def_stages, self.combat_elemental.base_physical_def)
 
     @property
     def bonus_magic_def(self) -> int:
-        return self.__calculate_stages(self.m_def_stages, self.combat_elemental.magic_def)
+        return self.__calculate_stages(self.m_def_stages, self.combat_elemental.base_magic_def)
 
     @property
     def bonus_speed(self) -> int:
-        return self.__calculate_stages(self.speed_stages, self.combat_elemental.speed)
+        return self.__calculate_stages(self.speed_stages, self.combat_elemental.base_speed)
 
     @property
     def bonus_mana_per_turn(self) -> int:
         return self._mana_per_turn
+
+    @property
+    def damage_reduction(self) -> float:
+        return self._damage_reduction
 
     def add_status_effect(self, status_effect: StatusEffect) -> None:
         equivalent_effect = self.__effect_exists(status_effect)

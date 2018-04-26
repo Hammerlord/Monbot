@@ -14,7 +14,7 @@ class GenericBuff(StatusEffect):
         self.apply_stat_changes()
 
     def apply_stat_changes(self) -> None:
-        self._target.update_physical_att(25)
+        self._update_p_att_stages(2)
 
     def get_recap(self) -> str:
         return f"{self._target.nickname}'s physical attack has greatly increased!"
@@ -34,7 +34,7 @@ class PermaBuff(StatusEffect):
         self.apply_stat_changes()
 
     def apply_stat_changes(self) -> None:
-        self._target.update_magic_def(10)
+        self._update_m_def_stages(1)
 
     def get_recap(self) -> str:
         return f"{self._target.nickname}'s magic defence has increased."
