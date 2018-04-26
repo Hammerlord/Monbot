@@ -17,7 +17,7 @@ class StatusEffect:
         self._max_duration = self._calculate_duration(self._base_duration)
         self._duration_remaining = 0
         self.is_dispellable = True
-        self.fades_on_switch = True
+        self.ends_on_switch = True
         self.can_stack = False  # Ie. can we apply multiple instances of this effect?
 
     @property
@@ -107,9 +107,6 @@ class StatusEffect:
     def on_switch_in(self) -> None:
         pass
 
-    def on_switch_out(self) -> None:
-        pass
-
     def on_knockout(self) -> None:
         pass
 
@@ -135,7 +132,7 @@ class StatusEffect:
 
     def apply_stat_changes(self) -> None:
         """
-        Alter the CombatElemental's main stats, if applicable.
+        Alter the stages on the StatusManager, if applicable.
         """
         pass
 

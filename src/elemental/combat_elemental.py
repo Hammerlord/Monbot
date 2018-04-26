@@ -4,6 +4,7 @@ from src.core.elements import Elements
 from src.elemental.ability.ability import Ability
 from src.elemental.elemental import Elemental
 from src.elemental.status_effect.status_effect import StatusEffect
+from src.elemental.status_effect.status_manager import StatusManager
 
 
 class CombatElemental:
@@ -23,7 +24,7 @@ class CombatElemental:
         self._defend_potency = self._elemental.defend_potency
         self._stun_effects = 0  # int. The number of incapacitating effects on the Elemental. 0 = not stunned
         self._damage_reduction = 0  # Float. Percentage of damage reduced on incoming attacks.
-        self._status_effects = []  # List[StatusEffect]
+        self._status_manager = StatusManager(self)
         self._actions = []  # List[ElementalAction]  A record of the actions taken by this CombatElemental.
         self._abilities = elemental.active_abilities
 
@@ -57,48 +58,27 @@ class CombatElemental:
 
     @property
     def physical_att(self) -> int:
-        return self._physical_att
-
-    def update_physical_att(self, amount: int) -> None:
-        self._physical_att += amount
+        return self._physical_att + self._status_manager.bonus_physical_att
 
     @property
     def magic_att(self) -> int:
-        return self._magic_att
-
-    def update_magic_att(self, amount: int) -> None:
-        self._magic_att += amount
+        return self._magic_att + self._status_manager.bonus_magic_att
 
     @property
     def physical_def(self) -> int:
-        return self._physical_def
-
-    def update_physical_def(self, amount: int) -> None:
-        self._physical_def += amount
+        return self._physical_def + self._status_manager.bonus_physical_att
 
     @property
     def magic_def(self) -> int:
-        return self._magic_def
-
-    def update_magic_def(self, amount: int) -> None:
-        self._magic_def += amount
+        return self._magic_def + self._status_manager.bonus_magic_def
 
     @property
     def speed(self) -> int:
-        return self._speed
-
-    def update_speed(self, amount: int) -> None:
-        self._speed += amount
-
-    def update_mana_per_turn(self, amount: int) -> None:
-        self._mana_per_turn += amount
+        return self._speed + self._status_manager.bonus_speed
 
     @property
     def damage_reduction(self) -> float:
-        return self._damage_reduction
-
-    def update_damage_reduction(self, amount: float) -> None:
-        self._damage_reduction += amount
+        return self._damage_reduction + self._status_manager.damage_reduction
 
     @property
     def defend_charges(self) -> int:
@@ -133,12 +113,11 @@ class CombatElemental:
 
     @property
     def status_effects(self) -> List[StatusEffect]:
-        return self._status_effects
+        return self._status_manager.status_effects
 
     @property
     def num_status_effects(self) -> int:
-        # TODO num buffs and debuffs
-        return len(self._status_effects)
+        return self._status_manager.num_status_effects
 
     @property
     def is_knocked_out(self) -> bool:
@@ -148,7 +127,7 @@ class CombatElemental:
         return self.current_mana >= ability.mana_cost and self.defend_charges >= ability.defend_cost
 
     def on_turn_start(self) -> None:
-        self.gain_mana(self._mana_per_turn)
+        self.gain_mana(self._mana_per_turn + self._status_manager.bonus_mana_per_turn)
 
     def gain_bench_mana(self) -> None:
         """
@@ -177,47 +156,18 @@ class CombatElemental:
         pass
 
     def add_status_effect(self, status_effect: StatusEffect):
-        equivalent_effect = self._effect_exists(status_effect)
-        if equivalent_effect and not status_effect.can_stack:
-            equivalent_effect.refresh_duration()
-            return
-        status_effect.target = self
-        self._status_effects.append(status_effect)
-        status_effect.on_effect_start()
-
-    def _effect_exists(self, status_effect: StatusEffect) -> StatusEffect or None:
-        """
-        Check if an equivalent StatusEffect is already on this CombatElemental by ID.
-        :return The StatusEffect if it exists, None if not.
-        """
-        for effect in self._status_effects:
-            if effect.id == status_effect.id:
-                return effect
-
-    def dispel_all(self, dispeller: 'CombatElemental'):
-        for effect in self._status_effects:
-            if effect.is_dispellable:
-                self._status_effects.remove(effect)
-                effect.on_dispel(dispeller)
+        # TODO check if we can add status effects.
+        self._status_manager.add_status_effect(status_effect)
 
     def on_turn_end(self) -> None:
-        for effect in self._status_effects:
-            effect.on_turn_end()
-            self._check_effect_end(effect)
-        self.recalculate_effect_stats()
-
-    def _check_effect_end(self, effect: StatusEffect) -> None:
-        effect.reduce_duration()
-        if effect.duration_ended:
-            self._status_effects.remove(effect)
+        self._status_manager.on_turn_end()
 
     def on_receive_ability(self, ability: Ability, actor: 'CombatElemental') -> None:
         """
         :param ability: The incoming Ability being received.
         :param actor: The CombatElemental performing the ability.
         """
-        for effect in self._status_effects:
-            effect.on_receive_ability(ability, actor)
+        self._status_manager.on_receive_ability(ability, actor)
 
     def receive_damage(self, amount: int, actor: 'CombatElemental') -> None:
         """
@@ -225,30 +175,7 @@ class CombatElemental:
         :param actor: The CombatElemental dealing the damage.
         """
         self._elemental.receive_damage(amount)
-        for effect in self._status_effects:
-            effect.on_receive_damage(amount, actor)
+        self._status_manager.on_receive_damage(amount, actor)
 
     def heal(self, amount: int) -> None:
         self._elemental.heal(amount)
-
-    def recalculate_effect_stats(self):
-        """
-        Recalculate stat bonuses/penalties from effects, due to changes in status effects on a per-turn basis.
-        """
-        self._reset_stats()
-        for effect in self._status_effects:
-            effect.apply_stat_changes()
-
-    def _reset_stats(self) -> None:
-        """
-        Resets the CombatElemental's main stats to the referenced Elemental's stats.
-        Used when recalculating stat changes from StatusEffects.
-        """
-        self._physical_att = self._elemental.physical_att
-        self._magic_att = self._elemental.magic_att
-        self._physical_def = self._elemental.physical_def
-        self._magic_def = self._elemental.magic_def
-        self._speed = self._elemental.speed
-        self._mana_per_turn = self._elemental.mana_per_turn
-        self._defend_potency = self._elemental.defend_potency
-        self._damage_reduction = 0
