@@ -21,6 +21,7 @@ class StatusManager:
         self.m_def_stages = 0
         self.speed_stages = 0
         self._mana_per_turn = 0
+        self._max_stages = 6
         self._damage_reduction = 0  # Float. Percentage of damage reduced on incoming attacks.
         self._status_effects = []  # List[StatusEffect]
 
@@ -82,6 +83,57 @@ class StatusManager:
     @property
     def damage_reduction(self) -> float:
         return self._damage_reduction
+
+    def update_p_att_stages(self, amount: int) -> bool:
+        if self.__is_capped_stages(self.p_att_stages, amount):
+            return False
+        self.p_att_stages = self.__validate_stages(self.p_att_stages, amount)
+        return True
+
+    def update_m_att_stages(self, amount: int) -> bool:
+        if self.__is_capped_stages(self.m_att_stages, amount):
+            return False
+        self.m_att_stages = self.__validate_stages(self.m_att_stages, amount)
+        return True
+
+    def update_p_def_stages(self, amount: int) -> bool:
+        if self.__is_capped_stages(self.p_def_stages, amount):
+            return False
+        self.p_def_stages = self.__validate_stages(self.p_def_stages, amount)
+        return True
+
+    def update_m_def_stages(self, amount: int) -> bool:
+        if self.__is_capped_stages(self.m_def_stages, amount):
+            return False
+        self.m_def_stages = self.__validate_stages(self.m_def_stages, amount)
+        return True
+
+    def update_speed_stages(self, amount: int) -> bool:
+        if self.__is_capped_stages(self.speed_stages, amount):
+            return False
+        self.speed_stages = self.__validate_stages(self.speed_stages, amount)
+        return True
+
+    def __is_capped_stages(self, stages: int, amount: int) -> bool:
+        """
+        Check if the number of stages is already capped. In which case, the status effect does nothing.
+        """
+        if amount > 0:
+            return stages == self._max_stages
+        else:
+            return stages == -self._max_stages
+
+    def __validate_stages(self, stages: int, amount: int) -> int:
+        """
+        A CombatElemental's stat stages are capped by a maximum number.
+        :return: The capped number of stages if it exceeds the range, otherwise return the addition.
+        """
+        added = stages + amount
+        if added > self._max_stages:
+            return self._max_stages
+        if added < -self._max_stages:
+            return -self._max_stages
+        return added
 
     def add_status_effect(self, status_effect: StatusEffect) -> None:
         equivalent_effect = self.__effect_exists(status_effect)
@@ -159,7 +211,7 @@ class StatusManager:
 
     def __recalculate_stages(self):
         """
-        How much bonus stat you receive from buffs is measured in stages. The product is +25% / stage.
+        How much bonus stat you receive from buffs is measured in stages.
         Reset your stages and recalculate them from changes in buffs. Eg. when a buff or debuff falls off.
         """
         self.__reset_status()

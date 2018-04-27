@@ -154,19 +154,19 @@ class StatusEffect:
         pass
 
     def _update_p_att_stages(self, amount: int) -> None:
-        self.target.p_att_stages += amount
+        self.target.update_p_att_stages(amount)
 
     def _update_m_att_stages(self, amount: int) -> None:
-        self.target.m_att_stages += amount
+        self.target.update_m_att_stages(amount)
 
     def _update_p_def_stages(self, amount: int) -> None:
-        self.target.p_def_stages += amount
+        self.target.update_p_def_stages(amount)
 
     def _update_m_def_stages(self, amount: int) -> None:
-        self.target.m_def_stages += amount
+        self.target.update_m_def_stages(amount)
 
     def _update_speed_stages(self, amount: int) -> None:
-        self.target.speed_stages += amount
+        self.target.update_speed_stages(amount)
 
     @staticmethod
     def _calculate_duration(num_turns: float) -> int:
