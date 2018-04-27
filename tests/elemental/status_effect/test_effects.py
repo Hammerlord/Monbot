@@ -12,12 +12,10 @@ class GenericBuff(StatusEffect):
 
     def on_effect_start(self):
         self.apply_stat_changes()
+        return f"{self._target.nickname}'s physical attack has greatly increased!"
 
     def apply_stat_changes(self) -> None:
         self._update_p_att_stages(2)
-
-    def get_recap(self) -> str:
-        return f"{self._target.nickname}'s physical attack has greatly increased!"
 
 
 class PermaBuff(StatusEffect):
@@ -30,11 +28,9 @@ class PermaBuff(StatusEffect):
         self.is_dispellable = False
         self.ends_on_switch = False
 
-    def on_effect_start(self):
+    def on_effect_start(self) -> str:
         self.apply_stat_changes()
+        return f"{self._target.nickname}'s magic defence has increased."
 
     def apply_stat_changes(self) -> None:
         self._update_m_def_stages(1)
-
-    def get_recap(self) -> str:
-        return f"{self._target.nickname}'s magic defence has increased."
