@@ -1,3 +1,11 @@
+from enum import Enum
+
+
+class EffectType(Enum):
+    BUFF: 0
+    DEBUFF: 1
+
+
 class StatusEffect:
 
     """
@@ -8,15 +16,15 @@ class StatusEffect:
     """
 
     def __init__(self):
-        self._id = 0
-        self._name = None  # Str. TBD by descendants.
-        self._description = None  # Str. TBD by descendants.
-        self._target = None  # The StatusManager this StatusEffect is applied to.
-        self._applier = None  # The CombatElemental that applied this StatusEffect.
-        self._icon = ''  # The emote that represents the effect.
-
+        self.id = 0
+        self.name = None  # Str. TBD by descendants.
+        self.description = None  # Str. TBD by descendants.
+        self.target = None  # The StatusManager this StatusEffect is applied to.
+        self.applier = None  # The CombatElemental that applied this StatusEffect.
+        self.icon = ''  # The emote that represents the effect.
+        self.effect_type = EffectType.BUFF
         # Pass duration in number of the affected Elemental's turns. -1 if no duration:
-        self._max_duration = self._calculate_duration(self._base_duration)
+        self.max_duration = self._calculate_duration(self._base_duration)
         self._duration_remaining = 0
         self.is_dispellable = True
         self.ends_on_switch = True
@@ -38,26 +46,6 @@ class StatusEffect:
         See _calculate_duration.
         """
         return 0
-
-    @property
-    def name(self) -> str:
-        return self._name
-
-    @property
-    def icon(self) -> str:
-        return self._icon
-
-    @property
-    def description(self) -> str:
-        return self._description
-
-    @property
-    def id(self) -> int:
-        return self._id
-
-    @property
-    def max_duration(self) -> int:
-        return self._max_duration
 
     @property
     def duration_remaining(self) -> int:
