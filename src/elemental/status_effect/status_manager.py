@@ -173,18 +173,21 @@ class StatusManager:
         for effect in self._status_effects:
             effect.on_receive_damage(amount, actor)
 
-    def on_turn_end(self):
+    def on_turn_end(self) -> None:
         for effect in self._status_effects:
             effect.on_turn_end()
             self.__check_effect_end(effect)
-        self.__recalculate_stages()
+        self.__recalculate_effects()
 
-    def on_switch_out(self):
+    def on_switch_out(self) -> None:
+        """
+        Presently, there are no on_switch_out effects.
+        """
         for effect in self._status_effects:
             if effect.ends_on_switch:
                 self._status_effects.remove(effect)
 
-    def on_switch_in(self):
+    def on_switch_in(self) -> None:
         for effect in self._status_effects:
             effect.on_switch_in()
 
@@ -213,10 +216,10 @@ class StatusManager:
         if effect.duration_ended:
             self._status_effects.remove(effect)
 
-    def __recalculate_stages(self):
+    def __recalculate_effects(self) -> None:
         """
-        How much bonus stat you receive from buffs is measured in stages.
-        Reset your stages and recalculate them from changes in buffs. Eg. when a buff or debuff falls off.
+        Reset stat bonuses/penalties and recalculate them from changes in StatusEffects.
+        Eg. when a buff or debuff falls off.
         """
         self.__reset_status()
         for effect in self._status_effects:
