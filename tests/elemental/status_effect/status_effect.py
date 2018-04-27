@@ -38,14 +38,14 @@ class StatusEffectTests(unittest.TestCase):
         self.assertEqual(num_effects, 0, error)
 
     def test_unstackable_effect(self):
-        error = "A StatusEffect was incorrectly able to stack when added"
+        error = "A !can_add_instances StatusEffect incorrectly added multiple instances"
         self.combat_elemental.add_status_effect(GenericBuff())
         self.combat_elemental.add_status_effect(GenericBuff())
         num_effects = self.combat_elemental.num_status_effects
         self.assertEqual(num_effects, 1, error)
 
     def test_unstackable_effect_refresh(self):
-        error = "An unstackable StatusEffect didn't refresh its effect's duration when reapplied"
+        error = "A !can_add_instances StatusEffect didn't refresh its effect's duration when reapplied"
         buff = GenericBuff()
         same_buff = GenericBuff()
         self.combat_elemental.add_status_effect(buff)

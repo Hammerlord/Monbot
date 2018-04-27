@@ -28,7 +28,7 @@ class PermaBuff(StatusEffect):
         self._description = "Increases magic defence."
         self._max_duration = self._calculate_duration(num_turns=-1)  # No duration
         self.is_dispellable = False
-        self.fades_on_switch = False
+        self.ends_on_switch = False
 
     def on_effect_start(self):
         self.apply_stat_changes()

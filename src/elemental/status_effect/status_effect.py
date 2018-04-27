@@ -20,7 +20,13 @@ class StatusEffect:
         self._duration_remaining = 0
         self.is_dispellable = True
         self.ends_on_switch = True
-        self.can_stack = False  # Ie. can we apply multiple instances of this effect?
+        self.max_stacks = 1  # Ie. can we apply multiple of this effect?
+        self.current_stacks = 0
+        self.can_add_instances = False  # Ie. can we apply multiple instances of this effect?
+
+    @property
+    def can_stack(self) -> bool:
+        return self.current_stacks < self.max_stacks
 
     @property
     def _base_duration(self) -> float:
@@ -92,6 +98,14 @@ class StatusEffect:
     @property
     def duration_ended(self) -> bool:
         return self._duration_remaining == 0
+
+    def reapply(self) -> None:
+        self.add_stack()
+        self.refresh_duration()
+
+    def add_stack(self) -> None:
+        if self.can_stack:
+            self.current_stacks += 1
 
     def refresh_duration(self) -> None:
         self._duration_remaining = self._max_duration

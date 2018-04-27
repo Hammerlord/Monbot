@@ -114,6 +114,10 @@ class StatusManager:
         self.speed_stages = self.__validate_stages(self.speed_stages, amount)
         return True
 
+    def update_mana_per_turn(self, amount: int) -> bool:
+        self._mana_per_turn += amount
+        return True
+
     def __is_capped_stages(self, stages: int, amount: int) -> bool:
         """
         Check if the number of stages is already capped. In which case, the status effect does nothing.
@@ -137,8 +141,8 @@ class StatusManager:
 
     def add_status_effect(self, status_effect: StatusEffect) -> None:
         equivalent_effect = self.__effect_exists(status_effect)
-        if equivalent_effect and not status_effect.can_stack:
-            equivalent_effect.refresh_duration()
+        if equivalent_effect and not status_effect.can_add_instances:
+            equivalent_effect.reapply()
             return
         status_effect.target = self
         self._status_effects.append(status_effect)
