@@ -1,7 +1,7 @@
 import unittest
 
+from src.elemental.ability.abilities.defend import Defend
 from src.elemental.ability.ability import Ability, LearnableAbility
-from src.elemental.ability.defend import Defend
 from src.elemental.attribute.attribute_factory import AttributeFactory
 from src.elemental.attribute.attribute_manager import AttributeManager
 from tests.character.character_builder import PlayerBuilder

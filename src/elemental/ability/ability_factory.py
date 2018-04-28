@@ -1,5 +1,5 @@
+from src.elemental.ability.abilities.defend import Defend
 from src.elemental.ability.ability import LearnableAbility
-from src.elemental.ability.defend import Defend
 
 
 class AbilityFactory:
