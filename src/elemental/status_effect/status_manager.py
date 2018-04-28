@@ -203,13 +203,17 @@ class StatusManager:
     def __calculate_stages(self, stages: int, stats: int) -> int:
         """
         :param stages: The number of stages a particular stat has.
-        :param stats How much of a particular stat the CombatElemental has. Eg. CombatElemental.physical_att
-        :return: The amount of a stat gained based on the number of stages.
+        :param stats: How much of a particular stat the CombatElemental has. Eg. CombatElemental.physical_att
+        :return: The amount of a stat gained or lost based on the number of stages.
         """
         if stages == 0:
             return 0
-        level_bonus = self.combat_elemental.level // 3
-        return int(stages * (stats * 0.2 + level_bonus))
+        scale = 4
+        if stages > 0:
+            calculation = stats * (scale + stages) // scale
+        else:
+            calculation = stats * scale // (scale - stages)
+        return calculation - stats
 
     def __check_effect_end(self, effect: StatusEffect) -> None:
         effect.reduce_duration()
