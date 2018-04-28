@@ -132,7 +132,11 @@ class StatusEffect:
         pass
 
     def on_effect_start(self) -> None:
-        pass
+        """
+        Apply any stat changes immediately even though they are recalculated at the end of the turn.
+        Eg. this allows Defend to block end-of-turn debuff damage.
+        """
+        self.apply_stat_changes()
 
     def apply_stat_changes(self) -> None:
         """
