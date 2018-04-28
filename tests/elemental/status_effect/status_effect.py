@@ -24,7 +24,7 @@ class StatusEffectTests(unittest.TestCase):
         buff = GenericBuff()
         self.combat_elemental.add_status_effect(buff)
         duration_before = buff.duration_remaining
-        self.combat_elemental.on_turn_end()
+        self.combat_elemental.end_turn()
         duration_after = buff.duration_remaining
         self.assertLess(duration_after, duration_before, error)
 
@@ -33,7 +33,7 @@ class StatusEffectTests(unittest.TestCase):
         buff = GenericBuff()
         self.combat_elemental.add_status_effect(buff)
         for i in range(buff.duration_remaining):
-            self.combat_elemental.on_turn_end()
+            self.combat_elemental.end_turn()
         num_effects = self.combat_elemental.num_status_effects
         self.assertEqual(num_effects, 0, error)
 
@@ -50,7 +50,7 @@ class StatusEffectTests(unittest.TestCase):
         same_buff = GenericBuff()
         self.combat_elemental.add_status_effect(buff)
         duration_before = buff.duration_remaining
-        self.combat_elemental.on_turn_end()
+        self.combat_elemental.end_turn()
         self.combat_elemental.add_status_effect(same_buff)
         duration_after = buff.duration_remaining
         self.assertEqual(duration_before, duration_after, error)
@@ -69,7 +69,7 @@ class StatusEffectTests(unittest.TestCase):
         buff = GenericBuff()
         self.combat_elemental.add_status_effect(buff)
         for i in range(buff.duration_remaining):
-            self.combat_elemental.on_turn_end()  # Remove the effect via duration end
+            self.combat_elemental.end_turn()  # Remove the effect via duration end
         physical_att_after = self.combat_elemental.physical_att
         self.assertEqual(physical_att_before, physical_att_after, error)
 
@@ -78,7 +78,7 @@ class StatusEffectTests(unittest.TestCase):
         buff = GenericBuff()
         self.combat_elemental.add_status_effect(buff)
         physical_att_before = self.combat_elemental.physical_att
-        self.combat_elemental.on_turn_end()  # Remove the effect via duration end
+        self.combat_elemental.end_turn()  # Remove the effect via duration end
         physical_att_after = self.combat_elemental.physical_att
         self.assertEqual(physical_att_before, physical_att_after, error)
 
@@ -87,7 +87,7 @@ class StatusEffectTests(unittest.TestCase):
         buff = PermaBuff()
         self.combat_elemental.add_status_effect(buff)
         duration_before = buff.duration_remaining
-        self.combat_elemental.on_turn_end()
+        self.combat_elemental.end_turn()
         duration_after = buff.duration_remaining
         self.assertEqual(duration_after, duration_before, error)
 

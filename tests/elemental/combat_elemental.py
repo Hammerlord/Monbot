@@ -93,7 +93,7 @@ class CombatElementalTests(unittest.TestCase):
     def test_gain_mana(self):
         error = "CombatElemental didn't gain mana on turn start"
         mana_before_turn = self.combat_elemental.current_mana
-        self.combat_elemental.on_turn_start()
+        self.combat_elemental.start_turn()
         mana_after_turn = self.combat_elemental.current_mana
         self.assertGreater(mana_after_turn, mana_before_turn, error)
 

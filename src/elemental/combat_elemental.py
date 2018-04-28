@@ -130,9 +130,6 @@ class CombatElemental:
     def can_use_ability(self, ability: Ability) -> bool:
         return self.current_mana >= ability.mana_cost and self.defend_charges >= ability.defend_cost
 
-    def on_turn_start(self) -> None:
-        self.gain_mana(self._mana_per_turn + self._status_manager.bonus_mana_per_turn)
-
     def gain_bench_mana(self) -> None:
         """
         All eligible bench (not dead, not active) Elementals gain mana per turn.
@@ -158,16 +155,19 @@ class CombatElemental:
     def dispel_all(self, dispeller: 'CombatElemental'):
         self._status_manager.dispel_all(dispeller)
 
-    def on_ability(self, ability: Ability) -> None:
-        # TODO
-        pass
-
     def add_status_effect(self, status_effect: StatusEffect):
         # TODO check if we can add status effects.
         self._status_manager.add_status_effect(status_effect)
 
-    def on_turn_end(self) -> None:
+    def start_turn(self) -> None:
+        self.gain_mana(self._mana_per_turn + self._status_manager.bonus_mana_per_turn)
+
+    def end_turn(self) -> None:
         self._status_manager.on_turn_end()
+
+    def on_ability(self, ability: Ability) -> None:
+        # TODO
+        pass
 
     def on_receive_ability(self, ability: Ability, actor: 'CombatElemental') -> None:
         """

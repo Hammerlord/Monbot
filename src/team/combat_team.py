@@ -100,7 +100,7 @@ class CombatTeam:
         self.combat.check_end()
 
     def end_turn(self) -> None:
-        self.active_elemental.on_turn_end()
+        self.active_elemental.end_turn()
         # Check knocked out again in case a debuff, etc. finished off the Elemental
         if self.active_elemental.is_knocked_out:
             self.handle_knockout()
@@ -123,7 +123,7 @@ class CombatTeam:
         self._active_elemental.add_action(action)
 
     def on_turn_start(self) -> None:
-        self.active_elemental.on_turn_start()
+        self.active_elemental.start_turn()
         for elemental in self.eligible_bench:
             elemental.gain_bench_mana()
 
