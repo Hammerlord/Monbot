@@ -96,7 +96,7 @@ class StatusEffect:
             self.current_stacks += 1
 
     def refresh_duration(self) -> None:
-        self._duration_remaining = self._max_duration
+        self._duration_remaining = self.max_duration
 
     def reduce_duration(self) -> None:
         if self.can_reduce_duration:
