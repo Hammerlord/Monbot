@@ -34,6 +34,8 @@ class Ability:
         self.base_power = 0
         self.mana_cost = 0
         self.defend_cost = 0
+        # Who goes first in the round is determined by turn_priority.
+        # Higher number = higher turn priority. If it’s equal, then we match speed stats.
         self.turn_priority = 0
         self.targeting = Target.ENEMY
         self.type = AbilityType.DAMAGE

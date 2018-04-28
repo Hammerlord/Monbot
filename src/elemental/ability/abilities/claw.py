@@ -18,6 +18,6 @@ class Claw(Ability):
         self.base_power = 10
         self.mana_cost = 0
         self.defend_cost = 0
-        self.turn_priority = 0
+        self.turn_priority = 1
         self.targeting = Target.ENEMY
         self.ability_type = AbilityType.DAMAGE
