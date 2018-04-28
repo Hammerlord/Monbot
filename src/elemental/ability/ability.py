@@ -20,6 +20,12 @@ class AbilityType(Enum):
     STATUS_EFFECT = 2
 
 
+class TurnPriority(Enum):
+    NORMAL = 1  # Most abilities are normal turn priority.
+    HIGH = 2  # Eg. for "attack first" type abilities.
+    SWITCH = 3  # Switch has the highest priority.
+
+
 class Ability:
     """
     Basic information about an ability.
@@ -36,7 +42,7 @@ class Ability:
         self.defend_cost = 0
         # Who goes first in the round is determined by turn_priority.
         # Higher number = higher turn priority. If it’s equal, then we match speed stats.
-        self.turn_priority = 0
+        self.turn_priority = TurnPriority.NORMAL
         self.targeting = Target.ENEMY
         self.type = AbilityType.DAMAGE
 
