@@ -45,6 +45,14 @@ class Ability:
         """
         return
 
+    @staticmethod
+    def is_usable_by(combat_elemental) -> bool:
+        """
+        A custom use requirement.
+        :param combat_elemental: CombatElemental
+        """
+        return True
+
 
 class LearnableAbility:
     """

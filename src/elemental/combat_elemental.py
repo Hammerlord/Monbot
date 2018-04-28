@@ -128,7 +128,9 @@ class CombatElemental:
         return self._elemental.is_knocked_out
 
     def can_use_ability(self, ability: Ability) -> bool:
-        return self.current_mana >= ability.mana_cost and self.defend_charges >= ability.defend_cost
+        return self.current_mana >= ability.mana_cost and \
+               self.defend_charges >= ability.defend_cost and \
+               ability.is_usable_by(self)
 
     def gain_bench_mana(self) -> None:
         """
