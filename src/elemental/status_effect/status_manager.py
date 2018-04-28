@@ -188,6 +188,7 @@ class StatusManager:
                 self._status_effects.remove(effect)
 
     def on_switch_in(self) -> None:
+        self.__recalculate_effects()
         for effect in self._status_effects:
             effect.on_switch_in()
 
