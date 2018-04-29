@@ -67,9 +67,10 @@ class LearnableAbility:
     """
 
     def __init__(self,
-                 ability: Ability):
+                 ability: Ability,
+                 level_required=0):
         self.ability = ability
-        self.level_required = 0
+        self.level_required = level_required
         self.p_att_rank_required = 0  # Attribute ranks required, eg. Ferocity, Attunement, etc.
         self.m_att_rank_required = 0
         self.p_def_rank_required = 0
