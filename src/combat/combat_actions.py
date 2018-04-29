@@ -1,4 +1,4 @@
-from src.elemental.ability.ability import Ability, AbilityType
+from src.elemental.ability.ability import Ability
 from src.elemental.ability.damage_calculator import DamageCalculator
 from src.elemental.combat_elemental import CombatElemental
 
