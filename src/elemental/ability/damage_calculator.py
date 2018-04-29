@@ -91,7 +91,7 @@ class DamageCalculator:
     def __get_bonus_multiplier(self) -> float:
         """
         Check a custom condition on the damage source that may trigger a multiplier bonus.
-        :return: 1x, if there was no custom condition (defaults to False) or the condition failed.
+        :return: 1x, if there was no custom condition or the condition failed.
         """
         return self.damage_source.get_bonus_multiplier(self.target, self.actor)
 

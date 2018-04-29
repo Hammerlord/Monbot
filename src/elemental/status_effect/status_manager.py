@@ -179,7 +179,8 @@ class StatusManager:
             if effect.id == status_effect.id:
                 return effect
 
-    def __calculate_stages(self, stages: int, stats: int) -> int:
+    @staticmethod
+    def __calculate_stages(stages: int, stats: int) -> int:
         """
         :param stages: The number of stages a particular stat has.
         :param stats: How much of a particular stat the CombatElemental has. Eg. CombatElemental.physical_att
