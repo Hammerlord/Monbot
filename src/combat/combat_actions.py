@@ -84,9 +84,8 @@ class ElementalAction(Action):
     def check_healing_done(self) -> None:
         healing = self.ability.base_recovery
         if healing > 0:
-            # Recovery abilities don't scale off of anything... yet
-            if self.ability.is_multiplier_triggered(self.target, self.actor):
-                healing += self.ability.bonus_multiplier
+            # Recovery abilities don't scale off of anything besides the bonus... yet
+            healing *= self.ability.get_bonus_multiplier(self.target, self.actor)
             self.target.heal(healing)
 
     def check_status_effect_application(self) -> None:

@@ -13,7 +13,7 @@ class DamageCalculator:
     + ability.base_power
     + actor.attack // 3
     - target.damage_reduction percentage
-    - target.def // 5
+    - target.def // 4
     If same element as ability: +25%
     Elemental weakness/resistance: +/-50%
     Bonus multiplier for a custom condition set by damage source: +x%
@@ -93,9 +93,7 @@ class DamageCalculator:
         Check a custom condition on the damage source that may trigger a multiplier bonus.
         :return: 1x, if there was no custom condition (defaults to False) or the condition failed.
         """
-        if self.damage_source.is_multiplier_triggered(self.target, self.actor):
-            return self.damage_source.bonus_multiplier
-        return 1
+        return self.damage_source.get_bonus_multiplier(self.target, self.actor)
 
     def __get_damage_blocked(self) -> int:
         """

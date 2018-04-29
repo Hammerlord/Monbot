@@ -50,7 +50,7 @@ class DamageCalculatorTests(unittest.TestCase):
         self.assertEqual(calculator.final_damage, 0, error)
 
     def test_default_bonus_multiplier(self):
-        error = "Ability bonus_multiplier condition didn't resolve to false by default"
+        error = "Ability bonus_multiplier didn't resolve to 1 by default"
         ability = AbilityBuilder().build()
         target = CombatElementalBuilder().build()
         actor = CombatElementalBuilder().build()
