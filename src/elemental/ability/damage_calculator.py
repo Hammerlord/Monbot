@@ -44,12 +44,13 @@ class DamageCalculator:
         if self.damage_source.base_power == 0:
             return
         self.raw_damage = self.__get_raw_damage()
-        self.damage_blocked = self.__get_damage_blocked()
-        self.damage_defended = self.__get_damage_defended()  # From stats
+        self.damage_blocked = self.__get_damage_blocked()  # From damage_reduction
+        self.damage_defended = self.__get_damage_defended()  # From def stats
         final_difference = self.raw_damage - self.damage_blocked - self.damage_defended
         if final_difference < 1:
             self.final_damage = 1
-        self.final_damage = final_difference
+        else:
+            self.final_damage = final_difference
 
     def __get_raw_damage(self):
         raw_damage = self.damage_source.base_power
