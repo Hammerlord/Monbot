@@ -1,3 +1,5 @@
+from unittest.mock import MagicMock
+
 from src.character.player import Player
 from src.elemental.attribute.attribute_factory import AttributeFactory
 from src.elemental.combat_elemental import CombatElemental
@@ -83,4 +85,5 @@ class CombatElementalBuilder:
         return self
 
     def build(self):
-        return CombatElemental(self._elemental)
+        return CombatElemental(self._elemental,
+                               MagicMock())
