@@ -1,5 +1,5 @@
 from src.core.elements import Elements, Category
-from src.elemental.ability.ability import Target, Ability, AbilityType
+from src.elemental.ability.ability import Target, Ability
 
 
 class Claw(Ability):
@@ -19,4 +19,3 @@ class Claw(Ability):
         self.mana_cost = 0
         self.defend_cost = 0
         self.targeting = Target.ENEMY
-        self.ability_type = AbilityType.DAMAGE

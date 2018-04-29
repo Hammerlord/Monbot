@@ -1,12 +1,14 @@
 from enum import Enum
 
+from src.elemental.ability.technique import Technique
+
 
 class EffectType(Enum):
     BUFF = 0
     DEBUFF = 1
 
 
-class StatusEffect:
+class StatusEffect(Technique):
 
     """
     A status effect applied onto a CombatElemental.
@@ -16,9 +18,7 @@ class StatusEffect:
     """
 
     def __init__(self):
-        self.id = 0
-        self.name = None  # Str. TBD by descendants.
-        self.description = None  # Str. TBD by descendants.
+        super().__init__()
         self.__target = None  # The CombatElemental this effect is applied to.
         self.__applier = None  # The CombatElemental that applied this StatusEffect.
         self.icon = ''  # The emote that represents the effect.
@@ -31,6 +31,7 @@ class StatusEffect:
         self.max_stacks = 1  # Ie. can we apply multiple of this effect?
         self.current_stacks = 1
         self.can_add_instances = False  # Ie. can we apply multiple instances of this effect?
+        self.bonus_multiplier = 1
 
     @property
     def can_stack(self) -> bool:

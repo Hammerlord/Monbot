@@ -40,6 +40,7 @@ class ElementalAction(Action):
         self.character = character
         self.actor = actor
         self.ability = ability
+        self.ability_triggered_bonus = False
         self.target = target
         self.damage_calculator = DamageCalculator(self.target,
                                                   self.actor,
@@ -70,14 +71,23 @@ class ElementalAction(Action):
         self.actor.on_ability(self.ability)
         self.target.on_receive_ability(self.ability, self.actor)
         self.check_damage_dealt()
+        self.check_healing_done()
         self.check_status_effect_application()
 
     def check_damage_dealt(self) -> None:
-        if self.ability.type == AbilityType.DAMAGE:
+        if self.ability.base_power > 0:
             # Only run calculate() and deal damage if the Ability is meant to do damage.
             self.damage_calculator.calculate()
             damage = self.damage_calculator.final_damage
             self.target.receive_damage(damage, self.actor)
+
+    def check_healing_done(self) -> None:
+        healing = self.ability.base_recovery
+        if self.ability.is_multiplier_triggered(self.target, self.actor):
+            healing += self.ability.bonus_multiplier
+        if healing > 0:
+            # Recovery abilities don't scale off of anything... yet
+            self.target.heal(healing)
 
     def check_status_effect_application(self) -> None:
         status_effect = self.ability.status_effect

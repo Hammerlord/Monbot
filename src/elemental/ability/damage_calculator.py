@@ -20,7 +20,7 @@ class DamageCalculator:
                  target: CombatElemental,
                  actor: CombatElemental,
                  damage_source: Ability or StatusEffect):
-        self.actor = actor
+        self.actor = actor  # The Elemental who is attacking or who applied the effect.
         self.target = target
         self.damage_source = damage_source
         self.effectiveness_multiplier = 1
@@ -39,9 +39,10 @@ class DamageCalculator:
 
     def calculate(self) -> None:
         """
-        Run this method if damage should be calculated.
         All attacks have a damage calculation (even if it's zero).
         """
+        if self.damage_source.base_power == 0:
+            return
         self.raw_damage = self.__get_raw_damage()
         self.damage_blocked = self.__get_damage_blocked()
         self.damage_defended = self.__get_damage_defended()  # From stats

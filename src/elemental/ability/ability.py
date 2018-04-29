@@ -1,6 +1,7 @@
 from enum import Enum
 
 from src.core.elements import Elements, Category
+from src.elemental.ability.technique import Technique
 from src.elemental.status_effect.status_effect import StatusEffect
 
 
@@ -14,37 +15,27 @@ class Target(Enum):
     SELF_AOE = 6
 
 
-class AbilityType(Enum):
-    DAMAGE = 0
-    HEALING = 1
-    STATUS_EFFECT = 2
-
-
 class TurnPriority(Enum):
     NORMAL = 1  # Most abilities are normal turn priority.
     HIGH = 2  # Eg. for "attack first" type abilities.
     SWITCH = 3  # Switch has the highest priority.
 
 
-class Ability:
+class Ability(Technique):
     """
     Basic information about an ability.
+    Perhaps weirdly, it doesn't know who owns it.
     """
 
     def __init__(self):
-        self.name = None  # Str. TBD by descendants
-        self.description = None  # Str. TBD by descendants
-        self.id = 0  # Int. TBD by descendants
-        self.element = Elements.NONE
-        self.category = Category.NONE
-        self.base_power = 0
+        super().__init__()
         self.mana_cost = 0
         self.defend_cost = 0
         # Who goes first in the round is determined by turn_priority.
         # Higher number = higher turn priority. If it’s equal, then we match speed stats.
         self.turn_priority = TurnPriority.NORMAL
         self.targeting = Target.ENEMY
-        self.type = AbilityType.DAMAGE
+        self.bonus_multiplier = 1
 
     @property
     def status_effect(self) -> StatusEffect or None:
