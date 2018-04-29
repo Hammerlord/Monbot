@@ -127,6 +127,24 @@ class CombatElemental:
     def is_knocked_out(self) -> bool:
         return self._elemental.is_knocked_out
 
+    def update_p_att_stages(self, amount: int) -> None:
+        self._status_manager.update_p_att_stages(amount)
+
+    def update_m_att_stages(self, amount: int) -> None:
+        self._status_manager.update_m_att_stages(amount)
+
+    def update_p_def_stages(self, amount: int) -> None:
+        self._status_manager.update_p_def_stages(amount)
+
+    def update_m_def_stages(self, amount: int) -> None:
+        self._status_manager.update_m_def_stages(amount)
+
+    def update_speed_stages(self, amount: int) -> None:
+        self._status_manager.update_speed_stages(amount)
+
+    def update_mana_per_turn(self, amount: int) -> None:
+        self._status_manager.update_mana_per_turn(amount)
+
     def can_use_ability(self, ability: Ability) -> bool:
         return self.current_mana >= ability.mana_cost and \
                self.defend_charges >= ability.defend_cost and \

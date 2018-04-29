@@ -2,8 +2,8 @@ from enum import Enum
 
 
 class EffectType(Enum):
-    BUFF: 0
-    DEBUFF: 1
+    BUFF = 0
+    DEBUFF = 1
 
 
 class StatusEffect:
@@ -19,8 +19,8 @@ class StatusEffect:
         self.id = 0
         self.name = None  # Str. TBD by descendants.
         self.description = None  # Str. TBD by descendants.
-        self.target = None  # The StatusManager this StatusEffect is applied to.
-        self.applier = None  # The CombatElemental that applied this StatusEffect.
+        self.__target = None  # The CombatElemental this effect is applied to.
+        self.__applier = None  # The CombatElemental that applied this StatusEffect.
         self.icon = ''  # The emote that represents the effect.
         self.effect_type = EffectType.BUFF
         # Pass duration in number of the affected Elemental's turns. -1 if no duration:
@@ -29,7 +29,7 @@ class StatusEffect:
         self.is_dispellable = True
         self.ends_on_switch = True
         self.max_stacks = 1  # Ie. can we apply multiple of this effect?
-        self.current_stacks = 0
+        self.current_stacks = 1
         self.can_add_instances = False  # Ie. can we apply multiple instances of this effect?
 
     @property
@@ -54,30 +54,30 @@ class StatusEffect:
     @property
     def target(self):
         """
-        :return: The CombatElemental.StatusManager this StatusEffect is applied to.
+        :return: The CombatElemental this StatusEffect is applied to.
         """
-        return self._target
+        return self.__target
 
     @target.setter
-    def target(self, status_manager) -> None:
+    def target(self, combat_elemental) -> None:
         """
-        :param status_manager: CombatElemental.StatusManager
+        :param combat_elemental: CombatElemental
         """
-        self._target = status_manager
+        self.__target = combat_elemental
 
     @property
     def applier(self):
         """
         :return: The CombatElemental that applied this StatusEffect.
         """
-        return self._applier
+        return self.__applier
 
     @applier.setter
     def applier(self, elemental) -> None:
         """
         :param elemental: CombatElemental
         """
-        self._applier = elemental
+        self.__applier = elemental
 
     @property
     def can_reduce_duration(self) -> bool:
