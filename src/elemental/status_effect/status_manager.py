@@ -155,6 +155,8 @@ class StatusManager:
     def on_turn_end(self) -> None:
         for effect in self._status_effects:
             effect.on_turn_end()
+            if self.combat_elemental.is_knocked_out:
+                return
             self.__check_effect_end(effect)
         self.__recalculate_effects()
 
