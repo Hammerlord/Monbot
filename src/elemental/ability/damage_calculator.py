@@ -56,6 +56,7 @@ class DamageCalculator:
         raw_damage += self.__get_attack_power()
         raw_damage += self.__check_same_element_bonus(raw_damage)
         raw_damage *= self.__get_effectiveness_multiplier()
+        raw_damage *= self.__get_bonus_multiplier()
         return raw_damage
 
     def __get_attack_power(self) -> int:
@@ -83,6 +84,15 @@ class DamageCalculator:
         effectiveness = Effectiveness(self.damage_source.element, self.target.element)
         multiplier = effectiveness.calculate()
         return multiplier
+
+    def __get_bonus_multiplier(self) -> float:
+        """
+        Check a custom condition on the damage source that may trigger a multiplier bonus.
+        :return: 1x, if there was no custom condition or the condition failed.
+        """
+        if self.damage_source.is_multiplier_triggered(self.target, self.actor):
+            return self.damage_source.bonus_multiplier
+        return 1
 
     def __get_damage_blocked(self) -> int:
         """
