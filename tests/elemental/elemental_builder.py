@@ -1,6 +1,7 @@
 from unittest.mock import MagicMock
 
 from src.character.player import Player
+from src.core.elements import Elements
 from src.elemental.attribute.attribute_factory import AttributeFactory
 from src.elemental.combat_elemental import CombatElemental
 from src.elemental.elemental import Elemental
@@ -21,6 +22,10 @@ class ElementalBuilder:
         self._owner = Player(UserBuilder().build())
         self._owner._level = 60  # Max level, as Elemental levels are restricted by owner level
         self._attribute_manager = AttributeFactory.create_manager()
+
+    def with_element(self, element: Elements) -> 'ElementalBuilder':
+        self._species = SpeciesBuilder().with_element(element).build()
+        return self
 
     def with_current_hp(self, amount: int) -> 'ElementalBuilder':
         self._current_hp = amount
@@ -79,6 +84,10 @@ class ElementalBuilder:
 class CombatElementalBuilder:
     def __init__(self):
         self._elemental = ElementalBuilder().build()
+
+    def with_element(self, element: Elements) -> 'CombatElementalBuilder':
+        self._elemental = ElementalBuilder().with_element(element).build()
+        return self
 
     def with_elemental(self, elemental: Elemental) -> 'CombatElementalBuilder':
         self._elemental = elemental

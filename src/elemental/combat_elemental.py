@@ -20,6 +20,7 @@ class CombatElemental:
         self.base_physical_def = elemental.physical_def
         self.base_magic_def = elemental.magic_def
         self.base_speed = elemental.speed
+        self.defend_potency = elemental.defend_potency
         self._current_mana = elemental.starting_mana
         self._defend_charges = elemental.defend_charges
         self._mana_per_turn = elemental.mana_per_turn
@@ -149,6 +150,9 @@ class CombatElemental:
 
     def update_mana_per_turn(self, amount: int) -> None:
         self._status_manager.update_mana_per_turn(amount)
+
+    def update_damage_reduction(self, amount: int) -> None:
+        self._status_manager.update_damage_reduction(amount)
 
     def can_use_ability(self, ability: Ability) -> bool:
         return self.current_mana >= ability.mana_cost and \

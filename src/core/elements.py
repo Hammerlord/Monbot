@@ -64,7 +64,8 @@ class Effectiveness:
         return self.check_elements(self.target_element, self.ability_element) or \
                self.is_light_vs_dark(self.target_element, self.ability_element)
 
-    def check_elements(self, against: Elements, to_check: Elements) -> bool:
+    @staticmethod
+    def check_elements(against: Elements, to_check: Elements) -> bool:
         if against == Elements.LIGHTNING:
             # Lightning is weak against earth and fire.
             return to_check == Elements.EARTH or to_check == Elements.FIRE
@@ -79,9 +80,10 @@ class Effectiveness:
             return to_check == Elements.WATER or to_check == Elements.FIRE
         if against == Elements.WIND:
             # Wind is weak against lightning and earth.
-            return to_check == Elements.WIND or to_check == Elements.EARTH
+            return to_check == Elements.LIGHTNING or to_check == Elements.EARTH
 
-    def is_light_vs_dark(self, against: Elements, to_check: Elements) -> bool:
+    @staticmethod
+    def is_light_vs_dark(against: Elements, to_check: Elements) -> bool:
         """
         Light and dark are effective against each other.
         """

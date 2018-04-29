@@ -35,7 +35,6 @@ class Ability(Technique):
         # Higher number = higher turn priority. If it’s equal, then we match speed stats.
         self.turn_priority = TurnPriority.NORMAL
         self.targeting = Target.ENEMY
-        self.bonus_multiplier = 1
 
     @property
     def status_effect(self) -> StatusEffect or None:

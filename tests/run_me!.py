@@ -1,6 +1,7 @@
 import unittest
 from typing import Type
 
+from tests.ability.damage_calculator import DamageCalculatorTests
 from tests.character.character import CharacterTests
 from tests.character.npc import NPCTests
 from tests.character.player import PlayerTests
@@ -17,7 +18,8 @@ suites = [CharacterTests,
           CombatElementalTests,
           TeamTests,
           CombatTeamTests,
-          StatusEffectTests]
+          StatusEffectTests,
+          DamageCalculatorTests]
 
 
 def load_test(tests: Type[unittest.TestCase]):

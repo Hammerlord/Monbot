@@ -102,6 +102,9 @@ class StatusManager:
     def update_mana_per_turn(self, amount: int) -> None:
         self._mana_per_turn += amount
 
+    def update_damage_reduction(self, amount: int) -> None:
+        self._damage_reduction += amount
+
     def __validate_stages(self, stages: int, amount: int) -> int:
         """
         A CombatElemental's stat stages are capped by a maximum number.

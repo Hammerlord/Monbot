@@ -74,6 +74,10 @@ class SpeciesBuilder(StatsBuilder):
         self._abilities = abilities
         return self
 
+    def with_element(self, element: Elements) -> 'SpeciesBuilder':
+        self._element = element
+        return self
+
     def build(self) -> Species:
         species = Species()
         species._name = self._name
