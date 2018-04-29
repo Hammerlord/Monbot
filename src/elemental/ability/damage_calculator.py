@@ -14,6 +14,7 @@ class DamageCalculator:
     - target.def // 5
     If same element as ability: +25%
     Elemental weakness/resistance: +/-50%
+    Bonus multiplier for a custom condition set by damage source: +x%
     """
 
     def __init__(self,
@@ -38,9 +39,6 @@ class DamageCalculator:
         return self.effectiveness_multiplier < 1
 
     def calculate(self) -> None:
-        """
-        All attacks have a damage calculation (even if it's zero).
-        """
         if self.damage_source.base_power == 0:
             return
         self.raw_damage = self.__get_raw_damage()
