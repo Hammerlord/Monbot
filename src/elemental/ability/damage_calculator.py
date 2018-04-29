@@ -24,7 +24,7 @@ class DamageCalculator:
         self.actor = actor  # The Elemental who is attacking or who applied the effect.
         self.target = target
         self.damage_source = damage_source
-        self.effectiveness_multiplier = 1
+        self.effectiveness_multiplier = self.__get_effectiveness_multiplier()
         self.raw_damage = 0
         self.damage_blocked = 0
         self.damage_defended = 0
@@ -53,7 +53,7 @@ class DamageCalculator:
     def __get_raw_damage(self):
         raw_damage = self.damage_source.base_power
         raw_damage += self.__get_attack_power()
-        raw_damage *= self.__get_same_element_multiplier()
+        raw_damage *= self.effectiveness_multiplier
         raw_damage *= self.__get_effectiveness_multiplier()
         raw_damage *= self.__get_bonus_multiplier()
         return raw_damage
