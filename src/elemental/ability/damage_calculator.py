@@ -1,3 +1,5 @@
+import warnings
+
 from src.core.elements import Category, Effectiveness
 from src.elemental.ability.ability import Ability
 from src.elemental.combat_elemental import CombatElemental
@@ -25,6 +27,8 @@ class DamageCalculator:
         self.target = target
         self.damage_source = damage_source
         self.effectiveness_multiplier = self.__get_effectiveness_multiplier()
+        self.same_element_multiplier = self.__get_same_element_multiplier()
+        self.bonus_multiplier = self.__get_bonus_multiplier()
         self.raw_damage = 0
         self.damage_blocked = 0
         self.damage_defended = 0
@@ -54,8 +58,8 @@ class DamageCalculator:
         raw_damage = self.damage_source.base_power
         raw_damage += self.__get_attack_power()
         raw_damage *= self.effectiveness_multiplier
-        raw_damage *= self.__get_effectiveness_multiplier()
-        raw_damage *= self.__get_bonus_multiplier()
+        raw_damage *= self.same_element_multiplier
+        raw_damage *= self.bonus_multiplier
         return raw_damage
 
     def __get_attack_power(self) -> int:
@@ -64,6 +68,7 @@ class DamageCalculator:
             return self.actor.physical_att // 3
         if self.damage_source.category == Category.MAGIC:
             return self.actor.magic_att // 3
+        warnings.warn("Damage source has no category:", self.damage_source.name)
         return 0
 
     def __get_same_element_multiplier(self) -> float:

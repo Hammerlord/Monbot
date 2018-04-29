@@ -48,3 +48,21 @@ class DamageCalculatorTests(unittest.TestCase):
         calculator = DamageCalculator(target, actor, ability)
         calculator.calculate()
         self.assertEqual(calculator.final_damage, 0, error)
+
+    def test_default_bonus_multiplier(self):
+        error = "Ability bonus_multiplier condition didn't resolve to false by default"
+        ability = AbilityBuilder().build()
+        target = CombatElementalBuilder().build()
+        actor = CombatElementalBuilder().build()
+        calculator = DamageCalculator(target, actor, ability)
+        calculator.calculate()
+        self.assertEqual(calculator.bonus_multiplier, 1, error)
+
+    def test_same_element_multiplier(self):
+        error = "The Ability being the same element as its user should grant a multiplier"
+        ability = AbilityBuilder().with_element(Elements.WATER).build()
+        target = CombatElementalBuilder().build()
+        actor = CombatElementalBuilder().with_element(Elements.WATER).build()
+        calculator = DamageCalculator(target, actor, ability)
+        calculator.calculate()
+        self.assertGreater(calculator.same_element_multiplier, 1, error)
