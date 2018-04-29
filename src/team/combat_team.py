@@ -20,7 +20,7 @@ class CombatTeam:
         :param team: The non-combat Team.
         """
         self.combat = None
-        self.team = [CombatElemental(elemental) for elemental in team.elementals]
+        self.team = [CombatElemental(elemental, self) for elemental in team.elementals]
         self.owner = team.owner
         self._active_elemental = None
         self.status_effects = []  # Team-wide status effects, eg. weather.

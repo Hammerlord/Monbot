@@ -8,8 +8,13 @@ from src.elemental.status_effect.status_manager import StatusManager
 
 
 class CombatElemental:
-    def __init__(self, elemental: Elemental):
+    def __init__(self, elemental: Elemental,
+                 team):
+        """
+        :param team: The CombatTeam this elemental is on.
+        """
         self._elemental = elemental
+        self.team = team
         self.base_physical_att = elemental.physical_att
         self.base_magic_att = elemental.magic_att
         self.base_physical_def = elemental.physical_def
