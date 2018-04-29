@@ -54,7 +54,7 @@ class DamageCalculator:
     def __get_raw_damage(self):
         raw_damage = self.damage_source.base_power
         raw_damage += self.__get_attack_power()
-        raw_damage += self.__check_same_element_bonus(raw_damage)
+        raw_damage *= self.__get_same_element_multiplier()
         raw_damage *= self.__get_effectiveness_multiplier()
         raw_damage *= self.__get_bonus_multiplier()
         return raw_damage
@@ -67,13 +67,13 @@ class DamageCalculator:
             return self.actor.magic_att // 3
         return 0
 
-    def __check_same_element_bonus(self, raw_damage: int) -> int:
+    def __get_same_element_multiplier(self) -> float:
         """
         If the ability has the same element as its user, gain 1.25x damage.
         """
         if self.damage_source.element == self.actor.element:
-            raw_damage += raw_damage * 0.25
-        return raw_damage
+            return 1.25
+        return 1
 
     def __get_effectiveness_multiplier(self) -> float:
         """
@@ -82,13 +82,12 @@ class DamageCalculator:
         Eg. the wind target is strong to fire, so a fire ability does 0.5x damage and is marked as resisted.
         """
         effectiveness = Effectiveness(self.damage_source.element, self.target.element)
-        multiplier = effectiveness.calculate()
-        return multiplier
+        return effectiveness.calculate()
 
     def __get_bonus_multiplier(self) -> float:
         """
         Check a custom condition on the damage source that may trigger a multiplier bonus.
-        :return: 1x, if there was no custom condition or the condition failed.
+        :return: 1x, if there was no custom condition (defaults to False) or the condition failed.
         """
         if self.damage_source.is_multiplier_triggered(self.target, self.actor):
             return self.damage_source.bonus_multiplier
