@@ -2,6 +2,9 @@ from src.elemental.ability.abilities.charge import Charge
 from src.elemental.ability.abilities.claw import Claw
 from src.elemental.ability.abilities.defend import Defend
 from src.elemental.ability.abilities.enrage import Enrage
+from src.elemental.ability.abilities.fireball import Fireball
+from src.elemental.ability.abilities.razor_fangs import RazorFangs
+from src.elemental.ability.abilities.slam import Slam
 from src.elemental.ability.ability import LearnableAbility, Ability
 
 
@@ -28,6 +31,9 @@ class Abilities:
     claw = AbilityInitializer.initialize(Claw())
     charge = AbilityInitializer.initialize(Charge())
     enrage = AbilityInitializer.initialize(Enrage())
+    slam = AbilityInitializer.initialize(Slam())
+    razor_fangs = AbilityInitializer.initialize(RazorFangs())
+    fireball = AbilityInitializer.initialize(Fireball())
 
 
 class LearnableAbilities:
@@ -50,3 +56,15 @@ class LearnableAbilities:
     @staticmethod
     def enrage(level=0) -> LearnableAbility:
         return LearnableAbility(Abilities.enrage, level)
+
+    @staticmethod
+    def slam(level=0) -> LearnableAbility:
+        return LearnableAbility(Abilities.slam, level)
+
+    @staticmethod
+    def razor_fangs(level=0) -> LearnableAbility:
+        return LearnableAbility(Abilities.razor_fangs, level)
+
+    @staticmethod
+    def fireball(level=0) -> LearnableAbility:
+        return LearnableAbility(Abilities.fireball, level)

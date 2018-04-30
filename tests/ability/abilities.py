@@ -1,6 +1,5 @@
 import unittest
 
-from src.elemental.ability.abilities.charge import Charge
 from src.elemental.ability.ability_factory import Abilities
 from src.elemental.ability.damage_calculator import DamageCalculator
 from tests.elemental.elemental_builder import CombatElementalBuilder

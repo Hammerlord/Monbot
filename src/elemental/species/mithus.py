@@ -1,4 +1,5 @@
 from src.core.elements import Elements
+from src.elemental.ability.ability_factory import LearnableAbilities
 from src.elemental.species.species import Species, StatsInterface
 
 
@@ -34,4 +35,5 @@ class Mithus(Species):
         self._right_icon = ':whale2:'
         self._portrait = None
         self._growth_rate = GrowthRate()
-        self._learnable_abilities = []
+        self._learnable_abilities = [LearnableAbilities.razor_fangs(),
+                                     LearnableAbilities.claw()]

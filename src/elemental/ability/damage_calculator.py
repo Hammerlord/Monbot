@@ -1,9 +1,6 @@
 import warnings
 
 from src.core.elements import Category, Effectiveness
-from src.elemental.ability.ability import Ability
-from src.elemental.combat_elemental import CombatElemental
-from src.elemental.status_effect.status_effect import StatusEffect
 
 
 class DamageCalculator:
@@ -19,11 +16,13 @@ class DamageCalculator:
     Bonus multiplier for a custom condition set by damage source: +x%
     """
 
-    def __init__(self,
-                 target: CombatElemental,
-                 actor: CombatElemental,
-                 damage_source: Ability or StatusEffect):
-        self.actor = actor  # The Elemental who is attacking or who applied the effect.
+    def __init__(self, target, actor, damage_source):
+        """
+        :param target: The CombatElemental receiving damage.
+        :param actor: The CombatElemental who is attacking or who applied the effect.
+        :param damage_source: Ability or StatusEffect
+        """
+        self.actor = actor
         self.target = target
         self.damage_source = damage_source
         self.effectiveness_multiplier = self.__get_effectiveness_multiplier()
