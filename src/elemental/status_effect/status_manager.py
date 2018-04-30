@@ -178,7 +178,7 @@ class StatusManager:
         :return The StatusEffect if it exists, None if not.
         """
         for effect in self._status_effects:
-            if effect.id == status_effect.id:
+            if effect.name == status_effect.name:
                 return effect
 
     @staticmethod

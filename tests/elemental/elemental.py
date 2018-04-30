@@ -2,6 +2,7 @@ import unittest
 
 from src.elemental.ability.abilities.defend import Defend
 from src.elemental.ability.ability import Ability, LearnableAbility
+from src.elemental.ability.ability_factory import Abilities
 from src.elemental.attribute.attribute_factory import AttributeFactory
 from src.elemental.attribute.attribute_manager import AttributeManager
 from tests.character.character_builder import PlayerBuilder
@@ -246,7 +247,7 @@ class ElementalTests(unittest.TestCase):
         elemental = ElementalBuilder().build()
         has_defend = False
         for ability in elemental.active_abilities:
-            if ability.id == Defend().id:
+            if ability.name == Abilities.defend.name:
                 has_defend = True
         self.assertIs(has_defend, True, error)
 
@@ -287,6 +288,5 @@ class ElementalTests(unittest.TestCase):
         species = self.get_species()
         elemental = ElementalBuilder().with_level(5).with_species(species).build()
         elemental.swap_ability(4, 0)
-        ability_id = elemental.active_abilities[4].id
-        defend_id = 1
-        self.assertEqual(ability_id, defend_id, error)
+        ability_name = elemental.active_abilities[4].name
+        self.assertEqual(ability_name, Abilities.defend.name, error)

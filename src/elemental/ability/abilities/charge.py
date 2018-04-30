@@ -1,15 +1,13 @@
 from src.core.elements import Elements, Category
 from src.elemental.ability.ability import Ability, Target, TurnPriority
-from src.elemental.combat_elemental import CombatElemental
 
 
 class Charge(Ability):
     def __init__(self):
         super().__init__()
         self.name = "Charge"
-        self.description = "Charge the opponent, dealing physical damage. " \
+        self.description = "Charge the opponent before it can attack! " \
                            "+50% damage if the target is at full health."
-        self.id = 3
         self.element = Elements.NONE
         self.category = Category.PHYSICAL
         self.base_power = 15
@@ -19,7 +17,7 @@ class Charge(Ability):
         self.targeting = Target.ENEMY
 
     @staticmethod
-    def get_bonus_multiplier(target: CombatElemental, actor) -> float:
+    def get_bonus_multiplier(target, actor) -> float:
         if target.current_hp == target.max_hp:
             return 1.5
         return 1

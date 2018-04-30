@@ -4,7 +4,6 @@ from src.elemental.status_effect.status_effect import StatusEffect
 class Enrage(StatusEffect):
     def __init__(self):
         super().__init__()
-        self._id = 1
         self._name = "Enraged!"
         self.num_turns = 4
         self._description = f"Increases physical attack by 1 stage every turn for {self.num_turns}."

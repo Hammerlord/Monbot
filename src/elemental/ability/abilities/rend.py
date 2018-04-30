@@ -8,7 +8,6 @@ class Rend(Ability):
         super().__init__()
         self.name = "Rend"
         self.description = "Rend the enemy, inflicting a bleed for 3 turns."
-        self.id = 5
         self.element = Elements.WIND
         self.category = Category.PHYSICAL
         self.base_power = 1

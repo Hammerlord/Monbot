@@ -12,8 +12,6 @@ class StatusEffect(Technique):
 
     """
     A status effect applied onto a CombatElemental.
-    **Most effects are temporary, so they mutate the CombatElemental's
-    StatusManager rather than the CombatElemental directly.**
     Many methods are no-op by default, that should be overridden to the desired effect.
     """
 

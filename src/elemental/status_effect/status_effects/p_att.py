@@ -4,7 +4,6 @@ from src.elemental.status_effect.status_effect import StatusEffect
 class PAttBuff(StatusEffect):
     def __init__(self):
         super().__init__()
-        self._id = 1
         self._name = "Physical Attack+"
         self.num_turns = 7
         self._description = f"Increases physical attack by 1 stage. Lasts for {self.num_turns} turns."
@@ -23,7 +22,6 @@ class PAttBuff(StatusEffect):
 class PAttBuffLarge(StatusEffect):
     def __init__(self):
         super().__init__()
-        self._id = 2
         self._name = "Physical Attack++"
         self.num_turns = 3
         self._description = f"Increases physical attack by 2 stages. Lasts for {self.num_turns} turns."

@@ -1,7 +1,7 @@
 from typing import List
 
 from src.elemental.ability.ability import LearnableAbility, Ability
-from src.elemental.ability.ability_factory import AbilityFactory
+from src.elemental.ability.ability_factory import LearnableAbilities, Abilities
 
 
 class AbilityManager:
@@ -52,8 +52,8 @@ class AbilityManager:
         Replaces an Ability in active_abilities with one from eligible_abilities.
         Uses position in the respective lists.
         """
-        if self._active_abilities[active_position].id == 1:
-            # Defend, which is ability id 1, is not swappable.
+        if self._active_abilities[active_position].name == Abilities.defend.name:
+            # Defend is not swappable.
             return
         self._active_abilities[active_position] = self.eligible_abilities[available_position]
 
@@ -69,5 +69,5 @@ class AbilityManager:
 
     def _initialize_abilities(self) -> List[LearnableAbility]:
         abilities = self.elemental.species.learnable_abilities
-        abilities.insert(0, AbilityFactory.defend())  # All Elementals learn Defend
+        abilities.insert(0, LearnableAbilities.defend())  # All Elementals learn Defend
         return abilities

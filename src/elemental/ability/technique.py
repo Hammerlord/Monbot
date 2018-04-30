@@ -9,7 +9,6 @@ class Technique:
     def __init__(self):
         self.name = None  # Str. TBD by descendants
         self.description = None  # Str. TBD by descendants
-        self.id = 0  # Int. TBD by descendants
         self.element = Elements.NONE
         self.category = Category.NONE  # Eg. magic or physical.
         self.base_power = 0  # Ie. a damage stat.

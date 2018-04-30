@@ -78,10 +78,6 @@ class LearnableAbility:
         self.speed_rank_required = 0
 
     @property
-    def ability_id(self) -> int:
-        return self.ability.id
-
-    @property
     def name(self) -> str:
         return self.ability.name
 

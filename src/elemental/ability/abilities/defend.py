@@ -8,7 +8,6 @@ class Defend(Ability):
     """
     def __init__(self):
         super().__init__()
-        self.id = 1
         self.name = "Defend"
         self.description = "Block incoming damage until the next turn."
         self.turn_priority = TurnPriority.HIGH
