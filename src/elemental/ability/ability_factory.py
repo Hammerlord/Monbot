@@ -1,6 +1,7 @@
 from src.elemental.ability.abilities.charge import Charge
 from src.elemental.ability.abilities.claw import Claw
 from src.elemental.ability.abilities.defend import Defend
+from src.elemental.ability.abilities.enrage import Enrage
 from src.elemental.ability.ability import LearnableAbility, Ability
 
 
@@ -26,6 +27,7 @@ class Abilities:
     defend = AbilityInitializer.initialize(Defend())
     claw = AbilityInitializer.initialize(Claw())
     charge = AbilityInitializer.initialize(Charge())
+    enrage = AbilityInitializer.initialize(Enrage())
 
 
 class LearnableAbilities:
@@ -44,3 +46,7 @@ class LearnableAbilities:
     @staticmethod
     def charge(level=0) -> LearnableAbility:
         return LearnableAbility(Abilities.charge, level)
+
+    @staticmethod
+    def enrage(level=0) -> LearnableAbility:
+        return LearnableAbility(Abilities.enrage, level)

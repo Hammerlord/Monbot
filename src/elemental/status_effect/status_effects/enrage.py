@@ -1,12 +1,12 @@
 from src.elemental.status_effect.status_effect import StatusEffect
 
 
-class Enrage(StatusEffect):
+class EnrageEffect(StatusEffect):
     def __init__(self):
         super().__init__()
         self._name = "Enraged!"
-        self.num_turns = 4
-        self._description = f"Increases physical attack by 1 stage every turn for {self.num_turns}."
+        self.num_turns = 3
+        self._description = f"Increases physical and magic attack by 1 stage every turn for {self.num_turns}."
         self._max_duration = self._calculate_duration(self.num_turns)
         self.refresh_duration()
 
@@ -19,3 +19,4 @@ class Enrage(StatusEffect):
     def apply_stat_changes(self) -> None:
         stages = (self.max_duration - self.duration_remaining) // 2
         self._update_p_att_stages(stages)
+        self._update_m_att_stages(stages)
