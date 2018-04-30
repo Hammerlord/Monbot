@@ -12,6 +12,7 @@ class Defend(Ability):
         self.description = "Block incoming damage until the next turn."
         self.turn_priority = TurnPriority.HIGH
         self.targeting = Target.SELF
+        self.defend_cost = 1
 
     @property
     def status_effect(self) -> DefendEffect:
