@@ -21,6 +21,18 @@ class DamageCalculatorTests(unittest.TestCase):
         self.assertGreater(calculator.effectiveness_multiplier, 1, multiplier_error)
         self.assertTrue(calculator.is_effective, flag_error)
 
+    def test_resisted_ability(self):
+        multiplier_error = "Super effective ability didn't apply a correct multiplier"
+        flag_error = "Resisted ability wasn't flagged as such"
+        # Fire is weak against water
+        ability = AbilityBuilder().with_base_power(10).with_element(Elements.FIRE).build()
+        target = CombatElementalBuilder().with_element(Elements.WATER).build()
+        actor = CombatElementalBuilder().build()
+        calculator = DamageCalculator(target, actor, ability)
+        calculator.calculate()
+        self.assertEqual(calculator.effectiveness_multiplier, 0.5, multiplier_error)
+        self.assertTrue(calculator.is_resisted, flag_error)
+
     def test_block_damage(self):
         error = "Defend didn't block any damage"
         ability = AbilityBuilder().with_base_power(10).build()
@@ -66,3 +78,12 @@ class DamageCalculatorTests(unittest.TestCase):
         calculator = DamageCalculator(target, actor, ability)
         calculator.calculate()
         self.assertGreater(calculator.same_element_multiplier, 1, error)
+
+    def test_different_element_multiplier(self):
+        error = "The Ability being a different element from its user should only grant a 1x multiplier"
+        ability = AbilityBuilder().with_element(Elements.NONE).build()
+        target = CombatElementalBuilder().build()
+        actor = CombatElementalBuilder().with_element(Elements.WATER).build()
+        calculator = DamageCalculator(target, actor, ability)
+        calculator.calculate()
+        self.assertEqual(calculator.same_element_multiplier, 1, error)
