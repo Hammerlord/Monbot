@@ -44,7 +44,7 @@ class Effectiveness:
         """
         self.ability_element = ability_element
         self.target_element = target_element
-        self.effectiveness_multiplier = 1  # 1 = normal, <1 = not effective, >1 = effective
+        self.effectiveness_multiplier = 1  # 1 = normal, <1 = resisted, >1 = effective
 
     def calculate(self) -> int:
         if self.is_effective():
@@ -55,14 +55,18 @@ class Effectiveness:
 
     def is_resistant(self) -> bool:
         # Is the ability not very effective against the target's element?
-        # Chaos has no resistances or weaknesses.
+        # Chaos has no resistances.
         return self.check_elements(self.ability_element, self.target_element) or \
-               (self.ability_element == self.target_element and self.ability_element is not Elements.CHAOS)
+               (self.ability_element == self.target_element and self.ability_element != Elements.CHAOS)
 
     def is_effective(self) -> bool:
-        # Is the ability super effective against the target's element?
+        """
+        "Is the ability super effective against the target's element?"
+        Chaos is weak to and effective against all elements.
+        """
         return self.check_elements(self.target_element, self.ability_element) or \
-               self.is_light_vs_dark(self.target_element, self.ability_element)
+               self.is_light_vs_dark(self.target_element, self.ability_element) or \
+               self.is_chaos(self.target_element, self.ability_element)
 
     @staticmethod
     def check_elements(against: Elements, to_check: Elements) -> bool:
@@ -93,3 +97,7 @@ class Effectiveness:
         if against == Elements.DARK:
             # Dark is weak against light.
             return to_check == Elements.LIGHT
+
+    @staticmethod
+    def is_chaos(against: Elements, to_check: Elements) -> bool:
+        return against == Elements.CHAOS or to_check == Elements.CHAOS
