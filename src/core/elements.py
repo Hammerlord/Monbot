@@ -47,29 +47,29 @@ class Effectiveness:
         self.effectiveness_multiplier = 1  # 1 = normal, <1 = resisted, >1 = effective
 
     def calculate(self) -> int:
-        if self.is_effective():
+        if self.__is_effective():
             self.effectiveness_multiplier += 0.5
-        if self.is_resistant():
+        if self.__is_resistant():
             self.effectiveness_multiplier -= 0.5
         return self.effectiveness_multiplier
 
-    def is_resistant(self) -> bool:
+    def __is_resistant(self) -> bool:
         # Is the ability not very effective against the target's element?
         # Chaos has no resistances.
-        return self.check_elements(self.ability_element, self.target_element) or \
+        return self.__check_elements(self.ability_element, self.target_element) or \
                (self.ability_element == self.target_element and self.ability_element != Elements.CHAOS)
 
-    def is_effective(self) -> bool:
+    def __is_effective(self) -> bool:
         """
         "Is the ability super effective against the target's element?"
         Chaos is weak to and effective against all elements.
         """
-        return self.check_elements(self.target_element, self.ability_element) or \
-               self.is_light_vs_dark(self.target_element, self.ability_element) or \
-               self.is_chaos(self.target_element, self.ability_element)
+        return self.__check_elements(self.target_element, self.ability_element) or \
+               self.__is_light_vs_dark(self.target_element, self.ability_element) or \
+               self.__is_chaos(self.target_element, self.ability_element)
 
     @staticmethod
-    def check_elements(against: Elements, to_check: Elements) -> bool:
+    def __check_elements(against: Elements, to_check: Elements) -> bool:
         if against == Elements.LIGHTNING:
             # Lightning is weak against earth and fire.
             return to_check == Elements.EARTH or to_check == Elements.FIRE
@@ -87,7 +87,7 @@ class Effectiveness:
             return to_check == Elements.LIGHTNING or to_check == Elements.EARTH
 
     @staticmethod
-    def is_light_vs_dark(against: Elements, to_check: Elements) -> bool:
+    def __is_light_vs_dark(against: Elements, to_check: Elements) -> bool:
         """
         Light and dark are effective against each other.
         """
@@ -99,5 +99,5 @@ class Effectiveness:
             return to_check == Elements.LIGHT
 
     @staticmethod
-    def is_chaos(against: Elements, to_check: Elements) -> bool:
+    def __is_chaos(against: Elements, to_check: Elements) -> bool:
         return against == Elements.CHAOS or to_check == Elements.CHAOS

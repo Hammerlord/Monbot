@@ -9,6 +9,7 @@ from tests.character.player import PlayerTests
 from tests.elemental.combat_elemental import CombatElementalTests
 from tests.elemental.elemental import ElementalTests
 from tests.elemental.status_effect.status_effect import StatusEffectTests
+from tests.elements.effectiveness import ElementalEffectivenessTests
 from tests.team.combat_team import CombatTeamTests
 from tests.team.team import TeamTests
 
@@ -21,7 +22,8 @@ suites = [CharacterTests,
           CombatTeamTests,
           StatusEffectTests,
           DamageCalculatorTests,
-          AbilityTests]
+          AbilityTests,
+          ElementalEffectivenessTests]
 
 
 def load_test(tests: Type[unittest.TestCase]):
