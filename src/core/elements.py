@@ -57,7 +57,11 @@ class Effectiveness:
         # Is the ability not very effective against the target's element?
         # Chaos has no resistances.
         return self.__check_elements(self.ability_element, self.target_element) or \
-               (self.ability_element == self.target_element and self.ability_element != Elements.CHAOS)
+               self.__is_same_element()
+
+    def __is_same_element(self) -> bool:
+        return self.ability_element == self.target_element and \
+               self.ability_element != Elements.CHAOS
 
     def __is_effective(self) -> bool:
         """
