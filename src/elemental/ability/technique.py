@@ -14,6 +14,9 @@ class Technique:
         self.base_power = 0  # Ie. a damage stat.
         self.base_recovery = 0  # Ie. a healing stat.
 
+    def __str__(self) -> str:
+        return self.name
+
     @staticmethod
     def get_bonus_multiplier(target, actor) -> float:
         """

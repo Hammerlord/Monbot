@@ -88,6 +88,9 @@ class Species(StatsInterface):
     def name(self) -> str:
         return self._name
 
+    def __str__(self) -> str:
+        return self.name
+
     @property
     def element(self) -> Elements:
         """
