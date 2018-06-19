@@ -127,17 +127,22 @@ class CombatTeam:
         for elemental in self.eligible_bench:
             elemental.gain_bench_mana()
 
-    def switch(self, slot: int) -> None:
+    def switch(self, slot: int) -> bool:
         """
         Switch the active Elemental with an Elemental on CombatTeam.eligible.
         """
         eligible_elementals = self.eligible_bench
         valid_slot = 0 <= slot < len(eligible_elementals)
         if not valid_slot:
-            return
-        self._actions.append(Switch(
-            character=self.owner,
+            return False
+        switch = Switch(
+            team=self,
             old_active=self.active_elemental,
             new_active=eligible_elementals[slot]
-        ))
-        self._active_elemental = eligible_elementals[slot]
+        )
+        switch.execute()
+        self._actions.append(switch)
+        return True
+
+    def change_active_elemental(self, elemental: CombatElemental):
+        self._active_elemental = elemental

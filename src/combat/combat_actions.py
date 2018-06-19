@@ -1,6 +1,7 @@
 from src.elemental.ability.ability import Ability
 from src.elemental.ability.damage_calculator import DamageCalculator
 from src.elemental.combat_elemental import CombatElemental
+from src.team.combat_team import CombatTeam
 
 
 class ActionType:
@@ -22,8 +23,14 @@ class Action:
     def action_type(self) -> int:
         raise NotImplementedError
 
+    def execute(self) -> None:
+        raise NotImplementedError
+
     @property
     def recap(self) -> str:
+        """
+        :return: Summarize the main part of the action.
+        """
         raise NotImplementedError
 
 
@@ -37,6 +44,9 @@ class ElementalAction(Action):
                  actor: CombatElemental,
                  ability: Ability,
                  target: CombatElemental):
+        """
+        :param character: The Character who owns this elemental.
+        """
         self.character = character
         self.actor = actor
         self.ability = ability
@@ -109,16 +119,20 @@ class Switch(Action):
     """
 
     def __init__(self,
-                 character,
+                 team: CombatTeam,
                  old_active: CombatElemental or None,
                  new_active: CombatElemental):
-        self.character = character
+        self.team = team
+        self.character = team.owner
         self.old_active = old_active
         self.new_active = new_active
 
     @property
     def action_type(self) -> int:
         return ActionType.SWITCH
+
+    def execute(self) -> None:
+        self.team.change_active_elemental(self.new_active)
 
     @property
     def recap(self) -> str:
@@ -138,6 +152,12 @@ class KnockedOut(Action):
     @property
     def action_type(self) -> int:
         return ActionType.KNOCKED_OUT
+
+    def execute(self) -> None:
+        """
+        Do nothing.
+        """
+        pass
 
     @property
     def recap(self) -> str:
