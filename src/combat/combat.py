@@ -20,6 +20,7 @@ class Combat:
         :param combat_team: CombatTeam
         """
         self.teams.append(combat_team)
+        combat_team.set_combat(self)
         if combat_team.owner:
             self.players.append(combat_team.owner)
 
