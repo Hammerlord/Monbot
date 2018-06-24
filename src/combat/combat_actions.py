@@ -40,14 +40,9 @@ class ElementalAction(Action):
     """
 
     def __init__(self,
-                 character,
                  actor: CombatElemental,
                  ability: Ability,
                  target: CombatElemental):
-        """
-        :param character: The Character who owns this elemental.
-        """
-        self.character = character
         self.actor = actor
         self.ability = ability
         self.ability_triggered_bonus = False
