@@ -50,7 +50,9 @@ class ElementalAction(Action):
         self.damage_calculator = DamageCalculator(self.target,
                                                   self.actor,
                                                   self.ability)
-        self.status_effect_applied = None
+        self.target_effects_applied = []
+        self.target_effects_failed = []
+        self.actor_effects_applied = []
 
     @property
     def final_damage(self) -> int:
@@ -96,8 +98,10 @@ class ElementalAction(Action):
     def check_status_effect_application(self) -> None:
         status_effect = self.ability.status_effect
         if status_effect:
-            self.status_effect_applied = status_effect
-            self.target.add_status_effect(status_effect)
+            if self.target.add_status_effect(status_effect):
+                self.target_effects_applied.append(status_effect)
+            else:
+                self.target_effects_failed.append(status_effect)
 
     @property
     def action_type(self) -> int:
