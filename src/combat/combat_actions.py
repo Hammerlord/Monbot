@@ -1,7 +1,6 @@
 from src.elemental.ability.ability import Ability
 from src.elemental.ability.damage_calculator import DamageCalculator
 from src.elemental.combat_elemental import CombatElemental
-from src.team.combat_team import CombatTeam
 
 
 class ActionType:
@@ -118,9 +117,14 @@ class Switch(Action):
     """
 
     def __init__(self,
-                 team: CombatTeam,
-                 old_active: CombatElemental or None,
-                 new_active: CombatElemental):
+                 team,
+                 old_active,
+                 new_active):
+        """
+        :param team: CombatTeam
+        :param old_active: CombatElemental or None
+        :param new_active: CombatElemental
+        """
         self.team = team
         self.character = team.owner
         self.old_active = old_active

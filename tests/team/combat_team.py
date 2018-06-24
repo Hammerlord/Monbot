@@ -1,6 +1,5 @@
 import unittest
 
-from src.combat.combat_actions import Switch
 from src.elemental.combat_elemental import CombatElemental
 from src.team.combat_team import CombatTeam
 from tests.character.character_builder import NPCBuilder, PlayerBuilder
@@ -87,7 +86,6 @@ class CombatTeamTests(unittest.TestCase):
         combat_team = CombatTeam(team)
         combat_team.switch(0)
         action = combat_team.last_action
-        self.assertIsInstance(action, Switch, error)
         self.assertEqual(action.recap, 'Dopple recalled smurggle and sent out loksy!', error)
 
     def test_all_knocked_out(self):

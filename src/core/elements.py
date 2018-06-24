@@ -2,7 +2,6 @@ from enum import Enum
 
 
 class Elements(Enum):
-
     """
     Element typing for Elementals and Abilities.
     """
@@ -19,7 +18,6 @@ class Elements(Enum):
 
 
 class Category(Enum):
-
     """
     Physical or magic.
     """
@@ -30,7 +28,6 @@ class Category(Enum):
 
 
 class Effectiveness:
-
     """
     Checks if the attack is effective, normal, or not very effective.
     """
