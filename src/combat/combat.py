@@ -37,6 +37,7 @@ class Combat:
     def get_active_enemy(self, actor: CombatElemental) -> CombatElemental:
         """
         :return: The active CombatElemental that is not currently requesting a target.
+        TODO this, of course, doesn't support modes with >2 teams/enemies.
         """
         return next(team.active_elemental for team in self.teams if team.active_elemental != actor)
 

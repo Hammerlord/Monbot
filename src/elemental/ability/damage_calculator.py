@@ -67,7 +67,7 @@ class DamageCalculator:
             return self.actor.physical_att // 3
         if self.damage_source.category == Category.MAGIC:
             return self.actor.magic_att // 3
-        warnings.warn("Damage source has no category:", self.damage_source.name)
+        print("Damage source has no category:", self.damage_source.name)
         return 0
 
     def __get_same_element_multiplier(self) -> float:
