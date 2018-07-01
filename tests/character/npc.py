@@ -5,10 +5,9 @@ from tests.elemental.elemental_builder import ElementalBuilder
 
 
 class NPCTests(unittest.TestCase):
-
     """
     NPCs automatically generate a Team that:
-    1) suits the opposing Player's level and team size
+    1) suits the opposing Player's level and team size (slightly randomized)
     2) fits their profession (eg. Researcher, Enthusiast, Adventurer)
     """
 
@@ -34,51 +33,74 @@ class NPCTests(unittest.TestCase):
 
     def test_team_size(self):
         error = "NPC team size is potentially larger than the opponent's"
+        is_correct_size = True
+        player = self.get_player()
         for i in range(100):
-            player = self.get_player()
             npc = NPCBuilder().with_opponent(player).build()
-            player_team_size = player.team.size
-            npc_team_size = npc.team.size
-            self.assertLessEqual(npc_team_size, player_team_size, error)
+            if npc.team.size > player.team.size:
+                is_correct_size = False
+                break
+        self.assertTrue(is_correct_size, error)
 
     def test_max_level(self):
         error = "NPC level is potentially too much higher than the opponent's"
+        is_correct_level = True
+        player = self.get_player()
         for i in range(100):
-            player = self.get_player()
             npc = NPCBuilder().with_opponent(player).build()
             accepted_max_level = player.level + 1
-            self.assertLessEqual(npc.level, accepted_max_level, error)
+            if npc.level > accepted_max_level:
+                is_correct_level = False
+                break
+        self.assertTrue(is_correct_level, error)
 
     def test_min_level(self):
         error = "NPC level is potentially too much lower than the opponent's"
+        is_correct_level = True
+        player = self.get_player()
         for i in range(100):
-            player = self.get_player()
             npc = NPCBuilder().with_opponent(player).build()
             accepted_min_level = player.level - 2
-            self.assertGreaterEqual(npc.level, accepted_min_level, error)
+            if npc.level < accepted_min_level:
+                is_correct_level = False
+                break
+        self.assertTrue(is_correct_level, error)
 
     def test_valid_level(self):
         error = "NPC level is potentially less than 1"
+        is_correct_level = True
+        player = PlayerBuilder().with_level(1).build()
         for i in range(100):
-            player = self.get_player()
             npc = NPCBuilder().with_opponent(player).build()
-            self.assertGreaterEqual(npc.level, 1, error)
+            if npc.level < 1:
+                is_correct_level = False
+                break
+        self.assertTrue(is_correct_level, error)
 
     def test_team_level(self):
         error = "NPC's elemental levels are potentially higher than his own level"
+        is_correct_level = True
         for i in range(100):
             npc = NPCBuilder().build()
             team = npc.team
             for elemental in team.elementals:
-                self.assertLessEqual(elemental.level, npc.level, error)
+                if elemental.level > npc.level:
+                    is_correct_level = False
+                    break
+        self.assertTrue(is_correct_level, error)
 
     def test_profession_elementals(self):
         error = "An NPC's elementals don't match potential species"
         npc = NPCBuilder().build()
         team = npc.team
         pool = npc._potential_species
-        for elemental in team.elementals:
-            self.assertIn(elemental.species, pool, error)
+        is_correct = True
+        for i in range(100):
+            for elemental in team.elementals:
+                if elemental.species not in pool:
+                    is_correct = False
+                    break
+        self.assertTrue(is_correct, error)
 
     def test_default_nickname(self):
         error = "NPC nickname doesn't get set"
