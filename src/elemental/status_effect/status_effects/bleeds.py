@@ -7,7 +7,7 @@ class Bleed(StatusEffect):
 
     def __init__(self):
         super().__init__()
-        self.effect_type = EffectType.DEBUFF
+        self.effect_type = EffectType.BLEED
         self.category = Category.PHYSICAL
         self.base_power = 1
 

@@ -1,7 +1,7 @@
 from typing import List
 
 from src.elemental.ability.ability import Ability
-from src.elemental.status_effect.status_effect import StatusEffect
+from src.elemental.status_effect.status_effect import StatusEffect, EffectType
 
 
 class StatusManager:
@@ -10,10 +10,6 @@ class StatusManager:
         :param combat_elemental: CombatElemental
         """
         self.combat_elemental = combat_elemental
-        self.num_stuns = 0  # Multiple status effects can apply a stack of this. If num > 0, then the effect is true.
-        self.num_freezes = 0
-        self.num_chills = 0
-        self.num_blocks = 0  # How many "blocking damage" buffs there are
         self.switch_disabled = 0  # The number of "switch-preventing" debuffs
         self.p_att_stages = 0
         self.p_def_stages = 0
@@ -27,19 +23,23 @@ class StatusManager:
 
     @property
     def is_stunned(self) -> bool:
-        return self.num_stuns > 0
+        return self.__has_effect(EffectType.STUN)
 
     @property
     def is_frozen(self) -> bool:
-        return self.num_freezes > 0
+        return self.__has_effect(EffectType.FREEZE)
 
     @property
     def is_chilled(self) -> bool:
-        return self.num_chills > 0
+        return self.__has_effect(EffectType.CHILL)
+
+    @property
+    def is_burning(self) -> bool:
+        return self.__has_effect(EffectType.BURN)
 
     @property
     def is_blocking(self) -> bool:
-        return self.num_blocks > 0
+        return self._damage_reduction > 0
 
     @property
     def can_switch(self) -> bool:
@@ -52,29 +52,34 @@ class StatusManager:
     @property
     def num_status_effects(self) -> int:
         """
-        Some attacks scale based on the number of StatusEffects a CombatElemental has.
+        Eg. Some attacks scale based on the number of StatusEffects a CombatElemental has.
         """
         return len(self._status_effects)
 
     @property
     def bonus_physical_att(self) -> int:
-        return self.__calculate_stages(self.p_att_stages, self.combat_elemental.base_physical_att)
+        return self.__calculate_stages(self.p_att_stages,
+                                       self.combat_elemental.base_physical_att)
 
     @property
     def bonus_magic_att(self) -> int:
-        return self.__calculate_stages(self.m_att_stages, self.combat_elemental.base_magic_att)
+        return self.__calculate_stages(self.m_att_stages,
+                                       self.combat_elemental.base_magic_att)
 
     @property
     def bonus_physical_def(self) -> int:
-        return self.__calculate_stages(self.p_def_stages, self.combat_elemental.base_physical_def)
+        return self.__calculate_stages(self.p_def_stages,
+                                       self.combat_elemental.base_physical_def)
 
     @property
     def bonus_magic_def(self) -> int:
-        return self.__calculate_stages(self.m_def_stages, self.combat_elemental.base_magic_def)
+        return self.__calculate_stages(self.m_def_stages,
+                                       self.combat_elemental.base_magic_def)
 
     @property
     def bonus_speed(self) -> int:
-        return self.__calculate_stages(self.speed_stages, self.combat_elemental.base_speed)
+        return self.__calculate_stages(self.speed_stages,
+                                       self.combat_elemental.base_speed)
 
     @property
     def bonus_mana_per_turn(self) -> int:
@@ -212,10 +217,6 @@ class StatusManager:
             effect.apply_stat_changes()
 
     def __reset_status(self):
-        self.num_stuns = 0
-        self.num_freezes = 0
-        self.num_chills = 0
-        self.num_blocks = 0
         self.p_att_stages = 0
         self.p_def_stages = 0
         self.m_att_stages = 0
@@ -223,3 +224,10 @@ class StatusManager:
         self.speed_stages = 0
         self._mana_per_turn = 0
         self._damage_reduction = 0
+
+    def __has_effect(self, effect_type: EffectType) -> bool:
+        """
+        Helper function to check, eg., if the elemental is stunned.
+        """
+        matching = next((effect for effect in self._status_effects if effect.is_type(effect_type)), None)
+        return matching is not None

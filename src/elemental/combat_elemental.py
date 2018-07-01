@@ -62,6 +62,10 @@ class CombatElemental:
         return self._status_manager.is_blocking
 
     @property
+    def is_burning(self) -> bool:
+        return self._status_manager.is_burning
+
+    @property
     def current_hp(self) -> int:
         # HP is based on the Elemental's.
         return self._elemental.current_hp

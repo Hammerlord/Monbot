@@ -1,11 +1,20 @@
 from enum import Enum
 
+from src.core.elements import Category
 from src.elemental.ability.technique import Technique
 
 
 class EffectType(Enum):
-    BUFF = 0
-    DEBUFF = 1
+    """
+    Is it a stun, etc.
+    """
+    NONE = 0
+    BLEED = 1
+    BURN = 2
+    CHILL = 3
+    STUN = 4
+    FREEZE = 5
+    POISON = 6
 
 
 class StatusEffect(Technique):
@@ -20,7 +29,8 @@ class StatusEffect(Technique):
         self.__target = None  # The CombatElemental this effect is applied to.
         self.__applier = None  # The CombatElemental that applied this StatusEffect.
         self.icon = ''  # The emote that represents the effect.
-        self.effect_type = EffectType.BUFF
+        self.effect_type = EffectType.NONE
+        self.category = Category.PHYSICAL
         # Pass duration in number of the affected Elemental's turns. -1 if no duration:
         self.max_duration = self._calculate_duration(self._base_duration)
         self._duration_remaining = 0
@@ -30,6 +40,16 @@ class StatusEffect(Technique):
         self.current_stacks = 1
         self.can_add_instances = False  # Ie. can we apply multiple instances of this effect?
         self.bonus_multiplier = 1
+
+    @property
+    def is_debuff(self) -> bool:
+        """
+        TODO there are probably buff categories
+        """
+        return self.effect_type != EffectType.NONE
+
+    def is_type(self, effect_type: EffectType) -> bool:
+        return self.effect_type == effect_type
 
     @property
     def can_stack(self) -> bool:
