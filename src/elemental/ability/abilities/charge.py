@@ -6,8 +6,8 @@ class Charge(Ability):
     def __init__(self):
         super().__init__()
         self.name = "Charge"
-        self.description = "Charge the opponent before it can attack! " \
-                           "+50% damage if the target is at full health."
+        self.description = ("Charge the opponent before it can attack! "
+                            "2x damage if the target is at full health.")
         self.element = Elements.NONE
         self.category = Category.PHYSICAL
         self.base_power = 15
@@ -19,5 +19,5 @@ class Charge(Ability):
     @staticmethod
     def get_bonus_multiplier(target, actor) -> float:
         if target.current_hp == target.max_hp:
-            return 1.5
+            return 2
         return 1
