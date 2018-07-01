@@ -15,6 +15,7 @@ class EffectType(Enum):
     STUN = 4
     FREEZE = 5
     POISON = 6
+    SWITCH_PREVENTION = 7
 
 
 class StatusEffect(Technique):

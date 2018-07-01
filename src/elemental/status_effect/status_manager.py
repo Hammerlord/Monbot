@@ -10,7 +10,6 @@ class StatusManager:
         :param combat_elemental: CombatElemental
         """
         self.combat_elemental = combat_elemental
-        self.switch_disabled = 0  # The number of "switch-preventing" debuffs
         self.p_att_stages = 0
         self.p_def_stages = 0
         self.m_att_stages = 0
@@ -38,12 +37,12 @@ class StatusManager:
         return self.__has_effect(EffectType.BURN)
 
     @property
-    def is_blocking(self) -> bool:
-        return self._damage_reduction > 0
+    def can_switch(self) -> bool:
+        return not self.__has_effect(EffectType.SWITCH_PREVENTION)
 
     @property
-    def can_switch(self) -> bool:
-        return self.switch_disabled == 0
+    def is_blocking(self) -> bool:
+        return self._damage_reduction > 0
 
     @property
     def status_effects(self) -> List[StatusEffect]:
