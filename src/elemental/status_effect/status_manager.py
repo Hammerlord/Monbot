@@ -181,14 +181,12 @@ class StatusManager:
         for effect in self._status_effects:
             effect.on_switch_in()
 
-    def __effect_exists(self, status_effect: StatusEffect) -> StatusEffect or None:
+    def __effect_exists(self, to_check: StatusEffect) -> StatusEffect or None:
         """
-        Check if an equivalent StatusEffect is already on this CombatElemental by ID.
+        Check if an equivalent StatusEffect is already on this CombatElemental by instance.
         :return The StatusEffect if it exists, None if not.
         """
-        for effect in self._status_effects:
-            if effect.name == status_effect.name:
-                return effect
+        return next((effect for effect in self._status_effects if type(effect) is type(to_check)), None)
 
     @staticmethod
     def __calculate_stages(stages: int, stats: int) -> int:
