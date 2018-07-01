@@ -2,6 +2,7 @@ import unittest
 
 from src.elemental.combat_elemental import CombatElemental
 from src.team.combat_team import CombatTeam
+from src.team.team import Team
 from tests.character.character_builder import NPCBuilder, PlayerBuilder
 from tests.elemental.elemental_builder import ElementalBuilder
 from tests.team.team_builder import TeamBuilder
@@ -104,3 +105,13 @@ class CombatTeamTests(unittest.TestCase):
         combat_team.on_turn_start()
         resultant_mana = bench[0].current_mana
         self.assertGreater(resultant_mana, starting_mana, error)
+
+    def test_team_defensive_copy(self):
+        error = "Changing the member of a Team incorrectly affected the CombatTeam"
+        # Not that it should be possible to change your elementals when you're in combat.
+        team = TeamBuilder().build()
+        smurggle = ElementalBuilder().build()
+        team.add_elemental(smurggle)
+        combat_team = CombatTeam(team)
+        team.remove_elemental(0)
+        self.assertEqual(len(combat_team.elementals), 1, error)

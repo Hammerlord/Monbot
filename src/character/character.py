@@ -1,4 +1,3 @@
-import copy
 import math
 from typing import List
 
@@ -22,11 +21,15 @@ class Character:
         self._location = 0  # TODO
         self._team = Team(self)
         self._is_npc = False
-        self._elementals = []  # List[Elemental]. All Elementals owned by this Character, including ones not on Team.
+        self.__elementals = []  # List[Elemental]. All Elementals owned by this Character, including ones not on Team.
         self._inventory = Inventory()
 
-    def copy_elementals(self) -> List[Elemental]:
-        return copy.deepcopy(self._elementals)  # Defensive copy
+    @property
+    def elementals(self) -> List[Elemental]:
+        """
+        :return: All elementals that this Character owns, including those not on their current team.
+        """
+        return self.__elementals.copy()
 
     @property
     def nickname(self) -> str:
@@ -76,7 +79,7 @@ class Character:
     def add_elemental(self, elemental: Elemental) -> None:
         elemental.owner = self
         self._team.add_elemental(elemental)
-        self._elementals.append(elemental)
+        self.__elementals.append(elemental)
 
     def _check_level_up(self) -> None:
         while self._current_exp >= self._exp_to_level:

@@ -1,7 +1,5 @@
 from typing import List
 
-from copy import deepcopy
-
 from src.core.elements import Elements
 
 
@@ -103,8 +101,11 @@ class Species(StatsInterface):
         return self._growth_rate
 
     @property
-    def learnable_abilities(self) -> List['LearnableAbility']:
-        return deepcopy(self._learnable_abilities)
+    def learnable_abilities(self):
+        """
+        :return: List[LearnableAbility]
+        """
+        return self._learnable_abilities.copy()
 
     @property
     def starting_mana(self) -> int:

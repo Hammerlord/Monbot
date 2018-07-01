@@ -5,7 +5,7 @@ from src.elemental.elemental import Elemental
 
 class Team:
     def __init__(self, owner):
-        self._elementals = []  # List[Elemental]
+        self.__elementals = []  # List[Elemental]
         self._nickname = None
         self._note = None
         self._owner = owner
@@ -16,7 +16,7 @@ class Team:
         """
         :return: A reference to this Team's Elementals
         """
-        return self._elementals
+        return self.__elementals.copy()
 
     @property
     def owner(self):
@@ -27,11 +27,11 @@ class Team:
 
     @property
     def is_space_available(self) -> bool:
-        return len(self._elementals) < self._max_size
+        return len(self.__elementals) < self._max_size
 
     @property
     def size(self) -> int:
-        return len(self._elementals)
+        return len(self.__elementals)
 
     @property
     def is_all_knocked_out(self) -> bool:
@@ -47,26 +47,24 @@ class Team:
         """
         if not self._is_valid_slot(slot):
             return
-        self._elementals[slot] = elemental
+        self.__elementals[slot] = elemental
 
     def add_elemental(self, elemental: Elemental) -> None:
-        if not self.is_space_available:
-            return
-        self._elementals.append(elemental)
+        if self.is_space_available:
+            self.__elementals.append(elemental)
 
     def remove_elemental(self, slot: int) -> None:
-        self._elementals.pop(slot)
+        self.__elementals.pop(slot)
 
     def get_elemental(self, position: int) -> Elemental or None:
-        return self._elementals[position]
+        return self.__elementals[position]
 
     def reorder(self, first: int, second: int) -> None:
         """
         You can only switch slots if both hold an Elemental.
         """
-        if not self._is_valid_reorder(first, second):
-            return
-        self._elementals[first], self._elementals[second] = self._elementals[second], self._elementals[first]
+        if self._is_valid_reorder(first, second):
+            self.__elementals[first], self.__elementals[second] = self.__elementals[second], self.__elementals[first]
 
     def _is_valid_reorder(self, first: int, second: int) -> bool:
         return self._is_valid_slot(first) and self._is_valid_slot(second)

@@ -20,7 +20,7 @@ class CombatTeam:
         :param team: The non-combat Team.
         """
         self.combat = None
-        self.team = [CombatElemental(elemental, self) for elemental in team.elementals]
+        self.__elementals = [CombatElemental(elemental, self) for elemental in team.elementals]
         self.owner = team.owner
         self.__active_elemental = None
         self.status_effects = []  # Team-wide status effects, eg. weather.
@@ -35,6 +35,13 @@ class CombatTeam:
         self.combat.join_battle(self)
 
     @property
+    def elementals(self) -> List[CombatElemental]:
+        """
+        :return: All CombatElementals on this team, including the active one.
+        """
+        return self.__elementals.copy()
+
+    @property
     def active_elemental(self) -> CombatElemental:
         return self.__active_elemental
 
@@ -43,7 +50,7 @@ class CombatTeam:
         """
         Returns the team CombatElementals minus the active one.
         """
-        return [elemental for elemental in self.team if elemental != self.__active_elemental]
+        return [elemental for elemental in self.__elementals if elemental != self.__active_elemental]
 
     @property
     def can_switch(self) -> bool:
@@ -54,7 +61,7 @@ class CombatTeam:
         """
         Returns the benched CombatElementals that aren't knocked out (ie. have more than 0 HP).
         """
-        return [elemental for elemental in self.team
+        return [elemental for elemental in self.__elementals
                 if elemental != self.__active_elemental and not elemental.is_knocked_out]
 
     @property
@@ -67,7 +74,7 @@ class CombatTeam:
         :return bool: If all Elementals on the Team have been knocked out (0 HP).
         Game over if true.
         """
-        return all(elemental.is_knocked_out for elemental in self.team)
+        return all(elemental.is_knocked_out for elemental in self.__elementals)
 
     @property
     def last_action(self) -> Action:
