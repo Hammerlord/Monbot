@@ -13,6 +13,7 @@ class Target(Enum):
     ENEMY_TEAM = 4
     SELF_CLEAVE = 5
     SELF_AOE = 6
+    SELF_TEAM = 7
 
 
 class TurnPriority(Enum):
@@ -46,7 +47,7 @@ class Ability(Technique):
     @staticmethod
     def is_usable_by(combat_elemental) -> bool:
         """
-        A custom use requirement.
+        A custom use requirement (not including mana costs).
         :param combat_elemental: CombatElemental
         """
         return True
@@ -85,11 +86,10 @@ class LearnableAbility:
         """
         :param elemental: The Elemental trying to learn this ability.
         """
-        return \
-            elemental.level >= self.level_required and \
-            elemental.ferocity >= self.p_att_rank_required and \
-            elemental.attunement >= self.m_att_rank_required and \
-            elemental.sturdiness >= self.p_def_rank_required and \
-            elemental.resolve >= self.hp_rank_required and \
-            elemental.resistance >= self.m_def_rank_required and \
-            elemental.swiftness >= self.speed_rank_required
+        return (elemental.level >= self.level_required and
+                elemental.ferocity >= self.p_att_rank_required and
+                elemental.attunement >= self.m_att_rank_required and
+                elemental.sturdiness >= self.p_def_rank_required and
+                elemental.resolve >= self.hp_rank_required and
+                elemental.resistance >= self.m_def_rank_required and
+                elemental.swiftness >= self.speed_rank_required)

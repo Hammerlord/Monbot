@@ -49,9 +49,9 @@ class ElementalAction(Action):
         self.damage_calculator = DamageCalculator(self.target,
                                                   self.actor,
                                                   self.ability)
-        self.target_effects_applied = []
-        self.target_effects_failed = []
-        self.actor_effects_applied = []
+        self.target_effects_applied = []  # List[StatusEffect]
+        self.target_effects_failed = []  # List[StatusEffect]
+        self.actor_effects_applied = []  # List[StatusEffect]
 
     @property
     def final_damage(self) -> int:
