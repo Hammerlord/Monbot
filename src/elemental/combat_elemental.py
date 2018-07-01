@@ -216,6 +216,8 @@ class CombatElemental:
         """
         self._elemental.receive_damage(amount)
         self._status_manager.on_receive_damage(amount, actor)
+        if self.is_knocked_out:
+            self._status_manager.clear_status_effects()
 
     def heal(self, amount: int) -> None:
         self._elemental.heal(amount)

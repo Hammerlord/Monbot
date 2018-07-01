@@ -1,4 +1,5 @@
 import unittest
+from unittest.mock import Mock
 
 from tests.elemental.elemental_builder import CombatElementalBuilder
 from tests.elemental.status_effect.test_effects import GenericBuff, PermaBuff
@@ -106,3 +107,11 @@ class StatusEffectTests(unittest.TestCase):
         self.combat_elemental.dispel_all(self.combat_elemental)
         num_effects = self.combat_elemental.num_status_effects
         self.assertEqual(num_effects, 1, error)
+
+    def test_effect_knocked_out(self):
+        error = "Status effect wasn't removed when the elemental was knocked out"
+        buff = GenericBuff()
+        self.combat_elemental.add_status_effect(buff)
+        self.combat_elemental.receive_damage(100000, Mock())
+        num_effects = self.combat_elemental.num_status_effects
+        self.assertEqual(num_effects, 0, error)

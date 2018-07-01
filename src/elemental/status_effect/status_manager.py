@@ -89,6 +89,10 @@ class StatusManager:
     def damage_reduction(self) -> float:
         return self._damage_reduction
 
+    def clear_status_effects(self) -> None:
+        # TODO some effects may ought to linger after knockout
+        self._status_effects = []
+
     def update_p_att_stages(self, amount: int) -> None:
         self.p_att_stages = self.__validate_stages(self.p_att_stages, amount)
 
