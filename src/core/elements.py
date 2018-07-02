@@ -16,6 +16,26 @@ class Elements(Enum):
     DARK = 7
     CHAOS = 8
 
+    @staticmethod
+    def get_icon(element) -> str:
+        if element == Elements.LIGHTNING:
+            return ':zap:'
+        if element == Elements.WATER:
+            return ':droplet:'
+        if element == Elements.FIRE:
+            return ':fire:'
+        if element == Elements.EARTH:
+            return ':mountain_snow:'
+        if element == Elements.WIND:
+            return ':cloud_tornado:'
+        if element == Elements.LIGHT:
+            return ':star2:'
+        if element == Elements.DARK:
+            return ':dark_sunglasses:'
+        if element == Elements.CHAOS:
+            return ':radioactive:'
+        return ''
+
 
 class Category(Enum):
     """
