@@ -9,7 +9,7 @@ class Enrage(Ability):
     def __init__(self):
         super().__init__()
         self.name = "Enrage"
-        self.description = EnrageEffect().description
+        self._description = EnrageEffect().description
         self.turn_priority = TurnPriority.NORMAL
         self.mana_cost = 15
         self.targeting = Target.SELF

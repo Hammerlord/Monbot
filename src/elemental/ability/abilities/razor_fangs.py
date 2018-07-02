@@ -7,7 +7,7 @@ class RazorFangs(Ability):
     def __init__(self):
         super().__init__()
         self.name = "Razor Fangs"
-        self.description = "Slash the enemy, inflicting a bleed for 4 turns."
+        self._description = "Slash the enemy, inflicting a bleed for 4 turns."
         self.element = Elements.NONE
         self.category = Category.PHYSICAL
         self.base_power = 1

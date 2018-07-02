@@ -6,8 +6,8 @@ class Charge(Ability):
     def __init__(self):
         super().__init__()
         self.name = "Charge"
-        self.description = ("Charge the opponent before it can attack! "
-                            "2x damage if the target is at full health.")
+        self._description = ("Charge before the opponent can attack! "
+                             "2x damage on targets at full health.")
         self.element = Elements.NONE
         self.category = Category.PHYSICAL
         self.base_power = 15

@@ -7,13 +7,17 @@ class Technique:
     They have something in common, but I don't know what to call it.
     """
     def __init__(self):
-        self.name = None  # Str. TBD by descendants
-        self.description = None  # Str. TBD by descendants
+        self.name = ''  # Str. TBD by descendants
+        self._description = ''  # Str. TBD by descendants
         self.element = Elements.NONE
         self.category = Category.NONE  # Eg. magic or physical.
         self.base_power = 0  # Ie. a damage stat.
         self.base_recovery = 0  # Ie. a healing stat.
         self.icon = ''  # A str icon representing this ability.
+
+    @property
+    def description(self) -> str:
+        return self._description
 
     def __str__(self) -> str:
         return self.name

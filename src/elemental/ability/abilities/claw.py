@@ -11,7 +11,7 @@ class Claw(Ability):
     def __init__(self):
         super().__init__()
         self.name = "Claw"
-        self.description = "Rake the opponent."
+        self._description = "Rake the opponent."
         self.element = Elements.NONE
         self.category = Category.PHYSICAL
         self.base_power = 10
