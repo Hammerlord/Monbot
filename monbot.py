@@ -41,7 +41,9 @@ async def on_reaction_add(reaction, user):
 
 @bot.event
 async def on_reaction_remove(reaction, user):
-    pass
+    view = view_manager.get_view(user)
+    if view:
+        await view.remove_option(reaction.emoji)
 
 
 bot.run(TOKEN)

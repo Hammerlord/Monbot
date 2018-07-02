@@ -35,7 +35,7 @@ class Form:
         if reaction in self.buttons:
             option = self.buttons.index(reaction)
             if option in self.selected:
-                self.selected.pop(option)
+                self.selected.remove(option)
 
     @staticmethod
     def static_options() -> List[str]:
