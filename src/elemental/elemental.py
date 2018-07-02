@@ -142,6 +142,9 @@ class Elemental:
         if self._current_hp > self.max_hp:
             self._current_hp = self.max_hp
 
+    def heal_to_full(self) -> None:
+        self._current_hp = self.max_hp
+
     def receive_damage(self, amount: int) -> None:
         self._current_hp -= amount
         if self._current_hp < 0:
@@ -242,6 +245,7 @@ class Elemental:
             self._increase_exp_to_level()
             self._check_raise_rank()
             self._ability_manager.check_learnable_abilities()
+        self.heal_to_full()
 
     def reset_note(self) -> None:
         """
