@@ -1,8 +1,8 @@
-from src.elemental.ability.ability import TurnPriority, Target
+from src.elemental.ability.ability import TurnPriority, Target, Ability
 from src.elemental.status_effect.status_effects.enrage import EnrageEffect
 
 
-class Enrage:
+class Enrage(Ability):
     """
     An ability that applies Enrage.
     """
