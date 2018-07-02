@@ -40,6 +40,14 @@ class Elemental:
         self._ability_manager = AbilityManager(self)
 
     @property
+    def left_icon(self) -> str:
+        return self._species.left_icon
+
+    @property
+    def right_icon(self) -> str:
+        return self._species.right_icon
+
+    @property
     def species(self) -> Species:
         return self._species
 

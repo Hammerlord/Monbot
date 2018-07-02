@@ -83,6 +83,14 @@ class Species(StatsInterface):
         self._learnable_abilities = []  # List[LearnableAbility]. TBD by descendants.
 
     @property
+    def left_icon(self) -> str:
+        return self._left_icon
+
+    @property
+    def right_icon(self) -> str:
+        return self._right_icon
+
+    @property
     def name(self) -> str:
         return self._name
 

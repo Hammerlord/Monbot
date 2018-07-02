@@ -21,8 +21,12 @@ class Character:
         self._location = 0  # TODO
         self._team = Team(self)
         self._is_npc = False
-        self.__elementals = []  # List[Elemental]. All Elementals owned by this Character, including ones not on Team.
+        self.__elementals = []
         self._inventory = Inventory()
+
+    @property
+    def num_elementals(self) -> int:
+        return len(self.__elementals)
 
     @property
     def elementals(self) -> List[Elemental]:
