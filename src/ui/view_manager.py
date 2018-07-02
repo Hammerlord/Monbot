@@ -1,8 +1,9 @@
 from discord.ext.commands import Bot
 
 from src.character.player import Player
-from src.ui.form import Form, Status
+from src.ui.form import Form
 from src.ui.select_starter import SelectStarter
+from src.ui.status import Status
 
 
 class ViewManager:
@@ -50,4 +51,4 @@ class ViewManager:
         self._check_create_profile(user)
         player = self.get_player(user)
         if player.num_elementals == 0:
-            await self.set_view(player, SelectStarter(self.bot))
+            await self.set_view(player, SelectStarter(self.bot, player))
