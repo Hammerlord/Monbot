@@ -16,7 +16,7 @@ class ViewManager:
         self._check_create_profile(user)
         player = self.get_player(user)
         if player.num_elementals == 0:
-            await self.set_view(player, SelectStarter(self.bot))
+            await self.set_view(player, SelectStarter(self.bot, player))
         else:
             await self.set_view(player, Status(self.bot, player))
         await player.current_view.render()

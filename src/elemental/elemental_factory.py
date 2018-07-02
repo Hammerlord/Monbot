@@ -24,29 +24,29 @@ class ElementalInitializer:
         return elemental
 
     @staticmethod
-    def rainatu() -> Elemental:
+    def rainatu(level=1) -> Elemental:
         """
         :return: The lightning starter, Rainatu
         """
-        return ElementalInitializer.make(Rainatu())
+        return ElementalInitializer.make(Rainatu(), level)
 
     @staticmethod
-    def roaus() -> Elemental:
+    def roaus(level=1) -> Elemental:
         """
         :return: The earth starter, Roaus
         """
-        return ElementalInitializer.make(Roaus())
+        return ElementalInitializer.make(Roaus(), level)
 
     @staticmethod
-    def mithus() -> Elemental:
+    def mithus(level=1) -> Elemental:
         """
         :return: The water starter, Mithus
         """
-        return ElementalInitializer.make(Mithus())
+        return ElementalInitializer.make(Mithus(), level)
 
     @staticmethod
-    def sithel() -> Elemental:
+    def sithel(level=1) -> Elemental:
         """
         :return: The fire starter, Sithel
         """
-        return ElementalInitializer.make(Sithel())
+        return ElementalInitializer.make(Sithel(), level)
