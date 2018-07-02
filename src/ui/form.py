@@ -1,11 +1,14 @@
 from typing import List
 
 from src.core.constants import *
+from src.core.elements import Elements
+from src.elemental.elemental import Elemental
 from src.elemental.elemental_factory import ElementalInitializer
 from src.elemental.species.mithus import Mithus
 from src.elemental.species.rainatu import Rainatu
 from src.elemental.species.roaus import Roaus
 from src.elemental.species.sithel import Sithel
+from src.ui.health_bar import HealthBarView
 
 
 class Form:
@@ -16,7 +19,7 @@ class Form:
     def __init__(self, bot):
         self.bot = bot
         self.selected = []  # A list of all options that have been toggled. The actual selection is the last one.
-        self.options = []  # List[Tuple]
+        self.options = []  # List[str]
         self.message = None
 
     async def render(self) -> None:
@@ -60,15 +63,21 @@ class Status(Form):
         self.options = Form.static_options()[:player.team.size]
 
     async def render(self) -> None:
-        message_body = f"{self.player.nickname}'s team: \n"
+        message_body = f"```{self.player.nickname}'s Team```"
         for elemental in self.player.team.elementals:
-            message_body += (f"{elemental.left_icon} {elemental.nickname}: "
-                             f"{elemental.current_hp} / {elemental.max_hp} HP \n")
+            message_body += self._get_status(elemental)
         self.message = await self.bot.say(message_body)
         for option in self.options:
             await self.bot.add_reaction(self.message, option)
 
+    @staticmethod
+    def _get_status(elemental: Elemental) -> str:
+        return (f"`{elemental.left_icon} {elemental.nickname} "
+                f"{HealthBarView.from_elemental(elemental)} "
+                f"{elemental.current_hp} / {elemental.max_hp} HP` \n")
+
     async def confirm(self):
+        # No operation.
         pass
 
 
@@ -88,9 +97,17 @@ class SelectStarter(Form):
         self.options.append(OK)
 
     async def render(self) -> None:
-        self.message = await self.bot.say('pls pik one')
+        message_body = ("\n```Welcome to the dangerous world of elementals!"
+                        "\nIt's impossible to go alone, so ples pik some1:```")
+        for i, starter in enumerate(self.starters):
+            index = str(i + 1) + ')'  # Display starting at 1
+            message_body += f"\n {index} {starter.left_icon} {starter.name}"
+        self.message = await self.bot.say(message_body)
         for option in self.options:
             await self.bot.add_reaction(self.message, option)
+
+    async def pick_option(self, reaction: str) -> None:
+        await super().pick_option(reaction)
 
     async def confirm(self):
         """

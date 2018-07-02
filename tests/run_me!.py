@@ -13,6 +13,7 @@ from tests.elemental.status_effect.status_effect import StatusEffectTests
 from tests.elements.effectiveness import ElementalEffectivenessTests
 from tests.team.combat_team import CombatTeamTests
 from tests.team.team import TeamTests
+from tests.ui.health_bar import HealthBarTests
 
 suites = [CharacterTests,
           NPCTests,
@@ -25,7 +26,8 @@ suites = [CharacterTests,
           DamageCalculatorTests,
           AbilityTests,
           ElementalEffectivenessTests,
-          CombatTests]
+          CombatTests,
+          HealthBarTests]
 
 
 def load_test(tests: Type[unittest.TestCase]):
