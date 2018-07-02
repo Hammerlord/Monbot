@@ -52,7 +52,7 @@ class SelectStarter(Form):
     @staticmethod
     def get_detail_screen(starter: Species) -> str:
         abilities = starter.learnable_abilities[:2]  # Show two abilities.
-        abilities_view = '\n'.join([AbilityOptionView.get_view(ability) for ability in abilities])
+        abilities_view = '\n'.join([AbilityOptionView(ability).get_detail() for ability in abilities])
 
         return (f"{starter.left_icon} **{starter.name}** [{Elements.get_icon(starter.element)} type]\n"
                 f"{starter.description}\n\n"
