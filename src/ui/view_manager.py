@@ -1,7 +1,8 @@
 from discord.ext.commands import Bot
 
 from src.character.player import Player
-from src.ui.form import SelectStarter, Form, Status
+from src.ui.form import Form, Status
+from src.ui.select_starter import SelectStarter
 
 
 class ViewManager:

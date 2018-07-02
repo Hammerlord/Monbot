@@ -36,6 +36,7 @@ class Ability(Technique):
         # Higher number = higher turn priority. If it’s equal, then we match speed stats.
         self.turn_priority = TurnPriority.NORMAL
         self.targeting = Target.ENEMY
+        self.icon = ':crossed_swords:'  # Generic default icon.
 
     @property
     def status_effect(self) -> StatusEffect or None:
@@ -81,6 +82,18 @@ class LearnableAbility:
     @property
     def name(self) -> str:
         return self.ability.name
+
+    @property
+    def description(self) -> str:
+        return self.ability.description
+
+    @property
+    def element(self) -> Elements:
+        return self.ability.element
+
+    @property
+    def icon(self) -> str:
+        return self.ability.icon
 
     def are_requirements_fulfilled(self, elemental) -> bool:
         """

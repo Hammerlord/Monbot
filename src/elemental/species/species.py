@@ -98,6 +98,10 @@ class Species(StatsInterface):
         return self.name
 
     @property
+    def description(self) -> str:
+        return self._description
+
+    @property
     def element(self) -> Elements:
         """
         :return: An enumerated int pertaining to this Species' element.

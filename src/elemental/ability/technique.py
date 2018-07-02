@@ -13,6 +13,7 @@ class Technique:
         self.category = Category.NONE  # Eg. magic or physical.
         self.base_power = 0  # Ie. a damage stat.
         self.base_recovery = 0  # Ie. a healing stat.
+        self.icon = ''  # A str icon representing this ability.
 
     def __str__(self) -> str:
         return self.name

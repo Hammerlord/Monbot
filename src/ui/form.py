@@ -1,25 +1,21 @@
 from typing import List
 
 from src.core.constants import *
-from src.core.elements import Elements
 from src.elemental.elemental import Elemental
-from src.elemental.elemental_factory import ElementalInitializer
-from src.elemental.species.mithus import Mithus
-from src.elemental.species.rainatu import Rainatu
-from src.elemental.species.roaus import Roaus
-from src.elemental.species.sithel import Sithel
 from src.ui.health_bar import HealthBarView
 
 
 class Form:
     """
-    Logic behind rendering and updating options for an interface (represented by a Discord message)
+    Logic behind rendering and updating options for an interface (represented by a Discord message).
+    Reactions act as controls to manipulate views and state.
     """
 
     def __init__(self, bot):
         self.bot = bot
-        self.selected = []  # A list of all options that have been toggled. The actual selection is the last one.
-        self.options = []  # List[str]
+        self.selected = []  # List[int] A list of all selected indices. The actual selection is the last one.
+        self.buttons = []  # List[str]
+        self.options = []  # List[any] The option values, mapped to each button.
         self.message = None
 
     async def render(self) -> None:
@@ -32,12 +28,12 @@ class Form:
         if reaction == OK:
             await self.confirm()
             return
-        if reaction in self.options:
-            self.selected.append(self.options.index(reaction))
+        if reaction in self.buttons:
+            self.selected.append(self.buttons.index(reaction))
 
     async def remove_option(self, reaction: str) -> None:
-        if reaction in self.options:
-            option = self.options.index(reaction)
+        if reaction in self.buttons:
+            option = self.buttons.index(reaction)
             if option in self.selected:
                 self.selected.pop(option)
 
@@ -46,7 +42,10 @@ class Form:
         return [ONE, TWO, THREE, FOUR, FIVE, SIX]  # Reaction emojis that enumerate options.
 
     @property
-    def _selected_item(self) -> int or None:
+    def _selected_index(self) -> int or None:
+        """
+        :return: int: The selected item is the option most recently toggled. Or None, if none are toggled.
+        """
         if len(self.selected) == 0:
             return None
         return self.selected[-1]
@@ -64,15 +63,15 @@ class Status(Form):
 
     async def render(self) -> None:
         message_body = f"```{self.player.nickname}'s Team```"
-        for elemental in self.player.team.elementals:
-            message_body += self._get_status(elemental)
+        for i, elemental in enumerate(self.player.team.elementals):
+            message_body += self._get_status(i, elemental)
         self.message = await self.bot.say(message_body)
         for option in self.options:
             await self.bot.add_reaction(self.message, option)
 
     @staticmethod
-    def _get_status(elemental: Elemental) -> str:
-        return (f"`{elemental.left_icon} {elemental.nickname} "
+    def _get_status(index: int, elemental: Elemental) -> str:
+        return (f"{index + 1}) `{elemental.left_icon} {elemental.nickname} "
                 f"{HealthBarView.from_elemental(elemental)} "
                 f"{elemental.current_hp} / {elemental.max_hp} HP` \n")
 
@@ -80,40 +79,3 @@ class Status(Form):
         # No operation.
         pass
 
-
-class SelectStarter(Form):
-    """
-    The welcome screen where you choose an Elemental to start.
-    """
-
-    def __init__(self, bot, player):
-        super().__init__(bot)
-        self.player = player
-        self.starters = [Rainatu(),
-                         Mithus(),
-                         Roaus(),
-                         Sithel()]
-        self.options = Form.static_options()[:len(self.starters)]
-        self.options.append(OK)
-
-    async def render(self) -> None:
-        message_body = ("\n```Welcome to the dangerous world of elementals!"
-                        "\nIt's impossible to go alone, so ples pik some1:```")
-        for i, starter in enumerate(self.starters):
-            index = str(i + 1) + ')'  # Display starting at 1
-            message_body += f"\n {index} {starter.left_icon} {starter.name}"
-        self.message = await self.bot.say(message_body)
-        for option in self.options:
-            await self.bot.add_reaction(self.message, option)
-
-    async def pick_option(self, reaction: str) -> None:
-        await super().pick_option(reaction)
-
-    async def confirm(self):
-        """
-        If you already have an elemental, this should do nothing.
-        """
-        if self.player.num_elementals > 0:
-            return
-        starter = self.starters[self._selected_item]
-        self.player.add_elemental(ElementalInitializer.make(starter, level=3))
