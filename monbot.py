@@ -14,6 +14,7 @@ view_manager = None
 async def on_ready():
     global view_manager
     view_manager = ViewManager(bot)
+    print("Monbot is ready!")
 
 
 @bot.command(pass_context=True)
@@ -33,6 +34,7 @@ async def on_reaction_add(reaction, user):
     """
     1) Check if the user is adding a reaction to their own view: if not, do nothing.
     2) If true, the form checks if there is a valid option mapped to the reaction.
+    TODO this should do nothing if the reaction is not on the right message.
     """
     view = view_manager.get_view(user)
     if view:

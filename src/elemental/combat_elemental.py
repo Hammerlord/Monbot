@@ -215,6 +215,7 @@ class CombatElemental:
         :param actor: The CombatElemental dealing the damage.
         """
         self._elemental.receive_damage(amount)
+        # TODO differentiate ability damage source from debuff damage source
         self._status_manager.on_receive_damage(amount, actor)
         if self.is_knocked_out:
             self._status_manager.clear_status_effects()
