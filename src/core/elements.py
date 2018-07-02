@@ -1,50 +1,43 @@
-from enum import Enum
-
-
-class Elements(Enum):
+class Elements:
     """
     Element typing for Elementals and Abilities.
     """
 
-    NONE = 0
-    LIGHTNING = 1
-    WATER = 2
-    FIRE = 3
-    EARTH = 4
-    WIND = 5
-    LIGHT = 6
-    DARK = 7
-    CHAOS = 8
+    NONE = 'None'
+    LIGHTNING = 'Lightning'
+    WATER = 'Water'
+    FIRE = 'Fire'
+    EARTH = 'Earth'
+    WIND = 'Wind'
+    LIGHT = 'Light'
+    DARK = 'Dark'
+    CHAOS = 'Chaos'
 
     @staticmethod
     def get_icon(element) -> str:
-        if element == Elements.LIGHTNING:
-            return ':zap:'
-        if element == Elements.WATER:
-            return ':droplet:'
-        if element == Elements.FIRE:
-            return ':fire:'
-        if element == Elements.EARTH:
-            return ':mountain_snow:'
-        if element == Elements.WIND:
-            return ':cloud_tornado:'
-        if element == Elements.LIGHT:
-            return ':star2:'
-        if element == Elements.DARK:
-            return ':dark_sunglasses:'
-        if element == Elements.CHAOS:
-            return ':radioactive:'
+        icon_map = {
+            Elements.LIGHTNING: ':zap:',
+            Elements.WATER: ':droplet:',
+            Elements.FIRE: ':fire:',
+            Elements.EARTH: ':mountain_snow:',
+            Elements.WIND: ':cloud_tornado:',
+            Elements.LIGHT: ':star2:',
+            Elements.DARK: ':dark_sunglasses:',
+            Elements.CHAOS: ':radioactive:'
+        }
+        if element in icon_map:
+            return icon_map[element]
         return ''
 
 
-class Category(Enum):
+class Category:
     """
     Physical or magic.
     """
 
-    NONE = 0
-    PHYSICAL = 1
-    MAGIC = 2
+    NONE = 'None'
+    PHYSICAL = 'Physical'
+    MAGIC = 'Magic'
 
 
 class Effectiveness:

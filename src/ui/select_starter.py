@@ -6,6 +6,7 @@ from src.elemental.species.rainatu import Rainatu
 from src.elemental.species.roaus import Roaus
 from src.elemental.species.sithel import Sithel
 from src.elemental.species.species import Species
+from src.ui.ability_option import AbilityOptionView
 from src.ui.form import Form
 
 
@@ -35,7 +36,7 @@ class SelectStarter(Form):
         message_body = ("```Welcome to the dangerous world of elementals!\n"
                         "It's impossible to go alone, so please take a companion with you.```")
         for i, starter in enumerate(self.options):
-            message_body += self.get_starter_view(i, starter)
+            message_body += f"{i + 1}) {starter.left_icon} {starter.name}\n"
         return message_body
 
     async def render(self) -> None:
@@ -51,19 +52,13 @@ class SelectStarter(Form):
     @staticmethod
     def get_detail_screen(starter: Species) -> str:
         abilities = starter.learnable_abilities[:2]  # Show two abilities.
-        abilities_view = '\n'.join([f"{ability.icon} [{ability.name}] {ability.description}"
-                                    for ability in abilities])
+        abilities_view = '\n'.join([AbilityOptionView.get_view(ability) for ability in abilities])
 
-        return (f"{starter.left_icon} **{starter.name}**\n"
-                f"{Elements.get_icon(starter.element)} type\n"
-                f"*{starter.description}*\n"
-                f"===== Abilities ===== \n"
-                f"{abilities_view}"
-                f"```Press OK to select this one.```")
-
-    @staticmethod
-    def get_starter_view(index: int, starter) -> str:
-        return f"\n {index + 1}) {starter.left_icon} {starter.name}"
+        return (f"{starter.left_icon} **{starter.name}** [{Elements.get_icon(starter.element)} type]\n"
+                f"{starter.description}\n\n"
+                f"{abilities_view}\n"
+                "- -\n"
+                "Press OK to choose this one.")
 
     async def pick_option(self, reaction: str) -> None:
         await super().pick_option(reaction)

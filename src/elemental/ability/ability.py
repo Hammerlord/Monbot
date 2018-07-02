@@ -88,8 +88,20 @@ class LearnableAbility:
         return self.ability.description
 
     @property
+    def category(self) -> Category:
+        return self.ability.category
+
+    @property
+    def mana_cost(self) -> int:
+        return self.ability.mana_cost
+
+    @property
     def element(self) -> Elements:
         return self.ability.element
+
+    @property
+    def base_power(self) -> int:
+        return self.ability.base_power
 
     @property
     def icon(self) -> str:
