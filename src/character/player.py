@@ -21,10 +21,6 @@ class Player(Character):
     def is_busy(self) -> bool:
         return self._is_busy
 
-    @property
-    def has_elemental(self) -> bool:
-        return self.num_elementals > 0
-
     @is_busy.setter
     def is_busy(self, set_busy: bool) -> None:
         self._is_busy = set_busy
