@@ -36,6 +36,10 @@ class Attribute:
         self.add_stats(attribute_manager)
 
     @property
+    def name(self) -> str:
+        return self._name
+
+    @property
     def level(self) -> int:
         return self._current_level
 

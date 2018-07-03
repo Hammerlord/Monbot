@@ -18,12 +18,9 @@ class Form:
     async def render(self) -> None:
         raise NotImplementedError
 
-    async def confirm(self):
-        raise NotImplementedError
-
     async def pick_option(self, reaction: str) -> None:
         if reaction == OK:
-            await self.confirm()
+            await self._confirm()
             return
         if reaction in self.buttons:
             self.selected.append(self.buttons.index(reaction))
@@ -33,6 +30,9 @@ class Form:
             option = self.buttons.index(reaction)
             if option in self.selected:
                 self.selected.remove(option)
+
+    async def _confirm(self):
+        raise NotImplementedError
 
     @staticmethod
     def static_options() -> List[str]:

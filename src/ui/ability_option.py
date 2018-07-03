@@ -16,7 +16,7 @@ class AbilityOptionView:
         ability = self.ability
         icon = Elements.get_icon(ability.element)
         return (f"{ability.icon} **{ability.name}** [{ability.category}{icon}] "
-                f"[{self._get_mana_cost()}:small_blue_diamond:] - {self._get_power(ability)}")
+                f"[{self._get_mana_cost()}:small_blue_diamond:]{self._get_power(ability)}")
 
     def get_detail(self) -> str:
         ability = self.ability
@@ -33,5 +33,5 @@ class AbilityOptionView:
     @staticmethod
     def _get_power(ability: Ability or LearnableAbility) -> str:
         if ability.base_power > 0:
-            return f'- Power: {ability.base_power}'
+            return f' - Power: {ability.base_power}'
         return ''

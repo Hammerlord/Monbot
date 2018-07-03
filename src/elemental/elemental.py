@@ -104,6 +104,14 @@ class Elemental:
         return self._nickname
 
     @property
+    def name(self) -> str:
+        return self._species.name
+
+    @property
+    def description(self) -> str:
+        return self._species.description
+
+    @property
     def element(self) -> Elements:
         return self._species.element
 

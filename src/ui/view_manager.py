@@ -27,7 +27,6 @@ class ViewManager:
         if player.current_view:
             # Reduce chat clutter by displaying one view message at a time.
             old_message = player.current_view.message
-            player.current_view = None
             await self.bot.delete_message(old_message)
         player.current_view = form
 
