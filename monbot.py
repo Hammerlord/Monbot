@@ -36,6 +36,8 @@ async def on_reaction_add(reaction, user):
     2) If true, the form checks if there is a valid option mapped to the reaction.
     TODO this should do nothing if the reaction is not on the right message.
     """
+    if user.bot:
+        return
     view = view_manager.get_view(user)
     if view:
         await view.pick_option(reaction.emoji)
@@ -43,6 +45,8 @@ async def on_reaction_add(reaction, user):
 
 @bot.event
 async def on_reaction_remove(reaction, user):
+    if user.bot:
+        return
     view = view_manager.get_view(user)
     if view:
         await view.remove_option(reaction.emoji)
