@@ -37,7 +37,7 @@ class Form:
     @property
     def buttons(self) -> List[Button]:
         """
-        :return: A list of emojis used to render buttons (reactions).
+        :return: A list of buttons, which are emoji strings mapped to values.
         """
         raise NotImplementedError
 
@@ -49,7 +49,7 @@ class Form:
 
     async def pick_option(self, reaction: str) -> bool:
         """
-        Adds the index of the valid button to this.toggled. Later used to retrieve what the user picked.
+        Adds the selected button to this.toggled. Later used to retrieve what the user picked.
         :return: True if a valid option was added.
         """
         for button in self.buttons:
@@ -59,7 +59,7 @@ class Form:
 
     async def remove_option(self, reaction: str) -> bool:
         """
-        Removes the index of the button from this.selected.
+        Removes the button from this.toggled.
         :return: True if a valid option was removed.
         """
         for button in self.toggled:
