@@ -5,7 +5,7 @@ from discord.ext.commands import Bot
 
 from src.core.constants import *
 from src.elemental.elemental import Elemental
-from src.ui.form import Form, FormOptions
+from src.ui.forms.form import Form, FormOptions
 from src.ui.health_bar import HealthBarView
 from src.ui.stats import StatsView
 

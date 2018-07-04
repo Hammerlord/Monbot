@@ -9,14 +9,15 @@ from src.elemental.species.roaus import Roaus
 from src.elemental.species.sithel import Sithel
 from src.elemental.species.species import Species
 from src.ui.ability_option import AbilityOptionView
-from src.ui.form import Form, FormOptions
-from src.ui.status import StatusView
+from src.ui.forms.form import Form, FormOptions
+from src.ui.forms.status import StatusView
 
 
 class SelectStarterView(Form):
     """
     The welcome screen where you choose an Elemental to start.
     """
+
     def __init__(self, options: FormOptions):
         super().__init__(options)
         self.initial_render = True

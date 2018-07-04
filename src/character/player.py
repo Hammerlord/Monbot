@@ -1,5 +1,5 @@
 from src.character.character import Character
-from src.ui.form import Form
+from src.ui.forms.form import Form
 
 
 class Player(Character):
