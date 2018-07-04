@@ -3,7 +3,7 @@ from typing import List
 import discord
 from discord.ext.commands import Bot
 
-from src.character.player import Player
+from src.core.constants import *
 from src.elemental.elemental import Elemental
 from src.ui.form import Form, FormOptions
 from src.ui.health_bar import HealthBarView
@@ -55,7 +55,8 @@ class StatusView(Form):
 
 
 class StatusDetailOptions(FormOptions):
-    def __init__(self, bot: Bot,
+    def __init__(self,
+                 bot: Bot,
                  player,
                  elemental: Elemental,
                  discord_message: discord.Message=None):
@@ -70,12 +71,12 @@ class StatusDetailView(Form):
     def __init__(self, options: StatusDetailOptions):
         super().__init__(options)
         self.elemental = options.elemental
-        # No button values here. Customized emojis will trigger different operations.
 
     @property
     def buttons(self) -> List[Form.Button]:
-        buttons = ['🔙', '⚔', '💪', '🏷', '📝']
-        return [Form.Button(button, None) for button in buttons]
+        reactions = [BACK, ABILITIES, ATTRIBUTES, NICKNAME, NOTE]
+        # No button values here. Non-default emojis will trigger different operations; see pick_option()
+        return [Form.Button(reaction, None) for reaction in reactions]
 
     async def render(self) -> None:
         if not self.discord_message:
@@ -85,6 +86,18 @@ class StatusDetailView(Form):
         await self.bot.clear_reactions(self.discord_message)
         for button in self.buttons:
             await self.bot.add_reaction(self.discord_message, button.reaction)
+
+    async def pick_option(self, reaction: str) -> None:
+        if reaction == BACK:
+            await self.back()
+        elif reaction == ABILITIES:
+            pass
+        elif reaction == ATTRIBUTES:
+            pass
+        elif reaction == NICKNAME:
+            pass
+        elif reaction == NOTE:
+            pass
 
     def get_status(self) -> str:
         # Renders HP, EXP, stats and currently active abilities and traits.
