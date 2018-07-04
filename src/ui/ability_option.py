@@ -1,3 +1,5 @@
+from typing import List
+
 from src.core.elements import Elements
 from src.elemental.ability.ability import Ability, LearnableAbility
 
@@ -9,13 +11,20 @@ class AbilityOptionView:
     def __init__(self, ability: Ability or LearnableAbility):
         self.ability = ability
 
+    @staticmethod
+    def detail_from_list(abilities: List[Ability] or List[LearnableAbility]) -> str:
+        """
+        :return: A string view for displaying multiple Abilities.
+        """
+        return '\n'.join([AbilityOptionView(ability).get_detail() for ability in abilities])
+
     def get_summary(self) -> str:
         """
         :return: String representation of the ability, without the description.
         """
         ability = self.ability
         icon = Elements.get_icon(ability.element)
-        return (f"{ability.icon} **{ability.name}** [{ability.category}{icon}] "
+        return (f"{ability.icon} {ability.name} [{ability.category.name}{icon}] "
                 f"[{self._get_mana_cost()}:small_blue_diamond:]{self._get_power(ability)}")
 
     def get_detail(self) -> str:

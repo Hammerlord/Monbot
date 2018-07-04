@@ -71,13 +71,13 @@ class Species(StatsInterface):
         self._description = 'Something interesting here.'
         self._element = Elements.NONE
         self._max_hp = 50
-        self._starting_mana = 20
+        self._starting_mana = 15
         self._max_mana = 50
         self._mana_per_turn = 5
         self._bench_mana_per_turn = 2
         self._defend_charges = 2
-        self._left_icon = None  # str. This Elemental's emote, facing right.
-        self._right_icon = None  # str. This Elemental's emote, facing left.
+        self._left_icon = ''  # This Elemental's emote, facing right.
+        self._right_icon = ''  # This Elemental's emote, facing left.
         self._portrait = None
         self._growth_rate = GrowthRate()  # Must be overridden to customize the stat growth!
         self._learnable_abilities = []  # List[LearnableAbility]. TBD by descendants.

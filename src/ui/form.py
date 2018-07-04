@@ -1,3 +1,4 @@
+from collections import namedtuple
 from typing import List
 
 from src.core.constants import *
@@ -5,45 +6,73 @@ from src.core.constants import *
 
 class Form:
     """
-    Logic behind rendering and updating options for an interface (represented by a Discord message).
+    Logic for rendering and updating options in an interface (represented by a Discord message).
     Reactions act as controls to manipulate views and state.
+    Each new set of reactions should have their own form.
     """
-    def __init__(self, bot):
+
+    Button = namedtuple('Button', 'reaction, value')
+
+    def __init__(self, bot, message=None):
         self.bot = bot
-        self.selected = []  # List[int] A list of all selected indices. The actual selection is the last one.
-        self.buttons = []  # List[str]
-        self.options = []  # List[any] The option values, mapped to each button.
-        self.message = None
-
-    async def render(self) -> None:
-        raise NotImplementedError
-
-    async def pick_option(self, reaction: str) -> None:
-        if reaction == OK:
-            await self._confirm()
-            return
-        if reaction in self.buttons:
-            self.selected.append(self.buttons.index(reaction))
-
-    async def remove_option(self, reaction: str) -> None:
-        if reaction in self.buttons:
-            option = self.buttons.index(reaction)
-            if option in self.selected:
-                self.selected.remove(option)
-
-    async def _confirm(self):
-        raise NotImplementedError
-
-    @staticmethod
-    def static_options() -> List[str]:
-        return [ONE, TWO, THREE, FOUR, FIVE, SIX]  # Reaction emojis that enumerate options.
+        self.toggled: List[Form.Button] = []  # The "toggled on" buttons.
+        self.values: List[any] = []  # Values to be mapped to the reactions, if applicable.
+        self.discord_message = message  # The Discord.message object representing this form.
 
     @property
-    def _selected_index(self) -> int or None:
+    def buttons(self) -> List[Button]:
         """
-        :return: int: The selected item is the option most recently toggled. Or None, if none are toggled.
+        :return: A list of emojis used to render buttons (reactions).
         """
-        if len(self.selected) == 0:
-            return None
-        return self.selected[-1]
+        raise NotImplementedError
 
+    async def render(self) -> None:
+        """
+        Tell the bot to render a message body depending on the state.
+        """
+        raise NotImplementedError
+
+    async def pick_option(self, reaction: str) -> bool:
+        """
+        Adds the index of the valid button to this.toggled. Later used to retrieve what the user picked.
+        :return: True if a valid option was added.
+        """
+        for button in self.buttons:
+            if button.reaction == reaction:
+                self.toggled.append(button)
+                return True
+
+    async def remove_option(self, reaction: str) -> bool:
+        """
+        Removes the index of the button from this.selected.
+        :return: True if a valid option was removed.
+        """
+        for button in self.toggled:
+            if button.reaction == reaction:
+                self.toggled.remove(button)
+                return True
+
+    @staticmethod
+    def enumerated_buttons(values: List[any]) -> List[Button]:
+        # Creates buttons with reaction emojis that enumerate values.
+        # For now, this gets around the issues of duplicates and needing custom icons.
+        reactions = [ONE, TWO, THREE, FOUR, FIVE, SIX]
+        return [Form.Button(reactions[i], value) for i, value in enumerate(values)]
+
+    @property
+    def _selected_value(self) -> any or None:
+        """
+        :return: The value object of the most recently toggled button.
+        """
+        if len(self.toggled) > 0:
+            return self.toggled[-1].value
+
+    async def _display(self, message: str) -> None:
+        """
+        Helper method to edit the discord message if one exists, or set a message if not.
+        :param message: The message body.
+        """
+        if self.discord_message:
+            await self.bot.edit_message(self.discord_message, message)
+        else:
+            self.discord_message = await self.bot.say(message)

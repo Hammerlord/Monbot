@@ -2,8 +2,8 @@ from discord.ext.commands import Bot
 
 from src.character.player import Player
 from src.ui.form import Form
-from src.ui.select_starter import SelectStarter
-from src.ui.status import Status
+from src.ui.select_starter import SelectStarterView
+from src.ui.status import StatusView
 
 
 class ViewManager:
@@ -18,23 +18,22 @@ class ViewManager:
         self._check_create_profile(user)
         player = self.get_player(user)
         if player.num_elementals == 0:
-            await self.set_view(player, SelectStarter(self.bot, player))
+            await self.set_view(player, SelectStarterView(self.bot, player))
         else:
-            await self.set_view(player, Status(self.bot, player))
-        await player.current_view.render()
+            await self.set_view(player, StatusView(self.bot, player))
 
     async def set_view(self, player: Player, form: Form) -> None:
-        if player.current_view:
+        if player.primary_view:
             # Reduce chat clutter by displaying one view message at a time.
-            old_message = player.current_view.message
+            old_message = player.view_message
             await self.bot.delete_message(old_message)
-        player.current_view = form
+        player.set_primary_view(form)
+        await form.render()
 
     def get_view(self, user) -> Form or None:
         player = self.get_player(user)
-        if not player:
-            return None
-        return player.current_view
+        if player:
+            return player.primary_view
 
     def get_player(self, user) -> Player or None:
         if user.id in self.players:
@@ -50,4 +49,4 @@ class ViewManager:
         self._check_create_profile(user)
         player = self.get_player(user)
         if player.num_elementals == 0:
-            await self.set_view(player, SelectStarter(self.bot, player))
+            await self.set_view(player, SelectStarterView(self.bot, player))

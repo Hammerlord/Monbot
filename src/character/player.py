@@ -1,21 +1,26 @@
 from src.character.character import Character
-from src.elemental.elemental_factory import ElementalInitializer
+from src.ui.form import Form
 
 
 class Player(Character):
     def __init__(self, user):
         super().__init__()
         self._is_busy = False
-        self.current_view = None  # Type: Form
+        self.primary_view = None  # Type: Form
+        self.secondary_view = None  # Type: Form (eg. also having a logger open)
         self.id = user.id
         self._nickname = user.name
 
+    def set_primary_view(self, view: Form) -> None:
+        self.primary_view = view
+
     @property
-    def get_message(self):
+    def view_message(self):
         """
         :return: Discord message object.
+        This is how the view actually gets represented in Discord.
         """
-        return self.current_view.message
+        return self.primary_view.discord_message
 
     @property
     def is_busy(self) -> bool:
