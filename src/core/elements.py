@@ -1,17 +1,19 @@
-class Elements:
+from enum import Enum
+
+
+class Elements(Enum):
     """
     Element typing for Elementals and Abilities.
     """
-
-    NONE = 'None'
-    LIGHTNING = 'Lightning'
-    WATER = 'Water'
-    FIRE = 'Fire'
-    EARTH = 'Earth'
-    WIND = 'Wind'
-    LIGHT = 'Light'
-    DARK = 'Dark'
-    CHAOS = 'Chaos'
+    NONE = 0
+    LIGHTNING = 1
+    WATER = 2
+    FIRE = 3
+    EARTH = 4
+    WIND = 5
+    LIGHT = 6
+    DARK = 7
+    CHAOS = 8
 
     @staticmethod
     def get_icon(element) -> str:
@@ -30,14 +32,14 @@ class Elements:
         return ''
 
 
-class Category:
+class Category(Enum):
     """
     Physical or magic.
     """
 
-    NONE = 'None'
-    PHYSICAL = 'Physical'
-    MAGIC = 'Magic'
+    NONE = 0
+    PHYSICAL = 1
+    MAGIC = 2
 
 
 class Effectiveness:
