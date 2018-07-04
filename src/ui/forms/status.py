@@ -107,7 +107,10 @@ class StatusDetailView(Form):
                 f"`{HealthBarView.from_elemental(elemental)} {elemental.current_hp} / {elemental.max_hp} HP`\n"
                 f"{StatsView(elemental).get_view()}")
         note = f"Note: {elemental.note}" if elemental.note else ''
-        option_descriptions = f"[⚔ Abilities]   [💪 Attributes]   [🏷 Nickname]   [📝 Note]"
+        option_descriptions = (f"[{ABILITIES}`Abilities`]   "
+                               f"[{ATTRIBUTES}`Attributes`]   "
+                               f"[{NICKNAME}`Nickname`]   "
+                               f"[{NOTE}`Note`]")
         return '\n'.join([view, note, option_descriptions])
 
     def get_name(self) -> str:
