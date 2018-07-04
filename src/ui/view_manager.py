@@ -1,7 +1,7 @@
 from discord.ext.commands import Bot
 
 from src.character.player import Player
-from src.ui.form import Form
+from src.ui.form import Form, FormOptions
 from src.ui.select_starter import SelectStarterView
 from src.ui.status import StatusView
 
@@ -18,7 +18,8 @@ class ViewManager:
         self._check_create_profile(user)
         player = self.get_player(user)
         if player.num_elementals == 0:
-            await self.set_view(player, SelectStarterView(self.bot, player))
+            options = FormOptions(self.bot, player)
+            await self.set_view(player, SelectStarterView(options))
         else:
             await self.set_view(player, StatusView(self.bot, player))
 
@@ -49,4 +50,5 @@ class ViewManager:
         self._check_create_profile(user)
         player = self.get_player(user)
         if player.num_elementals == 0:
-            await self.set_view(player, SelectStarterView(self.bot, player))
+            options = FormOptions(self.bot, player)
+            await self.set_view(player, SelectStarterView(options))

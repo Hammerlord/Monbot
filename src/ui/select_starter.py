@@ -9,16 +9,16 @@ from src.elemental.species.roaus import Roaus
 from src.elemental.species.sithel import Sithel
 from src.elemental.species.species import Species
 from src.ui.ability_option import AbilityOptionView
-from src.ui.form import Form
+from src.ui.form import Form, FormOptions
+from src.ui.status import StatusView
 
 
 class SelectStarterView(Form):
     """
     The welcome screen where you choose an Elemental to start.
     """
-    def __init__(self, bot, player):
-        super().__init__(bot)
-        self.player = player
+    def __init__(self, options: FormOptions):
+        super().__init__(options)
         self.initial_render = True
         self.values: List[Species] = [Rainatu(), Mithus(), Roaus(), Sithel()]
 
@@ -30,20 +30,20 @@ class SelectStarterView(Form):
         if self.initial_render:
             await self.render_initial()
         elif len(self.toggled) == 0:
-            await self._display(self._get_initial_screen())
+            await self._display(self._get_initial_page())
         else:
             species = self._selected_value
-            await self._display(self._get_detail_screen(species))
+            await self._display(self._get_detail_page(species))
 
     async def render_initial(self) -> None:
-        await self._display(self._get_initial_screen())
+        await self._display(self._get_initial_page())
         for button in self.buttons:
             await self.bot.add_reaction(self.discord_message, button.reaction)
         self.initial_render = False
 
     async def pick_option(self, reaction: str) -> None:
         if reaction == OK:
-            self._confirm()
+            await self._confirm()
             return
         is_valid_pick = await super().pick_option(reaction)
         if is_valid_pick:
@@ -57,7 +57,7 @@ class SelectStarterView(Form):
         if is_valid_removal:
             await self.render()
 
-    def _get_initial_screen(self) -> str:
+    def _get_initial_page(self) -> str:
         message_body = ("```Welcome to the dangerous world of elementals!\n"
                         "It's impossible to go alone, so please take a companion with you.```")
         for i, starter in enumerate(self.values):
@@ -65,7 +65,7 @@ class SelectStarterView(Form):
         return message_body
 
     @staticmethod
-    def _get_detail_screen(starter: Species) -> str:
+    def _get_detail_page(starter: Species) -> str:
         abilities = starter.learnable_abilities[:2]  # Show two abilities.
         abilities_view = AbilityOptionView.detail_from_list(abilities)
 
@@ -73,8 +73,9 @@ class SelectStarterView(Form):
                 f"{starter.description}\n\n"
                 f"{abilities_view}")
 
-    def _confirm(self):
+    async def _confirm(self):
         if self.player.num_elementals > 0 or self._selected_value is None:
             return
         starter = self._selected_value
         self.player.add_elemental(ElementalInitializer.make(starter, level=3))
+        await Form.from_form(self, StatusView)

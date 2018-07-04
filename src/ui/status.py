@@ -1,7 +1,11 @@
 from typing import List
 
+import discord
+from discord.ext.commands import Bot
+
+from src.character.player import Player
 from src.elemental.elemental import Elemental
-from src.ui.form import Form
+from src.ui.form import Form, FormOptions
 from src.ui.health_bar import HealthBarView
 from src.ui.stats import StatsView
 
@@ -10,11 +14,8 @@ class StatusView(Form):
     """
     Shows the status of your team.
     """
-    def __init__(self,
-                 bot,
-                 player):
-        super().__init__(bot)
-        self.player = player
+    def __init__(self, options: FormOptions):
+        super().__init__(options)
         self.values: List[Elemental] = self.player.team.elementals
         self.initial_render = True
 
@@ -23,12 +24,17 @@ class StatusView(Form):
         return self.enumerated_buttons(self.values)
 
     async def render(self) -> None:
+        if self.discord_message:
+            await self.bot.clear_reactions(self.discord_message)
+        await self._display(self._get_page())
+        for button in self.buttons:
+            await self.bot.add_reaction(self.discord_message, button.reaction)
+
+    def _get_page(self) -> str:
         message_body = f"```{self.player.nickname}'s Team (Slots: {self.player.team.size}/4)```"
         for i, elemental in enumerate(self.values):
             message_body += self._get_status(i, elemental)
-        self.discord_message = await self.bot.say(message_body)
-        for button in self.buttons:
-            await self.bot.add_reaction(self.discord_message, button.reaction)
+        return message_body
 
     @staticmethod
     def _get_status(index: int, elemental: Elemental) -> str:
@@ -42,28 +48,29 @@ class StatusView(Form):
             await self.create_detail_view(self._selected_value)
 
     async def create_detail_view(self, elemental: Elemental) -> None:
-        form = StatusDetailView(self.bot,
-                                self.player,
-                                elemental,
-                                self.discord_message)
-        await form.render()
+        options = StatusDetailOptions(self.bot, self.player, elemental, self.discord_message)
+        form = StatusDetailView(options)
         self.player.set_primary_view(form)
+        await form.render()
+
+
+class StatusDetailOptions(FormOptions):
+    def __init__(self, bot: Bot,
+                 player,
+                 elemental: Elemental,
+                 discord_message: discord.Message=None):
+        super().__init__(bot, player, discord_message)
+        self.elemental = elemental
 
 
 class StatusDetailView(Form):
     """
     A detail view for an Elemental on your team.
     """
-    def __init__(self,
-                 bot,
-                 player,
-                 elemental,
-                 message=None):
-        super().__init__(bot)
-        self.player = player
-        self.elemental = elemental
+    def __init__(self, options: StatusDetailOptions):
+        super().__init__(options)
+        self.elemental = options.elemental
         # No button values here. Customized emojis will trigger different operations.
-        self.discord_message = message
 
     @property
     def buttons(self) -> List[Form.Button]:
@@ -98,11 +105,8 @@ class StatusDetailView(Form):
             return f"**{nickname}** [{name}]"
         return f"**{name}**"
 
-    async def back(self):
+    async def back(self) -> None:
         """
         Rerenders the Status form.
         """
-        form = StatusView(self.bot,
-                          self.player)
-        await form.render()
-        self.player.set_primary_view(form)
+        await Form.from_form(self, StatusView)

@@ -1,7 +1,21 @@
 from collections import namedtuple
 from typing import List
 
+from discord.ext.commands import Bot
+import discord
 from src.core.constants import *
+
+
+class FormOptions:
+    """
+    The dependencies of all Forms.
+    """
+    def __init__(self, bot: Bot,
+                 player,
+                 discord_message: discord.Message=None):
+        self.bot = bot
+        self.player = player
+        self.discord_message = discord_message  # Optional. The form will edit an existing message.
 
 
 class Form:
@@ -13,11 +27,12 @@ class Form:
 
     Button = namedtuple('Button', 'reaction, value')
 
-    def __init__(self, bot, message=None):
-        self.bot = bot
+    def __init__(self, options: FormOptions):
+        self.bot = options.bot
+        self.player = options.player
+        self.discord_message = options.discord_message  # The Discord.message object representing this form.
         self.toggled: List[Form.Button] = []  # The "toggled on" buttons.
         self.values: List[any] = []  # Values to be mapped to the reactions, if applicable.
-        self.discord_message = message  # The Discord.message object representing this form.
 
     @property
     def buttons(self) -> List[Button]:
@@ -76,3 +91,20 @@ class Form:
             await self.bot.edit_message(self.discord_message, message)
         else:
             self.discord_message = await self.bot.say(message)
+
+    def get_form_options(self) -> FormOptions:
+        return FormOptions(self.bot,
+                           self.player,
+                           self.discord_message)
+
+    @staticmethod
+    async def from_form(from_form: 'Form', to_form) -> None:
+        """
+        Creates a form from another form, allowing the same Discord message to be reused.
+        :param from_form: The old form to take dependencies from.
+        :param to_form: Reference to the Form class being generated
+        """
+        options = from_form.get_form_options()
+        new_form = to_form(options)
+        options.player.set_primary_view(new_form)
+        await new_form.render()
