@@ -1,7 +1,7 @@
 from collections import namedtuple
 from typing import List
 
-from discord.ext.commands import Bot
+from discord.ext.commands import Bot, bot
 import discord
 from src.core.constants import *
 
@@ -31,7 +31,7 @@ class Form:
         self.bot = options.bot
         self.player = options.player
         self.discord_message = options.discord_message  # The Discord.message object representing this form.
-        self.toggled: List[Form.Button] = []  # The "toggled on" buttons.
+        self.toggled: List['Button'] = []  # The "toggled on" buttons.
         self.values: List[any] = []  # Values to be mapped to the reactions, if applicable.
 
     @property
@@ -40,6 +40,13 @@ class Form:
         :return: A list of buttons, which are emoji strings mapped to values.
         """
         raise NotImplementedError
+
+    @property
+    def is_awaiting_input(self) -> bool:
+        """
+        Override this with the condition which a form would await a user's typed input.
+        """
+        return False
 
     async def render(self) -> None:
         """
@@ -88,9 +95,23 @@ class Form:
         :param message: The message body.
         """
         if self.discord_message:
-            await self.bot.edit_message(self.discord_message, message)
+            try:
+                await self.bot.edit_message(self.discord_message, message)
+            except discord.errors.NotFound:
+                print("Message has been deleted.")
         else:
             self.discord_message = await self.bot.say(message)
+
+    async def _clear_reactions(self) -> None:
+        """
+        Attempt to clear reactions from the message.
+        TODO should delete the message and repost if we don't have permission to clear reactions.
+        """
+        if self.discord_message:
+            try:
+                await self.bot.clear_reactions(self.discord_message)
+            except discord.errors.NotFound:
+                print("Message has been deleted.")
 
     def get_form_options(self) -> FormOptions:
         return FormOptions(self.bot,

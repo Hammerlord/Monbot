@@ -59,7 +59,7 @@ class StatusDetailOptions(FormOptions):
                  bot: Bot,
                  player,
                  elemental: Elemental,
-                 discord_message: discord.Message=None):
+                 discord_message: discord.Message = None):
         super().__init__(bot, player, discord_message)
         self.elemental = elemental
 
@@ -71,6 +71,12 @@ class StatusDetailView(Form):
     def __init__(self, options: StatusDetailOptions):
         super().__init__(options)
         self.elemental = options.elemental
+        self.is_setting_nickname = False
+        self.is_setting_note = False
+
+    @property
+    def is_awaiting_input(self) -> bool:
+        return self.is_setting_note or self.is_setting_nickname
 
     @property
     def buttons(self) -> List[Form.Button]:
@@ -79,15 +85,14 @@ class StatusDetailView(Form):
         return [Form.Button(reaction, None) for reaction in reactions]
 
     async def render(self) -> None:
-        if not self.discord_message:
-            self.discord_message = await self.bot.say(self.get_status())
-        else:
-            await self.bot.edit_message(self.discord_message, self.get_status())
+        await self._display(self.get_status())
         await self.bot.clear_reactions(self.discord_message)
         for button in self.buttons:
             await self.bot.add_reaction(self.discord_message, button.reaction)
 
     async def pick_option(self, reaction: str) -> None:
+        if self.is_awaiting_input:
+            return
         if reaction == BACK:
             await self.back()
         elif reaction == ABILITIES:
@@ -95,25 +100,61 @@ class StatusDetailView(Form):
         elif reaction == ATTRIBUTES:
             pass
         elif reaction == NICKNAME:
-            pass
+            await self.set_nickname_mode()
         elif reaction == NOTE:
-            pass
+            await self.set_note_mode()
+
+    async def set_nickname_mode(self) -> None:
+        message_body = (f"```Give {self.elemental.nickname} a new nickname. \n"
+                        f"Awaiting input... Or type `;` to cancel.```"
+                        f"{self.get_status()}")
+        self.is_setting_nickname = True
+        await self._clear_reactions()
+        await self._display(message_body)
+
+    async def set_note_mode(self) -> None:
+        message_body = (f"```Set a note for {self.elemental.nickname}. \n"
+                        f"Awaiting input... Or type `;` to cancel.```"
+                        f"{self.get_status()}")
+        self.is_setting_note = True
+        await self._clear_reactions()
+        await self._display(message_body)
+
+    async def receive_input(self, content: str) -> None:
+        content = content.strip()
+        if content != ';':
+            if self.is_setting_nickname:
+                self.elemental.nickname = content
+            elif self.is_setting_note:
+                self.elemental.note = content
+        self.is_setting_nickname = False
+        self.is_setting_note = False
+        await self.render()
+
+    def get_main_view(self) -> str:
+        return '\n'.join([self.get_status(), self.option_descriptions])
 
     def get_status(self) -> str:
-        # Renders HP, EXP, stats and currently active abilities and traits.
+        """
+        :return: str: HP, EXP, stats and currently active abilities and traits.
+        """
         elemental = self.elemental
-        view = (f"{elemental.left_icon} {self.get_name()} "
+        view = (f"{elemental.left_icon} {self.get_elemental_name()} "
                 f"Lv. {elemental.level} (EXP: {elemental.current_exp} / {elemental.exp_to_level})\n"
                 f"`{HealthBarView.from_elemental(elemental)} {elemental.current_hp} / {elemental.max_hp} HP`\n"
                 f"{StatsView(elemental).get_view()}")
         note = f"Note: {elemental.note}" if elemental.note else ''
-        option_descriptions = (f"[{ABILITIES}`Abilities`]   "
-                               f"[{ATTRIBUTES}`Attributes`]   "
-                               f"[{NICKNAME}`Nickname`]   "
-                               f"[{NOTE}`Note`]")
-        return '\n'.join([view, note, option_descriptions])
+        return '\n'.join([view, note])
 
-    def get_name(self) -> str:
+    @property
+    def option_descriptions(self) -> str:
+        # Show what each reaction maps to.
+        return (f"[{ABILITIES}`Abilities`]   "
+                f"[{ATTRIBUTES}`Attributes`]   "
+                f"[{NICKNAME}`Nickname`]   "
+                f"[{NOTE}`Note`]")
+
+    def get_elemental_name(self) -> str:
         # If the Elemental has a nickname, also display its actual species name.
         name = self.elemental.name
         nickname = self.elemental.nickname

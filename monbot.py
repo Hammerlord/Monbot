@@ -52,4 +52,16 @@ async def on_reaction_remove(reaction, user):
         await view.remove_option(reaction.emoji)
 
 
+@bot.event
+async def on_message(message):
+    """
+    Check if the user has a view that is awaiting an input, eg. renaming an Elemental.
+    """
+    if message.author.bot:
+        return
+    await bot.process_commands(message)
+    view = view_manager.get_view(message.author)
+    if view and view.is_awaiting_input:
+        await view.receive_input(message.content)
+
 bot.run(TOKEN)
