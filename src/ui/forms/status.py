@@ -5,12 +5,12 @@ from discord.ext.commands import Bot
 
 from src.core.constants import *
 from src.elemental.elemental import Elemental
-from src.ui.forms.form import Form, FormOptions
+from src.ui.forms.form import Form, FormOptions, ValueForm
 from src.ui.health_bar import HealthBarView
 from src.ui.stats import StatsView
 
 
-class StatusView(Form):
+class StatusView(ValueForm):
     """
     Shows the status of your team.
     """
@@ -20,7 +20,7 @@ class StatusView(Form):
         self.initial_render = True
 
     @property
-    def buttons(self) -> List[Form.Button]:
+    def buttons(self) -> List[ValueForm.Button]:
         return self.enumerated_buttons(self.values)
 
     async def render(self) -> None:
@@ -78,17 +78,11 @@ class StatusDetailView(Form):
     def is_awaiting_input(self) -> bool:
         return self.is_setting_note or self.is_setting_nickname
 
-    @property
-    def buttons(self) -> List[Form.Button]:
-        reactions = [BACK, ABILITIES, ATTRIBUTES, NICKNAME, NOTE]
-        # No button values here. Non-default emojis will trigger different operations; see pick_option()
-        return [Form.Button(reaction, None) for reaction in reactions]
-
     async def render(self) -> None:
         await self._display(self.get_status())
         await self.bot.clear_reactions(self.discord_message)
-        for button in self.buttons:
-            await self.bot.add_reaction(self.discord_message, button.reaction)
+        for reaction in [BACK, ABILITIES, ATTRIBUTES, NICKNAME, NOTE]:
+            await self.bot.add_reaction(self.discord_message, reaction)
 
     async def pick_option(self, reaction: str) -> None:
         if self.is_awaiting_input:

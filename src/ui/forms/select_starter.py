@@ -9,11 +9,11 @@ from src.elemental.species.roaus import Roaus
 from src.elemental.species.sithel import Sithel
 from src.elemental.species.species import Species
 from src.ui.ability_option import AbilityOptionView
-from src.ui.forms.form import Form, FormOptions
+from src.ui.forms.form import Form, FormOptions, ValueForm
 from src.ui.forms.status import StatusView
 
 
-class SelectStarterView(Form):
+class SelectStarterView(ValueForm):
     """
     The welcome screen where you choose an Elemental to start.
     """
@@ -24,7 +24,7 @@ class SelectStarterView(Form):
         self.values = [Rainatu(), Mithus(), Roaus(), Sithel()]
 
     @property
-    def buttons(self) -> List[Form.Button]:
+    def buttons(self) -> List[ValueForm.Button]:
         return self.enumerated_buttons(self.values)
 
     async def render(self) -> None:

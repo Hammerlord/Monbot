@@ -26,21 +26,10 @@ class Form:
     Each new set of reactions should have their own form.
     """
 
-    Button = namedtuple('Button', 'reaction, value')
-
     def __init__(self, options: FormOptions):
         self.bot = options.bot
         self.player = options.player
         self.discord_message = options.discord_message  # The Discord.message object representing this form.
-        self.toggled = []  # Type: List[Button] The "toggled on" buttons.
-        self.values = []  # Values (any) to be mapped to the reactions, if applicable.
-
-    @property
-    def buttons(self) -> List[Button]:
-        """
-        :return: A list of buttons, which are emoji strings mapped to values.
-        """
-        raise NotImplementedError
 
     @property
     def is_awaiting_input(self) -> bool:
@@ -57,39 +46,7 @@ class Form:
         raise NotImplementedError
 
     async def pick_option(self, reaction: str) -> bool:
-        """
-        Adds the selected button to this.toggled. Later used to retrieve what the user picked.
-        :return: True if a valid option was added.
-        """
-        for button in self.buttons:
-            if button.reaction == reaction:
-                self.toggled.append(button)
-                return True
-
-    async def remove_option(self, reaction: str) -> bool:
-        """
-        Removes the button from this.toggled.
-        :return: True if a valid option was removed.
-        """
-        for button in self.toggled:
-            if button.reaction == reaction:
-                self.toggled.remove(button)
-                return True
-
-    @staticmethod
-    def enumerated_buttons(values: List[any]) -> List[Button]:
-        # Creates buttons with reaction emojis that enumerate values.
-        # For now, this gets around the issues of duplicates and needing custom icons.
-        reactions = [ONE, TWO, THREE, FOUR, FIVE, SIX]
-        return [Form.Button(reactions[i], value) for i, value in enumerate(values)]
-
-    @property
-    def _selected_value(self) -> any or None:
-        """
-        :return: The value object of the most recently toggled button.
-        """
-        if len(self.toggled) > 0:
-            return self.toggled[-1].value
+        raise NotImplementedError
 
     async def _display(self, message: str) -> None:
         """
@@ -131,3 +88,60 @@ class Form:
         new_form = to_form(options)
         options.player.set_primary_view(new_form)
         await new_form.render()
+
+
+class ValueForm(Form):
+    """
+    A type of form that allows multiple selection of choices by implementing pick_option.
+    """
+    Button = namedtuple('Button', 'reaction, value')
+
+    def __init__(self, options: FormOptions):
+        super().__init__(options)
+        self.toggled = []  # Type: List[Button] The "toggled on" buttons.
+        self.values = []  # Values (any) to be mapped to the reactions, if applicable.
+
+    def render(self) -> None:
+        raise NotImplementedError
+
+    @property
+    def buttons(self) -> List[Button]:
+        """
+        :return: A list of buttons, which are emoji strings mapped to values.
+        """
+        raise NotImplementedError
+
+    async def pick_option(self, reaction: str) -> bool:
+        """
+        Adds the selected button to this.toggled. Later used to retrieve what the user picked.
+        :return: True if a valid option was added.
+        """
+        for button in self.buttons:
+            if button.reaction == reaction:
+                self.toggled.append(button)
+                return True
+
+    async def remove_option(self, reaction: str) -> bool:
+        """
+        Removes the button from this.toggled.
+        :return: True if a valid option was removed.
+        """
+        for button in self.toggled:
+            if button.reaction == reaction:
+                self.toggled.remove(button)
+                return True
+
+    @staticmethod
+    def enumerated_buttons(values: List[any]) -> List[Button]:
+        # Creates buttons with reaction emojis that enumerate values.
+        # For now, this gets around the issues of duplicates and needing custom icons.
+        reactions = [ONE, TWO, THREE, FOUR, FIVE, SIX]
+        return [ValueForm.Button(reactions[i], value) for i, value in enumerate(values)]
+
+    @property
+    def _selected_value(self) -> any or None:
+        """
+        :return: The value object of the most recently toggled button.
+        """
+        if len(self.toggled) > 0:
+            return self.toggled[-1].value
