@@ -2,7 +2,7 @@ from src.character.character import Character
 from src.character.npc import NPC
 from src.character.npc_initializer import NPCInitializer
 from src.character.player import Player
-from tests.character.test_user import UserBuilder
+from tests.character.user_builder import UserBuilder
 from tests.elemental.elemental_builder import ElementalBuilder
 
 

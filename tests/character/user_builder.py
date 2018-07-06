@@ -13,4 +13,4 @@ class UserBuilder:
 class TestUser:
     def __init__(self):
         self.id = '444444'
-        self.name = "A test user"
+        self.name = "A tests user"

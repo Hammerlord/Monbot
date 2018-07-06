@@ -1,6 +1,6 @@
 import unittest
 
-from tests.character.character_builder import NPCBuilder, PlayerBuilder
+from tests.character.character_builder import PlayerBuilder, NPCBuilder
 from tests.elemental.elemental_builder import ElementalBuilder
 
 

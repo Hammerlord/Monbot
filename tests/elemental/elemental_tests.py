@@ -1,13 +1,12 @@
 import unittest
 
-from src.elemental.ability.abilities.defend import Defend
 from src.elemental.ability.ability import Ability, LearnableAbility
 from src.elemental.ability.ability_factory import Abilities
 from src.elemental.attribute.attribute_factory import AttributeFactory
 from src.elemental.attribute.attribute_manager import AttributeManager
 from tests.character.character_builder import PlayerBuilder
-from tests.elemental.elemental_builder import ElementalBuilder, SpeciesBuilder
-from tests.elemental.species_builder import StatsBuilder
+from tests.elemental.elemental_builder import ElementalBuilder
+from tests.elemental.species_builder import StatsBuilder, SpeciesBuilder
 
 
 class ElementalTests(unittest.TestCase):
@@ -23,7 +22,7 @@ class ElementalTests(unittest.TestCase):
 
     def get_learnable_ability(self, level: int) -> LearnableAbility:
         """
-        Returns a test LearnableAbility for checking requirements.
+        Returns a tests LearnableAbility for checking requirements.
         """
         learnable = LearnableAbility(Ability())
         learnable.level_required = level

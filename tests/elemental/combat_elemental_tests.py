@@ -3,7 +3,7 @@ import unittest
 from src.elemental.ability.ability import Ability
 from src.elemental.combat_elemental import CombatElemental
 from src.elemental.elemental import Elemental
-from tests.elemental.elemental_builder import ElementalBuilder, CombatElementalBuilder
+from tests.elemental.elemental_builder import CombatElementalBuilder, ElementalBuilder
 
 
 class CombatElementalTests(unittest.TestCase):

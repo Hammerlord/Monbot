@@ -2,7 +2,6 @@ import unittest
 
 from src.elemental.combat_elemental import CombatElemental
 from src.team.combat_team import CombatTeam
-from src.team.team import Team
 from tests.character.character_builder import NPCBuilder, PlayerBuilder
 from tests.elemental.elemental_builder import ElementalBuilder
 from tests.team.team_builder import TeamBuilder

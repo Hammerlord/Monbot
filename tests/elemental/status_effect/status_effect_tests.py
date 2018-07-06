@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import Mock
 
 from tests.elemental.elemental_builder import CombatElementalBuilder
-from tests.elemental.status_effect.test_effects import GenericBuff, PermaBuff
+from tests.elemental.status_effect.fake_effects import GenericBuff, PermaBuff
 
 
 class StatusEffectTests(unittest.TestCase):
