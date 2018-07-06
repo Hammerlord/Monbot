@@ -1,7 +1,7 @@
 from collections import namedtuple
 from typing import List
 
-from discord.ext.commands import Bot, bot
+from discord.ext.commands import Bot
 import discord
 from src.core.constants import *
 
@@ -10,7 +10,8 @@ class FormOptions:
     """
     The dependencies of all Forms.
     """
-    def __init__(self, bot: Bot,
+    def __init__(self,
+                 bot: Bot,
                  player,
                  discord_message: discord.Message=None):
         self.bot = bot
@@ -31,8 +32,8 @@ class Form:
         self.bot = options.bot
         self.player = options.player
         self.discord_message = options.discord_message  # The Discord.message object representing this form.
-        self.toggled: List['Button'] = []  # The "toggled on" buttons.
-        self.values: List[any] = []  # Values to be mapped to the reactions, if applicable.
+        self.toggled = []  # Type: List[Button] The "toggled on" buttons.
+        self.values = []  # Values (any) to be mapped to the reactions, if applicable.
 
     @property
     def buttons(self) -> List[Button]:
@@ -45,6 +46,7 @@ class Form:
     def is_awaiting_input(self) -> bool:
         """
         Override this with the condition which a form would await a user's typed input.
+        Also remember to implement a way to switch it off.
         """
         return False
 

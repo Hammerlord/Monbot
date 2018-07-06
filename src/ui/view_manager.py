@@ -7,7 +7,7 @@ from src.ui.forms.select_starter import SelectStarterView
 from src.ui.forms.status import StatusView
 
 
-class ViewManager:
+class ViewCommandManager:
     """
     Routes user commands to the appropriate view.
     """
@@ -15,22 +15,24 @@ class ViewManager:
         self.bot = bot
         self.players = {}  # TODO an actual persistence layer
 
-    async def get_status(self, user):
+    async def show_status(self, user) -> None:
         self._check_create_profile(user)
         player = self.get_player(user)
         options = FormOptions(self.bot, player)
         if player.num_elementals == 0:
-            await self.set_view(player, SelectStarterView(options))
+            await self._set_view(player, SelectStarterView(options))
         else:
-            await self.set_view(player, StatusView(options))
+            await self._set_view(player, StatusView(options))
 
-    async def set_view(self, player: Player, form: Form) -> None:
-        if player.primary_view:
-            # Reduce chat clutter by displaying one view message at a time.
-            old_message = player.view_message
-            await self.bot.delete_message(old_message)
-        player.set_primary_view(form)
-        await form.render()
+    async def get_battle(self, user) -> None:
+        # TODO
+        self._check_create_profile(user)
+        player = self.get_player(user)
+        options = FormOptions(self.bot, player)
+        if player.num_elementals == 0:
+            await self._set_view(player, SelectStarterView(options))
+        else:
+            pass
 
     def get_view(self, user) -> Form or None:
         player = self.get_player(user)
@@ -41,15 +43,16 @@ class ViewManager:
         if user.id in self.players:
             return self.players[user.id]
 
-    def _check_create_profile(self, user):
+    def _check_create_profile(self, user) -> None:
         # TODO an actual persistence layer
         if user.id not in self.players:
             new_player = Player(user)
             self.players[user.id] = new_player
 
-    async def get_battle(self, user):
-        self._check_create_profile(user)
-        player = self.get_player(user)
-        if player.num_elementals == 0:
-            options = FormOptions(self.bot, player)
-            await self.set_view(player, SelectStarterView(options))
+    async def _set_view(self, player: Player, form: Form) -> None:
+        if player.primary_view:
+            # Reduce chat clutter by displaying one view message at a time.
+            old_message = player.view_message
+            await self.bot.delete_message(old_message)
+        player.set_primary_view(form)
+        await form.render()

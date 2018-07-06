@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 
 from src.discord_token import TOKEN
-from src.ui.view_manager import ViewManager
+from src.ui.view_manager import ViewCommandManager
 
 description = "Collect elementals and battle them!"
 bot = commands.Bot(command_prefix=';', description=description)
@@ -13,7 +13,7 @@ view_manager = None
 @bot.event
 async def on_ready():
     global view_manager
-    view_manager = ViewManager(bot)
+    view_manager = ViewCommandManager(bot)
     print("Monbot is ready!")
 
 
