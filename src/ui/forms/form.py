@@ -39,6 +39,12 @@ class Form:
         """
         return False
 
+    def matches(self, other: discord.Message) -> bool:
+        """
+        To check if a reaction added onto a message corresponds to the one in this Form.
+        """
+        return self.discord_message.id == other.id
+
     async def render(self) -> None:
         """
         Tell the bot to render a message body depending on the state.
