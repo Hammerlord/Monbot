@@ -7,21 +7,23 @@ from src.elemental.combat_elemental import CombatElemental
 
 class Combat:
     """
-    How two CombatTeams communicate.
+    How CombatTeams communicate.
+    Two opposing sides to a battlefield are distinguished, internally, by "side_a" and "side_b".
+    TODO for now we only have 1v1, even though each side allows multiple CombatTeams to join.
     """
 
     def __init__(self):
-        self.__players = []  # The Players participating in the match
-        self.__teams = []  # The CombatTeams participating in the match
-        self.max_teams = 2
-        self.is_started = False
+        self.side_a = []  # List[CombatTeam] One side of the battlefield.
+        self.side_b = []  # List[CombatTeam] Another side of the battlefield.
+        self.max_teams_per_side = 3
+        self.in_progress = False
 
     @property
     def teams(self):
         """
-        :return: List[CombatTeam]: Defensive copy
+        :return: List[CombatTeam] - All CombatTeams currently participating in this battle.
         """
-        return self.__teams.copy()
+        return self.side_a + self.side_b  # Defensive
 
     def join_battle(self, combat_team) -> bool:
         """
@@ -30,10 +32,10 @@ class Combat:
         """
         if not self.__can_join_battle(combat_team):
             return False
-        self.__teams.append(combat_team)
+        # Automatically join the side that has fewer teams, or side_a if both are equal.
+        side_to_join = self.side_a if len(self.side_a) <= len(self.side_b) else self.side_b
+        side_to_join.append(combat_team)
         combat_team.set_combat(self)
-        if combat_team.owner:
-            self.__players.append(combat_team.owner)
         return True
 
     def get_target(self, ability: Ability, actor: CombatElemental) -> CombatElemental:
@@ -48,29 +50,45 @@ class Combat:
 
     def get_active_enemy(self, actor: CombatElemental) -> CombatElemental:
         """
-        :return: The active CombatElemental that is not currently requesting a target.
-        TODO this, of course, doesn't support modes with >2 teams/enemies.
+        :return: The first CombatElemental on the opposing side.
+        TODO work in progress: this, of course, doesn't support multiple elementals on one side.
         """
-        return next(team.active_elemental for team in self.__teams if team.active_elemental != actor)
+        return self.get_opposing_side(actor)[0]
+
+    def get_opposing_side(self, actor: CombatElemental) -> List[CombatElemental]:
+        """
+        :return: All active CombatElementals on the side opposing the actor.
+        """
+        for team in self.side_b:
+            if team.active_elemental == actor:
+                return [team.active_elemental for team in self.side_a]
+        return [team.active_elemental for team in self.side_b]
 
     def check_end(self) -> None:
-        for team in self.__teams:
-            if team.is_all_knocked_out:
-                self.end_combat()
+        if (all(team.is_all_knocked_out for team in self.side_a) or
+                all(team.is_all_knocked_out for team in self.side_b)):
+            self.end_combat()
 
     def end_combat(self) -> None:
-        self.is_started = False
-        for player in self.__players:
-            player.is_busy = False
+        self.in_progress = False
+        for team in self.teams:
+            team.end_combat()
 
     def is_previous_turn_knockout(self) -> List[Character]:
         """
         Return team owners whose active Elemental was knocked out last turn.
         We then wait for them to send out a new one.
         """
-        return [team.owner for team in self.__teams if team.active.is_knocked_out]
+        return [team.owner for team in self.teams if team.active.is_knocked_out]
 
     def __can_join_battle(self, combat_team) -> bool:
-        return (len(self.__teams) < self.max_teams and
-                combat_team not in self.__teams and
-                not self.is_started)
+        """
+        :param combat_team: CombatTeam trying to join.
+        :return: False if:
+        1) Neither side has space
+        2) The CombatTeam is already in the battle
+        3) The battle has already started.
+        """
+        return (len(self.teams) < self.max_teams_per_side * 2 and
+                combat_team not in self.teams and
+                not self.in_progress)

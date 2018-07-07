@@ -33,6 +33,10 @@ class CombatTeam:
         """
         self.combat = combat
         self.combat.join_battle(self)
+        self.owner.is_busy = True
+
+    def end_combat(self) -> None:
+        self.owner.is_busy = False
 
     @property
     def elementals(self) -> List[CombatElemental]:
