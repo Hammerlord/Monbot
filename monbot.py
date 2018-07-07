@@ -20,6 +20,10 @@ async def on_ready():
 @bot.command(pass_context=True)
 async def status(ctx):
     user = ctx.message.author
+    try:
+        await bot.delete_message(ctx.message)
+    except:
+        print("Couldn't clean up the user command. Probably no permission.")
     await view_manager.show_status(user)
 
 
