@@ -139,7 +139,7 @@ class StatusDetailView(Form):
         elemental = self.elemental
         note = f"```Note: {elemental.note}```" if elemental.note else ''
         return (f"{elemental.left_icon} {self.get_elemental_name()} "
-                f"Lv. {elemental.level} (EXP: {elemental.current_exp} / {elemental.exp_to_level})\n"
+                f"Lv. {elemental.level}  (EXP: {elemental.current_exp} / {elemental.exp_to_level})\n"
                 f"`{HealthBarView.from_elemental(elemental)} {elemental.current_hp} / {elemental.max_hp} HP`\n"
                 f"{note}"
                 f"{StatsView(elemental).get_view()}")
@@ -147,10 +147,10 @@ class StatusDetailView(Form):
     @property
     def option_descriptions(self) -> str:
         # Show what each reaction maps to.
-        return (f"[{ABILITIES}`Abilities`]   "
-                f"[{ATTRIBUTES}`Attributes`]   "
-                f"[{NICKNAME}`Nickname`]   "
-                f"[{NOTE}`Note`]")
+        return (f"{ABILITIES}`Abilities`   "
+                f"{ATTRIBUTES}`Attributes`   "
+                f"{NICKNAME}`Nickname`   "
+                f"{NOTE}`Note`")
 
     def get_elemental_name(self) -> str:
         # If the Elemental has a nickname, also display its actual species name.

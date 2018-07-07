@@ -20,12 +20,11 @@ class StatsView:
                  "\n"
                  f"{self.attributes_view}"
                  "```")
-
         return ''.join([stats, self.abilities_view])
 
     @property
     def attributes_view(self) -> str:
-        attributes = '   '.join([f"[{attribute.name} lv. {attribute.level}]"
+        attributes = '   '.join([f"[{attribute.name} Lv. {attribute.level}]"
                                  for attribute in self.elemental.attributes])
         points = self.elemental.attribute_points
         return '\n'.join([
@@ -37,5 +36,5 @@ class StatsView:
     def abilities_view(self) -> str:
         return '\n'.join([
             '\nActive abilities',
-            AbilityOptionView.summary_from_list(self.elemental.active_abilities)
+            AbilityOptionView.names_from_list(self.elemental.active_abilities)
         ])
