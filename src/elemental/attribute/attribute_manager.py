@@ -64,8 +64,12 @@ class AttributeManager:
         return self._rank
 
     @property
+    def points_remaining(self) -> int:
+        return self._points_remaining
+
+    @property
     def attributes(self) -> List[Attribute]:
-        return self._attributes
+        return self._attributes.copy()
 
     @property
     def physical_att(self) -> int:

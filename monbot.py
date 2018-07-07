@@ -20,7 +20,7 @@ async def on_ready():
 @bot.command(pass_context=True)
 async def status(ctx):
     user = ctx.message.author
-    await view_manager.get_status(user)
+    await view_manager.show_status(user)
 
 
 @bot.command(pass_context=True)

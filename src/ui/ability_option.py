@@ -14,9 +14,16 @@ class AbilityOptionView:
     @staticmethod
     def detail_from_list(abilities: List[Ability] or List[LearnableAbility]) -> str:
         """
-        :return: A string view for displaying multiple Abilities.
+        :return: A string view for displaying multiple Abilities and their descriptions.
         """
         return '\n'.join([AbilityOptionView(ability).get_detail() for ability in abilities])
+
+    @staticmethod
+    def summary_from_list(abilities: List[Ability] or List[LearnableAbility]) -> str:
+        """
+        :return: A string view for displaying multiple Ability summaries.
+        """
+        return '\n'.join([AbilityOptionView(ability).get_summary() for ability in abilities])
 
     def get_summary(self) -> str:
         """

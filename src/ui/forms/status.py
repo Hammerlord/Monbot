@@ -82,7 +82,7 @@ class StatusDetailView(Form):
         return self.is_setting_note or self.is_setting_nickname
 
     async def render(self) -> None:
-        await self._display(self.get_status())
+        await self._display(self.get_main_view())
         await self.bot.clear_reactions(self.discord_message)
         for reaction in [BACK, ABILITIES, ATTRIBUTES, NICKNAME, NOTE]:
             await self.bot.add_reaction(self.discord_message, reaction)
@@ -129,19 +129,19 @@ class StatusDetailView(Form):
         await self.render()
 
     def get_main_view(self) -> str:
-        return '\n'.join([self.get_status(), self.option_descriptions])
+        return '\n\n'.join([self.get_status(), self.option_descriptions])
 
     def get_status(self) -> str:
         """
         :return: str: HP, EXP, stats and currently active abilities and traits.
         """
         elemental = self.elemental
-        view = (f"{elemental.left_icon} {self.get_elemental_name()} "
+        note = f"```Note: {elemental.note}```" if elemental.note else ''
+        return (f"{elemental.left_icon} {self.get_elemental_name()} "
                 f"Lv. {elemental.level} (EXP: {elemental.current_exp} / {elemental.exp_to_level})\n"
                 f"`{HealthBarView.from_elemental(elemental)} {elemental.current_hp} / {elemental.max_hp} HP`\n"
+                f"{note}"
                 f"{StatsView(elemental).get_view()}")
-        note = f"Note: {elemental.note}" if elemental.note else ''
-        return '\n'.join([view, note])
 
     @property
     def option_descriptions(self) -> str:

@@ -96,6 +96,10 @@ class Elemental:
         return self._attribute_manager.swiftness
 
     @property
+    def attribute_points(self) -> int:
+        return self._attribute_manager.points_remaining
+
+    @property
     def level(self) -> int:
         return self._level
 
