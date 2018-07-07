@@ -16,8 +16,11 @@ class StatusView(ValueForm):
     """
     def __init__(self, options: FormOptions):
         super().__init__(options)
-        self.values: List[Elemental] = self.player.team.elementals
         self.initial_render = True
+
+    @property
+    def values(self) -> List[Elemental]:
+        return self.player.team.elementals
 
     @property
     def buttons(self) -> List[ValueForm.Button]:
@@ -45,9 +48,9 @@ class StatusView(ValueForm):
     async def pick_option(self, reaction: str) -> None:
         await super().pick_option(reaction)
         if self._selected_value is not None:
-            await self.create_detail_view(self._selected_value)
+            await self._create_detail_view(self._selected_value)
 
-    async def create_detail_view(self, elemental: Elemental) -> None:
+    async def _create_detail_view(self, elemental: Elemental) -> None:
         options = StatusDetailOptions(self.bot, self.player, elemental, self.discord_message)
         form = StatusDetailView(options)
         self.player.set_primary_view(form)
@@ -99,19 +102,19 @@ class StatusDetailView(Form):
             await self.set_note_mode()
 
     async def set_nickname_mode(self) -> None:
+        self.is_setting_nickname = True
+        await self._clear_reactions()
         message_body = (f"```Give {self.elemental.nickname} a new nickname. \n"
                         f"Awaiting input... Or type `;` to cancel.```"
                         f"{self.get_status()}")
-        self.is_setting_nickname = True
-        await self._clear_reactions()
         await self._display(message_body)
 
     async def set_note_mode(self) -> None:
+        self.is_setting_note = True
+        await self._clear_reactions()
         message_body = (f"```Set a note for {self.elemental.nickname}. \n"
                         f"Awaiting input... Or type `;` to cancel.```"
                         f"{self.get_status()}")
-        self.is_setting_note = True
-        await self._clear_reactions()
         await self._display(message_body)
 
     async def receive_input(self, content: str) -> None:

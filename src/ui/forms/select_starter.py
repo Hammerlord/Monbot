@@ -21,7 +21,10 @@ class SelectStarterView(ValueForm):
     def __init__(self, options: FormOptions):
         super().__init__(options)
         self.initial_render = True
-        self.values = [Rainatu(), Mithus(), Roaus(), Sithel()]
+
+    @property
+    def values(self) -> List[Species]:
+        return [Rainatu(), Mithus(), Roaus(), Sithel()]
 
     @property
     def buttons(self) -> List[ValueForm.Button]:

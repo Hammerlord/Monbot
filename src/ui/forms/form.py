@@ -8,7 +8,7 @@ from src.core.constants import *
 
 class FormOptions:
     """
-    The dependencies of all Forms.
+    The dependencies of a Form.
     """
     def __init__(self,
                  bot: Bot,
@@ -46,6 +46,9 @@ class Form:
         raise NotImplementedError
 
     async def pick_option(self, reaction: str) -> bool:
+        """
+        Called when a user clicks a reaction (on_reaction_add event).
+        """
         raise NotImplementedError
 
     async def _display(self, message: str) -> None:
@@ -99,9 +102,15 @@ class ValueForm(Form):
     def __init__(self, options: FormOptions):
         super().__init__(options)
         self.toggled = []  # Type: List[Button] The "toggled on" buttons.
-        self.values = []  # Values (any) to be mapped to the reactions, if applicable.
 
     def render(self) -> None:
+        raise NotImplementedError
+
+    @property
+    def values(self) -> List[any]:
+        """
+        :return: Values (any) to be mapped to reactions.
+        """
         raise NotImplementedError
 
     @property
