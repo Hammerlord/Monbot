@@ -320,7 +320,7 @@ class Elemental:
     @staticmethod
     def _validate_nickname(name: str) -> str:
         max_length = 15
-        name = name.strip()
+        name = name.strip().replace('`', '').replace('\n', '')
         if len(name) > max_length:
             return name[:max_length]
         return name
@@ -328,7 +328,7 @@ class Elemental:
     @staticmethod
     def _validate_note(note: str) -> str:
         max_length = 75
-        note = note.strip()
+        note = note.strip().replace('`', '').replace('\n', '')
         if len(note) > max_length:
             return note[:max_length]
         return note
