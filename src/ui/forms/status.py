@@ -117,13 +117,14 @@ class StatusDetailView(Form):
                         f"{self.get_status()}")
         await self._display(message_body)
 
-    async def receive_input(self, content: str) -> None:
-        content = content.strip()
+    async def receive_input(self, message: discord.Message) -> None:
+        content = message.content.strip()
         if content != ';':
             if self.is_setting_nickname:
                 self.elemental.nickname = content
             elif self.is_setting_note:
                 self.elemental.note = content
+            await self.bot.add_reaction(message, OK_HAND)
         self.is_setting_nickname = False
         self.is_setting_note = False
         await self.render()

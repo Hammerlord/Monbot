@@ -62,6 +62,6 @@ async def on_message(message):
     await bot.process_commands(message)
     view = view_manager.get_view(message.author)
     if view and view.is_awaiting_input:
-        await view.receive_input(message.content)
+        await view.receive_input(message)
 
 bot.run(TOKEN)
