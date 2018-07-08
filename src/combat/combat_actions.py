@@ -1,9 +1,11 @@
+from enum import Enum
+
 from src.elemental.ability.ability import Ability, TurnPriority
 from src.elemental.ability.damage_calculator import DamageCalculator
 from src.elemental.combat_elemental import CombatElemental
 
 
-class ActionType:
+class ActionType(Enum):
     NONE = 0
     ELEMENTAL_ACTION = 1
     SWITCH = 2
@@ -26,7 +28,21 @@ class Action:
     def turn_priority(self) -> TurnPriority:
         raise NotImplementedError
 
-    def execute(self) -> None:
+    @property
+    def team(self):
+        """
+        :return: CombatTeam: To identify the "owner" of this action.
+        """
+        raise NotImplementedError
+
+    @property
+    def speed(self) -> int:
+        raise NotImplementedError
+
+    def execute(self) -> bool:
+        """
+        :return: bool: True if the action was successfully executed.
+        """
         raise NotImplementedError
 
     @property
@@ -58,8 +74,16 @@ class ElementalAction(Action):
         self.actor_effects_applied = []  # List[StatusEffect]
 
     @property
+    def team(self):
+        return self.actor.team
+
+    @property
     def turn_priority(self) -> TurnPriority:
         return self.ability.turn_priority
+
+    @property
+    def speed(self) -> int:
+        return self.actor.speed
 
     @property
     def final_damage(self) -> int:
@@ -81,12 +105,17 @@ class ElementalAction(Action):
     def is_resisted(self) -> bool:
         return self.damage_calculator.is_resisted
 
-    def execute(self) -> None:
+    def execute(self) -> bool:
+        if self.actor.is_knocked_out:
+            return False
         self.actor.on_ability(self.ability)
         self.target.on_receive_ability(self.ability, self.actor)
         self.check_damage_dealt()
         self.check_healing_done()
         self.check_status_effect_application()
+        self.actor.add_action(self)
+        self.team.end_turn()
+        return True
 
     def check_damage_dealt(self) -> None:
         if self.ability.base_power > 0:
@@ -111,7 +140,7 @@ class ElementalAction(Action):
                 self.target_effects_failed.append(status_effect)
 
     @property
-    def action_type(self) -> int:
+    def action_type(self) -> ActionType:
         return ActionType.ELEMENTAL_ACTION
 
     @property
@@ -133,21 +162,35 @@ class Switch(Action):
         :param old_active: CombatElemental or None
         :param new_active: CombatElemental
         """
-        self.team = team
+        self._team = team
         self.character = team.owner
         self.old_active = old_active
         self.new_active = new_active
 
     @property
-    def action_type(self) -> int:
+    def action_type(self) -> ActionType:
         return ActionType.SWITCH
+
+    @property
+    def team(self):
+        return self._team
+
+    @property
+    def speed(self) -> int:
+        if self.old_active:
+            return self.old_active.speed
+        return 0
 
     @property
     def turn_priority(self) -> TurnPriority:
         return TurnPriority.SWITCH
 
-    def execute(self) -> None:
+    def execute(self) -> bool:
+        if self.old_active and self.old_active.is_knocked_out:
+            return False
         self.team.change_active_elemental(self.new_active)
+        self.team.end_turn()
+        return True
 
     @property
     def recap(self) -> str:
@@ -178,19 +221,26 @@ class KnockedOut(Action):
         self.combat_elemental = combat_elemental
 
     @property
+    def team(self):
+        return self.combat_elemental.team
+
+    @property
     def turn_priority(self) -> TurnPriority:
         # This "action" is for record purposes: its turn priority doesn't get checked.
         return TurnPriority.LOW
 
     @property
-    def action_type(self) -> int:
+    def speed(self) -> int:
+        # Same as turn_priority, this doesn't matter.
+        return 0
+
+    @property
+    def action_type(self) -> ActionType:
         return ActionType.KNOCKED_OUT
 
-    def execute(self) -> None:
-        """
-        Do nothing.
-        """
-        pass
+    def execute(self) -> bool:
+        # No real operation.
+        return True
 
     @property
     def recap(self) -> str:

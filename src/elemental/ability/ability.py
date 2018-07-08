@@ -17,9 +17,17 @@ class Target(Enum):
 
 
 class TurnPriority(Enum):
+    LOW = 0
     NORMAL = 1  # Most abilities are normal turn priority.
     HIGH = 2  # Eg. for "attack first" type abilities.
-    SWITCH = 3  # Switch has the highest priority.
+    ITEM = 3
+    SWITCH = 4  # Switch has higher priority than all abilities.
+    FLEE = 5
+
+    def __gt__(self, other) -> bool:
+        if self.__class__ is other.__class__:
+            return self.value > other.value
+        return NotImplemented
 
 
 class Ability(Technique):

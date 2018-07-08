@@ -3,6 +3,7 @@ from typing import List
 from src.combat.combat_actions import KnockedOut, ElementalAction, Switch, Action
 from src.elemental.ability.ability import Ability
 from src.elemental.combat_elemental import CombatElemental
+from src.elemental.elemental import Elemental
 from src.team.team import Team
 
 
@@ -25,12 +26,11 @@ class CombatTeam:
         self.__active_elemental = None
         self.status_effects = []  # Team-wide status effects, eg. weather.
         self._actions = []  # list[Action] taken by this team.
-        self.switch(0)  # The first eligible (HP > 0) Elemental in the team
 
     @staticmethod
     def from_elementals(elementals: List[Elemental]) -> 'CombatTeam':
         """
-        Wild Elementals don't have a formal team, so we make a dummy one.
+        Wild Elementals don't have a formal team, so this function makes a dummy one for them.
         """
         team = Team(owner=None)
         for elemental in elementals:
@@ -45,6 +45,9 @@ class CombatTeam:
         self.combat.join_battle(self)
         if self.owner and not self.owner.is_npc:
             self.owner.is_busy = True
+
+    def on_combat_start(self) -> None:
+        self.attempt_switch(0)  # The first eligible (HP > 0) Elemental in the team
 
     def end_combat(self) -> None:
         if self.owner and not self.owner.is_npc:
@@ -103,20 +106,25 @@ class CombatTeam:
 
     @property
     def available_abilities(self) -> List[Ability]:
-        return self.active_elemental.available_abilities
+        return self.active_elemental.available_abilities.copy()
 
     def select_ability(self, i: int) -> bool:
         """
         Uses one of the active Elemental's abilities.
         TODO Check if the Elemental is incapacitated for the turn.
         :param i: The position of the ability in the active Elemental's abilities list.
-        :return bool: True if a recordable Action was made.
+        :return bool: True if the request was made. Note that a request is different from resolution.
         """
         is_valid_selection = 0 <= i < len(self.active_elemental.available_abilities)
         if not is_valid_selection:
             return False
         selected_ability = self.active_elemental.abilities[i]
-        self.__use_ability(selected_ability)
+        action = ElementalAction(
+            actor=self.active_elemental,
+            ability=selected_ability,
+            target=self.combat.get_target(selected_ability, self.active_elemental)
+        )
+        self.combat.request_action(action)
         return True
 
     def on_turn_start(self) -> None:
@@ -124,10 +132,10 @@ class CombatTeam:
         for elemental in self.eligible_bench:
             elemental.gain_bench_mana()
 
-    def switch(self, slot: int) -> bool:
+    def attempt_switch(self, slot: int) -> bool:
         """
         Switch the active Elemental with an Elemental on CombatTeam.eligible.
-        :return bool: True if a switch succeeded.
+        :return bool: True if the request to switch was made. Note that a request is different from resolution.
         """
         eligible_elementals = self.eligible_bench
         is_valid_slot = 0 <= slot < len(eligible_elementals)
@@ -138,43 +146,19 @@ class CombatTeam:
             old_active=self.active_elemental,
             new_active=eligible_elementals[slot]
         )
-        self.__execute_action(switch)
+        self.combat.request_action(switch)
         return True
 
-    def change_active_elemental(self, elemental: CombatElemental):
+    def change_active_elemental(self, elemental: CombatElemental) -> None:
         self.__active_elemental = elemental
 
     def end_turn(self) -> None:
         self.active_elemental.end_turn()
         # Check knocked out again in case a debuff, etc. finished off the Elemental
         if self.active_elemental.is_knocked_out:
-            self.__handle_knockout()
+            # TODO
+            pass
 
-    def __use_ability(self, ability: Ability) -> None:
-        if self.active_elemental.is_knocked_out:
-            self.__handle_knockout()
-        else:
-            self.__make_action(ability)
-            self.end_turn()
-        self.combat.check_end()
-
-    def __handle_knockout(self) -> None:
-        action = KnockedOut(self.active_elemental)
-        self.__execute_action(action)
-
-    def __execute_action(self, action: Action) -> None:
-        action.execute()
+    def add_action(self, action: Action) -> None:
         # Store the Action as a record.
         self._actions.append(action)
-
-    def __make_action(self, ability: Ability) -> None:
-        """
-        Execute the Ability and create a log for it.
-        """
-        action = ElementalAction(
-            actor=self.active_elemental,
-            ability=ability,
-            target=self.combat.get_target(ability, self.active_elemental)
-        )
-        self.__execute_action(action)
-        self.__active_elemental.add_action(action)

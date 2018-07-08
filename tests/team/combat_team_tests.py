@@ -72,7 +72,7 @@ class CombatTeamTests(unittest.TestCase):
         team.add_elemental(smurggle)
         team.add_elemental(loksy)
         combat_team = CombatTeam(team)
-        combat_team.switch(0)  # smurggle's position
+        combat_team.attempt_switch(0)  # smurggle's position
         self.assertEqual(combat_team.active_elemental.id, loksy.id, error)
 
     def test_switch_log(self):
@@ -84,7 +84,7 @@ class CombatTeamTests(unittest.TestCase):
         team.add_elemental(smurggle)
         team.add_elemental(loksy)
         combat_team = CombatTeam(team)
-        combat_team.switch(0)
+        combat_team.attempt_switch(0)
         action = combat_team.last_action
         self.assertEqual(action.recap, 'Dopple recalled smurggle and sent out loksy!', error)
 
