@@ -12,6 +12,7 @@ client = discord.Client()
 view_manager = None
 battle_manager = BattleManager()
 
+
 @bot.event
 async def on_ready():
     global view_manager
@@ -22,18 +23,17 @@ async def on_ready():
 @bot.command(pass_context=True)
 async def status(ctx):
     user = ctx.message.author
-    try:
-        await bot.delete_message(ctx.message)
-    except:
-        print("Couldn't clean up the user command. Probably no permission.")
-    await view_manager.show_status(user)
+    await view_manager.delete_message(ctx.message)
+    if not user.bot:
+        await view_manager.show_status(user)
 
 
 @bot.command(pass_context=True)
 async def battle(ctx):
     # Create or resume a battle
     user = ctx.message.author
-    if not await view_manager.player_has_starter(user):
+    await view_manager.delete_message(ctx.message)
+    if user.bot or not await view_manager.player_has_starter(user):
         return
     player = view_manager.get_player(user)  # That doesn't seem to be where it belongs!
     if player.is_busy:

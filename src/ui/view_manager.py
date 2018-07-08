@@ -1,3 +1,4 @@
+import discord
 from discord.ext.commands import Bot
 
 
@@ -50,6 +51,13 @@ class ViewCommandManager:
         if user.id in self.players:
             return self.players[user.id]
 
+    async def delete_message(self, message: discord.Message) -> None:
+        try:
+            await self.bot.delete_message(message)
+        except:
+            # No permission, or the message was already deleted. Oh well.
+            pass
+
     def _check_create_profile(self, user) -> None:
         # TODO an actual persistence layer
         if user.id not in self.players:
@@ -60,6 +68,6 @@ class ViewCommandManager:
         if player.primary_view:
             # Reduce chat clutter by displaying one view message at a time.
             old_message = player.view_message
-            await self.bot.delete_message(old_message)
+            await self.delete_message(old_message)
         player.set_primary_view(form)
         await form.render()
