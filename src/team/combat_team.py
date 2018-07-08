@@ -21,11 +21,21 @@ class CombatTeam:
         """
         self.combat = None
         self.__elementals = [CombatElemental(elemental, self) for elemental in team.elementals]
-        self.owner = team.owner
+        self.owner = team.owner  # Character or None
         self.__active_elemental = None
         self.status_effects = []  # Team-wide status effects, eg. weather.
         self._actions = []  # list[Action] taken by this team.
         self.switch(0)  # The first eligible (HP > 0) Elemental in the team
+
+    @staticmethod
+    def from_elementals(elementals: List[Elemental]) -> 'CombatTeam':
+        """
+        Wild Elementals don't have a formal team, so we make a dummy one.
+        """
+        team = Team(owner=None)
+        for elemental in elementals:
+            team.add_elemental(elemental)
+        return CombatTeam(team)
 
     def set_combat(self, combat) -> None:
         """
@@ -33,10 +43,12 @@ class CombatTeam:
         """
         self.combat = combat
         self.combat.join_battle(self)
-        self.owner.is_busy = True
+        if self.owner and not self.owner.is_npc:
+            self.owner.is_busy = True
 
     def end_combat(self) -> None:
-        self.owner.is_busy = False
+        if self.owner and not self.owner.is_npc:
+            self.owner.is_busy = False
 
     @property
     def elementals(self) -> List[CombatElemental]:
@@ -70,7 +82,11 @@ class CombatTeam:
 
     @property
     def is_npc(self) -> bool:
-        return self.owner.is_npc
+        """
+        Should this CombatTeam auto-battle?
+        True if: No owner (wild elementals), or owner is an NPC.
+        """
+        return not self.owner or self.owner.is_npc
 
     @property
     def is_all_knocked_out(self) -> bool:

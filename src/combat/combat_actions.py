@@ -1,4 +1,4 @@
-from src.elemental.ability.ability import Ability
+from src.elemental.ability.ability import Ability, TurnPriority
 from src.elemental.ability.damage_calculator import DamageCalculator
 from src.elemental.combat_elemental import CombatElemental
 
@@ -20,6 +20,10 @@ class StatusEffectRecap:
 class Action:
     @property
     def action_type(self) -> int:
+        raise NotImplementedError
+
+    @property
+    def turn_priority(self) -> TurnPriority:
         raise NotImplementedError
 
     def execute(self) -> None:
@@ -52,6 +56,10 @@ class ElementalAction(Action):
         self.target_effects_applied = []  # List[StatusEffect]
         self.target_effects_failed = []  # List[StatusEffect]
         self.actor_effects_applied = []  # List[StatusEffect]
+
+    @property
+    def turn_priority(self) -> TurnPriority:
+        return self.ability.turn_priority
 
     @property
     def final_damage(self) -> int:
@@ -134,16 +142,33 @@ class Switch(Action):
     def action_type(self) -> int:
         return ActionType.SWITCH
 
+    @property
+    def turn_priority(self) -> TurnPriority:
+        return TurnPriority.SWITCH
+
     def execute(self) -> None:
         self.team.change_active_elemental(self.new_active)
 
     @property
     def recap(self) -> str:
-        character_name = self.character.nickname
+        # If the team has an owner, report the Switch differently.
+        if self.character:
+            return self.recap_team_switch()
+        return self.recap_wild_elemental_switch()
+
+    def recap_wild_elemental_switch(self) -> str:
+        new_elemental = self.new_active.nickname
+        if not self.old_active or self.old_active.is_knocked_out:
+            return f"{new_elemental} appeared!"
         previous_elemental = self.old_active.nickname
+        return f"{previous_elemental} retreated, and {new_elemental} appeared!"
+
+    def recap_team_switch(self) -> str:
+        character_name = self.character.nickname
         new_elemental = self.new_active.nickname
         if not self.old_active or self.old_active.is_knocked_out:
             return f"{character_name} sent out {new_elemental}!"
+        previous_elemental = self.old_active.nickname
         return f"{character_name} recalled {previous_elemental} and sent out {new_elemental}!"
 
 
@@ -151,6 +176,11 @@ class KnockedOut(Action):
     def __init__(self,
                  combat_elemental):
         self.combat_elemental = combat_elemental
+
+    @property
+    def turn_priority(self) -> TurnPriority:
+        # This "action" is for record purposes: its turn priority doesn't get checked.
+        return TurnPriority.LOW
 
     @property
     def action_type(self) -> int:

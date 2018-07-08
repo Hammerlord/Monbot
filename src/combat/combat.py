@@ -48,21 +48,24 @@ class Combat:
         elif target == Target.ENEMY:
             return self.get_active_enemy(actor)
 
-    def get_active_enemy(self, actor: CombatElemental) -> CombatElemental:
+    def get_active_enemy(self, of_elemental: CombatElemental) -> CombatElemental:
         """
+        :param of_elemental: The elemental looking for an opponent.
         :return: The first CombatElemental on the opposing side.
         TODO work in progress: this, of course, doesn't support multiple elementals on one side.
         """
-        return self.get_opposing_side(actor)[0]
+        return self.get_opposing_side(of_elemental.team)[0]
 
-    def get_opposing_side(self, actor: CombatElemental) -> List[CombatElemental]:
+    def get_opposing_side(self, combat_team) -> List[CombatElemental]:
         """
-        :return: All active CombatElementals on the side opposing the actor.
+        :return: All active CombatElementals on the side opposing the passed-in CombatTeam.
         """
-        for team in self.side_b:
-            if team.active_elemental == actor:
-                return [team.active_elemental for team in self.side_a]
-        return [team.active_elemental for team in self.side_b]
+        if any(team == combat_team for team in self.side_b):
+            return [team.active_elemental for team in self.side_a]
+        if any(team == combat_team for team in self.side_a):
+            return [team.active_elemental for team in self.side_b]
+        print("??? That CombatTeam isn't a part of this battle.")
+        return []
 
     def check_end(self) -> None:
         if (all(team.is_all_knocked_out for team in self.side_a) or
@@ -74,12 +77,12 @@ class Combat:
         for team in self.teams:
             team.end_combat()
 
-    def is_previous_turn_knockout(self) -> List[Character]:
+    def is_previous_turn_knockout(self):
         """
-        Return team owners whose active Elemental was knocked out last turn.
+        :return: List[CombatTeam] Return teams whose active Elemental was knocked out last turn.
         We then wait for them to send out a new one.
         """
-        return [team.owner for team in self.teams if team.active.is_knocked_out]
+        return [team for team in self.teams if team.active.is_knocked_out]
 
     def __can_join_battle(self, combat_team) -> bool:
         """
