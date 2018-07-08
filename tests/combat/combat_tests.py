@@ -59,8 +59,8 @@ class CombatTests(unittest.TestCase):
         combat = Combat()
         combat.join_battle(team_a)
         combat.join_battle(team_b)
-        combat.request_action(Switch(team_a, Mock(), Mock()))
         combat_elemental = CombatElemental(ElementalBuilder().build(), team_b)
+        combat.request_action(Switch(team_a, combat_elemental, combat_elemental))
         combat.request_action(ElementalAction(combat_elemental, Claw(), combat_elemental))
         self.assertIsInstance(combat.previous_round_log[0], Switch, error)
 

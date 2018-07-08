@@ -1,7 +1,10 @@
 import unittest
+from unittest.mock import Mock
 
+from src.combat.combat import Combat
 from src.elemental.combat_elemental import CombatElemental
 from src.team.combat_team import CombatTeam
+from src.team.team import Team
 from tests.character.character_builder import NPCBuilder, PlayerBuilder
 from tests.elemental.elemental_builder import ElementalBuilder
 from tests.team.team_builder import TeamBuilder
@@ -10,20 +13,29 @@ from tests.team.team_builder import TeamBuilder
 class CombatTeamTests(unittest.TestCase):
 
     @staticmethod
-    def get_combat_team() -> CombatTeam:
+    def get_combat_team(team) -> CombatTeam:
         """
         :return: A test CombatTeam with two Elementals.
         """
+        combat_team = CombatTeam(team)
+        combat_team.set_combat(Combat())
+        combat_team.on_combat_start()  # Triggers the initial switch in.
+        return combat_team
+
+    @staticmethod
+    def get_team() -> Team:
         team = TeamBuilder().build()
         smurggle = ElementalBuilder().build()
         loksy = ElementalBuilder().build()
         team.add_elemental(smurggle)
         team.add_elemental(loksy)
-        return CombatTeam(team)
+        return team
 
     def test_setup_active(self):
-        error = "CombatTeam didn't assign an active CombatElemental when created"
-        self.assertIsInstance(self.get_combat_team().active_elemental, CombatElemental, error)
+        error = "CombatTeam didn't assign an active CombatElemental on combat start"
+        self.assertIsInstance(
+            self.get_combat_team(self.get_team()).active_elemental,
+            CombatElemental, error)
 
     def test_skip_ko_active(self):
         error = "CombatTeam incorrectly set a 0 HP Elemental as the active Elemental"
@@ -32,7 +44,7 @@ class CombatTeamTests(unittest.TestCase):
         loksy = ElementalBuilder().build()
         team.add_elemental(smurggle)
         team.add_elemental(loksy)
-        combat_team = CombatTeam(team)
+        combat_team = self.get_combat_team(team)
         self.assertEqual(combat_team.active_elemental.id, loksy.id, error)
 
     def test_is_npc(self):
@@ -49,7 +61,7 @@ class CombatTeamTests(unittest.TestCase):
         loksy = ElementalBuilder().build()
         team.add_elemental(smurggle)
         team.add_elemental(loksy)
-        combat_team = CombatTeam(team)
+        combat_team = self.get_combat_team(team)
         bench = combat_team.bench
         self.assertEqual(len(bench), 1, error)
         self.assertEqual(bench[0].id, loksy.id, error)
@@ -61,7 +73,8 @@ class CombatTeamTests(unittest.TestCase):
         loksy = ElementalBuilder().build()
         team.add_elemental(smurggle)
         team.add_elemental(loksy)  # Loksy should be considered active
-        bench = CombatTeam(team).eligible_bench
+        combat_team = self.get_combat_team(team)
+        bench = combat_team.eligible_bench
         self.assertEqual(len(bench), 0, error)
 
     def test_switch_ko(self):
@@ -71,9 +84,9 @@ class CombatTeamTests(unittest.TestCase):
         loksy = ElementalBuilder().build()
         team.add_elemental(smurggle)
         team.add_elemental(loksy)
-        combat_team = CombatTeam(team)
-        combat_team.attempt_switch(0)  # smurggle's position
-        self.assertEqual(combat_team.active_elemental.id, loksy.id, error)
+        combat_team = self.get_combat_team(team)
+        is_switched = combat_team.attempt_switch(0)
+        self.assertFalse(is_switched, error)
 
     def test_switch_log(self):
         error = "Switching didn't create a log as the most recent action"
@@ -83,7 +96,7 @@ class CombatTeamTests(unittest.TestCase):
         loksy = ElementalBuilder().with_nickname('loksy').build()
         team.add_elemental(smurggle)
         team.add_elemental(loksy)
-        combat_team = CombatTeam(team)
+        combat_team = self.get_combat_team(team)
         combat_team.attempt_switch(0)
         action = combat_team.last_action
         self.assertEqual(action.recap, 'Dopple recalled smurggle and sent out loksy!', error)
@@ -98,7 +111,7 @@ class CombatTeamTests(unittest.TestCase):
 
     def test_mana_per_turn(self):
         error = "CombatTeam eligible Elementals on the bench didn't gain mana on turn start"
-        combat_team = self.get_combat_team()
+        combat_team = self.get_combat_team(self.get_team())
         bench = combat_team.eligible_bench
         starting_mana = bench[0].current_mana
         combat_team.on_turn_start()
