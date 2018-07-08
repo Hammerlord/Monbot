@@ -3,13 +3,16 @@ from src.ui.ability_option import AbilityOptionView
 
 
 class StatsView:
+    """
+    Generates strings to show an Elemental's stats.
+    """
     def __init__(self, elemental: Elemental):
         self.elemental = elemental
 
     def get_view(self) -> str:
         elemental = self.elemental
         stats = (f"```Python\n"
-                 f"Physical attack: {elemental.physical_att}   Magic attack: {elemental.magic_att}\n"
+                 f"Physical attack: {elemental.physical_att}    Magic attack: {elemental.magic_att}\n"
                  f"Physical defence: {elemental.physical_def}   Magic defence: {elemental.magic_def}\n"
                  f"Speed: {elemental.speed}\n"
                  "\n"

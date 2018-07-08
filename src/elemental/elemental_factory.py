@@ -1,5 +1,6 @@
 from src.elemental.attribute.attribute_factory import AttributeFactory
 from src.elemental.elemental import Elemental
+from src.elemental.species.manapher import Manapher
 from src.elemental.species.mithus import Mithus
 from src.elemental.species.rainatu import Rainatu
 from src.elemental.species.roaus import Roaus
@@ -50,3 +51,7 @@ class ElementalInitializer:
         :return: The fire starter, Sithel
         """
         return ElementalInitializer.make(Sithel(), level)
+
+    @staticmethod
+    def manapher(level=1) -> Elemental:
+        return ElementalInitializer.make(Manapher(), level)

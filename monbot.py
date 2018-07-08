@@ -2,13 +2,15 @@ import discord
 from discord.ext import commands
 
 from src.discord_token import TOKEN
+from src.team.combat_team import CombatTeam
+from src.ui.battle_manager import BattleManager
 from src.ui.view_manager import ViewCommandManager
 
 description = "Collect elementals and battle them!"
 bot = commands.Bot(command_prefix=';', description=description)
 client = discord.Client()
 view_manager = None
-
+battle_manager = BattleManager()
 
 @bot.event
 async def on_ready():
@@ -30,7 +32,16 @@ async def status(ctx):
 @bot.command(pass_context=True)
 async def battle(ctx):
     # Create or resume a battle
-    pass
+    user = ctx.message.author
+    if not await view_manager.player_has_starter(user):
+        return
+    player = view_manager.get_player(user)  # That doesn't seem to be where it belongs!
+    if player.is_busy:
+        await player.primary_view.render()
+    else:
+        combat_team = CombatTeam(player.team)
+        combat = battle_manager.dummy_fight(combat_team)
+        await view_manager.show_battle(player, combat, combat_team)
 
 
 @bot.event

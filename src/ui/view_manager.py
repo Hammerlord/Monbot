@@ -2,6 +2,7 @@ from discord.ext.commands import Bot
 
 
 from src.character.player import Player
+from src.ui.forms.battle import BattleView, BattleViewOptions
 from src.ui.forms.form import Form, FormOptions
 from src.ui.forms.select_starter import SelectStarterView
 from src.ui.forms.status import StatusView
@@ -24,15 +25,21 @@ class ViewCommandManager:
         else:
             await self._set_view(player, StatusView(options))
 
-    async def get_battle(self, user) -> None:
-        # TODO
+    async def player_has_starter(self, user) -> bool:
         self._check_create_profile(user)
         player = self.get_player(user)
         options = FormOptions(self.bot, player)
         if player.num_elementals == 0:
             await self._set_view(player, SelectStarterView(options))
-        else:
-            pass
+            return False
+        return True
+
+    async def show_battle(self, player, combat, combat_team) -> None:
+        view_options = BattleViewOptions(self.bot,
+                                         player,
+                                         combat,
+                                         combat_team)
+        await self._set_view(player, BattleView(view_options))
 
     def get_view(self, user) -> Form or None:
         player = self.get_player(user)

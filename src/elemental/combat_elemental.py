@@ -42,6 +42,10 @@ class CombatElemental:
         return self._elemental.level
 
     @property
+    def icon(self) -> str:
+        return self._elemental.left_icon
+
+    @property
     def element(self) -> Elements:
         return self._elemental.element
 
@@ -73,6 +77,10 @@ class CombatElemental:
     @property
     def max_hp(self) -> int:
         return self._elemental.max_hp
+
+    @property
+    def health_percent(self) -> int:
+        return int((self.current_hp / self.max_hp) * 100)
 
     @property
     def physical_att(self) -> int:
