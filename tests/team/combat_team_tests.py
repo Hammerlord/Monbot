@@ -88,19 +88,6 @@ class CombatTeamTests(unittest.TestCase):
         is_switched = combat_team.attempt_switch(0)
         self.assertFalse(is_switched, error)
 
-    def test_switch_log(self):
-        error = "Switching didn't create a log as the most recent action"
-        owner = PlayerBuilder().with_nickname('Dopple').build()
-        team = TeamBuilder().with_owner(owner).build()
-        smurggle = ElementalBuilder().with_nickname('smurggle').build()
-        loksy = ElementalBuilder().with_nickname('loksy').build()
-        team.add_elemental(smurggle)
-        team.add_elemental(loksy)
-        combat_team = self.get_combat_team(team)
-        combat_team.attempt_switch(0)
-        action = combat_team.last_action
-        self.assertEqual(action.recap, 'Dopple recalled smurggle and sent out loksy!', error)
-
     def test_all_knocked_out(self):
         error = "CombatTeam.is_all_knocked_out didn't resolve correctly"
         team = TeamBuilder().build()
