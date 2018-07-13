@@ -46,7 +46,11 @@ class Combat:
     def check_combat_start(self) -> None:
         if len(self.teams) >= 2:  # TODO 1v1 only right now
             self.in_progress = True
-            for team in self.teams:
+            for team in self.side_a:
+                team.set_enemy_side(self.side_b.copy())
+                team.on_combat_start()
+            for team in self.side_b:
+                team.set_enemy_side(self.side_a.copy())
                 team.on_combat_start()
 
     def request_action(self, request: Action) -> None:
@@ -102,35 +106,6 @@ class Combat:
                                   lambda action_request: action_request.turn_priority):
             action_groups.append(list(group))
         return action_groups
-
-    def get_target(self, ability: Ability, actor: CombatElemental) -> CombatElemental:
-        """
-        :return: The CombatElemental the Ability should affect, based on the Ability's targeting enum.
-        """
-        target = ability.targeting
-        if target == Target.SELF:
-            return actor
-        elif target == Target.ENEMY:
-            return self.get_active_enemy(actor)
-
-    def get_active_enemy(self, of_elemental: CombatElemental) -> CombatElemental:
-        """
-        :param of_elemental: The elemental looking for an opponent.
-        :return: The first CombatElemental on the opposing side.
-        TODO work in progress: this, of course, doesn't support multiple elementals on one side.
-        """
-        return self.get_opposing_side(of_elemental.team)[0]
-
-    def get_opposing_side(self, combat_team) -> List[CombatElemental]:
-        """
-        :return: All active CombatElementals on the side opposing the passed-in CombatTeam.
-        """
-        if any(team == combat_team for team in self.side_b):
-            return [team.active_elemental for team in self.side_a]
-        if any(team == combat_team for team in self.side_a):
-            return [team.active_elemental for team in self.side_b]
-        print("??? That CombatTeam isn't a part of this battle.")
-        return []
 
     def check_end(self) -> None:
         if (all(team.is_all_knocked_out for team in self.side_a) or

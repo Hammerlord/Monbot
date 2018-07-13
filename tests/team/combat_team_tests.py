@@ -2,6 +2,7 @@ import unittest
 from unittest.mock import Mock
 
 from src.combat.combat import Combat
+from src.elemental.ability.ability import Target
 from src.elemental.combat_elemental import CombatElemental
 from src.team.combat_team import CombatTeam
 from src.team.team import Team
@@ -114,3 +115,29 @@ class CombatTeamTests(unittest.TestCase):
         combat_team = CombatTeam(team)
         team.remove_elemental(0)
         self.assertEqual(len(combat_team.elementals), 1, error)
+
+    def test_get_enemy_target(self):
+        error = "Ability that targets an enemy didn't get the correct target"
+        team_a = self.get_combat_team(self.get_team())
+        team_b = self.get_combat_team(self.get_team())
+        combat = Combat()
+        combat.join_battle(team_a)
+        combat.join_battle(team_b)
+        combat.check_combat_start()
+        ability = Mock()
+        ability.targeting = Target.ENEMY
+        target = team_a.get_target(ability)
+        self.assertEqual(target, team_b.active_elemental, error)
+
+    def test_get_self_target(self):
+        error = "Ability that targets self didn't get the correct target"
+        team_a = self.get_combat_team(self.get_team())
+        team_b = self.get_combat_team(self.get_team())
+        combat = Combat()
+        combat.join_battle(team_a)
+        combat.join_battle(team_b)
+        combat.check_combat_start()
+        ability = Mock()
+        ability.targeting = Target.SELF
+        target = team_a.get_target(ability)
+        self.assertEqual(target, team_a.active_elemental, error)
