@@ -1,9 +1,10 @@
 import discord
 from discord.ext import commands
 
+from src.combat.battle_manager import BattleManager
+from src.data.data_manager import DataManager
 from src.discord_token import TOKEN
 from src.team.combat_team import CombatTeam
-from src.ui.battle_manager import BattleManager
 from src.ui.view_manager import ViewCommandManager
 
 description = "Collect elementals and battle them!"
@@ -11,6 +12,7 @@ bot = commands.Bot(command_prefix=';', description=description)
 client = discord.Client()
 view_manager = None
 battle_manager = BattleManager()
+data_manager = DataManager()
 
 
 @bot.event
@@ -24,8 +26,13 @@ async def on_ready():
 async def status(ctx):
     user = ctx.message.author
     await view_manager.delete_message(ctx.message)
-    if not user.bot:
-        await view_manager.show_status(user)
+    if user.bot:
+        return
+    player = data_manager.get_player(user)
+    if player.has_elemental():
+        await view_manager.show_status(player)
+    else:
+        await view_manager.show_starter_selection(player)
 
 
 @bot.command(pass_context=True)
@@ -33,10 +40,12 @@ async def battle(ctx):
     # Create or resume a battle
     user = ctx.message.author
     await view_manager.delete_message(ctx.message)
-    if user.bot or not await view_manager.player_has_starter(user):
+    if user.bot:
         return
-    player = view_manager.get_player(user)  # That doesn't seem to be where it belongs!
-    if player.is_busy:
+    player = data_manager.get_player(user)
+    if not player.has_elemental():
+        await view_manager.show_starter_selection(player)
+    elif player.is_busy:
         await player.primary_view.render()
     else:
         combat_team = CombatTeam(player.team)
@@ -52,7 +61,8 @@ async def on_reaction_add(reaction, user):
     """
     if user.bot:
         return
-    view = view_manager.get_view(user)
+    player = data_manager.get_player(user)
+    view = view_manager.get_view(player)
     if view and view.matches(reaction.message):
         await view.pick_option(reaction.emoji)
 
@@ -61,7 +71,8 @@ async def on_reaction_add(reaction, user):
 async def on_reaction_remove(reaction, user):
     if user.bot:
         return
-    view = view_manager.get_view(user)
+    player = data_manager.get_player(user)
+    view = view_manager.get_view(player)
     if view and view.matches(reaction.message):
         await view.remove_option(reaction.emoji)
 
@@ -74,7 +85,8 @@ async def on_message(message):
     if message.author.bot:
         return
     await bot.process_commands(message)
-    view = view_manager.get_view(message.author)
+    player = data_manager.get_player(message.author)
+    view = view_manager.get_view(player)
     if view and view.is_awaiting_input:
         await view.receive_input(message)
 

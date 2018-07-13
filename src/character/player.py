@@ -11,6 +11,9 @@ class Player(Character):
         self.id = user.id
         self._nickname = user.name
 
+    def has_elemental(self) -> bool:
+        return len(self.elementals) > 0
+
     def set_primary_view(self, view: Form) -> None:
         self.primary_view = view
 
