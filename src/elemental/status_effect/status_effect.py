@@ -41,6 +41,7 @@ class StatusEffect(Technique):
         self.current_stacks = 1
         self.can_add_instances = False  # Ie. can we apply multiple instances of this effect?
         self.bonus_multiplier = 1
+        self.refresh_duration()
 
     @property
     def is_debuff(self) -> bool:
@@ -65,7 +66,7 @@ class StatusEffect(Technique):
         2 = Lasts for two full turns
         See _calculate_duration.
         """
-        return 0
+        raise NotImplementedError
 
     @property
     def duration_remaining(self) -> int:

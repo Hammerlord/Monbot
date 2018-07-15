@@ -160,6 +160,10 @@ class StatusManager:
         for effect in self._status_effects:
             effect.on_receive_damage(amount, actor)
 
+    def on_turn_start(self) -> None:
+        for effect in self._status_effects:
+            effect.on_turn_start()
+
     def on_turn_end(self) -> None:
         for effect in self._status_effects:
             effect.on_turn_end()

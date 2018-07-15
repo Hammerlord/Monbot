@@ -7,8 +7,10 @@ class GenericBuff(StatusEffect):
         self._id = 1
         self._name = "Strength buff"
         self._description = "Increases physical attack."
-        self.max_duration = self._calculate_duration(num_turns=3)
-        self.refresh_duration()
+
+    @property
+    def _base_duration(self) -> int:
+        return 7
 
     def on_effect_start(self):
         super().on_effect_start()
@@ -24,9 +26,12 @@ class PermaBuff(StatusEffect):
         self._id = 2
         self._name = "Rainfall"
         self._description = "Increases magic defence."
-        self.max_duration = self._calculate_duration(num_turns=-1)  # No duration
         self.is_dispellable = False
         self.ends_on_switch = False
+
+    @property
+    def _base_duration(self) -> int:
+        return -1
 
     def on_effect_start(self) -> str:
         super().on_effect_start()

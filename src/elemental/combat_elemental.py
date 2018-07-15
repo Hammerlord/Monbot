@@ -205,7 +205,9 @@ class CombatElemental:
         self._status_manager.add_status_effect(status_effect)
 
     def start_turn(self) -> None:
-        self.update_mana(self._mana_per_turn + self._status_manager.bonus_mana_per_turn)
+        if not self.is_knocked_out:
+            self.update_mana(self._mana_per_turn + self._status_manager.bonus_mana_per_turn)
+            self._status_manager.on_turn_start()
 
     def end_turn(self) -> None:
         self._status_manager.on_turn_end()

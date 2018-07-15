@@ -1,6 +1,7 @@
 import unittest
 from unittest.mock import Mock
 
+from src.elemental.status_effect.status_effects.enrage import EnrageEffect
 from tests.elemental.elemental_builder import CombatElementalBuilder
 from tests.elemental.status_effect.fake_effects import GenericBuff, PermaBuff
 
@@ -22,7 +23,7 @@ class StatusEffectTests(unittest.TestCase):
 
     def test_effect_duration_decrement(self):
         error = "StatusEffect duration didn't decrement on turn end"
-        buff = GenericBuff()
+        buff = EnrageEffect()
         self.combat_elemental.add_status_effect(buff)
         duration_before = buff.duration_remaining
         self.combat_elemental.end_turn()
