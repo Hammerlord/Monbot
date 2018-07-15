@@ -215,6 +215,9 @@ class CombatElemental:
     def end_turn(self) -> None:
         self._status_manager.on_turn_end()
 
+    def end_round(self) -> None:
+        self._status_manager.on_round_end()
+
     def on_ability(self, ability: Ability) -> None:
         self.update_mana(-ability.mana_cost)
         self.update_defend_charges(-ability.defend_cost)

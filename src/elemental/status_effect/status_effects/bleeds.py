@@ -12,7 +12,7 @@ class Bleed(StatusEffect):
         self.base_power = 1
 
     @property
-    def _base_duration(self) -> float:
+    def _base_duration(self) -> int:
         return 4
 
     def on_turn_end(self):
@@ -36,5 +36,5 @@ class RendEffect(Bleed):
         self.base_power = 10
 
     @property
-    def _base_duration(self) -> float:
+    def _base_duration(self) -> int:
         return 3

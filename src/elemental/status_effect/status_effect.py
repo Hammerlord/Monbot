@@ -58,13 +58,10 @@ class StatusEffect(Technique):
         return self.current_stacks < self.max_stacks
 
     @property
-    def _base_duration(self) -> float:
+    def _base_duration(self) -> int:
         """
-        :return: The number of turns this status effect lasts, in terms of your Elemental's turns.
-        Examples:
-        0.5 = Lasts until the start of your next turn
-        2 = Lasts for two full turns
-        See _calculate_duration.
+        The number of rounds that this effect lasts for. A round is when every participant's moves have been resolved.
+        Eg. 1: ends next round.
         """
         raise NotImplementedError
 
@@ -196,11 +193,9 @@ class StatusEffect(Technique):
         self.target.update_speed_stages(amount)
 
     @staticmethod
-    def _calculate_duration(num_turns: float) -> int:
+    def _calculate_duration(num_turns: int) -> int:
         """
-         *2 for decrementing on enemy turn end and self turn end, so that effects can end after
-         your Elemental's turn, or after your enemy's turn.
-         +1 to account for the initial on_turn_end when the effect is applied, ie. so that your 1 turn duration
-         effect doesn't just end immediately.
+        +1 so that the duration doesn't just fall off immediately on the round end.
+        Unless that's what we want (eg. Defend).
         """
-        return int(num_turns * 2 + 1)
+        return num_turns + 1

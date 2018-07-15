@@ -81,7 +81,12 @@ class Combat:
                 self._resolve_request(action)
                 self.check_kos(kos)
                 self.check_combat_end()
+        self.end_round()
         self.prepare_new_round()
+
+    def end_round(self):
+        for team in self.teams:
+            team.active_elemental.end_round()
 
     def check_kos(self, already_checked: List[CombatElemental]) -> None:
         """

@@ -1,6 +1,8 @@
 import unittest
 from unittest.mock import Mock
 
+from src.combat.combat_actions import ElementalAction
+from src.elemental.ability.abilities.claw import Claw
 from src.elemental.status_effect.status_effects.enrage import EnrageEffect
 from tests.elemental.elemental_builder import CombatElementalBuilder
 from tests.elemental.status_effect.fake_effects import GenericBuff, PermaBuff
@@ -26,7 +28,7 @@ class StatusEffectTests(unittest.TestCase):
         buff = EnrageEffect()
         self.combat_elemental.add_status_effect(buff)
         duration_before = buff.duration_remaining
-        self.combat_elemental.end_turn()
+        self.combat_elemental.end_round()
         duration_after = buff.duration_remaining
         self.assertLess(duration_after, duration_before, error)
 
@@ -35,7 +37,7 @@ class StatusEffectTests(unittest.TestCase):
         buff = GenericBuff()
         self.combat_elemental.add_status_effect(buff)
         for i in range(buff.duration_remaining):
-            self.combat_elemental.end_turn()
+            self.combat_elemental.end_round()
         num_effects = self.combat_elemental.num_status_effects
         self.assertEqual(num_effects, 0, error)
 
@@ -52,7 +54,7 @@ class StatusEffectTests(unittest.TestCase):
         same_buff = GenericBuff()
         self.combat_elemental.add_status_effect(buff)
         duration_before = buff.duration_remaining
-        self.combat_elemental.end_turn()
+        self.combat_elemental.end_round()
         self.combat_elemental.add_status_effect(same_buff)
         duration_after = buff.duration_remaining
         self.assertEqual(duration_before, duration_after, error)
@@ -71,7 +73,7 @@ class StatusEffectTests(unittest.TestCase):
         buff = GenericBuff()
         self.combat_elemental.add_status_effect(buff)
         for i in range(buff.duration_remaining):
-            self.combat_elemental.end_turn()  # Remove the effect via duration end
+            self.combat_elemental.end_round()  # Remove the effect via duration end
         physical_att_after = self.combat_elemental.physical_att
         self.assertEqual(physical_att_before, physical_att_after, error)
 
@@ -80,7 +82,7 @@ class StatusEffectTests(unittest.TestCase):
         buff = GenericBuff()
         self.combat_elemental.add_status_effect(buff)
         physical_att_before = self.combat_elemental.physical_att
-        self.combat_elemental.end_turn()  # Remove the effect via duration end
+        self.combat_elemental.end_round()  # Remove the effect via duration end
         physical_att_after = self.combat_elemental.physical_att
         self.assertEqual(physical_att_before, physical_att_after, error)
 
@@ -89,7 +91,7 @@ class StatusEffectTests(unittest.TestCase):
         buff = PermaBuff()
         self.combat_elemental.add_status_effect(buff)
         duration_before = buff.duration_remaining
-        self.combat_elemental.end_turn()
+        self.combat_elemental.end_round()  # Remove the effect via duration end
         duration_after = buff.duration_remaining
         self.assertEqual(duration_after, duration_before, error)
 
@@ -116,3 +118,14 @@ class StatusEffectTests(unittest.TestCase):
         self.combat_elemental.receive_damage(100000, Mock())
         num_effects = self.combat_elemental.num_status_effects
         self.assertEqual(num_effects, 0, error)
+
+    def test_enrage(self):
+        error = "Enrage didn't increase damage output"
+        before_buff = ElementalAction(self.combat_elemental, Claw(), CombatElementalBuilder().build())
+        before_buff.execute()
+        self.combat_elemental.add_status_effect(EnrageEffect())
+        self.combat_elemental.end_round()
+        self.combat_elemental.start_turn()
+        after_buff = ElementalAction(self.combat_elemental, Claw(), CombatElementalBuilder().build())
+        after_buff.execute()
+        self.assertGreater(after_buff.final_damage, before_buff.final_damage, error)

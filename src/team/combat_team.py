@@ -178,11 +178,16 @@ class CombatTeam:
         self.__active_elemental = elemental
 
     def end_turn(self) -> None:
+        """
+        When this elemental's move has been resolved.
+        """
         self.active_elemental.end_turn()
-        # Check knocked out again in case a debuff, etc. finished off the Elemental
-        if self.active_elemental.is_knocked_out:
-            # TODO
-            pass
+
+    def end_round(self) -> None:
+        """
+        When everybody's moves have been resolved.
+        """
+        self.active_elemental.end_round()
 
     def add_log(self, action: Action) -> None:
         # Store the Action as a record.

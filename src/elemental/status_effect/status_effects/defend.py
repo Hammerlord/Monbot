@@ -9,8 +9,11 @@ class DefendEffect(StatusEffect):
         self.icon = DEFEND
 
     @property
-    def _base_duration(self) -> float:
-        return 0.5  # Until the end of the opponent's turn
+    def _base_duration(self) -> int:
+        """
+        :return 0: Lasts until the end of the round.
+        """
+        return 0
 
     def on_effect_start(self) -> None:
         # Block damage against any end of turn debuffs as well.
