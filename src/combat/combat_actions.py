@@ -39,7 +39,7 @@ class Action:
     def speed(self) -> int:
         raise NotImplementedError
 
-    def execute(self) -> bool:
+    def execute(self) -> None:
         """
         :return: bool: True if the action was successfully executed.
         """
@@ -50,6 +50,10 @@ class Action:
         """
         :return: Summarize the main part of the action.
         """
+        raise NotImplementedError
+
+    @property
+    def can_execute(self) -> bool:
         raise NotImplementedError
 
 
@@ -105,9 +109,7 @@ class ElementalAction(Action):
     def is_resisted(self) -> bool:
         return self.damage_calculator.is_resisted
 
-    def execute(self) -> bool:
-        if self.actor.is_knocked_out:
-            return False
+    def execute(self) -> None:
         self.actor.on_ability(self.ability)
         self.target.on_receive_ability(self.ability, self.actor)
         self.check_damage_dealt()
@@ -115,7 +117,6 @@ class ElementalAction(Action):
         self.check_status_effect_application()
         self.actor.add_action(self)
         self.team.end_turn()
-        return True
 
     def check_damage_dealt(self) -> None:
         if self.ability.base_power > 0:
@@ -146,6 +147,10 @@ class ElementalAction(Action):
     @property
     def recap(self) -> str:
         return f"{self.actor.nickname} used {self.ability.name}!"
+
+    @property
+    def can_execute(self) -> bool:
+        return self.team.active_elemental and not self.team.active_elemental.is_knocked_out
 
 
 class Switch(Action):
@@ -185,12 +190,9 @@ class Switch(Action):
     def turn_priority(self) -> TurnPriority:
         return TurnPriority.SWITCH
 
-    def execute(self) -> bool:
-        if self.old_active and self.old_active.is_knocked_out:
-            return False
+    def execute(self) -> None:
         self.team.change_active_elemental(self.new_active)
         self.team.end_turn()
-        return True
 
     @property
     def recap(self) -> str:
@@ -213,6 +215,12 @@ class Switch(Action):
             return f"{character_name} sent out {new_elemental}!"
         previous_elemental = self.old_active.nickname
         return f"{character_name} recalled {previous_elemental} and sent out {new_elemental}!"
+
+    def can_execute(self) -> bool:
+        """
+        :return bool: True if we don't have an active elemental, but false if it is dead.
+        """
+        return not self.team.active_elemental or self.team.active_elemental.is_knocked_out
 
 
 class KnockedOut(Action):
@@ -238,10 +246,17 @@ class KnockedOut(Action):
     def action_type(self) -> ActionType:
         return ActionType.KNOCKED_OUT
 
-    def execute(self) -> bool:
+    def execute(self) -> None:
         # No real operation.
-        return True
+        pass
 
     @property
     def recap(self) -> str:
         return f"{self.combat_elemental.nickname} has been knocked out!"
+
+    @property
+    def can_execute(self) -> bool:
+        """
+        :return bool: True if the team's combat elemental is dead.
+        """
+        return self.team.active_elemental.is_knocked_out

@@ -75,14 +75,13 @@ class Combat:
             for action in action_group:
                 self._resolve_request(action)
         self.prepare_new_round()
+        self.check_combat_end()
 
     def _resolve_request(self, action: Action) -> None:
-        if action.execute():
-            self.add_log(action)
-
-    def add_log(self, action: Action) -> None:
-        # Add Action to the most recent round of turns:
-        self.action_log[-1].append(action)
+        if action.can_execute:
+            action.execute()
+            # Add Action to the most recent round of turns:
+            self.action_log[-1].append(action)
 
     def prepare_new_round(self) -> None:
         """
@@ -107,10 +106,11 @@ class Combat:
             action_groups.append(list(group))
         return action_groups
 
-    def check_end(self) -> None:
+    def check_combat_end(self) -> bool:
         if (all(team.is_all_knocked_out for team in self.side_a) or
                 all(team.is_all_knocked_out for team in self.side_b)):
             self.end_combat()
+            return True
 
     def end_combat(self) -> None:
         self.in_progress = False
