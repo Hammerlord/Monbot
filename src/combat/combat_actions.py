@@ -259,17 +259,7 @@ class KnockedOut(Action):
         return ActionType.KNOCKED_OUT
 
     def execute(self) -> None:
-        # Grant the opposition experience. HELP THIS IS WEIRD
-        if not self.combat.allow_exp_gain:
-            return
-        enemy_side = self.team.enemy_side
-        raw_exp = self.combat_elemental.level * 6 + 5
-        self.exp_gained = raw_exp // len(enemy_side) + raw_exp * len(enemy_side) * 0.25
-        for enemy_team in enemy_side:
-            if enemy_team.is_npc:
-                continue
-            for elemental in enemy_team.elementals:
-                elemental.add_exp(self.exp_gained)
+        pass
 
     @property
     def recap(self) -> str:

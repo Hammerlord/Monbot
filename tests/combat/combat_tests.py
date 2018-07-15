@@ -82,8 +82,10 @@ class CombatTests(unittest.TestCase):
         combat = Combat()
         combat.join_battle(player_team)
         combat.join_battle(other_team)
+        other_team.elementals[0].receive_damage(10000, player_team.elementals[0])
         exp_before = elemental.current_exp
-        KnockedOut(other_team.active_elemental, combat).execute()
+        combat.request_action(ElementalAction(player_team.elementals[0], Claw(), other_team.elementals[0]))
+        combat.request_action(ElementalAction(other_team.elementals[0], Claw(), player_team.elementals[0]))
         exp_after = elemental.current_exp
         self.assertGreater(exp_after, exp_before, error)
 
