@@ -227,9 +227,18 @@ class Switch(Action):
 
 
 class KnockedOut(Action):
+    """
+    TODO this is too far away from being an actual Action--it shouldn't inherit Action.
+    """
     def __init__(self,
-                 combat_elemental):
+                 combat_elemental,
+                 combat):
+        """
+        :param combat_elemental: The knocked out CombatElemental.
+        """
         self.combat_elemental = combat_elemental
+        self.combat = combat
+        self.exp_gained = 0  # TODO to report?
 
     @property
     def team(self):
@@ -250,8 +259,17 @@ class KnockedOut(Action):
         return ActionType.KNOCKED_OUT
 
     def execute(self) -> None:
-        # No real operation.
-        pass
+        # Grant the opposition experience. HELP THIS IS WEIRD
+        if not self.combat.allow_exp_gain:
+            return
+        enemy_side = self.team.enemy_side
+        raw_exp = self.combat_elemental.level * 6 + 5
+        self.exp_gained = raw_exp // len(enemy_side) + raw_exp * len(enemy_side) * 0.25
+        for enemy_team in enemy_side:
+            if enemy_team.is_npc:
+                continue
+            for elemental in enemy_team.elementals:
+                elemental.add_exp(self.exp_gained)
 
     @property
     def recap(self) -> str:
@@ -259,7 +277,4 @@ class KnockedOut(Action):
 
     @property
     def can_execute(self) -> bool:
-        """
-        :return bool: True if the team's combat elemental is dead.
-        """
-        return self.team.active_elemental.is_knocked_out
+        return True

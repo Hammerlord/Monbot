@@ -2,11 +2,12 @@ import unittest
 from unittest.mock import Mock
 
 from src.combat.combat import Combat
-from src.combat.combat_actions import Switch, ElementalAction
+from src.combat.combat_actions import Switch, ElementalAction, KnockedOut
 from src.elemental.ability.abilities.claw import Claw
 from src.elemental.ability.ability import Target
 from src.elemental.combat_elemental import CombatElemental
 from src.team.combat_team import CombatTeam
+from tests.character.character_builder import PlayerBuilder
 from tests.elemental.elemental_builder import ElementalBuilder
 from tests.team.team_builder import TeamBuilder
 
@@ -54,6 +55,24 @@ class CombatTests(unittest.TestCase):
         combat.request_action(faster_action)
         expected = combat.previous_round_log[0].actor.nickname
         self.assertEqual(expected, faster.nickname, error)
+
+    def test_exp_gain(self):
+        error = "Knocking out an elemental didn't grant exp to player team"
+        player = PlayerBuilder().build()
+        player_team = TeamBuilder().with_owner(player).build()
+        elemental = ElementalBuilder().build()
+        player_team.add_elemental(elemental)
+        player_team = CombatTeam(player_team)
+        other_team = self.get_combat_team()
+        other_team.set_enemy_side([player_team])
+        combat = Combat()
+        combat.join_battle(player_team)
+        combat.join_battle(other_team)
+        exp_before = elemental.current_exp
+        print(other_team.active_elemental)
+        KnockedOut(other_team.active_elemental, combat).execute()
+        exp_after = elemental.current_exp
+        self.assertGreater(exp_after, exp_before, error)
 
     @staticmethod
     def get_combat_team():

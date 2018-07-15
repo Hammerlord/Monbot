@@ -26,7 +26,11 @@ class CombatTeam:
         self.__active_elemental = None
         self.status_effects = []  # Team-wide status effects, eg. weather.
         self._actions = []  # list[Action] taken by this team.
-        self.enemy_side = None  # List[CombatTeam]
+        self._enemy_side = None  # List[CombatTeam] All the teams opposing this one.
+
+    @property
+    def enemy_side(self) -> List['CombatTeam']:
+        return self._enemy_side.copy()
 
     @staticmethod
     def from_elementals(elementals: List[Elemental]) -> 'CombatTeam':
@@ -55,7 +59,7 @@ class CombatTeam:
             self.owner.is_busy = False
 
     def set_enemy_side(self, enemy_teams: List['CombatTeam']) -> None:
-        self.enemy_side = enemy_teams
+        self._enemy_side = enemy_teams
 
     def get_target(self, ability: Ability) -> CombatElemental:
         """
@@ -76,7 +80,7 @@ class CombatTeam:
         :return: The first CombatElemental on the opposing side.
         TODO work in progress: this, of course, doesn't support multiple elementals on one side.
         """
-        return self.enemy_side[0].active_elemental
+        return self._enemy_side[0].active_elemental
 
     @property
     def elementals(self) -> List[CombatElemental]:
@@ -180,6 +184,6 @@ class CombatTeam:
             # TODO
             pass
 
-    def add_action(self, action: Action) -> None:
+    def add_log(self, action: Action) -> None:
         # Store the Action as a record.
         self._actions.append(action)

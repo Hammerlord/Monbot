@@ -149,6 +149,9 @@ class CombatElemental:
     def is_knocked_out(self) -> bool:
         return self._elemental.is_knocked_out
 
+    def add_exp(self, amount: int) -> None:
+        self._elemental.add_exp(amount)
+
     def update_p_att_stages(self, amount: int) -> None:
         self._status_manager.update_p_att_stages(amount)
 

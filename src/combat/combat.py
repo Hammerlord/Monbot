@@ -1,7 +1,7 @@
 from itertools import groupby
 from typing import List
 
-from src.combat.combat_actions import ActionType, Action
+from src.combat.combat_actions import ActionType, Action, KnockedOut
 from src.combat.combat_ai import CombatAI
 from src.elemental.ability.ability import Target, Ability
 from src.elemental.combat_elemental import CombatElemental
@@ -13,13 +13,17 @@ class Combat:
     Two opposing sides to a battlefield are distinguished, internally, by "side_a" and "side_b".
     TODO for now we only have 1v1, even though each side allows multiple CombatTeams to join.
     """
-    def __init__(self, allow_items=True, allow_flee=True):
+    def __init__(self,
+                 allow_items=True,
+                 allow_flee=True,
+                 allow_exp_gain=True):
         self.side_a = []  # List[CombatTeam] One side of the battlefield.
         self.side_b = []  # List[CombatTeam] Another side of the battlefield.
         self.max_teams_per_side = 3
         self.in_progress = False
         self.allow_items = allow_items
         self.allow_flee = allow_flee
+        self.allow_exp_gain = allow_exp_gain
         self.action_requests = []  # List[ActionRequest]
         self.action_log = [[]]  # List[List[Action]]  Actions made this battle, in order, grouped by turn rounds.
 
@@ -69,20 +73,38 @@ class Combat:
         """
         When all players have made an action request, resolve the order and execution of those requests.
         """
+        kos = []  # List[CombatElemental]: elementals knocked out this turn
         for action_group in self._get_priority_order_requests():
             # If multiple Actions share the same TurnPriority,
             # next determine order by the speed of the elemental.
             action_group = sorted(action_group, key=lambda action: action.speed, reverse=True)
             for action in action_group:
                 self._resolve_request(action)
+                self.check_kos(kos)
         if not self.check_combat_end():
             self.prepare_new_round()
+
+    def check_kos(self, already_checked: List[CombatElemental]) -> None:
+        """
+        If an elemental has been knocked out after a request (on either side), record the log and grant exp.
+        """
+        for team in self.teams:
+            elemental = team.active_elemental
+            if elemental and elemental.is_knocked_out and elemental not in already_checked:
+                ko = KnockedOut(elemental, self)
+                ko.execute()
+                self._add_log(ko)
+                team.add_log(ko)
+                already_checked.append(elemental)
 
     def _resolve_request(self, action: Action) -> None:
         if action.can_execute:
             action.execute()
-            # Add Action to the most recent round of turns:
-            self.action_log[-1].append(action)
+            self._add_log(action)
+
+    def _add_log(self, action: Action) -> None:
+        # Add Action to the most recent round of turns:
+        self.action_log[-1].append(action)
 
     def prepare_new_round(self) -> None:
         """
