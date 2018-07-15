@@ -1,7 +1,7 @@
 from itertools import groupby
 from typing import List
 
-from src.combat.combat_actions import ActionType, Action, KnockedOut
+from src.combat.combat_actions import ActionType, Action, KnockedOut, Switch
 from src.combat.combat_ai import CombatAI
 from src.elemental.ability.ability import Target, Ability
 from src.elemental.combat_elemental import CombatElemental
@@ -58,12 +58,28 @@ class Combat:
                 team.set_enemy_side(self.side_a.copy())
                 team.on_combat_start()
 
+    def add_knockout_replacement(self, request: Action) -> None:
+        if not isinstance(request, Switch) or request.team not in self.get_knockouts():
+            return
+        self.action_requests.append(request)
+        if len(self.action_requests) == len(self.get_knockouts()):
+            self.resolve_requests()
+
+    def is_awaiting_knockout_replacements(self) -> bool:
+        """
+        When an elemental has been knocked out, their teams receive a grace turn where
+        a new elemental can be sent out without the opponent making an attack against it.
+        """
+        return len(self.get_knockouts()) > 0
+
     def request_action(self, request: Action) -> None:
         """
         :param request: An Action requested by a CombatTeam/player.
         It may be different from what gets executed and reported,
         eg., if the elemental gets knocked out before it can make a move.
         """
+        if self.is_awaiting_knockout_replacements():
+            self.add_knockout_replacement(request)
         self.action_requests.append(request)
         if len(self.action_requests) == len(self.teams):
             self.resolve_requests()
@@ -132,18 +148,19 @@ class Combat:
         """
         self.action_log.append([])
         self.action_requests = []
+        print([log.__str__() for log in self.previous_round_log], self.in_progress)
         if not self.in_progress:
             return
         for team in self.teams:
             team.on_turn_start()
-            # Check if there are any NPC teams, and automatically make a move for them.
             if team.is_npc:
-                CombatAI(team).pick_move()
+                # Automatically make a move for NPC teams.
+                CombatAI(team, self).pick_move()
 
     @property
     def previous_round_log(self) -> List[Action]:
         # Get all the Actions from the previous round of turns.
-        # prepare_new_round() creates an empty new log [] if combat is ongoing,
+        # prepare_new_round() always creates an empty new log [] by the time this is called,
         # so we want to retrieve the second last log.
         return self.action_log[-2].copy()
 
@@ -173,7 +190,7 @@ class Combat:
         :return: List[CombatTeam] Return teams whose active Elemental was knocked out last turn.
         We then wait for them to send out a new one.
         """
-        return [team for team in self.teams if team.active.is_knocked_out]
+        return [team for team in self.teams if team.active_elemental and team.active_elemental.is_knocked_out]
 
     def __can_join_battle(self, combat_team) -> bool:
         """

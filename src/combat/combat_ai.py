@@ -10,13 +10,19 @@ class CombatAI:
     An AI controller for a CombatTeam that selects Abilities and decides when to switch.
     """
     def __init__(self,
-                 combat_team: CombatTeam):
+                 combat_team: CombatTeam,
+                 combat):
+        """
+        :param combat_team:
+        :param combat: Combat
+        """
         self.team = combat_team
+        self.combat = combat
 
     def pick_move(self) -> None:
         if self.team.active_elemental.is_knocked_out and self.team.eligible_bench:
             self.switch()
-        else:
+        elif not self.combat.is_awaiting_knockout_replacements():
             self.pick_ability()
 
     def switch(self) -> None:
