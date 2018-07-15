@@ -12,13 +12,13 @@ class Combat:
     Two opposing sides to a battlefield are distinguished, internally, by "side_a" and "side_b".
     TODO for now we only have 1v1, even though each side allows multiple CombatTeams to join.
     """
-    def __init__(self):
+    def __init__(self, allow_items=True, allow_flee=True):
         self.side_a = []  # List[CombatTeam] One side of the battlefield.
         self.side_b = []  # List[CombatTeam] Another side of the battlefield.
         self.max_teams_per_side = 3
         self.in_progress = False
-        self.allow_items = True
-        self.allow_flee = True
+        self.allow_items = allow_items
+        self.allow_flee = allow_flee
         self.action_requests = []  # List[ActionRequest]
         self.action_log = [[]]  # List[List[Action]]  Actions made this battle, in order, grouped by turn rounds.
 
@@ -64,7 +64,7 @@ class Combat:
         if len(self.action_requests) == len(self.teams):
             self.resolve_requests()
 
-    def resolve_requests(self):
+    def resolve_requests(self) -> None:
         """
         When all players have made an action request, resolve the order and execution of those requests.
         """
