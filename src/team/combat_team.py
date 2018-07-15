@@ -48,7 +48,7 @@ class CombatTeam:
             self.owner.is_busy = True
 
     def on_combat_start(self) -> None:
-        self.attempt_switch(0)  # The first eligible (HP > 0) Elemental in the team
+        self.attempt_switch(self.eligible_bench[0])  # The first eligible (HP > 0) Elemental in the team
 
     def end_combat(self) -> None:
         if self.owner and not self.owner.is_npc:
@@ -66,6 +66,10 @@ class CombatTeam:
             return self.active_elemental
         elif target == Target.ENEMY:
             return self.get_active_enemy()
+
+    @property
+    def last_action(self) -> Action:
+        return self._actions[-1]
 
     def get_active_enemy(self) -> CombatElemental:
         """
@@ -129,21 +133,19 @@ class CombatTeam:
     def available_abilities(self) -> List[Ability]:
         return self.active_elemental.available_abilities.copy()
 
-    def select_ability(self, i: int) -> bool:
+    def select_ability(self, ability: Ability) -> bool:
         """
         Uses one of the active Elemental's abilities.
         TODO Check if the Elemental is incapacitated for the turn.
-        :param i: The position of the ability in the active Elemental's abilities list.
+        :param ability: The Ability to use.
         :return bool: True if the request was made. Note that a request is different from resolution.
         """
-        is_valid_selection = 0 <= i < len(self.active_elemental.available_abilities)
-        if not is_valid_selection:
+        if ability not in self.active_elemental.available_abilities:
             return False
-        selected_ability = self.active_elemental.abilities[i]
         action = ElementalAction(
             actor=self.active_elemental,
-            ability=selected_ability,
-            target=self.get_target(selected_ability, self.active_elemental)
+            ability=ability,
+            target=self.get_target(ability)
         )
         self.combat.request_action(action)
         return True
@@ -153,19 +155,17 @@ class CombatTeam:
         for elemental in self.eligible_bench:
             elemental.gain_bench_mana()
 
-    def attempt_switch(self, slot: int) -> bool:
+    def attempt_switch(self, elemental: CombatElemental) -> bool:
         """
         Switch the active Elemental with an Elemental on CombatTeam.eligible.
         :return bool: True if the request to switch was made. Note that a request is different from resolution.
         """
-        eligible_elementals = self.eligible_bench
-        is_valid_slot = 0 <= slot < len(eligible_elementals)
-        if not is_valid_slot:
+        if elemental not in self.eligible_bench:
             return False
         switch = Switch(
             team=self,
             old_active=self.active_elemental,
-            new_active=eligible_elementals[slot]
+            new_active=elemental
         )
         self.combat.request_action(switch)
         return True

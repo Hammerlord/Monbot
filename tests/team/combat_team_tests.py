@@ -86,7 +86,7 @@ class CombatTeamTests(unittest.TestCase):
         team.add_elemental(smurggle)
         team.add_elemental(loksy)
         combat_team = self.get_combat_team(team)
-        is_switched = combat_team.attempt_switch(0)
+        is_switched = combat_team.attempt_switch(combat_team.elementals[0])
         self.assertFalse(is_switched, error)
 
     def test_all_knocked_out(self):
