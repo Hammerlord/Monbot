@@ -35,11 +35,19 @@ class NPC(Character):
             elemental = self._get_random_elemental()
             self._team.add_elemental(elemental)
 
-    def generate_random_team(self):
+    def generate_random_team(self,
+                             min_level=1,
+                             max_level=60,
+                             min_team_size=1,
+                             max_team_size=4):
         """
-        TODO Generates a random Team, not based off of an opponent.
+        Generates a random Team, not based off of an opponent.
         """
-        pass
+        self._level = randint(min_level, max_level)
+        team_size = randint(min_team_size, max_team_size)
+        for i in range(team_size):
+            elemental = self._get_random_elemental()
+            self._team.add_elemental(elemental)
 
     def _generate_level(self, opponent: 'NPC' or Player) -> None:
         """
