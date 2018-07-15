@@ -12,7 +12,7 @@ class Defend(Ability):
         self.name = "Defend"
         self._description = "Block incoming damage until the next turn."
         self.icon = DEFEND
-        self.turn_priority = TurnPriority.HIGH
+        self.turn_priority = TurnPriority.DEFEND
         self.targeting = Target.SELF
         self.defend_cost = 1
 
