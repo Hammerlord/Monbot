@@ -27,8 +27,7 @@ class StatusView(ValueForm):
         return self.enumerated_buttons(self.values)
 
     async def render(self) -> None:
-        if self.discord_message:
-            await self.bot.clear_reactions(self.discord_message)
+        await self._clear_reactions()
         await self._display(self._get_page())
         for button in self.buttons:
             await self.bot.add_reaction(self.discord_message, button.reaction)

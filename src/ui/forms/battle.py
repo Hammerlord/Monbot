@@ -1,5 +1,6 @@
 from typing import List
 
+import asyncio
 import discord
 from discord.ext.commands import Bot
 
@@ -52,10 +53,20 @@ class BattleView(Form):
         return Battlefield(self.combat_team.active_elemental,
                            self.combat_team.get_active_enemy()).get_view()
 
-    async def render(self):
+    async def render(self) -> None:
         # TODO it is possible to have no available options, in which case, we need a skip.
         await self._display(self.get_main_view())
         await self._clear_reactions()
+        if self.combat_team.active_elemental.is_knocked_out and self.combat_team.eligible_bench:
+            # Render the mon selection view if your mon has been knocked out and you have another.
+            await asyncio.sleep(1.0)
+            await Form.from_form(self, SelectElementalView)
+        else:
+            await self.check_add_options()
+
+    async def check_add_options(self) -> None:
+        if not self.combat.in_progress:
+            return
         await self.bot.add_reaction(self.discord_message, ABILITIES)
         if self.combat_team.eligible_bench:
             await self.bot.add_reaction(self.discord_message, RETURN)
@@ -72,6 +83,8 @@ class BattleView(Form):
                                  self.discord_message)
 
     async def pick_option(self, reaction: str) -> None:
+        if not self.combat.in_progress:
+            return
         if reaction == ABILITIES:
             await Form.from_form(self, SelectAbilityView)
         elif reaction == RETURN and self.combat_team.eligible_bench:

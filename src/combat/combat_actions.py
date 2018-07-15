@@ -238,7 +238,6 @@ class KnockedOut(Action):
         """
         self.combat_elemental = combat_elemental
         self.combat = combat
-        self.exp_gained = 0  # TODO to report?
 
     @property
     def team(self):
