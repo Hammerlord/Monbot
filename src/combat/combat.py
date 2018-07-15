@@ -45,14 +45,14 @@ class Combat:
         return True
 
     def check_combat_start(self) -> None:
-        if len(self.teams) >= 2:  # TODO 1v1 only right now
-            self.in_progress = True
+        if len(self.teams) >= 2 and not self.in_progress:  # TODO 1v1 only right now
             for team in self.side_a:
                 team.set_enemy_side(self.side_b.copy())
                 team.on_combat_start()
             for team in self.side_b:
                 team.set_enemy_side(self.side_a.copy())
                 team.on_combat_start()
+                self.in_progress = True
 
     def request_action(self, request: Action) -> None:
         """
@@ -75,8 +75,8 @@ class Combat:
             action_group = sorted(action_group, key=lambda action: action.speed, reverse=True)
             for action in action_group:
                 self._resolve_request(action)
-        self.prepare_new_round()
-        self.check_combat_end()
+        if not self.check_combat_end():
+            self.prepare_new_round()
 
     def _resolve_request(self, action: Action) -> None:
         if action.can_execute:
@@ -89,6 +89,8 @@ class Combat:
         Add an empty list where the next turn's Actions will be logged.
         Then, reset action_requests for the next round of moves.
         """
+        for team in self.teams:
+            team.on_turn_start()
         self.action_log.append([])
         self.action_requests = []
         self._handle_ai_requests()

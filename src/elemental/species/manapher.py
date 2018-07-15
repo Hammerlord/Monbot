@@ -27,10 +27,10 @@ class Manapher(Species):
         self._max_hp = 50
         self._starting_mana = 20
         self._max_mana = 50
-        self._physical_att = 10
-        self._magic_att = 10
-        self._physical_def = 10
-        self._magic_def = 10
+        self._physical_att = 5
+        self._magic_att = 5
+        self._physical_def = 20
+        self._magic_def = 20
         self._speed = 10
         self._mana_per_turn = 5
         self._defend_charges = 2

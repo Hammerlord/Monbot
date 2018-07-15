@@ -1,10 +1,11 @@
 import unittest
 
 from src.core.elements import Elements, Category
+from src.elemental.ability.ability_factory import Abilities
 from src.elemental.ability.damage_calculator import DamageCalculator
 from src.elemental.status_effect.status_effects.defend import DefendEffect
 from tests.ability.ability_builder import AbilityBuilder
-from tests.elemental.elemental_builder import CombatElementalBuilder
+from tests.elemental.elemental_builder import CombatElementalBuilder, ElementalBuilder
 
 
 class DamageCalculatorTests(unittest.TestCase):
@@ -87,3 +88,18 @@ class DamageCalculatorTests(unittest.TestCase):
         calculator = DamageCalculator(target, actor, ability)
         calculator.calculate()
         self.assertEqual(calculator.same_element_multiplier, 1, error)
+
+    def test_physical_defence(self):
+        error = "Physical defence didn't reduce any damage"
+        low_def = CombatElementalBuilder().with_elemental(ElementalBuilder()
+                                                          .with_physical_def(0)
+                                                          .build()).build()
+        high_def = CombatElementalBuilder().with_elemental(ElementalBuilder()
+                                                           .with_physical_def(30)
+                                                           .build()).build()
+        actor = CombatElementalBuilder().build()
+        low_def_calculator = DamageCalculator(low_def, actor, Abilities.claw)
+        low_def_calculator.calculate()
+        high_def_calculator = DamageCalculator(high_def, actor, Abilities.claw)
+        high_def_calculator.calculate()
+        self.assertGreater(low_def_calculator.final_damage, high_def_calculator.final_damage, error)

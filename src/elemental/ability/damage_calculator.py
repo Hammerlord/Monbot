@@ -103,12 +103,11 @@ class DamageCalculator:
 
     def __get_damage_defended(self) -> int:
         """
-        Match the target's defensive stat against the incoming ability and return
-        Defenses scale worse than attack power.
+        Match the target's defensive stat against the incoming ability.
         :return: Int damage reduced by defenses.
         """
         if self.damage_source.category == Category.PHYSICAL:
-            return self.target.physical_att // 4
+            return self.target.physical_def // 3
         if self.damage_source.category == Category.MAGIC:
-            return self.target.magic_att // 4
+            return self.target.magic_def // 3
         return 0

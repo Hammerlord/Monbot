@@ -19,6 +19,7 @@ class ElementalBuilder:
         self._max_hp = 50
         self._rank = 1
         self._starting_mana = 15
+        self._physical_def = 0
         self._owner = Player(UserBuilder().build())
         self._owner._level = 60  # Max level, as Elemental levels are restricted by owner level
         self._attribute_manager = AttributeFactory.create_manager()
@@ -63,11 +64,16 @@ class ElementalBuilder:
         self._starting_mana = amount
         return self
 
+    def with_physical_def(self, amount: int) -> 'ElementalBuilder':
+        self._physical_def = amount
+        return self
+
     def build(self) -> 'Elemental':
         elemental = Elemental(self._species,
                               self._attribute_manager)
         elemental._current_hp = self._current_hp
         elemental._max_hp = self._max_hp
+        elemental._physical_def = self._physical_def
         elemental.owner = self._owner
         if self._nickname:
             elemental.nickname = self._nickname
