@@ -85,7 +85,7 @@ class DamageCalculator:
         Eg. the wind target is strong to fire, so a fire ability does 0.5x damage and is marked as resisted.
         """
         effectiveness = Effectiveness(self.damage_source.element, self.target.element)
-        return effectiveness.calculate()
+        return effectiveness.calculate_multiplier()
 
     def __get_bonus_multiplier(self) -> float:
         """

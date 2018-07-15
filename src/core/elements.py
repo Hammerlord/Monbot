@@ -1,4 +1,5 @@
 from enum import Enum
+from typing import List
 
 
 class Elements(Enum):
@@ -44,48 +45,68 @@ class Category(Enum):
 
 class Effectiveness:
     """
-    Checks if the attack is effective, normal, or not very effective.
+    Compares two elements, and checks if one is effective, normal, or not very effective against the other.
     """
 
     def __init__(self,
-                 ability_element: Elements,
-                 target_element: Elements):
+                 to_check: Elements,
+                 against: Elements):
         """
-        :param ability_element: The element of the Ability being used
-        :param target_element: The element of the CombatElemental recipient
+        :param to_check: The element to check the in/effectiveness...
+        :param against: ... against this element.
         """
-        self.ability_element = ability_element
-        self.target_element = target_element
-        self.effectiveness_multiplier = 1  # 1 = normal, <1 = resisted, >1 = effective
+        self.to_check = to_check
+        self.against = against
 
-    def calculate(self) -> int:
-        if self.__is_effective():
-            self.effectiveness_multiplier += 0.5
-        if self.__is_resistant():
-            self.effectiveness_multiplier -= 0.5
-        return self.effectiveness_multiplier
+    @staticmethod
+    def find_effective(comparators: List,
+                       against_element: Elements) -> List:
+        """
+        Given a list of CombatElementals or Abilities, return the ones
+        that are *effective* against a target element, if any.
+        """
+        return [comparator for comparator in comparators if
+                Effectiveness(comparator.element, against_element).is_effective()]
 
-    def __is_resistant(self) -> bool:
+    @staticmethod
+    def find_neutral(comparators: List,
+                     against_element: Elements) -> List:
+        """
+        Given a list of CombatElementals or Abilities, return the ones
+        that are at least *neutral* against a target element, if any.
+        """
+        return [comparator for comparator in comparators if not
+        Effectiveness(comparator.element, against_element).is_resistant()]
+
+    def calculate_multiplier(self) -> int:
+        effectiveness_multiplier = 1  # 1 = normal, <1 = resisted, >1 = effective
+        if self.is_effective():
+            effectiveness_multiplier += 0.5
+        elif self.is_resistant():
+            effectiveness_multiplier -= 0.5
+        return effectiveness_multiplier
+
+    def is_resistant(self) -> bool:
         # Is the ability not very effective against the target's element?
         # Chaos has no resistances.
-        return self.__check_elements(self.ability_element, self.target_element) or \
-               self.__is_same_element()
+        return (self.__check_elements(self.against, self.to_check) or
+                self.__is_same_element())
 
-    def __is_same_element(self) -> bool:
-        return self.ability_element == self.target_element and \
-               self.ability_element != Elements.CHAOS
-
-    def __is_effective(self) -> bool:
+    def is_effective(self) -> bool:
         """
         "Is the ability super effective against the target's element?"
         Chaos is weak to and effective against all elements.
         """
-        return self.__check_elements(self.target_element, self.ability_element) or \
-               self.__is_light_vs_dark(self.target_element, self.ability_element) or \
-               self.__is_chaos(self.target_element, self.ability_element)
+        return (self.__check_elements(self.to_check, self.against) or
+                self.__is_light_vs_dark(self.to_check, self.against) or
+                self.__is_chaos(self.to_check, self.against))
+
+    def __is_same_element(self) -> bool:
+        return (self.to_check == self.against and
+                self.to_check != Elements.CHAOS)
 
     @staticmethod
-    def __check_elements(against: Elements, to_check: Elements) -> bool:
+    def __check_elements(to_check: Elements, against: Elements) -> bool:
         if against == Elements.LIGHTNING:
             # Lightning is weak against earth and fire.
             return to_check == Elements.EARTH or to_check == Elements.FIRE
@@ -103,7 +124,7 @@ class Effectiveness:
             return to_check == Elements.LIGHTNING or to_check == Elements.EARTH
 
     @staticmethod
-    def __is_light_vs_dark(against: Elements, to_check: Elements) -> bool:
+    def __is_light_vs_dark(to_check: Elements, against: Elements) -> bool:
         """
         Light and dark are effective against each other.
         """
