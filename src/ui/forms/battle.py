@@ -43,12 +43,10 @@ class BattleView(Form):
         self.combat_team = options.combat_team
 
     def get_main_view(self) -> str:
-        return self.get_battlefield()
+        return '\n'.join([self.get_battlefield(), f'```{self.get_last_actions()}```'])
 
     def get_last_actions(self) -> str:
-        # If a switch is involved, always render the player's switch first.
-        if self.combat_team.last_action.action_type == ActionType.SWITCH:
-            pass  # TODO
+        return '\n'.join([action.recap for action in self.combat.previous_round_log])
 
     def get_battlefield(self) -> str:
         return Battlefield(self.combat_team.active_elemental,
