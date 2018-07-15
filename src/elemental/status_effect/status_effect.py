@@ -33,7 +33,7 @@ class StatusEffect(Technique):
         self.effect_type = EffectType.NONE
         self.category = Category.PHYSICAL
         # Pass duration in number of the affected Elemental's turns. -1 if no duration:
-        self.max_duration = self._calculate_duration(self._base_duration)
+        self.max_duration = self.calculate_duration()
         self._duration_remaining = 0
         self.is_dispellable = True
         self.ends_on_switch = True
@@ -192,10 +192,9 @@ class StatusEffect(Technique):
     def _update_speed_stages(self, amount: int) -> None:
         self.target.update_speed_stages(amount)
 
-    @staticmethod
-    def _calculate_duration(num_turns: int) -> int:
+    def calculate_duration(self) -> int:
         """
-        +1 so that the duration doesn't just fall off immediately on the round end.
+        +1 so that the duration doesn't just fall off immediately on round end.
         Unless that's what we want (eg. Defend).
         """
-        return num_turns + 1
+        return self._base_duration + 1

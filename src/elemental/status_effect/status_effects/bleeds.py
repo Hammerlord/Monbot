@@ -1,3 +1,4 @@
+from src.core.constants import BLEED
 from src.core.elements import Category
 from src.elemental.ability.damage_calculator import DamageCalculator
 from src.elemental.status_effect.status_effect import StatusEffect, EffectType
@@ -10,6 +11,7 @@ class Bleed(StatusEffect):
         self.effect_type = EffectType.BLEED
         self.category = Category.PHYSICAL
         self.base_power = 1
+        self.icon = BLEED
 
     @property
     def _base_duration(self) -> int:
@@ -26,14 +28,14 @@ class RazorFangsEffect(Bleed):
 
     def __init__(self):
         super().__init__()
-        self.base_power = 7
+        self.base_power = 12
 
 
 class RendEffect(Bleed):
 
     def __init__(self):
         super().__init__()
-        self.base_power = 10
+        self.base_power = 15
 
     @property
     def _base_duration(self) -> int:
