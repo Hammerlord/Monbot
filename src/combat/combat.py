@@ -114,15 +114,15 @@ class Combat:
                 ko = KnockedOut(elemental, self)
                 self._add_log(ko)
                 team.add_log(ko)
-                self.grant_exp(elemental)
+                self._grant_exp(elemental)
                 already_checked.append(elemental)
 
-    def grant_exp(self, from_elemental: CombatElemental) -> None:
+    def _grant_exp(self, from_elemental: CombatElemental) -> None:
         # Grant the opposition experience.
         if not self.allow_exp_gain:
             return
         enemy_side = from_elemental.team.enemy_side
-        raw_exp = from_elemental.level * 6 + 5
+        raw_exp = from_elemental.level * 6 + 10
         exp_gained = int(raw_exp // len(enemy_side) + raw_exp * len(enemy_side) * 0.25)
         for enemy_team in enemy_side:
             if enemy_team.is_npc:
