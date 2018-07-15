@@ -2,6 +2,7 @@ from itertools import groupby
 from typing import List
 
 from src.combat.combat_actions import ActionType, Action
+from src.combat.combat_ai import CombatAI
 from src.elemental.ability.ability import Target, Ability
 from src.elemental.combat_elemental import CombatElemental
 
@@ -90,6 +91,15 @@ class Combat:
         """
         self.action_log.append([])
         self.action_requests = []
+        self._handle_ai_requests()
+
+    def _handle_ai_requests(self) -> None:
+        """
+        Check if there are any NPC teams, and automatically make a move for them.
+        """
+        for team in self.teams:
+            if team.is_npc:
+                CombatAI(team).pick_move()
 
     @property
     def previous_round_log(self) -> List[Action]:
