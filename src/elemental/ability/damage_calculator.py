@@ -51,9 +51,9 @@ class DamageCalculator:
         if final_difference < 1:
             self.final_damage = 1
         else:
-            self.final_damage = final_difference
+            self.final_damage = int(final_difference)
 
-    def __get_raw_damage(self):
+    def __get_raw_damage(self) -> int:
         raw_damage = self.damage_source.base_power
         raw_damage += self.__get_attack_power()
         raw_damage *= self.effectiveness_multiplier
