@@ -1,5 +1,6 @@
 import unittest
 
+from src.combat.combat_actions import ElementalAction
 from src.elemental.ability.ability_factory import Abilities
 from src.elemental.ability.damage_calculator import DamageCalculator
 from src.elemental.status_effect.status_effects.burns import Burn
@@ -25,3 +26,23 @@ class AbilityTests(unittest.TestCase):
         calculator = DamageCalculator(target, actor, ability)
         calculator.calculate()
         self.assertGreater(calculator.bonus_multiplier, 1, error)
+
+    def test_defend_charge(self):
+        error = "Defend didn't use a defend charge"
+        elemental = CombatElementalBuilder().build()
+        previous_charges = elemental.defend_charges
+        ElementalAction(actor=elemental,
+                        ability=Abilities.defend,
+                        target=CombatElementalBuilder().build()
+                        ).execute()
+        self.assertEqual(elemental.defend_charges, (previous_charges - 1), error)
+
+    def test_mana_consumption(self):
+        error = "Mana-consuming ability didn't consume mana"
+        elemental = CombatElementalBuilder().build()
+        previous_mana = elemental.current_mana
+        ElementalAction(actor=elemental,
+                        ability=Abilities.razor_fangs,
+                        target=CombatElementalBuilder().build()
+                        ).execute()
+        self.assertLess(elemental.current_mana, previous_mana, error)

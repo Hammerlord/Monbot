@@ -1,6 +1,6 @@
 from src.core.elements import Elements, Category
 from src.elemental.ability.ability import Ability, Target, TurnPriority
-from src.elemental.status_effect.status_effects.bleeds import Bleed
+from src.elemental.status_effect.status_effects.bleeds import RazorFangsEffect
 
 
 class RazorFangs(Ability):
@@ -17,5 +17,5 @@ class RazorFangs(Ability):
         self.targeting = Target.ENEMY
 
     @property
-    def status_effect(self) -> Bleed:
-        return Bleed()
+    def status_effect(self) -> RazorFangsEffect:
+        return RazorFangsEffect()

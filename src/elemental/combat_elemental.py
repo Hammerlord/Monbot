@@ -179,9 +179,9 @@ class CombatElemental:
         """
         All eligible bench (not dead, not active) Elementals gain mana per turn.
         """
-        self.gain_mana(self._bench_mana_per_turn)
+        self.update_mana(self._bench_mana_per_turn)
 
-    def gain_mana(self, amount: int) -> None:
+    def update_mana(self, amount: int) -> None:
         self._current_mana += amount
         if self.current_mana > self._elemental.max_mana:
             self._current_mana = self._elemental.max_mana
@@ -205,14 +205,18 @@ class CombatElemental:
         self._status_manager.add_status_effect(status_effect)
 
     def start_turn(self) -> None:
-        self.gain_mana(self._mana_per_turn + self._status_manager.bonus_mana_per_turn)
+        self.update_mana(self._mana_per_turn + self._status_manager.bonus_mana_per_turn)
 
     def end_turn(self) -> None:
         self._status_manager.on_turn_end()
 
     def on_ability(self, ability: Ability) -> None:
-        # TODO
+        self.update_mana(-ability.mana_cost)
+        self.update_defend_charges(-ability.defend_cost)
         pass
+
+    def update_defend_charges(self, amount: int) -> None:
+        self._defend_charges += amount
 
     def on_receive_ability(self, ability: Ability, actor: 'CombatElemental') -> None:
         """

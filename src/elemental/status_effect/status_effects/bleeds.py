@@ -22,11 +22,18 @@ class Bleed(StatusEffect):
         self.target.receive_damage(damage, self.applier)
 
 
+class RazorFangsEffect(Bleed):
+
+    def __init__(self):
+        super().__init__()
+        self.base_power = 7
+
+
 class RendEffect(Bleed):
 
     def __init__(self):
         super().__init__()
-        self.base_power = 5
+        self.base_power = 10
 
     @property
     def _base_duration(self) -> float:

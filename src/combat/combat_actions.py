@@ -151,7 +151,9 @@ class ElementalAction(Action):
 
     @property
     def can_execute(self) -> bool:
-        return self.team.active_elemental and not self.team.active_elemental.is_knocked_out
+        return (self.team.active_elemental
+                and not self.team.active_elemental.is_knocked_out
+                and self.team.active_elemental.can_use_ability(self.ability))
 
 
 class Switch(Action):
