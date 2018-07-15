@@ -11,7 +11,7 @@ class RazorFangs(Ability):
         self.element = Elements.NONE
         self.category = Category.PHYSICAL
         self.base_power = 1
-        self.mana_cost = 7
+        self.mana_cost = 10
         self.defend_cost = 0
         self.turn_priority = TurnPriority.NORMAL
         self.targeting = Target.ENEMY

@@ -200,7 +200,7 @@ class StatusManager:
         """
         if stages == 0:
             return 0
-        scale = 4
+        scale = 2
         if stages > 0:
             calculation = stats * (scale + stages) // scale
         else:

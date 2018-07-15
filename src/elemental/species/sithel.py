@@ -24,11 +24,11 @@ class Sithel(Species):
         self._max_hp = 50
         self._starting_mana = 20
         self._max_mana = 50
-        self._physical_att = 19
-        self._magic_att = 18
-        self._physical_def = 15
-        self._magic_def = 16
-        self._speed = 20
+        self._physical_att = 14
+        self._magic_att = 14
+        self._physical_def = 9
+        self._magic_def = 8
+        self._speed = 15
         self._mana_per_turn = 5
         self._defend_charges = 2
         self._left_icon = ':spaghetti:'

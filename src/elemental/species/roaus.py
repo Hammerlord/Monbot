@@ -24,11 +24,11 @@ class Roaus(Species):
         self._max_hp = 55
         self._starting_mana = 20
         self._max_mana = 50
-        self._physical_att = 19
-        self._magic_att = 15
-        self._physical_def = 17
-        self._magic_def = 16
-        self._speed = 16
+        self._physical_att = 14
+        self._magic_att = 8
+        self._physical_def = 14
+        self._magic_def = 10
+        self._speed = 14
         self._mana_per_turn = 5
         self._defend_charges = 2
         self._left_icon = ':ox:'

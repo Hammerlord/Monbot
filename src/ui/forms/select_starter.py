@@ -81,5 +81,5 @@ class SelectStarterView(ValueForm):
         if self.player.num_elementals > 0 or self._selected_value is None:
             return
         starter = self._selected_value
-        self.player.add_elemental(ElementalInitializer.make(starter, level=3))
+        self.player.add_elemental(ElementalInitializer.make(starter))
         await Form.from_form(self, StatusView)
