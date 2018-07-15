@@ -111,6 +111,7 @@ class Combat:
         for enemy_team in enemy_side:
             if enemy_team.is_npc:
                 continue
+            enemy_team.owner.add_exp(exp_gained)
             for elemental in enemy_team.elementals:
                 elemental.add_exp(exp_gained)
 

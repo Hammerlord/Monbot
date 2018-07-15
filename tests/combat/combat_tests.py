@@ -70,8 +70,8 @@ class CombatTests(unittest.TestCase):
         expected = combat.previous_round_log[0].actor.nickname
         self.assertEqual(expected, faster.nickname, error)
 
-    def test_exp_gain(self):
-        error = "Knocking out an elemental didn't grant exp to player team"
+    def test_elemental_exp_gain(self):
+        error = "Knocking out an elemental didn't grant exp to player's elementals"
         player = PlayerBuilder().build()
         player_team = TeamBuilder().with_owner(player).build()
         elemental = ElementalBuilder().build()
@@ -87,6 +87,24 @@ class CombatTests(unittest.TestCase):
         combat.request_action(ElementalAction(player_team.elementals[0], Claw(), other_team.elementals[0]))
         combat.request_action(ElementalAction(other_team.elementals[0], Claw(), player_team.elementals[0]))
         exp_after = elemental.current_exp
+        self.assertGreater(exp_after, exp_before, error)
+
+    def test_player_exp_gain(self):
+        error = "Knocking out an elemental didn't grant exp to player"
+        player = PlayerBuilder().build()
+        player_team = TeamBuilder().with_owner(player).build()
+        player_team.add_elemental(ElementalBuilder().build())
+        player_team = CombatTeam(player_team)
+        other_team = self.get_combat_team()
+        other_team.set_enemy_side([player_team])
+        combat = Combat()
+        combat.join_battle(player_team)
+        combat.join_battle(other_team)
+        other_team.elementals[0].receive_damage(10000, player_team.elementals[0])
+        exp_before = player.current_exp
+        combat.request_action(ElementalAction(player_team.elementals[0], Claw(), other_team.elementals[0]))
+        combat.request_action(ElementalAction(other_team.elementals[0], Claw(), player_team.elementals[0]))
+        exp_after = player.current_exp
         self.assertGreater(exp_after, exp_before, error)
 
     @staticmethod
