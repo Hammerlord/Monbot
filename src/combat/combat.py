@@ -80,8 +80,7 @@ class Combat:
             for action in action_group:
                 self._resolve_request(action)
                 self.check_kos(kos)
-        if self.check_combat_end():
-            self.end_combat()
+                self.check_combat_end()
         self.prepare_new_round()
 
     def check_kos(self, already_checked: List[CombatElemental]) -> None:
@@ -127,7 +126,7 @@ class Combat:
         # Get all the Actions from the previous round of turns.
         # prepare_new_round() creates an empty new log [] if combat is ongoing,
         # so we want to retrieve the second last log.
-            return self.action_log[-2].copy()
+        return self.action_log[-2].copy()
 
     def _get_priority_order_requests(self) -> List[List[Action]]:
         """
@@ -140,10 +139,10 @@ class Combat:
             action_groups.append(list(group))
         return action_groups
 
-    def check_combat_end(self) -> bool:
+    def check_combat_end(self) -> None:
         if (all([team.is_all_knocked_out for team in self.side_a]) or
                 all([team.is_all_knocked_out for team in self.side_b])):
-            return True
+            self.end_combat()
 
     def end_combat(self) -> None:
         self.in_progress = False
