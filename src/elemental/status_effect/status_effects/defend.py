@@ -1,3 +1,4 @@
+from src.core.constants import DEFEND
 from src.elemental.status_effect.status_effect import StatusEffect
 
 
@@ -5,6 +6,7 @@ class DefendEffect(StatusEffect):
 
     def __init__(self):
         super().__init__()
+        self.icon = DEFEND
 
     @property
     def _base_duration(self) -> float:

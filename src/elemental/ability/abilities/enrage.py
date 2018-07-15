@@ -1,3 +1,4 @@
+from src.core.constants import ENRAGE
 from src.elemental.ability.ability import TurnPriority, Target, Ability
 from src.elemental.status_effect.status_effects.enrage import EnrageEffect
 
@@ -11,6 +12,7 @@ class Enrage(Ability):
         self.name = "Enrage"
         self._description = EnrageEffect().description
         self.turn_priority = TurnPriority.NORMAL
+        self.icon = ENRAGE
         self.mana_cost = 15
         self.targeting = Target.SELF
 
