@@ -1,5 +1,6 @@
 from typing import List
 
+from src.core.constants import MANA
 from src.core.elements import Elements
 from src.elemental.ability.ability import Ability, LearnableAbility
 
@@ -43,7 +44,7 @@ class AbilityOptionView:
         ability = self.ability
         icon = Elements.get_icon(ability.element)
         return (f"{ability.icon} {ability.name} [{ability.category.name}{icon}] "
-                f"[{self._get_mana_cost()}:small_blue_diamond:]{self._get_power(ability)}")
+                f"[{self._get_mana_cost()}{MANA}]{self._get_power(ability)}")
 
     def get_detail(self) -> str:
         ability = self.ability

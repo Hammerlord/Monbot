@@ -119,6 +119,10 @@ class CombatElemental:
         return self._current_mana
 
     @property
+    def max_mana(self) -> int:
+        return self._elemental.max_mana
+
+    @property
     def can_switch(self) -> bool:
         return self._status_manager.can_switch
 

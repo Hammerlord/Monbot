@@ -62,7 +62,7 @@ async def on_reaction_add(reaction, user):
     if user.bot:
         return
     player = data_manager.get_player(user)
-    view = view_manager.get_view(player)
+    view = player.primary_view
     if view and view.matches(reaction.message):
         await view.pick_option(reaction.emoji)
 
@@ -72,7 +72,7 @@ async def on_reaction_remove(reaction, user):
     if user.bot:
         return
     player = data_manager.get_player(user)
-    view = view_manager.get_view(player)
+    view = player.primary_view
     if view and view.matches(reaction.message):
         await view.remove_option(reaction.emoji)
 
@@ -86,7 +86,7 @@ async def on_message(message):
         return
     await bot.process_commands(message)
     player = data_manager.get_player(message.author)
-    view = view_manager.get_view(player)
+    view = player.primary_view
     if view and view.is_awaiting_input:
         await view.receive_input(message)
 

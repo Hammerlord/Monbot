@@ -135,6 +135,7 @@ class ElementalAction(Action):
     def check_status_effect_application(self) -> None:
         status_effect = self.ability.status_effect
         if status_effect:
+            status_effect.applier = self.actor
             if self.target.add_status_effect(status_effect):
                 self.target_effects_applied.append(status_effect)
             else:
