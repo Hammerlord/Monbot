@@ -1,9 +1,9 @@
 import unittest
-from unittest.mock import Mock
 
 from src.combat.combat import Combat
 from src.combat.combat_actions import Switch, ElementalAction, KnockedOut
 from src.elemental.ability.abilities.claw import Claw
+from src.elemental.ability.abilities.defend import Defend
 from src.elemental.ability.ability import Target
 from src.elemental.combat_elemental import CombatElemental
 from src.team.combat_team import CombatTeam
