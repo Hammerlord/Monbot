@@ -107,7 +107,7 @@ class Combat:
             return
         enemy_side = from_elemental.team.enemy_side
         raw_exp = from_elemental.level * 6 + 5
-        exp_gained = raw_exp // len(enemy_side) + raw_exp * len(enemy_side) * 0.25
+        exp_gained = int(raw_exp // len(enemy_side) + raw_exp * len(enemy_side) * 0.25)
         for enemy_team in enemy_side:
             if enemy_team.is_npc:
                 continue
