@@ -50,13 +50,13 @@ class Combat:
 
     def check_combat_start(self) -> None:
         if len(self.teams) >= 2 and not self.in_progress:  # TODO 1v1 only right now
+            self.in_progress = True
             for team in self.side_a:
                 team.set_enemy_side(self.side_b.copy())
                 team.on_combat_start()
             for team in self.side_b:
                 team.set_enemy_side(self.side_a.copy())
                 team.on_combat_start()
-                self.in_progress = True
 
     def request_action(self, request: Action) -> None:
         """
@@ -64,7 +64,6 @@ class Combat:
         It may be different from what gets executed and reported,
         eg., if the elemental gets knocked out before it can make a move.
         """
-        # TODO knockout handling
         self.action_requests.append(request)
         if len(self.action_requests) == len(self.teams):
             self.resolve_requests()
@@ -81,8 +80,9 @@ class Combat:
             for action in action_group:
                 self._resolve_request(action)
                 self.check_kos(kos)
-        if not self.check_combat_end():
-            self.prepare_new_round()
+        if self.check_combat_end():
+            self.end_combat()
+        self.prepare_new_round()
 
     def check_kos(self, already_checked: List[CombatElemental]) -> None:
         """
@@ -108,42 +108,41 @@ class Combat:
 
     def prepare_new_round(self) -> None:
         """
-        Add an empty list where the next turn's Actions will be logged.
+        Add an empty list where the next turn's Actions will be logged. We always add one as the logger looks
+        at the second last entry.
         Then, reset action_requests for the next round of moves.
         """
-        for team in self.teams:
-            team.on_turn_start()
         self.action_log.append([])
         self.action_requests = []
-        self._handle_ai_requests()
-
-    def _handle_ai_requests(self) -> None:
-        """
-        Check if there are any NPC teams, and automatically make a move for them.
-        """
+        if not self.in_progress:
+            return
         for team in self.teams:
+            team.on_turn_start()
+            # Check if there are any NPC teams, and automatically make a move for them.
             if team.is_npc:
                 CombatAI(team).pick_move()
 
     @property
     def previous_round_log(self) -> List[Action]:
         # Get all the Actions from the previous round of turns.
-        return self.action_log[-2].copy()
+        # prepare_new_round() creates an empty new log [] if combat is ongoing,
+        # so we want to retrieve the second last log.
+            return self.action_log[-2].copy()
 
     def _get_priority_order_requests(self) -> List[List[Action]]:
         """
         Group Actions by TurnPriority, in order of fastest Actions to the slowest.
         """
         action_groups = []
+        self.action_requests = sorted(self.action_requests, key=lambda action_request: action_request.turn_priority)
         for key, group in groupby(self.action_requests,
                                   lambda action_request: action_request.turn_priority):
             action_groups.append(list(group))
         return action_groups
 
     def check_combat_end(self) -> bool:
-        if (all(team.is_all_knocked_out for team in self.side_a) or
-                all(team.is_all_knocked_out for team in self.side_b)):
-            self.end_combat()
+        if (all([team.is_all_knocked_out for team in self.side_a]) or
+                all([team.is_all_knocked_out for team in self.side_b])):
             return True
 
     def end_combat(self) -> None:

@@ -14,7 +14,7 @@ class CombatAI:
         self.team = combat_team
 
     def pick_move(self) -> None:
-        if self.team.eligible_bench and not self.team.active_elemental:
+        if self.team.active_elemental.is_knocked_out and self.team.eligible_bench:
             self.switch()
         else:
             self.pick_ability()
