@@ -153,6 +153,8 @@ class Combat:
             return
         for team in self.teams:
             team.on_turn_start()
+            if team.check_casting():
+                continue
             if team.is_npc:
                 # Automatically make a move for NPC teams.
                 CombatAI(team, self).pick_move()

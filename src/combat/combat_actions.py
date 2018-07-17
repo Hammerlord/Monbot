@@ -1,6 +1,6 @@
 from enum import Enum
 
-from src.elemental.ability.ability import Ability, TurnPriority
+from src.elemental.ability.ability import Ability, TurnPriority, Castable
 from src.elemental.ability.damage_calculator import DamageCalculator
 from src.elemental.combat_elemental import CombatElemental
 
@@ -45,6 +45,9 @@ class Action:
         """
         raise NotImplementedError
 
+    def __str__(self):
+        return self.recap
+
     @property
     def recap(self) -> str:
         """
@@ -55,6 +58,10 @@ class Action:
     @property
     def can_execute(self) -> bool:
         raise NotImplementedError
+
+    @property
+    def final_damage(self) -> int:
+        return 0
 
 
 class ElementalAction(Action):
@@ -76,6 +83,9 @@ class ElementalAction(Action):
         self.target_effects_applied = []  # List[StatusEffect]
         self.target_effects_failed = []  # List[StatusEffect]
         self.actor_effects_applied = []  # List[StatusEffect]
+
+    def __str__(self):
+        return f"{self.recap} {self.final_damage} damage dealt."
 
     @property
     def team(self):
