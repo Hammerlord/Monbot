@@ -29,7 +29,7 @@ class Elemental:
         self._mana_per_turn = species.mana_per_turn
         self._bench_mana_per_turn = species.bench_mana_per_turn
         self._speed = species.speed
-        self._defend_potency = 0.6  # Percentage of damage blocked by Defend.
+        self._defend_potency = 0.8  # Percentage of damage blocked by Defend.
         self._defend_charges = species.defend_charges
         self._current_exp = 0
         self._exp_to_level = 20
