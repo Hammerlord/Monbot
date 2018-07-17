@@ -4,6 +4,7 @@ from src.elemental.ability.abilities.defend import Defend
 from src.elemental.ability.abilities.enrage import Enrage
 from src.elemental.ability.abilities.fireball import Fireball
 from src.elemental.ability.abilities.razor_fangs import RazorFangs
+from src.elemental.ability.abilities.shining_laser import ShiningLaser
 from src.elemental.ability.abilities.slam import Slam
 from src.elemental.ability.ability import LearnableAbility, Ability
 
@@ -34,6 +35,7 @@ class Abilities:
     slam = AbilityInitializer.initialize(Slam())
     razor_fangs = AbilityInitializer.initialize(RazorFangs())
     fireball = AbilityInitializer.initialize(Fireball())
+    shining_laser = AbilityInitializer.initialize(ShiningLaser())
 
 
 class LearnableAbilities:
@@ -68,3 +70,7 @@ class LearnableAbilities:
     @staticmethod
     def fireball(level=0) -> LearnableAbility:
         return LearnableAbility(Abilities.fireball, level)
+
+    @staticmethod
+    def shining_laser(level=0) -> LearnableAbility:
+        return LearnableAbility(Abilities.shining_laser, level)

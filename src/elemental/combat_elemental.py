@@ -136,7 +136,7 @@ class CombatElemental:
 
     @property
     def abilities(self) -> List[Ability]:
-        return self._abilities
+        return self._abilities.copy()
 
     @property
     def status_effects(self) -> List[StatusEffect]:
@@ -180,7 +180,7 @@ class CombatElemental:
     def can_use_ability(self, ability: Ability) -> bool:
         return (self.current_mana >= ability.mana_cost and
                 self.defend_charges >= ability.defend_cost and
-                ability in self.available_abilities and
+                ability in self.abilities and
                 ability.is_usable_by(self))
 
     def gain_bench_mana(self) -> None:
