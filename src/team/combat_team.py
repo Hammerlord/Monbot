@@ -1,7 +1,7 @@
 from typing import List
 
-from src.combat.combat_actions import KnockedOut, ElementalAction, Switch, Action
-from src.elemental.ability.ability import Ability, Target
+from src.combat.combat_actions import KnockedOut, ElementalAction, Switch, Action, Casting
+from src.elemental.ability.ability import Ability, Target, Castable
 from src.elemental.combat_elemental import CombatElemental
 from src.elemental.elemental import Elemental
 from src.team.team import Team
@@ -137,6 +137,19 @@ class CombatTeam:
     def available_abilities(self) -> List[Ability]:
         return self.active_elemental.available_abilities.copy()
 
+    def check_casting(self) -> bool:
+        """
+        Is our currently active elemental locked into casting an ability?
+        If true, automatically continue that ability.
+        """
+        castable = self.active_elemental.casting
+        if castable:
+            if castable.is_ready:
+                self.make_move(castable.ability)
+            else:
+                self.handle_cast_time(castable)
+            return True
+
     def select_ability(self, ability: Ability) -> bool:
         """
         Uses one of the active Elemental's abilities.
@@ -144,15 +157,30 @@ class CombatTeam:
         :param ability: The Ability to use.
         :return bool: True if the request was made. Note that a request is different from resolution.
         """
-        if ability not in self.active_elemental.available_abilities:
+        if not ability.is_usable_by(self.active_elemental):
             return False
+        if ability.has_cast_time:
+            self.handle_cast_time(Castable(ability))
+        else:
+            self.make_move(ability)
+        return True
+
+    def handle_cast_time(self, castable: Castable) -> None:
+        action = Casting(
+            actor=self.active_elemental,
+            castable=castable,
+            target=self.get_target(castable.ability)  # This might not be the end target.
+        )
+        self.combat.request_action(action)
+
+    def make_move(self, ability) -> None:
+        self.active_elemental.casting = None
         action = ElementalAction(
             actor=self.active_elemental,
             ability=ability,
             target=self.get_target(ability)
         )
         self.combat.request_action(action)
-        return True
 
     def on_turn_start(self) -> None:
         self.active_elemental.start_turn()

@@ -31,6 +31,58 @@ class TurnPriority(Enum):
         return NotImplemented
 
 
+class Channelable:
+    """
+    A "channeled" ability can activate repeatedly over multiple turns.
+    """
+    def __init__(self):
+        self._turns_to_channel = self.base_duration
+
+    @property
+    def base_duration(self) -> int:
+        raise NotImplementedError
+
+    @property
+    def has_ended(self) -> bool:
+        return self._turns_to_channel == 0
+
+    @staticmethod
+    def get_channeling_message(elemental) -> str:
+        return f"{elemental.name}'s attack continues!"
+
+    def decrement_time(self):
+        self._turns_to_channel -= 1
+
+
+class Castable:
+    """
+    A wrapper class for an Ability with a charge up time.
+    The cast time decrement is handled here.
+    """
+    def __init__(self,
+                 ability: 'Ability'):
+        """
+        :param ability: The castable ability being used.
+        :param elemental: CombatElemental using the ability.
+        """
+        assert(ability.base_cast_time > 0)  # It better have a cast time!
+        self.ability = ability
+        self.turns_to_activate = self.ability.base_cast_time
+
+    @staticmethod
+    def get_casting_message(elemental_name: str) -> str:
+        raise NotImplementedError
+
+    def is_ready(self) -> bool:
+        return self.turns_to_activate == 0
+
+    def decrement_cast_time(self):
+        self.turns_to_activate -= 1
+
+    def is_initial_use(self) -> bool:
+        return self.turns_to_activate == self.ability.base_cast_time
+
+
 class Ability(Technique):
     """
     Basic information about an ability.
@@ -48,6 +100,18 @@ class Ability(Technique):
         self.icon = ':crossed_swords:'  # Generic default icon.
 
     @property
+    def base_cast_time(self) -> int:
+        """
+        Override this method if an ability takes a turn to activate.
+        Also be sure to implement casting_message.
+        """
+        return 0
+
+    @property
+    def has_cast_time(self) -> bool:
+        return self.base_cast_time > 0
+
+    @property
     def status_effect(self) -> StatusEffect or None:
         """
         Override this operation if the ability applies a status effect.
@@ -61,6 +125,13 @@ class Ability(Technique):
         :param combat_elemental: CombatElemental
         """
         return True
+
+    def get_recap(self, elemental_name: str) -> str:
+        return f"{elemental_name} used {self.name}!"
+
+    @staticmethod
+    def casting_message(elemental_name: str) -> str:
+        return ''
 
 
 class LearnableAbility:

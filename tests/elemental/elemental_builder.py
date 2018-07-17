@@ -96,6 +96,7 @@ class ElementalBuilder:
 class CombatElementalBuilder:
     def __init__(self):
         self._elemental = ElementalBuilder().build()
+        self._team = MagicMock()
 
     def with_element(self, element: Elements) -> 'CombatElementalBuilder':
         self._elemental = ElementalBuilder().with_element(element).build()
@@ -105,6 +106,10 @@ class CombatElementalBuilder:
         self._elemental = elemental
         return self
 
+    def with_team(self, team) -> 'CombatElementalBuilder':
+        self._team = team
+        return self
+
     def build(self):
         return CombatElemental(self._elemental,
-                               MagicMock())
+                               self._team)

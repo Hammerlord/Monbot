@@ -1,7 +1,7 @@
 from typing import List
 
 from src.core.elements import Elements
-from src.elemental.ability.ability import Ability
+from src.elemental.ability.ability import Ability, Castable
 from src.elemental.elemental import Elemental
 from src.elemental.status_effect.status_effect import StatusEffect
 from src.elemental.status_effect.status_manager import StatusManager
@@ -28,6 +28,7 @@ class CombatElemental:
         self._status_manager = StatusManager(self)
         self._actions = []  # List[ElementalAction]  A record of the actions taken by this CombatElemental.
         self._abilities = elemental.active_abilities
+        self.casting = None  # An Ability that takes time to activate or executes over multiple turns.
 
     @property
     def nickname(self) -> str:
@@ -149,6 +150,9 @@ class CombatElemental:
     def is_knocked_out(self) -> bool:
         return self._elemental.is_knocked_out
 
+    def set_casting(self, casted: Castable) -> None:
+        self.casting = casted
+
     def add_exp(self, amount: int) -> None:
         self._elemental.add_exp(amount)
 
@@ -174,9 +178,10 @@ class CombatElemental:
         self._status_manager.update_damage_reduction(amount)
 
     def can_use_ability(self, ability: Ability) -> bool:
-        return self.current_mana >= ability.mana_cost and \
-               self.defend_charges >= ability.defend_cost and \
-               ability.is_usable_by(self)
+        return (self.current_mana >= ability.mana_cost and
+                self.defend_charges >= ability.defend_cost and
+                ability in self.available_abilities and
+                ability.is_usable_by(self))
 
     def gain_bench_mana(self) -> None:
         """
@@ -221,7 +226,6 @@ class CombatElemental:
     def on_ability(self, ability: Ability) -> None:
         self.update_mana(-ability.mana_cost)
         self.update_defend_charges(-ability.defend_cost)
-        pass
 
     def update_defend_charges(self, amount: int) -> None:
         self._defend_charges += amount
