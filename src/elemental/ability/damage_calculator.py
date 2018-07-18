@@ -25,13 +25,13 @@ class DamageCalculator:
         self.actor = actor
         self.target = target
         self.damage_source = damage_source
-        self.effectiveness_multiplier = self.__get_effectiveness_multiplier()
-        self.same_element_multiplier = self.__get_same_element_multiplier()
-        self.bonus_multiplier = self.__get_bonus_multiplier()
         self.raw_damage = 0
         self.damage_blocked = 0
         self.damage_defended = 0
         self.final_damage = 0
+        self.effectiveness_multiplier = 1
+        self.same_element_multiplier = 1
+        self.bonus_multiplier = self.__get_bonus_multiplier()
 
     @property
     def is_effective(self) -> bool:
@@ -41,9 +41,11 @@ class DamageCalculator:
     def is_resisted(self) -> bool:
         return self.effectiveness_multiplier < 1
 
-    def calculate(self) -> None:
+    def calculate(self) -> int:
         if self.damage_source.base_power == 0:
-            return
+            return 0
+        self.effectiveness_multiplier = self.__get_effectiveness_multiplier()
+        self.same_element_multiplier = self.__get_same_element_multiplier()
         self.raw_damage = self.__get_raw_damage()
         self.damage_blocked = self.__get_damage_blocked()  # From damage_reduction
         self.damage_defended = self.__get_damage_defended()  # From def stats
@@ -52,6 +54,7 @@ class DamageCalculator:
             self.final_damage = 1
         else:
             self.final_damage = int(final_difference)
+        return self.final_damage
 
     def __get_raw_damage(self) -> int:
         raw_damage = self.damage_source.base_power

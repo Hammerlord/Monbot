@@ -72,7 +72,7 @@ class StatusEffect(Technique):
     @property
     def target(self):
         """
-        :return: The CombatElemental this StatusEffect is applied to.
+        :return: The original CombatElemental this StatusEffect is applied to.
         """
         return self.__target
 

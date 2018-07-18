@@ -1,5 +1,6 @@
 from enum import Enum
 
+from src.core.targetable_interface import Targetable
 from src.elemental.ability.ability import Ability, TurnPriority, Castable
 from src.elemental.ability.damage_calculator import DamageCalculator
 from src.elemental.combat_elemental import CombatElemental
@@ -72,11 +73,12 @@ class ElementalAction(Action):
     def __init__(self,
                  actor: CombatElemental,
                  ability: Ability,
-                 target: CombatElemental):
+                 target: Targetable):
         self.actor = actor
         self.ability = ability
         self.ability_triggered_bonus = False
         self.target = target
+        self.damage_calculator = None
         self.damage_calculator = DamageCalculator(self.target,
                                                   self.actor,
                                                   self.ability)
@@ -132,7 +134,8 @@ class ElementalAction(Action):
 
     def check_damage_dealt(self) -> None:
         if self.ability.base_power > 0:
-            # Only run calculate() and deal damage if the Ability is meant to do damage.
+            # Only bother with damage calculation if the Ability is meant to do damage.
+            # Eg. an exception is if it applies a team debuff.
             self.damage_calculator.calculate()
             damage = self.damage_calculator.final_damage
             self.target.receive_damage(damage, self.actor)
@@ -177,7 +180,7 @@ class Casting(Action):
                  actor: CombatElemental,
                  castable: Castable,
                  target: CombatElemental):
-        assert(castable.ability.base_cast_time > 0)
+        assert (castable.ability.base_cast_time > 0)
         self.actor = actor
         self.castable = castable
         self.target = target

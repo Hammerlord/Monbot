@@ -102,7 +102,7 @@ class CombatTeamTests(unittest.TestCase):
         combat_team = self.get_combat_team(self.get_team())
         bench = combat_team.eligible_bench
         starting_mana = bench[0].current_mana
-        combat_team.on_turn_start()
+        combat_team.turn_start()
         resultant_mana = bench[0].current_mana
         self.assertGreater(resultant_mana, starting_mana, error)
 

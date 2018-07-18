@@ -13,6 +13,7 @@ class Combat:
     Two opposing sides to a battlefield are distinguished, internally, by "side_a" and "side_b".
     TODO for now we only have 1v1, even though each side allows multiple CombatTeams to join.
     """
+
     def __init__(self,
                  allow_items=True,
                  allow_flee=True,
@@ -98,11 +99,11 @@ class Combat:
                 self.check_kos(kos)
                 self.check_combat_end()
         self.end_round()
-        self.prepare_new_round()
 
     def end_round(self):
         for team in self.teams:
-            team.active_elemental.end_round()
+            team.end_round()
+        self.prepare_new_round()
 
     def check_kos(self, already_checked: List[CombatElemental]) -> None:
         """
@@ -152,7 +153,7 @@ class Combat:
         if not self.in_progress:
             return
         for team in self.teams:
-            team.on_turn_start()
+            team.turn_start()
             if team.check_casting():
                 continue
             if team.is_npc:

@@ -1,13 +1,14 @@
 from typing import List
 
 from src.core.elements import Elements
+from src.core.targetable_interface import Targetable
 from src.elemental.ability.ability import Ability, Castable
 from src.elemental.elemental import Elemental
 from src.elemental.status_effect.status_effect import StatusEffect
 from src.elemental.status_effect.status_manager import StatusManager
 
 
-class CombatElemental:
+class CombatElemental(Targetable):
     def __init__(self, elemental: Elemental,
                  team):
         """

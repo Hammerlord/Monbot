@@ -35,4 +35,4 @@ class Rainatu(Species):
         self._right_icon = ':pineapple:'
         self._portrait = None
         self._growth_rate = GrowthRate()
-        self._learnable_abilities = [LearnableAbilities.slam()]
+        self._learnable_abilities = [LearnableAbilities.slam(), LearnableAbilities.rolling_thunder()]

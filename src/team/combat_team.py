@@ -1,13 +1,15 @@
 from typing import List
 
-from src.combat.combat_actions import KnockedOut, ElementalAction, Switch, Action, Casting
+from src.combat.combat_actions import ElementalAction, Switch, Action, Casting
+from src.core.targetable_interface import Targetable
 from src.elemental.ability.ability import Ability, Target, Castable
 from src.elemental.combat_elemental import CombatElemental
 from src.elemental.elemental import Elemental
+from src.elemental.status_effect.status_effect import StatusEffect
 from src.team.team import Team
 
 
-class CombatTeam:
+class CombatTeam(Targetable):
 
     """
     Wrapper class for a Team in battle. Generates CombatElemental instances of the Team's Elementals.
@@ -24,7 +26,7 @@ class CombatTeam:
         self.__elementals = [CombatElemental(elemental, self) for elemental in team.elementals]
         self.owner = team.owner  # Character or None
         self.__active_elemental = None
-        self.status_effects = []  # Team-wide status effects, eg. weather.
+        self._status_effects = []  # Team-wide status effects, eg. weather.
         self._actions = []  # list[Action] taken by this team.
         self._enemy_side = None  # List[CombatTeam] All the teams opposing this one.
 
@@ -70,6 +72,8 @@ class CombatTeam:
             return self.active_elemental
         elif target == Target.ENEMY:
             return self.get_active_enemy()
+        elif target == Target.ENEMY_TEAM:
+            return self._enemy_side[0]
 
     @property
     def last_action(self) -> Action:
@@ -182,8 +186,10 @@ class CombatTeam:
         )
         self.combat.request_action(action)
 
-    def on_turn_start(self) -> None:
+    def turn_start(self) -> None:
         self.active_elemental.start_turn()
+        for effect in self._status_effects:
+            effect.on_turn_start()
         for elemental in self.eligible_bench:
             elemental.gain_bench_mana()
 
@@ -209,14 +215,35 @@ class CombatTeam:
         """
         When this elemental's move has been resolved.
         """
+        for effect in self._status_effects:
+            effect.on_turn_end()
         self.active_elemental.end_turn()
 
     def end_round(self) -> None:
         """
         When everybody's moves have been resolved.
         """
+        for effect in self._status_effects:
+            effect.reduce_duration()
+            if effect.duration_ended:
+                self._status_effects.remove(effect)
         self.active_elemental.end_round()
 
     def add_log(self, action: Action) -> None:
         # Store the Action as a record.
         self._actions.append(action)
+
+    def add_status_effect(self, status_effect: StatusEffect) -> None:
+        status_effect.target = self
+        self._status_effects.append(status_effect)
+        status_effect.on_effect_start()
+
+    # No op stubs when targeted.
+    def receive_damage(self, amount, actor):
+        pass
+
+    def on_receive_ability(self, ability, actor):
+        pass
+
+    def heal(self, amount):
+        pass

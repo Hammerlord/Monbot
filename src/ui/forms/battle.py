@@ -148,7 +148,7 @@ class SelectAbilityView(ValueForm):
 
     @property
     def values(self) -> List[any]:
-        return self.combat_team.active_elemental.abilities
+        return self.combat_team.active_elemental.available_abilities
 
     def get_battlefield(self) -> str:
         return Battlefield(self.combat_team.active_elemental,
@@ -161,7 +161,7 @@ class SelectAbilityView(ValueForm):
         elemental = self.combat_team.active_elemental
         ability_views = []
         for i, ability in enumerate(elemental.available_abilities):
-            ability_views.append(f'{i + 1}) {AbilityOptionView(ability).get_detail()}')
+            ability_views.append(f'{i + 1}) {AbilityOptionView(ability).get_summary()}')
         return '\n'.join(ability_views)
 
     def get_main_view(self) -> str:

@@ -5,7 +5,7 @@ from src.elemental.status_effect.status_effect import StatusEffect
 class EnrageEffect(StatusEffect):
     def __init__(self):
         super().__init__()
-        self._name = "Enraged!"
+        self.name = "Enraged!"
         self._description = f"Gain physical and magic attack every turn for {self._base_duration} turns."
         self.icon = ENRAGE
         self.uptime = 1  # The number of turns this effect has been up.
