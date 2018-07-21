@@ -19,7 +19,7 @@ class Technique:
     def description(self) -> str:
         return self._description
 
-    def __str__(self) -> str:
+    def __repr__(self) -> str:
         return self.name
 
     @staticmethod

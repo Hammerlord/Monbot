@@ -25,5 +25,5 @@ class DefendEffect(StatusEffect):
     def on_receive_damage(self, amount: int, actor) -> bool:
         return True
 
-    def activation_recap(self) -> str:
+    def trigger_recap(self) -> str:
         return f'{self.target.nickname} defended the attack!'

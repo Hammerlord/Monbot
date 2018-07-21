@@ -25,5 +25,5 @@ class Burn(StatusEffect):
     def application_recap(self) -> str:
         return f'{self.target.nickname} has been burned!'
 
-    def activation_recap(self) -> str:
+    def trigger_recap(self) -> str:
         return f'{self.target.nickname} was hurt by its burn.'

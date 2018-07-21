@@ -1,18 +1,16 @@
+import asyncio
 from typing import List
 
-import asyncio
 import discord
 from discord.ext.commands import Bot
 
 from src.character.player import Player
 from src.combat.combat import Combat
-from src.combat.combat_actions import ActionType
 from src.core.constants import *
 from src.team.combat_team import CombatTeam
 from src.ui.ability_option import AbilityOptionView
 from src.ui.battlefield import Battlefield
 from src.ui.forms.form import FormOptions, Form, ValueForm
-from src.ui.health_bar import HealthBarView
 
 
 class BattleViewOptions(FormOptions):
@@ -114,6 +112,7 @@ class SelectElementalView(ValueForm):
         return self.combat_team.eligible_bench
 
     async def render(self) -> None:
+
         await self._clear_reactions()
         for button in self.buttons:
             await self.bot.add_reaction(self.discord_message, button.reaction)

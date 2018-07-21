@@ -199,7 +199,7 @@ class StatusEffect(Technique):
         """
         return self._base_duration + 1
 
-    def activation_recap(self) -> str:
+    def trigger_recap(self) -> str:
         # Recap message for when this effect triggers.
         return ''
 

@@ -31,7 +31,7 @@ class RollingThunderEffect(StatusEffect):
             current_active.receive_damage(damage, self.applier)
             return True
 
-    def activation_recap(self) -> str:
+    def trigger_recap(self) -> str:
         return f'{self.name} crackles with energy on {self.target.active_elemental.nickname}!'
 
     def application_recap(self) -> str:

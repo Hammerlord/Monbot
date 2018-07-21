@@ -1,16 +1,17 @@
 from typing import List
 
-from src.combat.combat_actions import ElementalAction, Switch, Action, Casting
+from src.combat.actions.casting import Casting
+from src.combat.actions.combat_actions import Switch, Action
+from src.combat.actions.elemental_action import ElementalAction
 from src.core.targetable_interface import Targetable
 from src.elemental.ability.ability import Ability, Target, Castable
-from src.elemental.combat_elemental import CombatElemental
+from src.elemental.combat_elemental import CombatElemental, CombatElementalLog
 from src.elemental.elemental import Elemental
 from src.elemental.status_effect.status_effect import StatusEffect
 from src.team.team import Team
 
 
 class CombatTeam(Targetable):
-
     """
     Wrapper class for a Team in battle. Generates CombatElemental instances of the Team's Elementals.
     The player controls the CombatTeam.
@@ -28,11 +29,7 @@ class CombatTeam(Targetable):
         self.__active_elemental = None
         self._status_effects = []  # Team-wide status effects, eg. weather.
         self._actions = []  # list[Action] taken by this team.
-        self._enemy_side = None  # List[CombatTeam] All the teams opposing this one.
-
-    @property
-    def enemy_side(self) -> List['CombatTeam']:
-        return self._enemy_side.copy()
+        self.side = None  # Str. The side of the battlefield this CombatTeam is on.
 
     @staticmethod
     def from_elementals(elementals: List[Elemental]) -> 'CombatTeam':
@@ -53,6 +50,9 @@ class CombatTeam(Targetable):
         if self.owner and not self.owner.is_npc:
             self.owner.is_busy = True
 
+    def set_side(self, side: str) -> None:
+        self.side = side
+
     def on_combat_start(self) -> None:
         self.attempt_switch(self.eligible_bench[0])  # The first eligible (HP > 0) Elemental in the team
 
@@ -60,31 +60,9 @@ class CombatTeam(Targetable):
         if self.owner and not self.owner.is_npc:
             self.owner.is_busy = False
 
-    def set_enemy_side(self, enemy_teams: List['CombatTeam']) -> None:
-        self._enemy_side = enemy_teams
-
-    def get_target(self, ability: Ability) -> CombatElemental:
-        """
-        :return: The CombatElemental the Ability should affect, based on the Ability's targeting enum.
-        """
-        target = ability.targeting
-        if target == Target.SELF:
-            return self.active_elemental
-        elif target == Target.ENEMY:
-            return self.get_active_enemy()
-        elif target == Target.ENEMY_TEAM:
-            return self._enemy_side[0]
-
     @property
     def last_action(self) -> Action:
         return self._actions[-1]
-
-    def get_active_enemy(self) -> CombatElemental:
-        """
-        :return: The first CombatElemental on the opposing side.
-        TODO work in progress: this, of course, doesn't support multiple elementals on one side.
-        """
-        return self._enemy_side[0].active_elemental
 
     @property
     def elementals(self) -> List[CombatElemental]:
@@ -147,12 +125,13 @@ class CombatTeam(Targetable):
         If true, automatically continue that ability.
         """
         castable = self.active_elemental.casting
-        if castable:
-            if castable.is_ready:
-                self.make_move(castable.ability)
-            else:
-                self.handle_cast_time(castable)
-            return True
+        if not castable:
+            return False
+        if castable.is_ready:
+            self.make_move(castable.ability)
+        else:
+            self.handle_cast_time(castable)
+        return True
 
     def select_ability(self, ability: Ability) -> bool:
         """
@@ -173,7 +152,7 @@ class CombatTeam(Targetable):
         action = Casting(
             actor=self.active_elemental,
             castable=castable,
-            target=self.get_target(castable.ability)  # This might not be the end target.
+            target=self.combat.get_target(castable.ability, self.active_elemental)  # This might not be the end target.
         )
         self.combat.request_action(action)
 
@@ -182,7 +161,7 @@ class CombatTeam(Targetable):
         action = ElementalAction(
             actor=self.active_elemental,
             ability=ability,
-            target=self.get_target(ability)
+            target=self.combat.get_target(ability, self.active_elemental)
         )
         self.combat.request_action(action)
 
@@ -238,12 +217,21 @@ class CombatTeam(Targetable):
         self._status_effects.append(status_effect)
         status_effect.on_effect_start()
 
-    # No op stubs when targeted.
-    def receive_damage(self, amount, actor):
-        pass
+    def heal(self, amount: int) -> None:
+        """
+        When CombatTeam receives a heal, all eligible elementals receives that amount of healing.
+        """
+        self.active_elemental.heal(amount)
+        for elemental in self.eligible_bench:
+            elemental.heal(amount)
 
-    def on_receive_ability(self, ability, actor):
-        pass
+    def receive_damage(self, amount: int, actor: CombatElemental) -> None:
+        # However, trying to target a CombatTeam to do damage just goes to the active elemental.
+        self.active_elemental.receive_damage(amount, actor)
 
-    def heal(self, amount):
-        pass
+    def on_receive_ability(self, ability: Ability, actor: CombatElemental) -> None:
+        # Same as receive damage.
+        self.active_elemental.on_receive_ability(ability, actor)
+
+    def snapshot(self) -> CombatElementalLog:
+        return self.active_elemental.snapshot()

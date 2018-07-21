@@ -26,14 +26,17 @@ class CombatAI:
             self.pick_ability()
 
     def switch(self) -> None:
+        if not self.team.eligible_bench:
+            return
+        
         effective_elementals = Effectiveness.find_effective(self.team.eligible_bench,
-                                                            self.team.get_active_enemy().element)
+                                                            self.combat.get_active_enemy(self.team).element)
         if effective_elementals:
             self.team.attempt_switch(effective_elementals[0])
             return
 
         neutral_elementals = Effectiveness.find_neutral(self.team.eligible_bench,
-                                                        self.team.get_active_enemy().element)
+                                                        self.combat.get_active_enemy(self.team).element)
         if neutral_elementals:
             self.team.attempt_switch(neutral_elementals[0])
             return

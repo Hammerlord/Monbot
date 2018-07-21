@@ -1,5 +1,7 @@
 from typing import List
 
+from copy import deepcopy
+
 from src.core.elements import Elements
 from src.core.targetable_interface import Targetable
 from src.elemental.ability.ability import Ability, Castable
@@ -30,6 +32,9 @@ class CombatElemental(Targetable):
         self._actions = []  # List[ElementalAction]  A record of the actions taken by this CombatElemental.
         self._abilities = elemental.active_abilities
         self.casting = None  # An Ability that takes time to activate or executes over multiple turns.
+
+    def __repr__(self) -> str:
+        return self.nickname
 
     @property
     def nickname(self) -> str:
@@ -137,11 +142,11 @@ class CombatElemental(Targetable):
 
     @property
     def abilities(self) -> List[Ability]:
-        return self._abilities.copy()
+        return list(self._abilities)
 
     @property
     def status_effects(self) -> List[StatusEffect]:
-        return self._status_manager.status_effects
+        return list(self._status_manager.status_effects)
 
     @property
     def num_status_effects(self) -> int:
@@ -150,6 +155,13 @@ class CombatElemental(Targetable):
     @property
     def is_knocked_out(self) -> bool:
         return self._elemental.is_knocked_out
+
+    @property
+    def id(self) -> int:
+        return self._elemental.id
+
+    def is_elemental(self, other: 'CombatElemental') -> bool:
+        return self.id == other.id
 
     def set_casting(self, casted: Castable) -> None:
         self.casting = casted
@@ -251,3 +263,23 @@ class CombatElemental(Targetable):
 
     def heal(self, amount: int) -> None:
         self._elemental.heal(amount)
+
+    def snapshot(self) -> 'CombatElementalLog':
+        """
+        Create a limited log about itself for rendering.
+        """
+        return CombatElementalLog(self)
+
+
+class CombatElementalLog:
+    def __init__(self, combat_elemental: CombatElemental):
+        self.current_hp = combat_elemental.current_hp
+        self.max_hp = combat_elemental.max_hp
+        self.current_mana = combat_elemental.current_mana
+        self.max_mana = combat_elemental.max_mana
+        self.status_effects = deepcopy(combat_elemental.status_effects)
+        self.id = combat_elemental.id
+        self.team = combat_elemental.team
+
+    def is_enemy(self, team) -> bool:
+        return team in self.team.enemy_side

@@ -22,7 +22,7 @@ class EnrageEffect(StatusEffect):
         self.apply_stat_changes()
         return True
 
-    def activation_recap(self) -> str:
+    def trigger_recap(self) -> str:
         return f"{self.target.nickname}'s rage increases."
 
     def fade_recap(self) -> str:

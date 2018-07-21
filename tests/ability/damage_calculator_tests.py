@@ -73,7 +73,7 @@ class DamageCalculatorTests(unittest.TestCase):
 
     def test_same_element_multiplier(self):
         error = "The Ability being the same element as its user should grant a multiplier"
-        ability = AbilityBuilder().with_element(Elements.WATER).build()
+        ability = AbilityBuilder().with_element(Elements.WATER).with_base_power(10).build()
         target = CombatElementalBuilder().build()
         actor = CombatElementalBuilder().with_element(Elements.WATER).build()
         calculator = DamageCalculator(target, actor, ability)

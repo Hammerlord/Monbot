@@ -1,6 +1,6 @@
 import unittest
 
-from src.combat.combat_actions import ElementalAction
+from src.combat.actions.elemental_action import ElementalAction
 from src.elemental.ability.ability_factory import Abilities
 from src.elemental.ability.damage_calculator import DamageCalculator
 from src.elemental.status_effect.status_effects.burns import Burn

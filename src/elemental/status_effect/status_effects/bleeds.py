@@ -27,8 +27,9 @@ class Bleed(StatusEffect):
     def application_recap(self) -> str:
         return f'{self.target.nickname} has been wounded!'
 
-    def activation_recap(self) -> str:
-        return f'{self.target.nickname} was hurt by its wounds.'
+    def trigger_recap(self) -> str:
+        source = self.name if self.name else "its wounds"
+        return f'{self.target.nickname} was hurt by {source}.'
 
 
 class RazorFangsEffect(Bleed):
@@ -36,6 +37,7 @@ class RazorFangsEffect(Bleed):
     def __init__(self):
         super().__init__()
         self.base_power = 12
+        self.name = "Razor Fangs"
 
 
 class RendEffect(Bleed):
@@ -43,6 +45,7 @@ class RendEffect(Bleed):
     def __init__(self):
         super().__init__()
         self.base_power = 15
+        self.name = "Rend"
 
     @property
     def _base_duration(self) -> int:

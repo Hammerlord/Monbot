@@ -1,9 +1,10 @@
 from itertools import groupby
 from typing import List
 
-from src.combat.combat_actions import ActionType, Action, KnockedOut, Switch
+from src.combat.actions.combat_actions import Action, KnockedOut, Switch
 from src.combat.combat_ai import CombatAI
-from src.elemental.ability.ability import Target, Ability
+from src.core.targetable_interface import Targetable
+from src.elemental.ability.ability import Ability, Target
 from src.elemental.combat_elemental import CombatElemental
 
 
@@ -13,6 +14,8 @@ class Combat:
     Two opposing sides to a battlefield are distinguished, internally, by "side_a" and "side_b".
     TODO for now we only have 1v1, even though each side allows multiple CombatTeams to join.
     """
+    SIDE_A = 'a'  # Note: 'a' and 'b' are arbitrary.
+    SIDE_B = 'b'
 
     def __init__(self,
                  allow_items=True,
@@ -53,10 +56,10 @@ class Combat:
         if len(self.teams) >= 2 and not self.in_progress:  # TODO 1v1 only right now
             self.in_progress = True
             for team in self.side_a:
-                team.set_enemy_side(self.side_b.copy())
+                team.set_side(Combat.SIDE_A)
                 team.on_combat_start()
             for team in self.side_b:
-                team.set_enemy_side(self.side_a.copy())
+                team.set_side(Combat.SIDE_B)
                 team.on_combat_start()
 
     def add_knockout_replacement(self, request: Action) -> None:
@@ -64,7 +67,7 @@ class Combat:
             return
         self.action_requests.append(request)
         if len(self.action_requests) == len(self.get_knockouts()):
-            self.resolve_requests()
+            self._resolve_requests()
 
     def is_awaiting_knockout_replacements(self) -> bool:
         """
@@ -83,9 +86,39 @@ class Combat:
             self.add_knockout_replacement(request)
         self.action_requests.append(request)
         if len(self.action_requests) == len(self.teams):
-            self.resolve_requests()
+            self._resolve_requests()
 
-    def resolve_requests(self) -> None:
+    def get_target(self, ability: Ability, actor: CombatElemental) -> Targetable:
+        """
+        :return: The Targetable the Ability should affect, based on the Ability's targeting enum.
+        """
+        target = ability.targeting
+        if target == Target.SELF:
+            return actor
+        elif target == Target.ENEMY:
+            return self.get_active_enemy(actor.team)
+        elif target == Target.ENEMY_TEAM:
+            return self.get_enemy_side(actor.team)[0]
+
+    def get_enemy_side(self, team):
+        """
+        :param team: CombatTeam. The Team that is looking for an enemy.
+        :return: List[CombatTeam]
+        """
+        assert team.side is not None
+        if team.side == Combat.SIDE_A:
+            return list(self.side_b)
+        if team.side == Combat.SIDE_B:
+            return list(self.side_a)
+
+    def get_active_enemy(self, team):
+        """
+        :param team: CombatTeam. The Team that is looking for an enemy.
+        :return: CombatElemental
+        """
+        return self.get_enemy_side(team)[0].active_elemental
+
+    def _resolve_requests(self) -> None:
         """
         When all players have made an action request, resolve the order and execution of those requests.
         """
@@ -96,16 +129,16 @@ class Combat:
             action_group = sorted(action_group, key=lambda action: action.speed, reverse=True)
             for action in action_group:
                 self._resolve_request(action)
-                self.check_kos(kos)
+                self._check_kos(kos)
                 self.check_combat_end()
-        self.end_round()
+        self._end_round()
 
-    def end_round(self):
+    def _end_round(self):
         for team in self.teams:
             team.end_round()
         self.prepare_new_round()
 
-    def check_kos(self, already_checked: List[CombatElemental]) -> None:
+    def _check_kos(self, already_checked: List[CombatElemental]) -> None:
         """
         If an elemental has been knocked out after a request (on either side), record the log and grant exp.
         """
@@ -122,7 +155,7 @@ class Combat:
         # Grant the opposition experience.
         if not self.allow_exp_gain:
             return
-        enemy_side = from_elemental.team.enemy_side
+        enemy_side = self.get_enemy_side(from_elemental.team)
         raw_exp = from_elemental.level * 6 + 10
         exp_gained = int(raw_exp // len(enemy_side) + raw_exp * len(enemy_side) * 0.25)
         for enemy_team in enemy_side:
@@ -149,9 +182,9 @@ class Combat:
         """
         self.action_log.append([])
         self.action_requests = []
-        print([log.__str__() for log in self.previous_round_log], self.in_progress)
         if not self.in_progress:
             return
+        print([log.__str__() for log in self.previous_round_log], self.in_progress)
         for team in self.teams:
             team.turn_start()
             if team.check_casting():

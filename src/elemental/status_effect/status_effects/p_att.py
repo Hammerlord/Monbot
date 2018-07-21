@@ -11,7 +11,7 @@ class PAttBuff(StatusEffect):
     def _base_duration(self) -> int:
         return 7
 
-    def activation_recap(self) -> str:
+    def trigger_recap(self) -> str:
         return f"{self.target.nickname}'s physical attack has increased."
 
     def apply_stat_changes(self) -> None:
@@ -29,7 +29,7 @@ class PAttBuffLarge(StatusEffect):
     def _base_duration(self) -> int:
         return 3
 
-    def activation_recap(self) -> str:
+    def trigger_recap(self) -> str:
         return f"{self.target.nickname}'s physical attack has greatly increased!"
 
     def apply_stat_changes(self) -> None:

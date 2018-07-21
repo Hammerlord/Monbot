@@ -26,8 +26,8 @@ class CombatTeamTests(unittest.TestCase):
     @staticmethod
     def get_team() -> Team:
         team = TeamBuilder().build()
-        smurggle = ElementalBuilder().build()
-        loksy = ElementalBuilder().build()
+        smurggle = ElementalBuilder().with_nickname('smurggle').build()
+        loksy = ElementalBuilder().with_nickname('loksy').build()
         team.add_elemental(smurggle)
         team.add_elemental(loksy)
         return team
@@ -126,7 +126,7 @@ class CombatTeamTests(unittest.TestCase):
         combat.check_combat_start()
         ability = Mock()
         ability.targeting = Target.ENEMY
-        target = team_a.get_target(ability)
+        target = combat.get_target(ability, team_a.active_elemental)
         self.assertEqual(target, team_b.active_elemental, error)
 
     def test_get_self_target(self):
@@ -139,5 +139,5 @@ class CombatTeamTests(unittest.TestCase):
         combat.check_combat_start()
         ability = Mock()
         ability.targeting = Target.SELF
-        target = team_a.get_target(ability)
+        target = combat.get_target(ability, team_a.active_elemental)
         self.assertEqual(target, team_a.active_elemental, error)

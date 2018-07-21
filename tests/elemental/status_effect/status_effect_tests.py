@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import Mock
 
-from src.combat.combat_actions import ElementalAction
+from src.combat.actions.elemental_action import ElementalAction
 from src.elemental.ability.abilities.claw import Claw
 from src.elemental.status_effect.status_effects.enrage import EnrageEffect
 from tests.elemental.elemental_builder import CombatElementalBuilder

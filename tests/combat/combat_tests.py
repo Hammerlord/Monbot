@@ -1,15 +1,16 @@
 import unittest
 
+from src.combat.actions.combat_actions import Switch
+from src.combat.actions.elemental_action import ElementalAction
 from src.combat.combat import Combat
-from src.combat.combat_actions import Switch, ElementalAction, KnockedOut
 from src.elemental.ability.abilities.claw import Claw
 from src.elemental.ability.abilities.defend import Defend
 from src.elemental.ability.abilities.shining_laser import ShiningLaser
-from src.elemental.ability.ability import Target, Castable
+from src.elemental.ability.ability import Castable
 from src.elemental.combat_elemental import CombatElemental
 from src.team.combat_team import CombatTeam
 from tests.character.character_builder import PlayerBuilder
-from tests.elemental.elemental_builder import ElementalBuilder, CombatElementalBuilder
+from tests.elemental.elemental_builder import ElementalBuilder
 from tests.team.team_builder import TeamBuilder
 
 
@@ -78,7 +79,6 @@ class CombatTests(unittest.TestCase):
         player_team.add_elemental(elemental)
         player_team = CombatTeam(player_team)
         other_team = self.get_combat_team()
-        other_team.set_enemy_side([player_team])
         combat = Combat()
         combat.join_battle(player_team)
         combat.join_battle(other_team)
@@ -96,7 +96,6 @@ class CombatTests(unittest.TestCase):
         player_team.add_elemental(ElementalBuilder().build())
         player_team = CombatTeam(player_team)
         other_team = self.get_combat_team()
-        other_team.set_enemy_side([player_team])
         combat = Combat()
         combat.join_battle(player_team)
         combat.join_battle(other_team)
