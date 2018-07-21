@@ -162,7 +162,14 @@ class ElementalAction(Action):
 
     @property
     def recap(self) -> str:
-        return self.ability.get_recap(self.actor.nickname)
+        recap = self.ability.get_recap(self.actor.nickname)
+        if self.damage_calculator.is_effective:
+            recap += " It's super effective."
+        elif self.damage_calculator.is_resisted:
+            recap += f' The attack was resisted...'
+        if self.damage_calculator.damage_blocked > 0:
+            recap += f' {self.target.nickname} defended itself!'
+        return recap
 
     @property
     def can_execute(self) -> bool:
