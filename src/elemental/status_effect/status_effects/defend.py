@@ -19,13 +19,11 @@ class DefendEffect(StatusEffect):
         # Block damage against any end of turn debuffs as well.
         self.apply_stat_changes()
 
-    def on_receive_damage(self, amount: int, actor) -> str:
-        """
-        :param amount: The amount of damage taken.
-        :param actor: The CombatElemental attacking the owner of this buff.
-        :return: Str recap of this effect.
-        """
-        return f"{self.target.nickname} is defending!"
-
     def apply_stat_changes(self) -> None:
         self.target.update_damage_reduction(self.target.defend_potency)
+
+    def on_receive_damage(self, amount: int, actor) -> bool:
+        return True
+
+    def activation_recap(self) -> str:
+        return f'{self.target.nickname} defended the attack!'

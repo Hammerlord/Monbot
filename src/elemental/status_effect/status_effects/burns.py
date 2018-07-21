@@ -15,8 +15,15 @@ class Burn(StatusEffect):
     def _base_duration(self) -> float:
         return 4
 
-    def on_turn_end(self):
+    def on_turn_end(self) -> bool:
         damage_calculator = DamageCalculator(self.target, self.applier, self)
         damage_calculator.calculate()
         damage = damage_calculator.final_damage
         self.target.receive_damage(damage, self.applier)
+        return True
+
+    def application_recap(self) -> str:
+        return f'{self.target.nickname} has been burned!'
+
+    def activation_recap(self) -> str:
+        return f'{self.target.nickname} was hurt by its burn.'

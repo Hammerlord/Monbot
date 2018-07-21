@@ -198,3 +198,15 @@ class StatusEffect(Technique):
         Unless that's what we want (eg. Defend).
         """
         return self._base_duration + 1
+
+    def activation_recap(self) -> str:
+        # Recap message for when this effect triggers.
+        return ''
+
+    def application_recap(self) -> str:
+        # Recap message for when this effect is applied.
+        return ''
+
+    def fade_recap(self) -> str:
+        # Recap when this effect falls off.
+        return ''

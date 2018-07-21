@@ -17,9 +17,16 @@ class EnrageEffect(StatusEffect):
     def on_effect_start(self) -> None:
         self.apply_stat_changes()
 
-    def on_turn_start(self) -> str:
+    def on_turn_start(self) -> bool:
         self.uptime += 1
+        self.apply_stat_changes()
+        return True
+
+    def activation_recap(self) -> str:
         return f"{self.target.nickname}'s rage increases."
+
+    def fade_recap(self) -> str:
+        return f"{self.target.nickname}'s rage dissipates."
 
     def apply_stat_changes(self) -> None:
         stages = self.uptime

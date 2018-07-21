@@ -5,14 +5,13 @@ class PAttBuff(StatusEffect):
     def __init__(self):
         super().__init__()
         self._name = "Physical Attack+"
-        self.num_turns = 7
-        self._description = f"Increases physical attack by 1 stage. Lasts for {self.num_turns} turns."
-        self._max_duration = self._calculate_duration(self.num_turns)
-        self.refresh_duration()
+        self._description = f"Increases physical attack by 1 stage."
         self.can_add_instances = True
 
-    def on_effect_start(self) -> str:
-        super().on_effect_start()
+    def _base_duration(self) -> int:
+        return 7
+
+    def activation_recap(self) -> str:
         return f"{self.target.nickname}'s physical attack has increased."
 
     def apply_stat_changes(self) -> None:
@@ -24,13 +23,13 @@ class PAttBuffLarge(StatusEffect):
         super().__init__()
         self._name = "Physical Attack++"
         self.num_turns = 3
-        self._description = f"Increases physical attack by 2 stages. Lasts for {self.num_turns} turns."
-        self._max_duration = self._calculate_duration(self.num_turns)
-        self.refresh_duration()
+        self._description = f"Increases physical attack by 2 stages."
         self.can_add_instances = True
 
-    def on_effect_start(self) -> str:
-        super().on_effect_start()
+    def _base_duration(self) -> int:
+        return 3
+
+    def activation_recap(self) -> str:
         return f"{self.target.nickname}'s physical attack has greatly increased!"
 
     def apply_stat_changes(self) -> None:
