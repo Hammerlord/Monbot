@@ -1,4 +1,5 @@
 from enum import Enum
+from typing import List
 
 from src.core.targetable_interface import Targetable
 from src.elemental.ability.ability import TurnPriority
@@ -23,6 +24,30 @@ class EventLog:
                  recap: str):
         self.target_snapshot = target.snapshot()
         self.recap = recap
+
+    def __repr__(self) -> str:
+        return self.recap
+
+
+class TurnLogger:
+    def __init__(self):
+        self.turns = [[]]  # List[List[EventLog]]
+
+    def add_log(self, combat_elemental, recap) -> None:
+        # Ignore events with no recap message.
+        if recap != '':
+            log = EventLog(combat_elemental, recap)
+            self.turns[-1].append(log)
+
+    def get_previous_turn_logs(self) -> List[EventLog]:
+        return list(self.turns[-2])
+
+    def prepare_new_round(self) -> None:
+        self.turns.append([])
+
+    def add_ko(self, combat_elemental) -> None:
+        log = EventLog(combat_elemental, f'{combat_elemental.nickname} was knocked out!')
+        self.turns[-1].append(log)
 
 
 class Action:

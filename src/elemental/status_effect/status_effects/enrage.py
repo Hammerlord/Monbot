@@ -22,11 +22,13 @@ class EnrageEffect(StatusEffect):
         self.apply_stat_changes()
         return True
 
+    @property
     def trigger_recap(self) -> str:
         return f"{self.target.nickname}'s rage increases."
 
+    @property
     def fade_recap(self) -> str:
-        return f"{self.target.nickname}'s rage dissipates."
+        return f"{self.target.nickname}'s rage fades."
 
     def apply_stat_changes(self) -> None:
         stages = self.uptime

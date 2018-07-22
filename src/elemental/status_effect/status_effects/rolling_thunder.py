@@ -31,8 +31,10 @@ class RollingThunderEffect(StatusEffect):
             current_active.receive_damage(damage, self.applier)
             return True
 
+    @property
     def trigger_recap(self) -> str:
         return f'{self.name} crackles with energy on {self.target.active_elemental.nickname}!'
 
+    @property
     def application_recap(self) -> str:
         return f'Dark clouds gather over {self.target.active_elemental.nickname}.'

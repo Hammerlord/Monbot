@@ -28,7 +28,7 @@ class CombatAI:
     def switch(self) -> None:
         if not self.team.eligible_bench:
             return
-        
+
         effective_elementals = Effectiveness.find_effective(self.team.eligible_bench,
                                                             self.combat.get_active_enemy(self.team).element)
         if effective_elementals:

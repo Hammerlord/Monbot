@@ -199,14 +199,17 @@ class StatusEffect(Technique):
         """
         return self._base_duration + 1
 
+    @property
     def trigger_recap(self) -> str:
         # Recap message for when this effect triggers.
         return ''
 
+    @property
     def application_recap(self) -> str:
         # Recap message for when this effect is applied.
         return ''
 
+    @property
     def fade_recap(self) -> str:
         # Recap when this effect falls off.
         return ''

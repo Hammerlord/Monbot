@@ -237,8 +237,12 @@ class CombatElemental(Targetable):
         self._status_manager.on_round_end()
 
     def on_ability(self, ability: Ability) -> None:
+        # This method doesn't log itself because it doesn't have enough information about what just happened.
         self.update_mana(-ability.mana_cost)
         self.update_defend_charges(-ability.defend_cost)
+
+    def log(self, recap: str):
+        self.team.log(recap)
 
     def update_defend_charges(self, amount: int) -> None:
         self._defend_charges += amount
@@ -272,14 +276,17 @@ class CombatElemental(Targetable):
 
 
 class CombatElementalLog:
+    """
+    Containing visible details about a CombatElemental and a few identity attrs.
+    """
     def __init__(self, combat_elemental: CombatElemental):
         self.current_hp = combat_elemental.current_hp
         self.max_hp = combat_elemental.max_hp
         self.current_mana = combat_elemental.current_mana
         self.max_mana = combat_elemental.max_mana
-        self.status_effects = deepcopy(combat_elemental.status_effects)
+        self.status_effect_icons = [status_effect.icon for status_effect in combat_elemental.status_effects]
         self.id = combat_elemental.id
         self.team = combat_elemental.team
 
-    def is_enemy(self, team) -> bool:
-        return team in self.team.enemy_side
+    def is_enemy(self, other_team) -> bool:
+        return other_team.side != self.team.side

@@ -30,6 +30,7 @@ class CombatTeam(Targetable):
         self._status_effects = []  # Team-wide status effects, eg. weather.
         self._actions = []  # list[Action] taken by this team.
         self.side = None  # Str. The side of the battlefield this CombatTeam is on.
+        self.logger = None  # Later set by Combat.
 
     @staticmethod
     def from_elementals(elementals: List[Elemental]) -> 'CombatTeam':
@@ -46,7 +47,7 @@ class CombatTeam(Targetable):
         :param combat: The battle this Team is joining.
         """
         self.combat = combat
-        self.combat.join_battle(self)
+        self.logger = combat.turn_logger
         if self.owner and not self.owner.is_npc:
             self.owner.is_busy = True
 
@@ -188,6 +189,7 @@ class CombatTeam(Targetable):
         return True
 
     def change_active_elemental(self, elemental: CombatElemental) -> None:
+        # Logging is handled in Switch action as it has a detailed recap.
         self.__active_elemental = elemental
 
     def end_turn(self) -> None:
@@ -195,7 +197,8 @@ class CombatTeam(Targetable):
         When this elemental's move has been resolved.
         """
         for effect in self._status_effects:
-            effect.on_turn_end()
+            if effect.on_turn_end():
+                self.log(effect.trigger_recap)
         self.active_elemental.end_turn()
 
     def end_round(self) -> None:
@@ -208,7 +211,7 @@ class CombatTeam(Targetable):
                 self._status_effects.remove(effect)
         self.active_elemental.end_round()
 
-    def add_log(self, action: Action) -> None:
+    def add_action(self, action: Action) -> None:
         # Store the Action as a record.
         self._actions.append(action)
 
@@ -216,6 +219,7 @@ class CombatTeam(Targetable):
         status_effect.target = self
         self._status_effects.append(status_effect)
         status_effect.on_effect_start()
+        self.log(status_effect.application_recap)
 
     def heal(self, amount: int) -> None:
         """
@@ -233,5 +237,5 @@ class CombatTeam(Targetable):
         # Same as receive damage.
         self.active_elemental.on_receive_ability(ability, actor)
 
-    def snapshot(self) -> CombatElementalLog:
-        return self.active_elemental.snapshot()
+    def log(self, recap):
+        self.logger.add_log(self.active_elemental, recap)

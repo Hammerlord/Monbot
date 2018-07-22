@@ -125,15 +125,16 @@ class StatusManager:
             return -self._max_stages
         return added
 
-    def add_status_effect(self, status_effect: StatusEffect) -> None:
-        equivalent_effect = self.__effect_exists(status_effect)
-        if equivalent_effect and not status_effect.can_add_instances:
+    def add_status_effect(self, effect: StatusEffect) -> None:
+        equivalent_effect = self.__effect_exists(effect)
+        if equivalent_effect and not effect.can_add_instances:
             equivalent_effect.reapply()
             return
-        status_effect.target = self.combat_elemental
-        self._status_effects.append(status_effect)
-        status_effect.on_effect_start()
+        effect.target = self.combat_elemental
+        self._status_effects.append(effect)
+        effect.on_effect_start()
         self.__recalculate_effects()
+        self.combat_elemental.log(effect.application_recap)
 
     def dispel_all(self, dispeller) -> None:
         """
@@ -150,7 +151,8 @@ class StatusManager:
         :param actor: The CombatElemental performing the ability.
         """
         for effect in self._status_effects:
-            effect.on_receive_ability(ability, actor)
+            if effect.on_receive_ability(ability, actor):
+                self.combat_elemental.log(effect.trigger_recap)
 
     def on_receive_damage(self, amount, actor) -> None:
         """
@@ -158,15 +160,18 @@ class StatusManager:
         :param actor: The CombatElemental dealing damage.
         """
         for effect in self._status_effects:
-            effect.on_receive_damage(amount, actor)
+            if effect.on_receive_damage(amount, actor):
+                self.combat_elemental.log(effect.trigger_recap)
 
     def on_turn_start(self) -> None:
         for effect in self._status_effects:
-            effect.on_turn_start()
+            if effect.on_turn_start():
+                self.combat_elemental.log(effect.trigger_recap)
 
     def on_turn_end(self) -> None:
         for effect in self._status_effects:
-            effect.on_turn_end()
+            if effect.on_turn_end():
+                self.combat_elemental.log(effect.trigger_recap)
 
     def on_round_end(self) -> None:
         for effect in self._status_effects:
@@ -183,7 +188,8 @@ class StatusManager:
 
     def on_switch_in(self) -> None:
         for effect in self._status_effects:
-            effect.on_switch_in()
+            if effect.on_switch_in():
+                self.combat_elemental.log(effect.trigger_recap)
 
     def __effect_exists(self, to_check: StatusEffect) -> StatusEffect or None:
         """
@@ -212,6 +218,7 @@ class StatusManager:
         effect.reduce_duration()
         if effect.duration_ended:
             self._status_effects.remove(effect)
+            self.combat_elemental.log(effect.fade_recap)
 
     def __recalculate_effects(self) -> None:
         """

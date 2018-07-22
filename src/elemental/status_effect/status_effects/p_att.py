@@ -8,9 +8,11 @@ class PAttBuff(StatusEffect):
         self._description = f"Increases physical attack by 1 stage."
         self.can_add_instances = True
 
+    @property
     def _base_duration(self) -> int:
         return 7
 
+    @property
     def trigger_recap(self) -> str:
         return f"{self.target.nickname}'s physical attack has increased."
 
@@ -26,9 +28,11 @@ class PAttBuffLarge(StatusEffect):
         self._description = f"Increases physical attack by 2 stages."
         self.can_add_instances = True
 
+    @property
     def _base_duration(self) -> int:
         return 3
 
+    @property
     def trigger_recap(self) -> str:
         return f"{self.target.nickname}'s physical attack has greatly increased!"
 

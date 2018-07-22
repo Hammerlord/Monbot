@@ -22,8 +22,10 @@ class Burn(StatusEffect):
         self.target.receive_damage(damage, self.applier)
         return True
 
+    @property
     def application_recap(self) -> str:
         return f'{self.target.nickname} has been burned!'
 
+    @property
     def trigger_recap(self) -> str:
         return f'{self.target.nickname} was hurt by its burn.'

@@ -39,7 +39,11 @@ class Switch(Action):
         return TurnPriority.SWITCH
 
     def execute(self) -> None:
+        if self.old_active:
+            # Only log if there was a previous elemental.
+            self.team.log(self.recap)
         self.team.change_active_elemental(self.new_active)
+        self.team.log(self.recap)
         self.team.end_turn()
 
     @property

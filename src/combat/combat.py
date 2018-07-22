@@ -1,6 +1,7 @@
 from itertools import groupby
 from typing import List
 
+from src.combat.actions.action import TurnLogger
 from src.combat.actions.combat_actions import Action, KnockedOut, Switch
 from src.combat.combat_ai import CombatAI
 from src.core.targetable_interface import Targetable
@@ -30,6 +31,7 @@ class Combat:
         self.allow_exp_gain = allow_exp_gain
         self.action_requests = []  # List[ActionRequest]
         self.action_log = [[]]  # List[List[Action]]  Actions made this battle, in order, grouped by turn rounds.
+        self.turn_logger = TurnLogger()
 
     @property
     def teams(self):
@@ -125,12 +127,14 @@ class Combat:
         kos = []  # List[CombatElemental]: elementals knocked out this turn
         for action_group in self._get_priority_order_requests():
             # If multiple Actions share the same TurnPriority,
-            # next determine order by the speed of the elemental.
+            # next determine order by the speed of the elemental. TODO same speed should roll.
             action_group = sorted(action_group, key=lambda action: action.speed, reverse=True)
             for action in action_group:
                 self._resolve_request(action)
                 self._check_kos(kos)
-                self.check_combat_end()
+                if self.check_combat_end():
+                    self.prepare_new_round()  # Currently, logging needs the empty []
+                    return
         self._end_round()
 
     def _end_round(self):
@@ -145,9 +149,7 @@ class Combat:
         for team in self.teams:
             elemental = team.active_elemental
             if elemental and elemental.is_knocked_out and elemental not in already_checked:
-                ko = KnockedOut(elemental, self)
-                self._add_log(ko)
-                team.add_log(ko)
+                self.turn_logger.add_ko(elemental)
                 self._grant_exp(elemental)
                 already_checked.append(elemental)
 
@@ -182,9 +184,10 @@ class Combat:
         """
         self.action_log.append([])
         self.action_requests = []
+        self.turn_logger.prepare_new_round()
+        print([log for log in self.turn_logger.get_previous_turn_logs()])
         if not self.in_progress:
             return
-        print([log.__str__() for log in self.previous_round_log], self.in_progress)
         for team in self.teams:
             team.turn_start()
             if team.check_casting():
@@ -211,10 +214,11 @@ class Combat:
             action_groups.append(list(group))
         return action_groups
 
-    def check_combat_end(self) -> None:
+    def check_combat_end(self) -> bool:
         if (all([team.is_all_knocked_out for team in self.side_a]) or
                 all([team.is_all_knocked_out for team in self.side_b])):
             self.end_combat()
+            return True
 
     def end_combat(self) -> None:
         self.in_progress = False

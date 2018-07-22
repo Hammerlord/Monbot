@@ -24,9 +24,11 @@ class Bleed(StatusEffect):
         self.target.receive_damage(damage, self.applier)
         return True
 
+    @property
     def application_recap(self) -> str:
         return f'{self.target.nickname} has been wounded!'
 
+    @property
     def trigger_recap(self) -> str:
         source = self.name if self.name else "its wounds"
         return f'{self.target.nickname} was hurt by {source}.'

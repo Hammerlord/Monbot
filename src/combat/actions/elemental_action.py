@@ -22,7 +22,6 @@ class ElementalAction(Action):
                                                   self.ability)
         self.target_effects_applied = []  # List[StatusEffect]
         self.target_effects_failed = []  # List[StatusEffect]
-        self.events = []  # List[EventLog]
 
     def __repr__(self):
         return f"{self.recap} {self.final_damage} damage dealt."
@@ -61,9 +60,11 @@ class ElementalAction(Action):
 
     def execute(self) -> None:
         self.on_ability()
-        self.on_target_receive_ability()
+        self.actor.log(self.ability.get_recap(self.actor.nickname))
+        self.target.on_receive_ability(self.ability, self.actor)
         self.check_damage_dealt()
         self.check_healing_done()
+        self.actor.log(self.recap)
         self.check_status_effect_application()
         self.actor.add_action(self)
         self.team.end_turn()
@@ -71,22 +72,13 @@ class ElementalAction(Action):
     def on_ability(self):
         if not self.ability.has_cast_time:
             # Then mana consumption was already handled on cast start.
-            recap = self.ability.get_recap(self.actor.nickname)
             self.actor.on_ability(self.ability)
-
-    def _record_event(self, event_log: EventLog):
-        self.events.append(event_log)
-
-    def on_target_receive_ability(self):
-        # TODO this doesn't do anything yet, so let's avoid logging it for now.
-        self.target.on_receive_ability(self.ability, self.actor)
 
     def check_damage_dealt(self) -> None:
         if self.ability.base_power > 0:
             # Only bother with damage calculation if the Ability is meant to do damage.
             self.damage_calculator.calculate()
             damage = self.damage_calculator.final_damage
-            initial_recap = self.ability.get_recap(self.actor.nickname)
             self.target.receive_damage(damage, self.actor)
 
     def check_healing_done(self) -> None:

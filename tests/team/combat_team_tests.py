@@ -19,7 +19,8 @@ class CombatTeamTests(unittest.TestCase):
         :return: A test CombatTeam with two Elementals.
         """
         combat_team = CombatTeam(team)
-        combat_team.set_combat(Combat())
+        combat = Combat()
+        combat.join_battle(combat_team)
         combat_team.on_combat_start()  # Triggers the initial switch in.
         return combat_team
 
