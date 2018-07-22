@@ -56,7 +56,7 @@ class EventLogger:
                 side_a.append(elemental.snapshot())
             side_b = []
             for elemental in self.combat.side_b_active:
-                side_b.append(elemental)
+                side_b.append(elemental.snapshot())
             log = EventLog(side_a, side_b, recap)
             self.events[-1].append(log)
 

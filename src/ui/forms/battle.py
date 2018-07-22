@@ -72,7 +72,6 @@ class BattleView(Form):
         """
         logs = self.combat.previous_round_log
         for i, log in enumerate(logs):
-            print(log.side_a, log.side_b)
             if not log.side_a or not log.side_b:
                 continue
             battlefield = Battlefield(log.side_a,

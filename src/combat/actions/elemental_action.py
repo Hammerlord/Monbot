@@ -79,7 +79,6 @@ class ElementalAction(Action):
             self.damage_calculator.calculate()
             damage = self.damage_calculator.final_damage
             self.target.receive_damage(damage, self.actor)
-            self.actor.log(self.recap)
 
     def check_healing_done(self) -> None:
         healing = self.ability.base_recovery
@@ -87,7 +86,6 @@ class ElementalAction(Action):
             # Recovery abilities don't scale off of anything besides the bonus... yet
             healing *= self.ability.get_bonus_multiplier(self.target, self.actor)
             self.target.heal(healing)
-            self.actor.log(self.recap)
 
     def check_status_effect_application(self) -> None:
         status_effect = self.ability.status_effect

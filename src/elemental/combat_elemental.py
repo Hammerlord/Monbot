@@ -289,7 +289,6 @@ class CombatElementalLog:
     """
     def __init__(self, combat_elemental: CombatElemental):
         self.level = combat_elemental.level
-        print("Current hp", combat_elemental.current_hp)
         self.current_hp = combat_elemental.current_hp
         self.max_hp = combat_elemental.max_hp
         self.current_mana = combat_elemental.current_mana
