@@ -67,7 +67,7 @@ class EventLogger:
         self.events.append([])
 
     def add_ko(self, combat_elemental) -> None:
-        self.append_recent(f'{combat_elemental.nickname} was knocked out!')
+        self.add_log(f'{combat_elemental.nickname} was knocked out!')
 
     def append_recent(self, recap: str) -> None:
         """

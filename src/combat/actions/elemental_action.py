@@ -60,7 +60,7 @@ class ElementalAction(Action):
 
     def execute(self) -> None:
         self.on_ability()
-        self.actor.log(self.ability.get_recap(self.actor.nickname))
+        self.team.log(self.ability.get_recap(self.actor.nickname))
         self.target.on_receive_ability(self.ability, self.actor)
         self.check_damage_dealt()
         self.check_healing_done()
@@ -79,6 +79,8 @@ class ElementalAction(Action):
             self.damage_calculator.calculate()
             damage = self.damage_calculator.final_damage
             self.target.receive_damage(damage, self.actor)
+            # Log here for ability
+            self.team.log(self.recap)
 
     def check_healing_done(self) -> None:
         healing = self.ability.base_recovery
@@ -108,6 +110,8 @@ class ElementalAction(Action):
             recap += " It's super effective."
         elif self.damage_calculator.is_resisted:
             recap += f' The attack was resisted...'
+        if self.damage_blocked > 0:
+            recap += f'\n{self.target.nickname} defended the attack!'
         return recap
 
     @property

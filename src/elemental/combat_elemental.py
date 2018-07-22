@@ -237,7 +237,7 @@ class CombatElemental(Targetable):
         self._status_manager.on_round_end()
 
     def on_ability(self, ability: Ability) -> None:
-        # This method doesn't log itself because it doesn't have enough information about what just happened.
+        # Logging is handled by the ElementalAction and Casting actions.
         self.update_mana(-ability.mana_cost)
         self.update_defend_charges(-ability.defend_cost)
 

@@ -21,10 +21,3 @@ class DefendEffect(StatusEffect):
 
     def apply_stat_changes(self) -> None:
         self.target.update_damage_reduction(self.target.defend_potency)
-
-    def on_receive_damage(self, amount: int, actor) -> bool:
-        return True
-
-    @property
-    def trigger_recap(self) -> str:
-        return f'{self.target.nickname} defended the attack!'
