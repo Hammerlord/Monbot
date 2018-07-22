@@ -134,7 +134,7 @@ class StatusManager:
         self._status_effects.append(effect)
         effect.on_effect_start()
         self.__recalculate_effects()
-        self.combat_elemental.log(effect.application_recap)
+        self.combat_elemental.append_recent_log(effect.application_recap)
 
     def dispel_all(self, dispeller) -> None:
         """
@@ -152,7 +152,7 @@ class StatusManager:
         """
         for effect in self._status_effects:
             if effect.on_receive_ability(ability, actor):
-                self.combat_elemental.log(effect.trigger_recap)
+                self.combat_elemental.append_recent_log(effect.trigger_recap)
 
     def on_receive_damage(self, amount, actor) -> None:
         """
@@ -161,7 +161,7 @@ class StatusManager:
         """
         for effect in self._status_effects:
             if effect.on_receive_damage(amount, actor):
-                self.combat_elemental.log(effect.trigger_recap)
+                self.combat_elemental.append_recent_log(effect.trigger_recap)
 
     def on_turn_start(self) -> None:
         for effect in self._status_effects:
@@ -171,7 +171,7 @@ class StatusManager:
     def on_turn_end(self) -> None:
         for effect in self._status_effects:
             if effect.on_turn_end():
-                self.combat_elemental.log(effect.trigger_recap)
+                self.combat_elemental.append_recent_log(effect.trigger_recap)
 
     def on_round_end(self) -> None:
         for effect in self._status_effects:

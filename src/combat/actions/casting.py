@@ -40,6 +40,7 @@ class Casting(Action):
             # Only consume mana, etc. if this was the turn the cast was started. Although I don't imagine
             # cast times will ever exceed 1 turn.
             self.actor.on_ability(self.castable.ability)
+            self.actor.log(self.recap)
         self.actor.set_casting(self.castable)
         self.actor.add_action(self)
         self.castable.decrement_cast_time()

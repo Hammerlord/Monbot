@@ -1,13 +1,13 @@
 import math
 
-from src.elemental.combat_elemental import CombatElemental
+from src.elemental.combat_elemental import CombatElemental, CombatElementalLog
 from src.elemental.elemental import Elemental
 
 
 class HealthBarView:
 
     @staticmethod
-    def from_elemental(elemental: Elemental or CombatElemental) -> str:
+    def from_elemental(elemental: Elemental or CombatElemental or CombatElementalLog) -> str:
         return HealthBarView().get_view(elemental.current_hp, elemental.max_hp)
 
     def get_view(self, current_hp: int, max_hp: int) -> str:

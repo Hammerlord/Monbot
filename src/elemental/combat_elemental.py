@@ -1,6 +1,6 @@
 from typing import List
 
-from copy import deepcopy
+from copy import deepcopy, copy
 
 from src.core.elements import Elements
 from src.core.targetable_interface import Targetable
@@ -241,8 +241,11 @@ class CombatElemental(Targetable):
         self.update_mana(-ability.mana_cost)
         self.update_defend_charges(-ability.defend_cost)
 
-    def log(self, recap: str):
+    def log(self, recap: str) -> None:
         self.team.log(recap)
+
+    def append_recent_log(self, recap: str) -> None:
+        self.team.append_recent_log(recap)
 
     def update_defend_charges(self, amount: int) -> None:
         self._defend_charges += amount
@@ -267,6 +270,11 @@ class CombatElemental(Targetable):
 
     def heal(self, amount: int) -> None:
         self._elemental.heal(amount)
+        # TODO
+        self.log(f'{self.nickname} recovered health!')
+
+    def is_enemy(self, other_team) -> bool:
+        return other_team.side != self.team.side
 
     def snapshot(self) -> 'CombatElementalLog':
         """
@@ -280,13 +288,19 @@ class CombatElementalLog:
     Containing visible details about a CombatElemental and a few identity attrs.
     """
     def __init__(self, combat_elemental: CombatElemental):
+        self.level = combat_elemental.level
+        print("Current hp", combat_elemental.current_hp)
         self.current_hp = combat_elemental.current_hp
         self.max_hp = combat_elemental.max_hp
         self.current_mana = combat_elemental.current_mana
         self.max_mana = combat_elemental.max_mana
-        self.status_effect_icons = [status_effect.icon for status_effect in combat_elemental.status_effects]
+        self.status_effects = combat_elemental.status_effects
+        self.nickname = combat_elemental.nickname
+        self.defend_charges = combat_elemental.defend_charges
+        self.icon = combat_elemental.icon
         self.id = combat_elemental.id
         self.team = combat_elemental.team
+        self.health_percent = combat_elemental.health_percent
 
     def is_enemy(self, other_team) -> bool:
         return other_team.side != self.team.side

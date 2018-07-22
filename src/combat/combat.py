@@ -1,8 +1,8 @@
 from itertools import groupby
 from typing import List
 
-from src.combat.actions.action import TurnLogger
-from src.combat.actions.combat_actions import Action, KnockedOut, Switch
+from src.combat.actions.action import EventLogger, EventLog
+from src.combat.actions.combat_actions import Action, Switch
 from src.combat.combat_ai import CombatAI
 from src.core.targetable_interface import Targetable
 from src.elemental.ability.ability import Ability, Target
@@ -31,7 +31,7 @@ class Combat:
         self.allow_exp_gain = allow_exp_gain
         self.action_requests = []  # List[ActionRequest]
         self.action_log = [[]]  # List[List[Action]]  Actions made this battle, in order, grouped by turn rounds.
-        self.turn_logger = TurnLogger()
+        self.turn_logger = EventLogger(self)
 
     @property
     def teams(self):
@@ -39,6 +39,14 @@ class Combat:
         :return: List[CombatTeam] - All CombatTeams currently participating in this battle.
         """
         return self.side_a + self.side_b  # Defensive
+
+    @property
+    def side_a_active(self) -> List[CombatElemental]:
+        return [team.active_elemental for team in self.side_a if team.active_elemental]
+
+    @property
+    def side_b_active(self) -> List[CombatElemental]:
+        return [team.active_elemental for team in self.side_b if team.active_elemental]
 
     def join_battle(self, combat_team) -> bool:
         """
@@ -197,11 +205,22 @@ class Combat:
                 CombatAI(team, self).pick_move()
 
     @property
-    def previous_round_log(self) -> List[Action]:
-        # Get all the Actions from the previous round of turns.
-        # prepare_new_round() always creates an empty new log [] by the time this is called,
-        # so we want to retrieve the second last log.
-        return self.action_log[-2].copy()
+    def previous_round_actions(self) -> List[Action]:
+        """
+        Get all the Actions from the previous round of turns.
+        prepare_new_round() always creates an empty new log [] by the time this is called,
+        so we want to retrieve the second last log.
+        """
+        return self.action_log[-2]
+
+    @property
+    def previous_round_log(self) -> List[EventLog]:
+        # Get all the EventLogs from the previous round of turns.
+        return self.turn_logger.get_previous_turn_logs()
+
+    @property
+    def most_recent_recap(self) -> str:
+        return self.previous_round_log[-1].recap
 
     def _get_priority_order_requests(self) -> List[List[Action]]:
         """

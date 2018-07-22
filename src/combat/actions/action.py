@@ -10,8 +10,7 @@ class ActionType(Enum):
     NONE = 0
     ELEMENTAL_ACTION = 1
     SWITCH = 2
-    KNOCKED_OUT = 3
-    ITEM = 4
+    ITEM = 3
 
 
 class EventLog:
@@ -19,41 +18,70 @@ class EventLog:
     Record an event that occurs within an Action, eg. what happened on turn end.
     This is for rendering purposes.
     """
+
     def __init__(self,
-                 target: Targetable,
+                 side_a: List[CombatElementalLog],
+                 side_b: List[CombatElementalLog],
                  recap: str):
-        self.target_snapshot = target.snapshot()
+        self.side_a = side_a
+        self.side_b = side_b
         self.recap = recap
 
     def __repr__(self) -> str:
         return self.recap
 
+    def append_recap(self, new_recap: str) -> None:
+        self.recap = f'{self.recap}\n{new_recap}'
 
-class TurnLogger:
-    def __init__(self):
-        self.turns = [[]]  # List[List[EventLog]]
 
-    def add_log(self, combat_elemental, recap) -> None:
+class EventLogger:
+    """
+    Takes a snapshot of every currently-active elemental when asked to make a log.
+    The snapshots are static representations of the elemental's state, which is otherwise mutable.
+    """
+
+    def __init__(self, combat):
+        """
+        :param combat: Combat
+        """
+        self.combat = combat
+        self.events = [[]]  # List[List[EventLog]]; events are grouped by rounds
+
+    def add_log(self, recap: str) -> None:
         # Ignore events with no recap message.
-        if recap != '':
-            log = EventLog(combat_elemental, recap)
-            self.turns[-1].append(log)
+        if recap:
+            # Fall back on empty list if there are no active elementals on a side.
+            side_a = []
+            for elemental in self.combat.side_a_active:
+                side_a.append(elemental.snapshot())
+            side_b = []
+            for elemental in self.combat.side_b_active:
+                side_b.append(elemental)
+            log = EventLog(side_a, side_b, recap)
+            self.events[-1].append(log)
 
     def get_previous_turn_logs(self) -> List[EventLog]:
-        return list(self.turns[-2])
+        return list(self.events[-2])
 
     def prepare_new_round(self) -> None:
-        self.turns.append([])
+        self.events.append([])
 
     def add_ko(self, combat_elemental) -> None:
-        log = EventLog(combat_elemental, f'{combat_elemental.nickname} was knocked out!')
-        self.turns[-1].append(log)
+        self.append_recent(f'{combat_elemental.nickname} was knocked out!')
+
+    def append_recent(self, recap: str) -> None:
+        """
+        For the recaps that don't need to be in its own dialog box, they can be appended to the previous one.
+        """
+        if recap:
+            self.events[-1][-1].append_recap(recap)
 
 
 class Action:
     """
     Base action class. Actions capture a move made by a combatant.
     """
+
     def __repr__(self):
         return self.recap
 

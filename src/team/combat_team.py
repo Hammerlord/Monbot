@@ -219,7 +219,7 @@ class CombatTeam(Targetable):
         status_effect.target = self
         self._status_effects.append(status_effect)
         status_effect.on_effect_start()
-        self.log(status_effect.application_recap)
+        self.append_recent_log(status_effect.application_recap)
 
     def heal(self, amount: int) -> None:
         """
@@ -238,4 +238,7 @@ class CombatTeam(Targetable):
         self.active_elemental.on_receive_ability(ability, actor)
 
     def log(self, recap):
-        self.logger.add_log(self.active_elemental, recap)
+        self.logger.add_log(recap)
+
+    def append_recent_log(self, recap):
+        self.logger.append_recent(recap)

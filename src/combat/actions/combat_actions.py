@@ -39,9 +39,6 @@ class Switch(Action):
         return TurnPriority.SWITCH
 
     def execute(self) -> None:
-        if self.old_active:
-            # Only log if there was a previous elemental.
-            self.team.log(self.recap)
         self.team.change_active_elemental(self.new_active)
         self.team.log(self.recap)
         self.team.end_turn()
@@ -73,45 +70,3 @@ class Switch(Action):
         :return bool: True if we don't have an active elemental, but false if it is dead.
         """
         return not self.team.active_elemental or self.team.active_elemental.is_knocked_out
-
-
-class KnockedOut(Action):
-    """
-    TODO this is too far away from being an actual Action--it shouldn't inherit Action.
-    """
-    def __init__(self,
-                 combat_elemental,
-                 combat):
-        """
-        :param combat_elemental: The knocked out CombatElemental.
-        """
-        self.combat_elemental = combat_elemental
-
-    @property
-    def team(self):
-        return self.combat_elemental.team
-
-    @property
-    def turn_priority(self) -> TurnPriority:
-        # This "action" is for record purposes: its turn priority doesn't get checked.
-        return TurnPriority.LOW
-
-    @property
-    def speed(self) -> int:
-        # Same as turn_priority, this doesn't matter.
-        return 0
-
-    @property
-    def action_type(self) -> ActionType:
-        return ActionType.KNOCKED_OUT
-
-    def execute(self) -> None:
-        pass
-
-    @property
-    def recap(self) -> str:
-        return f"{self.combat_elemental.nickname} has been knocked out!"
-
-    @property
-    def can_execute(self) -> bool:
-        return True

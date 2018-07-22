@@ -42,25 +42,47 @@ class BattleView(Form):
         self.combat_team = options.combat_team
 
     def get_main_view(self) -> str:
-        return '\n'.join([self.get_battlefield(), f'```{self.get_last_actions()}```'])
-
-    def get_last_actions(self) -> str:
-        return '\n'.join([action.recap for action in self.combat.previous_round_log])
+        return '\n'.join([self.get_battlefield(), f'```{self.combat.most_recent_recap}```'])
 
     def get_battlefield(self) -> str:
         return Battlefield(self.combat_team.active_elemental,
-                           self.combat_team.get_active_enemy()).get_view()
+                           self.combat.get_active_enemy(self.combat_team),
+                           self.combat_team).get_view()
 
     async def render(self) -> None:
         # TODO it is possible to have no available options, in which case, we need a skip.
-        await self._display(self.get_main_view())
         await self._clear_reactions()
+        await self._render_battle()
         if self.combat_team.active_elemental.is_knocked_out and self.combat_team.eligible_bench:
             # Render the mon selection view if your mon has been knocked out and you have another.
             await asyncio.sleep(1.0)
             await Form.from_form(self, SelectElementalView)
         else:
             await self.check_add_options()
+
+    async def _render_battle(self) -> None:
+        # if self.show_turns:
+            await self._render_events()
+        # else:
+            # await self._display(self.get_main_view())
+
+    async def _render_events(self) -> None:
+        """
+        Show everything that happened last turn.
+        """
+        logs = self.combat.previous_round_log
+        for i, log in enumerate(logs):
+            print(log.side_a, log.side_b)
+            if not log.side_a or not log.side_b:
+                continue
+            battlefield = Battlefield(log.side_a,
+                                      log.side_b,
+                                      self.combat_team).get_view()
+            recap = log.recap  # TODO enemy recaps
+            message = '\n'.join([battlefield, f'```{recap}```'])
+            await self._display(message)
+            if i != len(logs) - 1:
+                await asyncio.sleep(1.5)
 
     async def check_add_options(self) -> None:
         if not self.combat.in_progress:
@@ -150,8 +172,9 @@ class SelectAbilityView(ValueForm):
         return self.combat_team.active_elemental.available_abilities
 
     def get_battlefield(self) -> str:
-        return Battlefield(self.combat_team.active_elemental,
-                           self.combat_team.get_active_enemy()).get_view()
+        return Battlefield(self.combat.side_a_active,
+                           self.combat.side_b_active,
+                           self.combat_team).get_view()
 
     def get_abilities(self) -> str:
         """

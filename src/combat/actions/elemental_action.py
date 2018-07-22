@@ -64,7 +64,6 @@ class ElementalAction(Action):
         self.target.on_receive_ability(self.ability, self.actor)
         self.check_damage_dealt()
         self.check_healing_done()
-        self.actor.log(self.recap)
         self.check_status_effect_application()
         self.actor.add_action(self)
         self.team.end_turn()
@@ -80,6 +79,7 @@ class ElementalAction(Action):
             self.damage_calculator.calculate()
             damage = self.damage_calculator.final_damage
             self.target.receive_damage(damage, self.actor)
+            self.actor.log(self.recap)
 
     def check_healing_done(self) -> None:
         healing = self.ability.base_recovery
@@ -87,6 +87,7 @@ class ElementalAction(Action):
             # Recovery abilities don't scale off of anything besides the bonus... yet
             healing *= self.ability.get_bonus_multiplier(self.target, self.actor)
             self.target.heal(healing)
+            self.actor.log(self.recap)
 
     def check_status_effect_application(self) -> None:
         status_effect = self.ability.status_effect
@@ -109,8 +110,6 @@ class ElementalAction(Action):
             recap += " It's super effective."
         elif self.damage_calculator.is_resisted:
             recap += f' The attack was resisted...'
-        if self.damage_calculator.damage_blocked > 0:
-            recap += f' \n{self.target.nickname} defended itself!'
         return recap
 
     @property
