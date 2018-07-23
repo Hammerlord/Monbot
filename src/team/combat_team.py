@@ -199,6 +199,9 @@ class CombatTeam(Targetable):
         for effect in self._status_effects:
             if effect.on_turn_end():
                 self.log(effect.trigger_recap)
+            effect.reduce_turn_duration()
+            if effect.duration_ended:
+                self._status_effects.remove(effect)
         self.active_elemental.end_turn()
 
     def end_round(self) -> None:
@@ -206,6 +209,8 @@ class CombatTeam(Targetable):
         When everybody's moves have been resolved.
         """
         for effect in self._status_effects:
+            if effect.on_round_end():
+                self.log(effect.trigger_recap)
             effect.reduce_round_duration()
             if effect.duration_ended:
                 self._status_effects.remove(effect)

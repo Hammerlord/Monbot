@@ -21,10 +21,10 @@ class RollingThunderEffect(StatusEffect):
 
     @property
     def turn_duration(self):
-        return 1
+        return 2
 
     def on_turn_end(self) -> bool:
-        if self.turns_remaining == 0:
+        if self.turns_remaining == 1:
             # This affects a CombatTeam Targetable.
             current_active = self.target.active_elemental
             damage_calculator = DamageCalculator(current_active, self.applier, self)

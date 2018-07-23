@@ -20,7 +20,6 @@ class StatusEffectTests(unittest.TestCase):
 
     def tearDown(self):
         self.combat_elemental = None
-        self.elemental = None
 
     def test_add_status_effect(self):
         error = "StatusEffect couldn't be added"
@@ -173,3 +172,31 @@ class StatusEffectTests(unittest.TestCase):
         self.combat_elemental.end_turn()
         num_effects = self.combat_elemental.num_status_effects
         self.assertEqual(num_effects, 1, error)
+
+    def test_rolling_thunder_duration(self):
+        error = "Rolling Thunder turn duration didn't decrement"
+        effect = RollingThunderEffect()
+        team = CombatTeam(Team(Mock()))
+        team.set_combat(Combat())
+        enemy = CombatElementalBuilder().with_team(team).build()
+        team.change_active_elemental(enemy)
+        team.add_status_effect(effect)
+        duration_before = effect.turns_remaining
+        team.end_turn()
+        duration_after = effect.turns_remaining
+        self.assertLess(duration_after, duration_before, error)
+
+    def test_rolling_thunder(self):
+        error = "Rolling Thunder did no damage on resolution"
+        effect = RollingThunderEffect()
+        effect.applier = self.combat_elemental
+        team = CombatTeam(Team(Mock()))
+        team.set_combat(Combat())
+        enemy = CombatElementalBuilder().with_team(team).build()
+        team.change_active_elemental(enemy)
+        team.add_status_effect(effect)
+        health_before = enemy.current_hp
+        team.end_turn()
+        team.end_turn()
+        health_after = enemy.current_hp
+        self.assertLess(health_after, health_before, error)
