@@ -15,10 +15,3 @@ class Targetable:
 
     def add_status_effect(self, effect):
         raise NotImplementedError
-
-    def snapshot(self):
-        """
-        :return CombatElementalLog: A log showing the current health and visible stats of the Elemental at the time
-        this snapshot was taken. This is for rendering purposes.
-        """
-        raise NotImplementedError

@@ -1,7 +1,7 @@
 from src.core.constants import ROLLING_THUNDER
 from src.core.elements import Elements, Category
 from src.elemental.ability.damage_calculator import DamageCalculator
-from src.elemental.status_effect.status_effect import StatusEffect
+from src.elemental.status_effect.status_effect import StatusEffect, EffectTarget
 
 
 class RollingThunderEffect(StatusEffect):
@@ -10,20 +10,21 @@ class RollingThunderEffect(StatusEffect):
     """
     def __init__(self):
         super().__init__()
-        self._description = f"Detonates after 1 round."
+        self._description = f"Detonates after 1 turn."
         self.name = "Rolling Thunder"
         self.icon = ROLLING_THUNDER
         self.element = Elements.LIGHTNING
         self.category = Category.MAGIC
+        self.targeting = EffectTarget.TEAM
         self.base_power = 20
         self.can_add_instances = True
 
     @property
-    def _base_duration(self):
+    def turn_duration(self):
         return 1
 
     def on_turn_end(self) -> bool:
-        if self.duration_remaining == 1:
+        if self.turns_remaining == 0:
             # This affects a CombatTeam Targetable.
             current_active = self.target.active_elemental
             damage_calculator = DamageCalculator(current_active, self.applier, self)

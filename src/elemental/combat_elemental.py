@@ -6,7 +6,7 @@ from src.core.elements import Elements
 from src.core.targetable_interface import Targetable
 from src.elemental.ability.ability import Ability, Castable
 from src.elemental.elemental import Elemental
-from src.elemental.status_effect.status_effect import StatusEffect
+from src.elemental.status_effect.status_effect import StatusEffect, EffectTarget
 from src.elemental.status_effect.status_manager import StatusManager
 
 
@@ -223,6 +223,7 @@ class CombatElemental(Targetable):
 
     def add_status_effect(self, status_effect: StatusEffect):
         # TODO check if we can add status effects.
+        assert(status_effect.targeting == EffectTarget.ELEMENTAL)
         self._status_manager.add_status_effect(status_effect)
 
     def start_turn(self) -> None:

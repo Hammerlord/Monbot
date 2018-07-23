@@ -9,7 +9,7 @@ class PAttBuff(StatusEffect):
         self.can_add_instances = True
 
     @property
-    def _base_duration(self) -> int:
+    def turn_duration(self) -> int:
         return 7
 
     @property
@@ -29,7 +29,7 @@ class PAttBuffLarge(StatusEffect):
         self.can_add_instances = True
 
     @property
-    def _base_duration(self) -> int:
+    def turn_duration(self) -> int:
         return 3
 
     @property

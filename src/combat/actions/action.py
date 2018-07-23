@@ -73,8 +73,9 @@ class EventLogger:
         """
         For the recaps that don't need to be in its own dialog box, they can be appended to the previous one.
         """
-        if recap:
-            self.events[-1][-1].append_recap(recap)
+        current_turn_events = self.events[-1]
+        if recap and current_turn_events:
+            current_turn_events[-1].append_recap(recap)
 
 
 class Action:

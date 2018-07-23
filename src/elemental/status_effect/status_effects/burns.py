@@ -12,7 +12,7 @@ class Burn(StatusEffect):
         self.base_power = 1
 
     @property
-    def _base_duration(self) -> float:
+    def turn_duration(self) -> float:
         return 4
 
     def on_turn_end(self) -> bool:

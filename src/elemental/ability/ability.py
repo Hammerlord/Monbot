@@ -36,10 +36,10 @@ class Channelable:
     A "channeled" ability can activate repeatedly over multiple turns.
     """
     def __init__(self):
-        self._turns_to_channel = self.base_duration
+        self._turns_to_channel = self.turn_duration
 
     @property
-    def base_duration(self) -> int:
+    def turn_duration(self) -> int:
         raise NotImplementedError
 
     @property

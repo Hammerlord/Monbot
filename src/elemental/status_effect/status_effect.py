@@ -18,23 +18,29 @@ class EffectType(Enum):
     SWITCH_PREVENTION = 7
 
 
+class EffectTarget(Enum):
+    NONE = 0
+    ELEMENTAL = 1
+    TEAM = 2
+
+
 class StatusEffect(Technique):
 
     """
-    A status effect applied onto a CombatElemental.
+    A status effect applied onto a Targetable (CombatElemental or CombatTeam).
     Many methods are no-op by default, that should be overridden to the desired effect.
     """
 
     def __init__(self):
         super().__init__()
-        self.__target = None  # The CombatElemental this effect is applied to.
+        self.__target = None  # The Targetable this effect is applied to.
         self.__applier = None  # The CombatElemental that applied this StatusEffect.
         self.icon = ''  # The emote that represents the effect.
         self.effect_type = EffectType.NONE
         self.category = Category.PHYSICAL
-        # Pass duration in number of the affected Elemental's turns. -1 if no duration:
-        self.max_duration = self.calculate_duration()
-        self._duration_remaining = 0
+        self.targeting = EffectTarget.ELEMENTAL
+        self.turns_remaining = -1
+        self.rounds_remaining = -1
         self.is_dispellable = True
         self.ends_on_switch = True
         self.max_stacks = 1  # Ie. can we apply multiple of this effect?
@@ -58,16 +64,20 @@ class StatusEffect(Technique):
         return self.current_stacks < self.max_stacks
 
     @property
-    def _base_duration(self) -> int:
+    def turn_duration(self) -> int:
         """
-        The number of rounds that this effect lasts for. A round is when every participant's moves have been resolved.
-        Eg. 1: ends next round.
+        The number of turns that this effect lasts for. Decrements on turn end.
+        Return -1 if this effect lasts forever/its duration is unaffected by turns.
         """
         raise NotImplementedError
 
     @property
-    def duration_remaining(self) -> int:
-        return self._duration_remaining
+    def round_duration(self) -> int:
+        """
+        The number of rounds that this effect lasts for. A round is when every participant's moves have been resolved.
+        Most effects will use turn_duration instead. Return -1 if this effect's duration is unaffected by rounds.
+        """
+        return -1
 
     @property
     def target(self):
@@ -98,12 +108,17 @@ class StatusEffect(Technique):
         self.__applier = elemental
 
     @property
-    def can_reduce_duration(self) -> bool:
-        return self._duration_remaining > 0
-
-    @property
     def duration_ended(self) -> bool:
-        return self._duration_remaining == 0
+        return self.turns_remaining == 0 or self.rounds_remaining == 0
+
+    def boost_turn_duration(self) -> None:
+        """
+        If the applier added this effect to itself or its own team, +1 duration to
+        make up for the decrement at the end of the application turn.
+        """
+        assert(self.target is not None and self.applier is not None)
+        if self.turns_remaining > 0:
+            self.turns_remaining += 1
 
     def reapply(self) -> None:
         self.add_stack()
@@ -114,35 +129,63 @@ class StatusEffect(Technique):
             self.current_stacks += 1
 
     def refresh_duration(self) -> None:
-        self._duration_remaining = self.max_duration
+        self.turns_remaining = self.turn_duration
+        self.rounds_remaining = self.round_duration
 
-    def reduce_duration(self) -> None:
-        if self.can_reduce_duration:
-            self._duration_remaining -= 1
+    def reduce_turn_duration(self) -> None:
+        if self.turns_remaining > 0:
+            self.turns_remaining -= 1
+            # A status effect's duration either uses turns or rounds--they're mutually exclusive.
+            assert (not self.round_duration >= 0)
 
-    def on_turn_start(self) -> None:
+    def reduce_round_duration(self) -> None:
+        if self.rounds_remaining > 0:
+            self.rounds_remaining -= 1
+            assert (not self.turn_duration >= 0)
+
+    def on_turn_start(self) -> True:
+        """
+        :return True if this triggered.
+        """
         pass
 
-    def on_turn_end(self) -> None:
+    def on_turn_end(self) -> True:
+        """
+        :return True if this triggered.
+        """
         pass
 
-    def on_switch_in(self) -> None:
+    def on_round_end(self) -> True:
+        """
+        :return True if this triggered.
+        """
         pass
 
-    def on_knockout(self) -> None:
+    def on_switch_in(self) -> True:
+        """
+        :return True if this triggered.
+        """
         pass
 
-    def on_receive_ability(self, ability, actor) -> None:
+    def on_knockout(self) -> True:
+        """
+        :return True if this triggered.
+        """
+        pass
+
+    def on_receive_ability(self, ability, actor) -> True:
         """
         :param ability: The incoming Ability.
         :param actor: The CombatElemental using the Ability.
+        :return True if this triggered.
         """
         pass
 
-    def on_receive_damage(self, amount: int, actor) -> None:
+    def on_receive_damage(self, amount: int, actor) -> True:
         """
         :param amount: The damage received.
         :param actor: The CombatElemental dealing the damage.
+        :return True if this triggered.
         """
         pass
 
@@ -165,16 +208,23 @@ class StatusEffect(Technique):
         """
         pass
 
-    def on_effect_end(self) -> None:
+    def on_effect_end(self) -> True:
+        """
+        :return True if this triggered.
+        """
         pass
 
-    def on_dispel(self, dispeller) -> None:
+    def on_dispel(self, dispeller) -> True:
         """
         :param dispeller: The CombatElemental who dispelled the StatusEffect
+        :return True if this triggered.
         """
         pass
 
-    def on_combat_start(self) -> None:
+    def on_combat_start(self) -> True:
+        """
+        :return True if this triggered.
+        """
         pass
 
     def _update_p_att_stages(self, amount: int) -> None:
@@ -191,13 +241,6 @@ class StatusEffect(Technique):
 
     def _update_speed_stages(self, amount: int) -> None:
         self.target.update_speed_stages(amount)
-
-    def calculate_duration(self) -> int:
-        """
-        +1 so that the duration doesn't just fall off immediately on round end.
-        Unless that's what we want (eg. Defend).
-        """
-        return self._base_duration + 1
 
     @property
     def trigger_recap(self) -> str:

@@ -41,7 +41,7 @@ class CombatTests(unittest.TestCase):
         combat_elemental = CombatElemental(ElementalBuilder().build(), team_b)
         combat.request_action(ElementalAction(combat_elemental, Claw(), combat_elemental))
         combat.request_action(Switch(team_a, combat_elemental, combat_elemental))
-        self.assertIsInstance(combat.previous_round_log[0], Switch, error)
+        self.assertIsInstance(combat.previous_round_actions[0], Switch, error)
 
     def test_defend_priority(self):
         error = "Defend wasn't faster than other abilities"
@@ -54,7 +54,7 @@ class CombatTests(unittest.TestCase):
         slower = CombatElemental(ElementalBuilder().with_speed(1).build(), team_a)
         combat.request_action(ElementalAction(faster, Claw(), slower))
         combat.request_action(ElementalAction(slower, Defend(), slower))
-        self.assertIsInstance(combat.previous_round_log[0].ability, Defend, error)
+        self.assertIsInstance(combat.previous_round_actions[0].ability, Defend, error)
 
     def test_action_speed_priority(self):
         error = "Faster elemental didn't attack first"
@@ -68,7 +68,7 @@ class CombatTests(unittest.TestCase):
         combat.request_action(ElementalAction(slower, Claw(), faster))
         faster_action = ElementalAction(faster, Claw(), slower)
         combat.request_action(faster_action)
-        expected = combat.previous_round_log[0].actor.nickname
+        expected = combat.previous_round_actions[0].actor.nickname
         self.assertEqual(expected, faster.nickname, error)
 
     def test_elemental_exp_gain(self):

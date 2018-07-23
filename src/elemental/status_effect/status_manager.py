@@ -131,6 +131,8 @@ class StatusManager:
             equivalent_effect.reapply()
             return
         effect.target = self.combat_elemental
+        if effect.applier == self.combat_elemental:
+            effect.boost_turn_duration()
         self._status_effects.append(effect)
         effect.on_effect_start()
         self.__recalculate_effects()
@@ -172,9 +174,15 @@ class StatusManager:
         for effect in self._status_effects:
             if effect.on_turn_end():
                 self.combat_elemental.append_recent_log(effect.trigger_recap)
+            effect.reduce_turn_duration()
+            self.__check_effect_end(effect)
+        self.__recalculate_effects()
 
     def on_round_end(self) -> None:
         for effect in self._status_effects:
+            if effect.on_round_end():
+                self.combat_elemental.append_recent_log(effect.trigger_recap)
+            effect.reduce_round_duration()
             self.__check_effect_end(effect)
         self.__recalculate_effects()
 
@@ -215,7 +223,6 @@ class StatusManager:
         return calculation - stats
 
     def __check_effect_end(self, effect: StatusEffect) -> None:
-        effect.reduce_duration()
         if effect.duration_ended:
             self._status_effects.remove(effect)
             self.combat_elemental.log(effect.fade_recap)

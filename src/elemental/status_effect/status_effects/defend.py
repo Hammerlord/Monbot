@@ -3,17 +3,27 @@ from src.elemental.status_effect.status_effect import StatusEffect
 
 
 class DefendEffect(StatusEffect):
-
+    """
+    The status effect applied by Defend, which grants the CombatElemental damage reduction
+    equal to its own Defend Potency until the end of the round.
+    """
     def __init__(self):
         super().__init__()
         self.icon = DEFEND
 
     @property
-    def _base_duration(self) -> int:
+    def turn_duration(self) -> int:
         """
-        :return 0: Lasts until the end of the round.
+        This ability should last until the end of the round, hence it is unaffected by turns.
         """
-        return 0
+        return -1
+
+    @property
+    def round_duration(self) -> int:
+        """
+        Lasts until the end of the round.
+        """
+        return 1
 
     def on_effect_start(self) -> None:
         # Block damage against any end of turn debuffs as well.

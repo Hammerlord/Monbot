@@ -14,7 +14,7 @@ class Bleed(StatusEffect):
         self.icon = BLEED
 
     @property
-    def _base_duration(self) -> int:
+    def turn_duration(self) -> int:
         return 4
 
     def on_turn_end(self) -> bool:
@@ -50,5 +50,5 @@ class RendEffect(Bleed):
         self.name = "Rend"
 
     @property
-    def _base_duration(self) -> int:
+    def turn_duration(self) -> int:
         return 3

@@ -9,7 +9,7 @@ class GenericBuff(StatusEffect):
         self._description = "Increases physical attack."
 
     @property
-    def _base_duration(self) -> int:
+    def turn_duration(self) -> int:
         return 7
 
     def on_effect_start(self):
@@ -30,7 +30,7 @@ class PermaBuff(StatusEffect):
         self.ends_on_switch = False
 
     @property
-    def _base_duration(self) -> int:
+    def turn_duration(self) -> int:
         return -1
 
     def on_effect_start(self) -> str:

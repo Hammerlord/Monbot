@@ -7,7 +7,7 @@ from src.core.targetable_interface import Targetable
 from src.elemental.ability.ability import Ability, Target, Castable
 from src.elemental.combat_elemental import CombatElemental, CombatElementalLog
 from src.elemental.elemental import Elemental
-from src.elemental.status_effect.status_effect import StatusEffect
+from src.elemental.status_effect.status_effect import StatusEffect, EffectTarget
 from src.team.team import Team
 
 
@@ -206,7 +206,7 @@ class CombatTeam(Targetable):
         When everybody's moves have been resolved.
         """
         for effect in self._status_effects:
-            effect.reduce_duration()
+            effect.reduce_round_duration()
             if effect.duration_ended:
                 self._status_effects.remove(effect)
         self.active_elemental.end_round()
@@ -216,7 +216,10 @@ class CombatTeam(Targetable):
         self._actions.append(action)
 
     def add_status_effect(self, status_effect: StatusEffect) -> None:
+        assert status_effect.targeting == EffectTarget.TEAM
         status_effect.target = self
+        if status_effect.applier == self.active_elemental:
+            status_effect.boost_turn_duration()
         self._status_effects.append(status_effect)
         status_effect.on_effect_start()
         self.append_recent_log(status_effect.application_recap)

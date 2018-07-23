@@ -6,12 +6,12 @@ class EnrageEffect(StatusEffect):
     def __init__(self):
         super().__init__()
         self.name = "Enraged!"
-        self._description = f"Gain physical and magic attack every turn for {self._base_duration} turns."
+        self._description = f"Gain physical and magic attack every turn for {self.turn_duration} turns."
         self.icon = ENRAGE
         self.uptime = 1  # The number of turns this effect has been up.
 
     @property
-    def _base_duration(self):
+    def turn_duration(self):
         return 3
 
     def on_effect_start(self) -> None:
