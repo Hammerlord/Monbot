@@ -152,7 +152,6 @@ class StatusEffectTests(unittest.TestCase):
         before_buff.execute()
         self.combat_elemental.add_status_effect(EnrageEffect())
         self.combat_elemental.end_turn()
-        self.combat_elemental.start_turn()
         after_buff = ElementalAction(self.combat_elemental, Claw(), CombatElementalBuilder().build())
         after_buff.execute()
         self.assertGreater(after_buff.final_damage, before_buff.final_damage, error)
