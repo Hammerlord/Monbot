@@ -10,9 +10,9 @@ class GrowthRate(StatsInterface):
         self._max_hp = 4
         self._physical_att = 2
         self._magic_att = 3
-        self._physical_def = 3
-        self._magic_def = 4
-        self._speed = 3
+        self._physical_def = 2
+        self._magic_def = 3
+        self._speed = 1
 
 
 class Mithus(Species):

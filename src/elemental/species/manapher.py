@@ -8,11 +8,11 @@ class GrowthRate(StatsInterface):
     def __init__(self):
         super().__init__()
         self._max_hp = 2
-        self._physical_att = 2
-        self._magic_att = 2
+        self._physical_att = 1
+        self._magic_att = 3
         self._physical_def = 3
-        self._magic_def = 3
-        self._speed = 2
+        self._magic_def = 4
+        self._speed = 1
 
 
 class Manapher(Species):

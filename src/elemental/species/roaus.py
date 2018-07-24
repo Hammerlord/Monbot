@@ -7,12 +7,12 @@ class GrowthRate(StatsInterface):
 
     def __init__(self):
         super().__init__()
-        self._max_hp = 4
+        self._max_hp = 2
         self._physical_att = 3
         self._magic_att = 2
-        self._physical_def = 4
-        self._magic_def = 3
-        self._speed = 4
+        self._physical_def = 3
+        self._magic_def = 2
+        self._speed = 2
 
 
 class Roaus(Species):
