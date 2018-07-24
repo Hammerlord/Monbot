@@ -1,6 +1,7 @@
 from enum import Enum
 
 from src.core.elements import Category
+from src.core.targetable_interface import Targetable
 from src.elemental.ability.technique import Technique
 
 
@@ -18,12 +19,6 @@ class EffectType(Enum):
     SWITCH_PREVENTION = 7
 
 
-class EffectTarget(Enum):
-    NONE = 0
-    ELEMENTAL = 1
-    TEAM = 2
-
-
 class StatusEffect(Technique):
 
     """
@@ -38,7 +33,6 @@ class StatusEffect(Technique):
         self.icon = ''  # The emote that represents the effect.
         self.effect_type = EffectType.NONE
         self.category = Category.PHYSICAL
-        self.targeting = EffectTarget.ELEMENTAL
         self.turns_remaining = -1
         self.rounds_remaining = -1
         self.is_dispellable = True
@@ -87,11 +81,11 @@ class StatusEffect(Technique):
         return self.__target
 
     @target.setter
-    def target(self, combat_elemental) -> None:
+    def target(self, targetable: Targetable) -> None:
         """
-        :param combat_elemental: CombatElemental
+        :param targetable: A CombatElemental or CombatTeam.
         """
-        self.__target = combat_elemental
+        self.__target = targetable
 
     @property
     def applier(self):

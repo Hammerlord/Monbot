@@ -1,3 +1,4 @@
+from src.core.elements import Elements
 
 
 class Targetable:
@@ -14,4 +15,24 @@ class Targetable:
         raise NotImplementedError
 
     def add_status_effect(self, effect):
+        raise NotImplementedError
+
+    @property
+    def element(self) -> Elements:
+        raise NotImplementedError
+
+    @property
+    def damage_reduction(self) -> float:
+        raise NotImplementedError
+
+    @property
+    def physical_def(self) -> int:
+        raise NotImplementedError
+
+    @property
+    def magic_def(self) -> int:
+        raise NotImplementedError
+
+    @property
+    def nickname(self) -> str:
         raise NotImplementedError

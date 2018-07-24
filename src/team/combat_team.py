@@ -3,11 +3,12 @@ from typing import List
 from src.combat.actions.casting import Casting
 from src.combat.actions.combat_actions import Switch, Action
 from src.combat.actions.elemental_action import ElementalAction
+from src.core.elements import Elements
 from src.core.targetable_interface import Targetable
 from src.elemental.ability.ability import Ability, Target, Castable
 from src.elemental.combat_elemental import CombatElemental, CombatElementalLog
 from src.elemental.elemental import Elemental
-from src.elemental.status_effect.status_effect import StatusEffect, EffectTarget
+from src.elemental.status_effect.status_effect import StatusEffect
 from src.team.team import Team
 
 
@@ -221,7 +222,6 @@ class CombatTeam(Targetable):
         self._actions.append(action)
 
     def add_status_effect(self, status_effect: StatusEffect) -> None:
-        assert status_effect.targeting == EffectTarget.TEAM
         status_effect.target = self
         if status_effect.applier == self.active_elemental:
             status_effect.boost_turn_duration()
@@ -229,16 +229,14 @@ class CombatTeam(Targetable):
         status_effect.on_effect_start()
         self.append_recent_log(status_effect.application_recap)
 
+    # Targetable implementations: Reroute attacks, etc. to the currently active elemental.
+
     def heal(self, amount: int) -> None:
-        """
-        When CombatTeam receives a heal, all eligible elementals receives that amount of healing.
-        """
+        # Trying to heal a CombatTeam to do damage just goes to the active elemental.
         self.active_elemental.heal(amount)
-        for elemental in self.eligible_bench:
-            elemental.heal(amount)
 
     def receive_damage(self, amount: int, actor: CombatElemental) -> None:
-        # However, trying to target a CombatTeam to do damage just goes to the active elemental.
+        # Trying to target a CombatTeam to do damage just goes to the active elemental.
         self.active_elemental.receive_damage(amount, actor)
 
     def on_receive_ability(self, ability: Ability, actor: CombatElemental) -> None:
@@ -250,3 +248,23 @@ class CombatTeam(Targetable):
 
     def append_recent_log(self, recap):
         self.logger.append_recent(recap)
+
+    @property
+    def nickname(self) -> str:
+        return self.active_elemental.nickname
+
+    @property
+    def physical_def(self) -> int:
+        return self.active_elemental.physical_def
+
+    @property
+    def element(self) -> Elements:
+        return self.active_elemental.element
+
+    @property
+    def damage_reduction(self) -> float:
+        return self.active_elemental.damage_reduction
+
+    @property
+    def magic_def(self) -> int:
+        return self.active_elemental.magic_def

@@ -1,6 +1,7 @@
 import warnings
 
 from src.core.elements import Category, Effectiveness
+from src.core.targetable_interface import Targetable
 
 
 class DamageCalculator:
@@ -16,9 +17,12 @@ class DamageCalculator:
     Bonus multiplier for a custom condition set by damage source: +x%
     """
 
-    def __init__(self, target, actor, damage_source):
+    def __init__(self,
+                 target: Targetable,
+                 actor,
+                 damage_source):
         """
-        :param target: The CombatElemental receiving damage.
+        :param target: The Targetable (CombatElemental or CombatTeam) receiving damage.
         :param actor: The CombatElemental who is attacking or who applied the effect.
         :param damage_source: Ability or StatusEffect
         """
