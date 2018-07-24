@@ -42,8 +42,9 @@ class AbilityOptionView:
         :return: String representation of the ability, without the description.
         """
         ability = self.ability
-        icon = Elements.get_icon(ability.element)
-        return (f"{ability.icon} {ability.name} [{ability.category.name}{icon}] "
+        element_icon = Elements.get_icon(ability.element)
+        element = f"[{ability.category.name}{element_icon}]" if ability.element != Elements.NONE else ''
+        return (f"{ability.icon} {ability.name} {element} "
                 f"[{self._get_mana_cost()}{MANA}]{self._get_power(ability)}")
 
     def get_detail(self) -> str:
