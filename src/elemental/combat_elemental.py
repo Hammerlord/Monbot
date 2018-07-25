@@ -77,6 +77,10 @@ class CombatElemental(Targetable):
         return self._status_manager.is_burning
 
     @property
+    def num_debuffs(self) -> int:
+        return self._status_manager.num_debuffs
+
+    @property
     def current_hp(self) -> int:
         # HP is based on the Elemental's.
         return self._elemental.current_hp

@@ -8,9 +8,9 @@ class RazorFangs(Ability):
         super().__init__()
         self.name = "Razor Fangs"
         self._description = f"Slash the enemy, inflicting a bleed for {self.status_effect.turn_duration} turns."
-        self.element = Elements.NONE
+        self.element = Elements.WIND
         self.category = Category.PHYSICAL
-        self.base_power = 0
+        self.attack_power = 0
         self.mana_cost = 10
         self.defend_cost = 0
         self.turn_priority = TurnPriority.NORMAL

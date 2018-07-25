@@ -13,7 +13,6 @@ class RollingThunder(Ability):
         self._description = f"Gather thunder clouds around the enemy. After 1 turn, they detonate."
         self.element = Elements.LIGHTNING
         self.category = Category.MAGIC
-        self.base_power = 0
         self.mana_cost = 15
         self.turn_priority = TurnPriority.NORMAL
         self.targeting = Target.ENEMY_TEAM

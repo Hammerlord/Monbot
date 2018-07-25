@@ -14,7 +14,7 @@ class Fireball(Ability):
         self._description = "Launch a fireball. +30% damage to burning enemies."
         self.element = Elements.FIRE
         self.category = Category.MAGIC
-        self.base_power = 20
+        self.attack_power = 20
         self.mana_cost = 10
         self.defend_cost = 0
         self.targeting = Target.ENEMY

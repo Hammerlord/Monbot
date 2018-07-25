@@ -12,8 +12,8 @@ class AbilityBuilder:
         self.turn_priority = TurnPriority.NORMAL
         self.element = Elements.NONE
         self.category = Category.NONE  # Eg. magic or physical.
-        self.base_power = 0  # Ie. a damage stat.
-        self.base_recovery = 0  # Ie. a healing stat.
+        self.attack_power = 0  # Ie. a damage stat.
+        self.recovery = 0  # Ie. a healing stat.
         self.bonus_multiplier = 1
 
     def with_mana_cost(self, amount: int) -> 'AbilityBuilder':
@@ -36,12 +36,12 @@ class AbilityBuilder:
         self.category = category
         return self
 
-    def with_base_power(self, base_power: int) -> 'AbilityBuilder':
-        self.base_power = base_power
+    def with_attack_power(self, attack_power: int) -> 'AbilityBuilder':
+        self.attack_power = attack_power
         return self
 
-    def with_base_recovery(self, base_recovery: int) -> 'AbilityBuilder':
-        self.base_recovery = base_recovery
+    def with_base_recovery(self, recovery: float) -> 'AbilityBuilder':
+        self.recovery = recovery
         return self
 
     def with_bonus_multiplier(self, multiplier: float) -> 'AbilityBuilder':
@@ -55,7 +55,7 @@ class AbilityBuilder:
         ability.turn_priority = self.turn_priority
         ability.element = self.element
         ability.category = self.category
-        ability.base_power = self.base_power
-        ability.base_recovery = self.base_recovery
+        ability.attack_power = self.attack_power
+        ability.recovery = self.recovery
         ability.bonus_multiplier = self.bonus_multiplier
         return ability

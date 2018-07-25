@@ -8,7 +8,7 @@ class DamageCalculator:
     """
     Requires: Actor, target, ability used.
     Damage calculation is:
-    + ability.base_power
+    + ability.attack_power
     + actor.attack // 3
     - target.damage_reduction percentage
     - target.def // 4
@@ -46,7 +46,7 @@ class DamageCalculator:
         return self.effectiveness_multiplier < 1
 
     def calculate(self) -> int:
-        if self.damage_source.base_power == 0:
+        if self.damage_source.attack_power == 0:
             return 0
         self.effectiveness_multiplier = self.__get_effectiveness_multiplier()
         self.same_element_multiplier = self.__get_same_element_multiplier()
@@ -61,7 +61,7 @@ class DamageCalculator:
         return self.final_damage
 
     def __get_raw_damage(self) -> int:
-        raw_damage = self.damage_source.base_power
+        raw_damage = self.damage_source.attack_power
         raw_damage += self.__get_attack_power()
         raw_damage *= self.effectiveness_multiplier
         raw_damage *= self.same_element_multiplier

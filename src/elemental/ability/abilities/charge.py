@@ -10,7 +10,7 @@ class Charge(Ability):
                              "2x damage on targets at full health.")
         self.element = Elements.NONE
         self.category = Category.PHYSICAL
-        self.base_power = 15
+        self.attack_power = 15
         self.mana_cost = 10
         self.defend_cost = 0
         self.turn_priority = TurnPriority.HIGH

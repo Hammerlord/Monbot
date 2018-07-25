@@ -49,6 +49,10 @@ class StatusManager:
         return self._status_effects
 
     @property
+    def num_debuffs(self) -> int:
+        return len([effect for effect in self.status_effects if effect.is_debuff])
+
+    @property
     def num_status_effects(self) -> int:
         """
         Eg. Some attacks scale based on the number of StatusEffects a CombatElemental has.

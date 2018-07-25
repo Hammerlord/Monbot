@@ -107,6 +107,9 @@ class Combat:
             return actor
         elif target == Target.ENEMY:
             return self.get_active_enemy(actor.team)
+        elif target == Target.ENEMY_CLEAVE:
+            # TODO
+            return self.get_active_enemy(actor.team)
         elif target == Target.ENEMY_TEAM:
             return self.get_enemy_side(actor.team)[0]
 

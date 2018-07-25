@@ -11,8 +11,8 @@ class Technique:
         self._description = ''  # Str. TBD by descendants
         self.element = Elements.NONE
         self.category = Category.NONE  # Eg. magic or physical.
-        self.base_power = 0  # Ie. a damage stat.
-        self.base_recovery = 0  # Ie. a healing stat.
+        self.attack_power: int = 0  # Ie. a damage stat.
+        self.recovery: float = 0  # The amount of healing this Technique does, based on % of maximum HP.
         self.icon = ''  # A str icon representing this ability.
 
     @property

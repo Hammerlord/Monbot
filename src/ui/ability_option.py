@@ -61,6 +61,6 @@ class AbilityOptionView:
 
     @staticmethod
     def _get_power(ability: Ability or LearnableAbility) -> str:
-        if ability.base_power > 0:
-            return f' - Power: {ability.base_power}'
+        if ability.attack_power > 0:
+            return f' - Power: {ability.attack_power}'
         return ''

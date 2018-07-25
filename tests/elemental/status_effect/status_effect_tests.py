@@ -4,12 +4,13 @@ from unittest.mock import Mock
 from src.combat.actions.elemental_action import ElementalAction
 from src.combat.combat import Combat
 from src.elemental.ability.abilities.claw import Claw
+from src.elemental.status_effect.status_effects.blessed_rain import BlessedRainEffect
 from src.elemental.status_effect.status_effects.defend import DefendEffect
 from src.elemental.status_effect.status_effects.enrage import EnrageEffect
 from src.elemental.status_effect.status_effects.rolling_thunder import RollingThunderEffect
 from src.team.combat_team import CombatTeam
 from src.team.team import Team
-from tests.elemental.elemental_builder import CombatElementalBuilder
+from tests.elemental.elemental_builder import CombatElementalBuilder, ElementalBuilder
 from tests.elemental.status_effect.fake_effects import GenericBuff, PermaBuff
 
 
@@ -199,3 +200,20 @@ class StatusEffectTests(unittest.TestCase):
         team.end_turn()
         health_after = enemy.current_hp
         self.assertLess(health_after, health_before, error)
+
+    def test_blessed_rain(self):
+        error = "Blessed Rain didn't heal on turn end"
+        team = Team(Mock())
+        elemental = ElementalBuilder().build()
+        team.add_elemental(elemental)
+        combat_team = CombatTeam(team)
+        combat_team.set_combat(Combat())
+        effect = BlessedRainEffect()
+        effect.applier = CombatElementalBuilder().build()
+        elemental.receive_damage(10)
+        combat_team.change_active_elemental(combat_team.eligible_bench[0])
+        combat_team.add_status_effect(effect)
+        health_before = elemental.current_hp
+        combat_team.end_turn()
+        health_after = elemental.current_hp
+        self.assertGreater(health_after, health_before, error)

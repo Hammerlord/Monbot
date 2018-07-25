@@ -180,8 +180,8 @@ class LearnableAbility:
         return self.ability.element
 
     @property
-    def base_power(self) -> int:
-        return self.ability.base_power
+    def attack_power(self) -> int:
+        return self.ability.attack_power
 
     @property
     def icon(self) -> str:

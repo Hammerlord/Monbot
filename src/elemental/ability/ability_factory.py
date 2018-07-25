@@ -1,9 +1,13 @@
+from src.elemental.ability.abilities.blessed_rain import BlessedRain
+from src.elemental.ability.abilities.blood_fangs import BloodFangs
 from src.elemental.ability.abilities.charge import Charge
 from src.elemental.ability.abilities.claw import Claw
 from src.elemental.ability.abilities.defend import Defend
 from src.elemental.ability.abilities.enrage import Enrage
 from src.elemental.ability.abilities.fireball import Fireball
 from src.elemental.ability.abilities.razor_fangs import RazorFangs
+from src.elemental.ability.abilities.reap import Reap
+from src.elemental.ability.abilities.rend import Rend
 from src.elemental.ability.abilities.rolling_thunder import RollingThunder
 from src.elemental.ability.abilities.shining_laser import ShiningLaser
 from src.elemental.ability.abilities.slam import Slam
@@ -38,6 +42,10 @@ class Abilities:
     fireball = AbilityInitializer.initialize(Fireball())
     shining_laser = AbilityInitializer.initialize(ShiningLaser())
     rolling_thunder = AbilityInitializer.initialize(RollingThunder())
+    blessed_rain = AbilityInitializer.initialize(BlessedRain())
+    rend = AbilityInitializer.initialize(Rend())
+    blood_fangs = AbilityInitializer.initialize(BloodFangs())
+    reap = AbilityInitializer.initialize(Reap())
 
 
 class LearnableAbilities:
@@ -80,3 +88,19 @@ class LearnableAbilities:
     @staticmethod
     def rolling_thunder(level=0) -> LearnableAbility:
         return LearnableAbility(Abilities.rolling_thunder, level)
+
+    @staticmethod
+    def blessed_rain(level=0) -> LearnableAbility:
+        return LearnableAbility(Abilities.blessed_rain, level)
+
+    @staticmethod
+    def rend(level=0) -> LearnableAbility:
+        return LearnableAbility(Abilities.rend, level)
+
+    @staticmethod
+    def blood_fangs(level=0) -> LearnableAbility:
+        return LearnableAbility(Abilities.blood_fangs, level)
+
+    @staticmethod
+    def reap(level=0) -> LearnableAbility:
+        return LearnableAbility(Abilities.reap, level)

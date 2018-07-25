@@ -11,7 +11,7 @@ class ShiningLaser(Ability):
         self.name = 'Shining Laser'
         self.element = Elements.LIGHT
         self.mana_cost = 15
-        self.base_power = 20
+        self.attack_power = 20
         self.category = Category.MAGIC
 
     @property

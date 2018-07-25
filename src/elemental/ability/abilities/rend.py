@@ -7,14 +7,13 @@ class Rend(Ability):
     def __init__(self):
         super().__init__()
         self.name = "Rend"
-        self._description = f"Rend the enemy, inflicting a bleed for {self.status_effect.calculate_duration()} rounds."
+        self._description = f"Rend up to 3 enemies, opening a wound for {self.status_effect.turn_duration} rounds."
         self.element = Elements.WIND
         self.category = Category.PHYSICAL
-        self.base_power = 1
+        self.attack_power = 1
         self.mana_cost = 15
         self.defend_cost = 0
-        self.turn_priority = TurnPriority.NORMAL
-        self.targeting = Target.ENEMY
+        self.targeting = Target.ENEMY_CLEAVE
 
     @property
     def status_effect(self) -> RendEffect:
