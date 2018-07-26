@@ -52,7 +52,7 @@ class AbilityManager:
         Replaces an Ability in active_abilities with one from eligible_abilities.
         Uses position in the respective lists.
         """
-        if self._active_abilities[active_position].name == Abilities.defend.name:
+        if self._active_abilities[active_position].name == 'Defend':
             # Defend is not swappable.
             return
         self._active_abilities[active_position] = self.eligible_abilities[available_position]

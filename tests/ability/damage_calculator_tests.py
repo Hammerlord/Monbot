@@ -1,7 +1,7 @@
 import unittest
 
 from src.core.elements import Elements, Category
-from src.elemental.ability.ability_factory import Abilities
+from src.elemental.ability.abilities.claw import Claw
 from src.elemental.ability.damage_calculator import DamageCalculator
 from src.elemental.status_effect.status_effects.defend import DefendEffect
 from tests.ability.ability_builder import AbilityBuilder
@@ -98,8 +98,8 @@ class DamageCalculatorTests(unittest.TestCase):
                                                            .with_physical_def(30)
                                                            .build()).build()
         actor = CombatElementalBuilder().build()
-        low_def_calculator = DamageCalculator(low_def, actor, Abilities.claw)
+        low_def_calculator = DamageCalculator(low_def, actor, Claw())
         low_def_calculator.calculate()
-        high_def_calculator = DamageCalculator(high_def, actor, Abilities.claw)
+        high_def_calculator = DamageCalculator(high_def, actor, Claw())
         high_def_calculator.calculate()
         self.assertGreater(low_def_calculator.final_damage, high_def_calculator.final_damage, error)

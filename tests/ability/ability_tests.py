@@ -3,8 +3,11 @@ from unittest.mock import Mock
 
 from src.combat.actions.elemental_action import ElementalAction
 from src.elemental.ability.abilities.blood_fangs import BloodFangs
+from src.elemental.ability.abilities.charge import Charge
+from src.elemental.ability.abilities.defend import Defend
+from src.elemental.ability.abilities.fireball import Fireball
+from src.elemental.ability.abilities.razor_fangs import RazorFangs
 from src.elemental.ability.abilities.reap import Reap
-from src.elemental.ability.ability_factory import Abilities
 from src.elemental.ability.damage_calculator import DamageCalculator
 from src.elemental.status_effect.status_effects.bleeds import RendEffect
 from src.elemental.status_effect.status_effects.burns import Burn
@@ -14,7 +17,7 @@ from tests.elemental.elemental_builder import CombatElementalBuilder
 class AbilityTests(unittest.TestCase):
     def test_charge(self):
         error = "Charge didn't gain a damage bonus against a max health target"
-        ability = Abilities.charge
+        ability = Charge()
         target = CombatElementalBuilder().build()
         actor = CombatElementalBuilder().build()
         calculator = DamageCalculator(target, actor, ability)
@@ -23,7 +26,7 @@ class AbilityTests(unittest.TestCase):
 
     def test_fireball(self):
         error = "Fireball didn't gain a damage bonus on a burning target"
-        ability = Abilities.fireball
+        ability = Fireball()
         target = CombatElementalBuilder().build()
         target.add_status_effect(Burn())
         actor = CombatElementalBuilder().build()
@@ -36,7 +39,7 @@ class AbilityTests(unittest.TestCase):
         elemental = CombatElementalBuilder().build()
         previous_charges = elemental.defend_charges
         ElementalAction(actor=elemental,
-                        ability=Abilities.defend,
+                        ability=Defend(),
                         target=CombatElementalBuilder().build()
                         ).execute()
         self.assertEqual(elemental.defend_charges, (previous_charges - 1), error)
@@ -46,7 +49,7 @@ class AbilityTests(unittest.TestCase):
         elemental = CombatElementalBuilder().build()
         previous_mana = elemental.current_mana
         ElementalAction(actor=elemental,
-                        ability=Abilities.razor_fangs,
+                        ability=RazorFangs(),
                         target=CombatElementalBuilder().build()
                         ).execute()
         self.assertLess(elemental.current_mana, previous_mana, error)
