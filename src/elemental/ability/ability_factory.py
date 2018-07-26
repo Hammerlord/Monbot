@@ -14,40 +14,6 @@ from src.elemental.ability.abilities.slam import Slam
 from src.elemental.ability.ability import LearnableAbility, Ability
 
 
-class AbilityInitializer:
-    ability_map = {}  # Dict {[Ability.name]: Ability}
-
-    @staticmethod
-    def initialize(ability) -> Ability:
-        AbilityInitializer.ability_map[ability.name] = ability
-        return ability
-
-
-class Abilities:
-    """
-    An Ability is static information, so all usages refer to the same instance of an Ability.
-    """
-
-    @staticmethod
-    def get_by_name(ability_name: str) -> Ability or None:
-        if ability_name in AbilityInitializer.ability_map:
-            return AbilityInitializer.ability_map[ability_name]
-
-    defend = AbilityInitializer.initialize(Defend())
-    claw = AbilityInitializer.initialize(Claw())
-    charge = AbilityInitializer.initialize(Charge())
-    enrage = AbilityInitializer.initialize(Enrage())
-    slam = AbilityInitializer.initialize(Slam())
-    razor_fangs = AbilityInitializer.initialize(RazorFangs())
-    fireball = AbilityInitializer.initialize(Fireball())
-    shining_laser = AbilityInitializer.initialize(ShiningLaser())
-    rolling_thunder = AbilityInitializer.initialize(RollingThunder())
-    blessed_rain = AbilityInitializer.initialize(BlessedRain())
-    rend = AbilityInitializer.initialize(Rend())
-    blood_fangs = AbilityInitializer.initialize(BloodFangs())
-    reap = AbilityInitializer.initialize(Reap())
-
-
 class LearnableAbilities:
     """
     Factory for LearnableAbilities. Pass in the level requirement to set a requirement higher than 0.
@@ -55,52 +21,52 @@ class LearnableAbilities:
 
     @staticmethod
     def defend() -> LearnableAbility:
-        return LearnableAbility(Abilities.defend)  # Base LearnableAbility has no requirements.
+        return LearnableAbility(Defend())  # Base LearnableAbility has no requirements.
 
     @staticmethod
     def claw(level=0) -> LearnableAbility:
-        return LearnableAbility(Abilities.claw, level)
+        return LearnableAbility(Claw(), level)
 
     @staticmethod
     def charge(level=0) -> LearnableAbility:
-        return LearnableAbility(Abilities.charge, level)
+        return LearnableAbility(Charge(), level)
 
     @staticmethod
     def enrage(level=0) -> LearnableAbility:
-        return LearnableAbility(Abilities.enrage, level)
+        return LearnableAbility(Enrage(), level)
 
     @staticmethod
     def slam(level=0) -> LearnableAbility:
-        return LearnableAbility(Abilities.slam, level)
+        return LearnableAbility(Slam(), level)
 
     @staticmethod
     def razor_fangs(level=0) -> LearnableAbility:
-        return LearnableAbility(Abilities.razor_fangs, level)
+        return LearnableAbility(RazorFangs(), level)
 
     @staticmethod
     def fireball(level=0) -> LearnableAbility:
-        return LearnableAbility(Abilities.fireball, level)
+        return LearnableAbility(Fireball(), level)
 
     @staticmethod
     def shining_laser(level=0) -> LearnableAbility:
-        return LearnableAbility(Abilities.shining_laser, level)
+        return LearnableAbility(ShiningLaser(), level)
 
     @staticmethod
     def rolling_thunder(level=0) -> LearnableAbility:
-        return LearnableAbility(Abilities.rolling_thunder, level)
+        return LearnableAbility(RollingThunder(), level)
 
     @staticmethod
     def blessed_rain(level=0) -> LearnableAbility:
-        return LearnableAbility(Abilities.blessed_rain, level)
+        return LearnableAbility(BlessedRain(), level)
 
     @staticmethod
     def rend(level=0) -> LearnableAbility:
-        return LearnableAbility(Abilities.rend, level)
+        return LearnableAbility(Rend(), level)
 
     @staticmethod
     def blood_fangs(level=0) -> LearnableAbility:
-        return LearnableAbility(Abilities.blood_fangs, level)
+        return LearnableAbility(BloodFangs(), level)
 
     @staticmethod
     def reap(level=0) -> LearnableAbility:
-        return LearnableAbility(Abilities.reap, level)
+        return LearnableAbility(Reap(), level)

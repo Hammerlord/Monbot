@@ -1,7 +1,7 @@
 from typing import List
 
 from src.elemental.ability.ability import LearnableAbility, Ability
-from src.elemental.ability.ability_factory import LearnableAbilities, Abilities
+from src.elemental.ability.ability_factory import LearnableAbilities
 
 
 class AbilityManager:
@@ -56,6 +56,11 @@ class AbilityManager:
             # Defend is not swappable.
             return
         self._active_abilities[active_position] = self.eligible_abilities[available_position]
+
+    def find_ability_by_name(self, name: str) -> Ability or None:
+        for ability in self._available_abilities:
+            if ability.name == name:
+                return ability
 
     def _can_learn(self, learnable_ability: LearnableAbility) -> bool:
         not_yet_learned = learnable_ability.ability not in self._available_abilities
