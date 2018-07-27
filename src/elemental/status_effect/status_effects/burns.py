@@ -29,3 +29,14 @@ class Burn(StatusEffect):
     @property
     def trigger_recap(self) -> str:
         return f'{self.target.nickname} was hurt by its burn.'
+
+
+class IgniteEffect(Burn):
+
+    def __init__(self):
+        super().__init__()
+        self.attack_power = 6
+
+    @property
+    def turn_duration(self) -> float:
+        return 5

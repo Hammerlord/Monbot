@@ -110,6 +110,9 @@ class Combat:
         elif target == Target.ENEMY_CLEAVE:
             # TODO
             return self.get_active_enemy(actor.team)
+        elif target == Target.ENEMY_AOE:
+            # TODO
+            return self.get_active_enemy(actor.team)
         elif target == Target.ENEMY_TEAM:
             return self.get_enemy_side(actor.team)[0]
 

@@ -5,12 +5,17 @@ from src.elemental.ability.abilities.claw import Claw
 from src.elemental.ability.abilities.defend import Defend
 from src.elemental.ability.abilities.enrage import Enrage
 from src.elemental.ability.abilities.fireball import Fireball
+from src.elemental.ability.abilities.gale_step import GaleStep
+from src.elemental.ability.abilities.geyser import Geyser
+from src.elemental.ability.abilities.ignite import Ignite
 from src.elemental.ability.abilities.razor_fangs import RazorFangs
 from src.elemental.ability.abilities.reap import Reap
 from src.elemental.ability.abilities.rend import Rend
 from src.elemental.ability.abilities.rolling_thunder import RollingThunder
 from src.elemental.ability.abilities.shining_laser import ShiningLaser
 from src.elemental.ability.abilities.slam import Slam
+from src.elemental.ability.abilities.stormbolt import Stormbolt
+from src.elemental.ability.abilities.wind_rush import Windrush
 from src.elemental.ability.ability import LearnableAbility, Ability
 
 
@@ -70,3 +75,23 @@ class LearnableAbilities:
     @staticmethod
     def reap(level=0) -> LearnableAbility:
         return LearnableAbility(Reap(), level)
+
+    @staticmethod
+    def gale_step(level=0) -> LearnableAbility:
+        return LearnableAbility(GaleStep(), level)
+
+    @staticmethod
+    def stormbolt(level=0) -> LearnableAbility:
+        return LearnableAbility(Stormbolt(), level)
+
+    @staticmethod
+    def geyser(level=0) -> LearnableAbility:
+        return LearnableAbility(Geyser(), level)
+
+    @staticmethod
+    def ignite(level=0) -> LearnableAbility:
+        return LearnableAbility(Ignite(), level)
+
+    @staticmethod
+    def windrush(level=0) -> LearnableAbility:
+        return LearnableAbility(Windrush(), level)

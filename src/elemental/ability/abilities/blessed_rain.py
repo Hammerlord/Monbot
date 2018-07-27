@@ -7,8 +7,8 @@ class BlessedRain(Ability):
     def __init__(self):
         super().__init__()
         self.name = "Blessed Rain"
-        self._description = ("Heals your active elemental for 15% of the"
-                             " user's health every turn for 4 turns.")
+        self._description = ("Heals your active elemental for 15% of the "
+                             f"user's health every turn for {self.status_effect.turn_duration} turns.")
         self.icon = ':cloud_rain:'
         self.element = Elements.WATER
         self.category = Category.MAGIC
@@ -16,5 +16,6 @@ class BlessedRain(Ability):
         self.turn_priority = TurnPriority.NORMAL
         self.targeting = Target.SELF_TEAM
 
+    @property
     def status_effect(self) -> BlessedRainEffect:
         return BlessedRainEffect()

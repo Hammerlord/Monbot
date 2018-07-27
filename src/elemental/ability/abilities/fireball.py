@@ -9,7 +9,7 @@ class Fireball(Ability):
     """
 
     def __init__(self):
-        super(Fireball, self).__init__()
+        super().__init__()
         self.name = "Fireball"
         self._description = "Launch a fireball. +30% damage to burning enemies."
         self.element = Elements.FIRE

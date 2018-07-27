@@ -8,13 +8,16 @@ class Targetable:
     def on_receive_ability(self, ability, actor):
         raise NotImplementedError
 
-    def receive_damage(self, amount, actor):
+    def receive_damage(self, amount: int, actor):
         raise NotImplementedError
 
-    def heal(self, amount):
+    def heal(self, amount: int):
         raise NotImplementedError
 
     def add_status_effect(self, effect):
+        raise NotImplementedError
+
+    def update_mana(self, amount: int):
         raise NotImplementedError
 
     @property

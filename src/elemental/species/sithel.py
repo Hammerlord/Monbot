@@ -37,4 +37,6 @@ class Sithel(Species):
         self._growth_rate = GrowthRate()
         self._learnable_abilities = [LearnableAbilities.claw(),
                                      LearnableAbilities.enrage(),
-                                     LearnableAbilities.fireball(2)]
+                                     LearnableAbilities.fireball(4),
+                                     LearnableAbilities.ignite(8),
+                                     LearnableAbilities.gale_step(15)]

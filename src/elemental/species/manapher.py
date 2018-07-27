@@ -38,4 +38,5 @@ class Manapher(Species):
         self._right_icon = ':koala:'
         self._portrait = None
         self._growth_rate = GrowthRate()
-        self._learnable_abilities = [LearnableAbilities.claw(), LearnableAbilities.shining_laser()]
+        self._learnable_abilities = [LearnableAbilities.claw(),
+                                     LearnableAbilities.shining_laser()]

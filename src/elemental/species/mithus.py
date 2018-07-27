@@ -36,4 +36,5 @@ class Mithus(Species):
         self._portrait = None
         self._growth_rate = GrowthRate()
         self._learnable_abilities = [LearnableAbilities.razor_fangs(),
-                                     LearnableAbilities.claw()]
+                                     LearnableAbilities.claw(),
+                                     LearnableAbilities.geyser(4)]

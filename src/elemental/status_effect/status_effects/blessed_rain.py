@@ -7,9 +7,9 @@ class BlessedRainEffect(StatusEffect):
     def __init__(self):
         super().__init__()
         self.icon = ':cloud_rain:'
-        self.effect_type = EffectType.NONE
         self.category = Category.MAGIC
         self.element = Elements.WATER
+        self.effect_type = EffectType.HEAL_OVER_TIME
         self.recovery = 0.15
         self._description = (f"Heals for {self.recovery*100}% of the user's max health "
                              f"every turn for {self.turn_duration} turns.")
@@ -31,4 +31,4 @@ class BlessedRainEffect(StatusEffect):
 
     @property
     def turn_duration(self) -> int:
-        return 4
+        return 5

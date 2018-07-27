@@ -62,6 +62,9 @@ class CombatTeam(Targetable):
         if self.owner and not self.owner.is_npc:
             self.owner.is_busy = False
 
+    def log(self, recap) -> None:
+        self.logger.add_log(recap)
+
     @property
     def last_action(self) -> Action:
         return self._actions[-1]
@@ -243,8 +246,8 @@ class CombatTeam(Targetable):
         # Same as receive damage.
         self.active_elemental.on_receive_ability(ability, actor)
 
-    def log(self, recap):
-        self.logger.add_log(recap)
+    def update_mana(self, amount: int) -> None:
+        self.active_elemental.update_mana(amount)
 
     def append_recent_log(self, recap):
         self.logger.append_recent(recap)
