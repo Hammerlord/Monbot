@@ -105,6 +105,8 @@ class Combat:
         target = ability.targeting
         if target == Target.SELF:
             return actor
+        if target == Target.SELF_TEAM:
+            return actor.team
         elif target == Target.ENEMY:
             return self.get_active_enemy(actor.team)
         elif target == Target.ENEMY_CLEAVE:
@@ -115,6 +117,7 @@ class Combat:
             return self.get_active_enemy(actor.team)
         elif target == Target.ENEMY_TEAM:
             return self.get_enemy_side(actor.team)[0]
+        raise ValueError(f"{ability.name} has no valid targeting.")
 
     def get_enemy_side(self, team):
         """
