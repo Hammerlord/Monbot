@@ -224,13 +224,17 @@ class CombatTeam(Targetable):
         # Store the Action as a record.
         self._actions.append(action)
 
-    def add_status_effect(self, status_effect: StatusEffect) -> None:
-        status_effect.target = self
-        if status_effect.applier == self.active_elemental:
-            status_effect.boost_turn_duration()
-        self._status_effects.append(status_effect)
-        status_effect.on_effect_start()
-        self.append_recent_log(status_effect.application_recap)
+    def add_status_effect(self, effect: StatusEffect) -> None:
+        equivalent_effect = self.__effect_exists(effect)
+        if equivalent_effect and not effect.can_add_instances:
+            equivalent_effect.reapply()
+            return
+        effect.target = self
+        if effect.applier == self.active_elemental:
+            effect.boost_turn_duration()
+        self._status_effects.append(effect)
+        effect.on_effect_start()
+        self.append_recent_log(effect.application_recap)
 
     # Targetable implementations: Reroute attacks, etc. to the currently active elemental.
 
@@ -271,3 +275,10 @@ class CombatTeam(Targetable):
     @property
     def magic_def(self) -> int:
         return self.active_elemental.magic_def
+
+    def __effect_exists(self, to_check: StatusEffect) -> StatusEffect or None:
+        """
+        Check if an equivalent StatusEffect is already on this CombatTeam, by type.
+        :return The StatusEffect if it exists, None if not.
+        """
+        return next((effect for effect in self._status_effects if type(effect) is type(to_check)), None)

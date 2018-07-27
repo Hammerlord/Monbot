@@ -205,7 +205,7 @@ class StatusManager:
 
     def __effect_exists(self, to_check: StatusEffect) -> StatusEffect or None:
         """
-        Check if an equivalent StatusEffect is already on this CombatElemental by instance.
+        Check if an equivalent StatusEffect is already on this CombatElemental by type.
         :return The StatusEffect if it exists, None if not.
         """
         return next((effect for effect in self._status_effects if type(effect) is type(to_check)), None)
