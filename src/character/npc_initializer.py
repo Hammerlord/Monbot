@@ -2,7 +2,10 @@ import random
 from enum import Enum
 
 from src.character.npc import NPC
+from src.elemental.species.felix import Felix
+from src.elemental.species.manapher import Manapher
 from src.elemental.species.mithus import Mithus
+from src.elemental.species.nepharus import Nepharus
 from src.elemental.species.rainatu import Rainatu
 from src.elemental.species.roaus import Roaus
 from src.elemental.species.sithel import Sithel
@@ -31,6 +34,12 @@ class NPCInitializer:
     def adventurer() -> NPC:
         potential_species = [Mithus(), Roaus(), Rainatu(), Sithel()]
         return NPC('Adventurer',
+                   potential_species)
+
+    @staticmethod
+    def collector() -> NPC:
+        potential_species = [Mithus(), Roaus(), Rainatu(), Sithel(), Felix(), Manapher(), Nepharus()]
+        return NPC('Collector',
                    potential_species)
 
     @staticmethod
