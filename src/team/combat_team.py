@@ -173,7 +173,8 @@ class CombatTeam(Targetable):
     def turn_start(self) -> None:
         self.active_elemental.start_turn()
         for effect in self._status_effects:
-            effect.on_turn_start()
+            if effect.on_turn_start():
+                self.log(effect.trigger_recap)
         for elemental in self.eligible_bench:
             elemental.gain_bench_mana()
 
