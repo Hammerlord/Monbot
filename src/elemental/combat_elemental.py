@@ -216,6 +216,12 @@ class CombatElemental(Targetable):
         previous = len(self._actions) - 1
         return self._actions[previous]
 
+    def actions(self):
+        """
+        :return: List[ElementalAction]
+        """
+        return list(self._actions)
+
     def add_action(self, action) -> None:
         """
         :param action: ElementalAction
