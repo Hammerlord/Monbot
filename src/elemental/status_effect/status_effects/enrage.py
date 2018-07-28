@@ -19,6 +19,10 @@ class EnrageEffect(StatusEffect):
             self.uptime += 1
             return True
 
+    def on_effect_start(self):
+        self.uptime = 0
+        super().on_effect_start()
+
     @property
     def trigger_recap(self) -> str:
         return f"{self.target.nickname}'s rage increases."
