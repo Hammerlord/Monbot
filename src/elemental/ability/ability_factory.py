@@ -1,3 +1,4 @@
+from src.elemental.ability.abilities.black_pinion import BlackPinion
 from src.elemental.ability.abilities.blessed_rain import BlessedRain
 from src.elemental.ability.abilities.blood_fangs import BloodFangs
 from src.elemental.ability.abilities.charge import Charge
@@ -95,3 +96,7 @@ class LearnableAbilities:
     @staticmethod
     def windrush(level=0) -> LearnableAbility:
         return LearnableAbility(Windrush(), level)
+
+    @staticmethod
+    def black_pinion(level=0) -> LearnableAbility:
+        return LearnableAbility(BlackPinion(), level)

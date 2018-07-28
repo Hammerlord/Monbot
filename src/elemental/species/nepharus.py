@@ -39,4 +39,5 @@ class Nepharus(Species):
         self._learnable_abilities = [LearnableAbilities.razor_fangs(),
                                      LearnableAbilities.reap(),
                                      LearnableAbilities.blood_fangs(5),
-                                     LearnableAbilities.rend(10)]
+                                     LearnableAbilities.rend(10),
+                                     LearnableAbilities.black_pinion(15)]

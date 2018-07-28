@@ -7,10 +7,11 @@ class GaleStepEffect(StatusEffect):
         self.name = "Gale Step"
         self._description = f"Increase speed significantly for {self.turn_duration} turns."
         self.icon = ':dash:'
+        self.max_stacks = 3
 
     @property
     def turn_duration(self):
-        return 4
+        return 5
 
     @property
     def application_recap(self) -> str:
