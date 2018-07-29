@@ -56,6 +56,6 @@ class AbilityBuilder:
         ability.element = self.element
         ability.category = self.category
         ability.attack_power = self.attack_power
-        ability.recovery = self.recovery
+        ability.target_recovery = self.recovery
         ability.bonus_multiplier = self.bonus_multiplier
         return ability

@@ -10,12 +10,12 @@ class BlessedRainEffect(StatusEffect):
         self.category = Category.MAGIC
         self.element = Elements.WATER
         self.effect_type = EffectType.HEAL_OVER_TIME
-        self.recovery = 0.15
-        self._description = (f"Heals for {self.recovery*100}% of the user's max health "
+        self.target_recovery = 0.15
+        self._description = (f"Heals for {self.target_recovery*100}% of the user's max health "
                              f"every turn for {self.turn_duration} turns.")
 
     def on_turn_end(self) -> True:
-        self.target.heal(self.recovery*self.applier.max_hp)
+        self.target.heal(self.target_recovery*self.applier.max_hp)
 
     @property
     def application_recap(self) -> str:

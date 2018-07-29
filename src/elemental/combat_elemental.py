@@ -305,7 +305,7 @@ class CombatElemental(Targetable):
             self.action_queued = None
 
     def heal(self, amount: int) -> None:
-        if self.is_knocked_out:
+        if self.is_knocked_out or self.current_hp == self.max_hp:
             # Regular healing effects don't work.
             return
         self._elemental.heal(amount)

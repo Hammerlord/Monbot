@@ -55,6 +55,18 @@ class AbilityTests(unittest.TestCase):
                         ).execute()
         self.assertLess(elemental.current_mana, previous_mana, error)
 
+    def test_blood_fangs_healing(self):
+        error = "Blood Fangs didn't heal the actor"
+        elemental = CombatElementalBuilder().build()
+        elemental.receive_damage(10, Mock())
+        hp_before = elemental.current_hp
+        ElementalAction(actor=elemental,
+                        ability=BloodFangs(),
+                        target=CombatElementalBuilder().build()
+                        ).execute()
+        hp_after = elemental.current_hp
+        self.assertGreater(hp_after, hp_before, error)
+
     def test_blood_fangs_base_healing(self):
         error = "Blood Fangs didn't recover 10% health baseline"
         elemental = CombatElementalBuilder().build()
