@@ -37,8 +37,8 @@ class Rex(Species):
         self._growth_rate = GrowthRate()
         self._learnable_abilities = [LearnableAbilities.slam(),
                                      LearnableAbilities.charge(),
-                                     LearnableAbilities.rampage(4),
                                      LearnableAbilities.enrage(4),
-                                     LearnableAbilities.rend(9),
+                                     LearnableAbilities.rampage(9),
+                                     LearnableAbilities.rend(14),
                                      LearnableAbilities.fireball(20),
                                      LearnableAbilities.stormbolt(25)]

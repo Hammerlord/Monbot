@@ -248,15 +248,17 @@ class CombatElemental(Targetable):
             self._status_manager.on_turn_start()
 
     def end_turn(self) -> None:
+        if self.is_knocked_out:
+            return
         if self.action_queued:
+            self.action_queued.decrement_time()
             if self.action_queued.has_ended:
                 self.action_queued = None
-            else:
-                self.action_queued.decrement_time()
         self._status_manager.on_turn_end()
 
     def end_round(self) -> None:
-        self._status_manager.on_round_end()
+        if not self.is_knocked_out:
+            self._status_manager.on_round_end()
 
     def on_ability(self, ability: Ability) -> None:
         # Logging is handled by the ElementalAction and Casting actions.
@@ -270,7 +272,9 @@ class CombatElemental(Targetable):
 
     @property
     def is_cast_in_progress(self) -> bool:
-        return self.action_queued and not self.action_queued.is_initial_use
+        if self.action_queued:
+            return not self.action_queued.is_initial_use
+        return False
 
     def log(self, recap: str) -> None:
         self.team.log(recap)
@@ -298,8 +302,12 @@ class CombatElemental(Targetable):
         self._status_manager.on_receive_damage(amount, actor)
         if self.is_knocked_out:
             self._status_manager.clear_status_effects()
+            self.action_queued = None
 
     def heal(self, amount: int) -> None:
+        if self.is_knocked_out:
+            # Regular healing effects don't work.
+            return
         self._elemental.heal(amount)
         # TODO
         self.log(f'{self.nickname} recovered health!')

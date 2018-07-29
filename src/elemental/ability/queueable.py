@@ -5,12 +5,15 @@ class Queueable:
     def decrement_time(self) -> None:
         raise NotImplementedError
 
+    @property
     def is_initial_use(self) -> bool:
         raise NotImplementedError
 
+    @property
     def has_ended(self) -> bool:
         raise NotImplementedError
 
+    @property
     def is_ready(self) -> bool:
         # Can this ability be used?
         raise NotImplementedError
@@ -38,6 +41,7 @@ class Channelable(Queueable):
     def decrement_time(self) -> None:
         self.turns_to_channel -= 1
 
+    @property
     def is_initial_use(self) -> bool:
         return self.turns_to_channel == self.ability.base_channel_time
 
@@ -59,14 +63,16 @@ class Castable(Queueable):
 
     @property
     def is_ready(self) -> bool:
-        return self.has_ended
+        return self.turns_to_activate == 0
 
     @property
     def has_ended(self) -> bool:
-        return self.turns_to_activate == 0
+        # The ability activates at timer 0 and is removed afterward, at -1.
+        return self.turns_to_activate < 0
 
     def decrement_time(self):
         self.turns_to_activate -= 1
 
+    @property
     def is_initial_use(self) -> bool:
         return self.turns_to_activate == self.ability.base_cast_time
