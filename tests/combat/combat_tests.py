@@ -1,4 +1,5 @@
 import unittest
+from unittest.mock import Mock
 
 from src.combat.actions.combat_actions import Switch
 from src.combat.actions.elemental_action import ElementalAction
@@ -10,7 +11,7 @@ from src.elemental.ability.ability import Castable
 from src.elemental.combat_elemental import CombatElemental
 from src.team.combat_team import CombatTeam
 from tests.character.character_builder import PlayerBuilder
-from tests.elemental.elemental_builder import ElementalBuilder
+from tests.elemental.elemental_builder import ElementalBuilder, CombatElementalBuilder
 from tests.team.team_builder import TeamBuilder
 
 
@@ -144,6 +145,36 @@ class CombatTests(unittest.TestCase):
         team_a.handle_cast_time(Castable(ShiningLaser()))
         team_b.make_move(Claw())
         self.assertLess(elemental_b.current_hp, health_before, error)
+
+    def test_elemental_action(self):
+        error = "ElementalAction could incorrectly trigger when the elemental is KOed."
+        team = TeamBuilder().build()
+        elemental = ElementalBuilder().build()
+        team.add_elemental(elemental)
+        team = CombatTeam(team)
+        elemental.receive_damage(10000)
+        action = ElementalAction(
+            actor=team.elementals[0],
+            ability=Claw(),
+            target=Mock()
+        )
+        self.assertFalse(action.can_execute, error)
+
+    def test_active_elemental_action(self):
+        error = "ElementalAction could incorrectly trigger when the elemental forcibly switched."
+        team = TeamBuilder().build()
+        elemental = ElementalBuilder().build()
+        team.add_elemental(elemental)
+        team = CombatTeam(team)
+        old_active = team.elementals[0]
+        team.change_active_elemental(old_active)
+        team.change_active_elemental(CombatElementalBuilder().build())
+        action = ElementalAction(
+            actor=old_active,
+            ability=Claw(),
+            target=Mock()
+        )
+        self.assertFalse(action.can_execute, error)
 
     @staticmethod
     def get_combat_team():
