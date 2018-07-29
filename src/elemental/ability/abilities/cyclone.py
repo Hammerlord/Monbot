@@ -19,7 +19,7 @@ class Cyclone(Ability):
     def get_bonus_multiplier(target, actor) -> float:
         multiplier = 1
         for action in reversed(actor.actions):
-            if not isinstance(action.ability, Cyclone):
+            if hasattr(action, 'ability') and not isinstance(action.ability, Cyclone):
                 break
             multiplier += 0.25
         return multiplier

@@ -39,4 +39,6 @@ class Felix(Species):
                                      LearnableAbilities.blessed_rain(),
                                      LearnableAbilities.geyser(5),
                                      LearnableAbilities.windrush(10),
-                                     LearnableAbilities.gale_step(15)]
+                                     LearnableAbilities.gale_step(15),
+                                     LearnableAbilities.cyclone(20),
+                                     LearnableAbilities.deluge(25)]

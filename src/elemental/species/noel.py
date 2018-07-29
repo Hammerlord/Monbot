@@ -36,10 +36,11 @@ class Noel(Species):
         self._right_icon = ':wolf:'
         self._portrait = None
         self._growth_rate = GrowthRate()
-        self._learnable_abilities = [LearnableAbilities.razor_fangs(),
-                                     LearnableAbilities.reap(),
-                                     LearnableAbilities.geyser(5),
-                                     LearnableAbilities.blood_fangs(10),
-                                     LearnableAbilities.rend(15),
-                                     LearnableAbilities.gale_step(20),
-                                     LearnableAbilities.windrush(25)]
+        self._learnable_abilities = [LearnableAbilities.reap(),
+                                     LearnableAbilities.razor_fangs(),
+                                     LearnableAbilities.geyser(4),
+                                     LearnableAbilities.blood_fangs(8),
+                                     LearnableAbilities.rend(12),
+                                     LearnableAbilities.gale_step(17),
+                                     LearnableAbilities.windrush(22),
+                                     LearnableAbilities.deluge(27)]

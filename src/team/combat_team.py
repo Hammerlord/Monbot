@@ -5,7 +5,8 @@ from src.combat.actions.combat_actions import Switch, Action
 from src.combat.actions.elemental_action import ElementalAction
 from src.core.elements import Elements
 from src.core.targetable_interface import Targetable
-from src.elemental.ability.ability import Ability, Target, Castable
+from src.elemental.ability.ability import Ability
+from src.elemental.ability.queueable import Castable, Channelable
 from src.elemental.combat_elemental import CombatElemental, CombatElementalLog
 from src.elemental.elemental import Elemental
 from src.elemental.status_effect.status_effect import StatusEffect
@@ -126,16 +127,17 @@ class CombatTeam(Targetable):
 
     def check_casting(self) -> bool:
         """
-        Is our currently active elemental locked into casting an ability?
+        Is our currently active elemental locked into an ability?
         If true, automatically continue that ability.
         """
-        castable = self.active_elemental.casting
-        if not castable:
+        action_queued = self.active_elemental.action_queued
+        if not action_queued:
             return False
-        if castable.is_ready:
-            self.make_move(castable.ability)
+        if action_queued.is_ready:
+            self.make_move(action_queued.ability)
         else:
-            self.handle_cast_time(castable)
+            # Handle a continued cast time. Only a Castable should ever reach this block.
+            self.handle_cast_time(action_queued)
         return True
 
     def select_ability(self, ability: Ability) -> bool:
@@ -162,7 +164,6 @@ class CombatTeam(Targetable):
         self.combat.request_action(action)
 
     def make_move(self, ability) -> None:
-        self.active_elemental.casting = None
         action = ElementalAction(
             actor=self.active_elemental,
             ability=ability,

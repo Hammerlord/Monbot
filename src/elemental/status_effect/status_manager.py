@@ -227,7 +227,7 @@ class StatusManager:
         return calculation - stats
 
     def __check_effect_end(self, effect: StatusEffect) -> None:
-        if effect.duration_ended:
+        if effect in self._status_effects and effect.duration_ended:
             self._status_effects.remove(effect)
             self.combat_elemental.log(effect.fade_recap)
 

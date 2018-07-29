@@ -1,6 +1,7 @@
 from src.combat.actions.action import Action, ActionType
 from src.core.targetable_interface import Targetable
-from src.elemental.ability.ability import Castable, TurnPriority
+from src.elemental.ability.ability import TurnPriority
+from src.elemental.ability.queueable import Castable
 from src.elemental.combat_elemental import CombatElemental
 
 
@@ -9,6 +10,7 @@ class Casting(Action):
     When a CombatElemental uses an ability with base_cast_time > 0, this Action is created instead
     of a normal ElementalAction.
     """
+
     def __init__(self,
                  actor: CombatElemental,
                  castable: Castable,
@@ -36,14 +38,10 @@ class Casting(Action):
         return self.ability.turn_priority
 
     def execute(self) -> None:
-        if self.castable.is_initial_use():
-            # Only consume mana, etc. if this was the turn the cast was started. Although I don't imagine
-            # cast times will ever exceed 1 turn.
-            self.actor.on_ability(self.castable.ability)
-            self.actor.log(self.recap)
-        self.actor.set_casting(self.castable)
+        self.actor.on_ability(self.castable.ability)
+        self.actor.log(self.recap)
+        self.actor.set_acting(self.castable)
         self.actor.add_action(self)
-        self.castable.decrement_cast_time()
         self.team.end_turn()
 
     @property

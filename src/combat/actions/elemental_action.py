@@ -15,7 +15,6 @@ class ElementalAction(Action):
                  target: Targetable):
         self.actor = actor
         self.ability = ability
-        self.ability_triggered_bonus = False
         self.target = target
         self.damage_calculator = DamageCalculator(self.target,
                                                   self.actor,
@@ -59,59 +58,16 @@ class ElementalAction(Action):
     def is_resisted(self) -> bool:
         return self.damage_calculator.is_resisted
 
-    def execute(self) -> 'ElementalAction':
-        self.on_ability()
-        self.team.log(self.ability.get_recap(self.actor.nickname))
-        self.target.on_receive_ability(self.ability, self.actor)
-        self.check_damage_dealt()
-        self.check_healing_done()
-        self.check_status_effect_application()
-        self.actor.add_action(self)
-        self.team.end_turn()
-        return self
-
-    def on_ability(self):
-        if not self.ability.has_cast_time:
-            # Then mana consumption was already handled on cast start.
-            self.actor.on_ability(self.ability)
-
-    def check_damage_dealt(self) -> None:
-        if self.ability.attack_power > 0:
-            # Only bother with damage calculation if the Ability is meant to do damage.
-            self.damage_calculator.calculate()
-            damage = self.damage_calculator.final_damage
-            self.target.receive_damage(damage, self.actor)
-            # Log here for ability
-            self.team.log(self.recap)
-
-    def check_healing_done(self) -> None:
-        # Healing is a percentage based on the caster's maximum HP.
-        assert self.ability.recovery <= 1
-        healing_percentage = self.ability.recovery
-        if healing_percentage > 0:
-            # Recovery abilities don't scale off of anything besides the bonus... yet
-            healing_percentage *= self.ability.get_bonus_multiplier(self.target, self.actor)
-            total_healing = healing_percentage*self.actor.max_hp
-            self.target.heal(total_healing)
-            self.total_healing = total_healing
-
-    def check_status_effect_application(self) -> None:
-        status_effect = self.ability.status_effect
-        if not status_effect:
-            return
-        status_effect.applier = self.actor
-        if self.target.add_status_effect(status_effect):
-            self.target_effects_applied.append(status_effect)
-        else:
-            self.target_effects_failed.append(status_effect)
-
     @property
     def action_type(self) -> ActionType:
         return ActionType.ELEMENTAL_ACTION
 
     @property
     def recap(self) -> str:
-        recap = self.ability.get_recap(self.actor.nickname)
+        if self.actor.is_cast_in_progress:
+            recap = self.ability.get_channeling_message(self.actor.nickname)
+        else:
+            recap = self.ability.get_recap(self.actor.nickname)
         if self.damage_calculator.is_effective:
             recap += " It's super effective."
         elif self.damage_calculator.is_resisted:
@@ -125,3 +81,43 @@ class ElementalAction(Action):
         return (self.team.active_elemental
                 and not self.team.active_elemental.is_knocked_out
                 and self.team.active_elemental == self.actor)
+
+    def execute(self) -> 'ElementalAction':
+        self.actor.on_ability(self.ability)
+        self.team.log(self.ability.get_recap(self.actor.nickname))
+        self.target.on_receive_ability(self.ability, self.actor)
+        self._check_damage_dealt()
+        self._check_healing_done()
+        self._check_status_effect_application()
+        self.actor.add_action(self)
+        self.team.end_turn()
+        return self
+
+    def _check_damage_dealt(self) -> None:
+        if self.ability.attack_power > 0:
+            # Only bother with damage calculation if the Ability is meant to do damage.
+            self.damage_calculator.calculate()
+            damage = self.damage_calculator.final_damage
+            self.target.receive_damage(damage, self.actor)
+            self.team.log(self.recap)
+
+    def _check_healing_done(self) -> None:
+        # Healing is a percentage based on the caster's maximum HP.
+        assert self.ability.recovery <= 1
+        healing_percentage = self.ability.recovery
+        if healing_percentage > 0:
+            # Recovery abilities don't scale off of anything besides the bonus... yet
+            healing_percentage *= self.ability.get_bonus_multiplier(self.target, self.actor)
+            total_healing = healing_percentage*self.actor.max_hp
+            self.target.heal(total_healing)
+            self.total_healing = total_healing
+
+    def _check_status_effect_application(self) -> None:
+        status_effect = self.ability.status_effect
+        if not status_effect:
+            return
+        status_effect.applier = self.actor
+        if self.target.add_status_effect(status_effect):
+            self.target_effects_applied.append(status_effect)
+        else:
+            self.target_effects_failed.append(status_effect)

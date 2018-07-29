@@ -32,6 +32,7 @@ class Combat:
         self.action_requests = []  # List[ActionRequest]
         self.action_log = [[]]  # List[List[Action]]  Actions made this battle, in order, grouped by turn rounds.
         self.turn_logger = EventLogger(self)
+        self.num_rounds = 0
 
     @property
     def teams(self):
@@ -155,6 +156,7 @@ class Combat:
         self._end_round()
 
     def _end_round(self):
+        self.num_rounds += 1
         for team in self.teams:
             team.end_round()
         self.prepare_new_round()
@@ -252,6 +254,7 @@ class Combat:
         self.in_progress = False
         for team in self.teams:
             team.end_combat()
+        print(f"Completed battle in {self.num_rounds} rounds.")
 
     def get_knockouts(self):
         """

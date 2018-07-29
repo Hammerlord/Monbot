@@ -7,7 +7,7 @@ class Rend(Ability):
     def __init__(self):
         super().__init__()
         self.name = "Rend"
-        self._description = f"Rend up to 3 enemies, opening a wound for {self.status_effect.turn_duration} rounds."
+        self._description = f"Rend up to 3 enemies, opening a wound for {self.status_effect.turn_duration} turns."
         self.element = Elements.WIND
         self.category = Category.PHYSICAL
         self.attack_power = 1

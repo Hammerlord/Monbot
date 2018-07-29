@@ -1,5 +1,5 @@
 from src.combat.actions.action import Action, ActionType
-from src.elemental.ability.ability import Ability, TurnPriority, Castable, Target
+from src.elemental.ability.ability import Ability, TurnPriority, Target
 
 
 class Switch(Action):

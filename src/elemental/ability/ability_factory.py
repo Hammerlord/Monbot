@@ -5,11 +5,13 @@ from src.elemental.ability.abilities.charge import Charge
 from src.elemental.ability.abilities.claw import Claw
 from src.elemental.ability.abilities.cyclone import Cyclone
 from src.elemental.ability.abilities.defend import Defend
+from src.elemental.ability.abilities.deluge import Deluge
 from src.elemental.ability.abilities.enrage import Enrage
 from src.elemental.ability.abilities.fireball import Fireball
 from src.elemental.ability.abilities.gale_step import GaleStep
 from src.elemental.ability.abilities.geyser import Geyser
 from src.elemental.ability.abilities.ignite import Ignite
+from src.elemental.ability.abilities.rampage import Rampage
 from src.elemental.ability.abilities.razor_fangs import RazorFangs
 from src.elemental.ability.abilities.reap import Reap
 from src.elemental.ability.abilities.rend import Rend
@@ -105,3 +107,11 @@ class LearnableAbilities:
     @staticmethod
     def cyclone(level=0) -> LearnableAbility:
         return LearnableAbility(Cyclone(), level)
+
+    @staticmethod
+    def deluge(level=0) -> LearnableAbility:
+        return LearnableAbility(Deluge(), level)
+
+    @staticmethod
+    def rampage(level=0) -> LearnableAbility:
+        return LearnableAbility(Rampage(), level)

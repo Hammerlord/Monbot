@@ -4,7 +4,8 @@ from copy import deepcopy, copy
 
 from src.core.elements import Elements
 from src.core.targetable_interface import Targetable
-from src.elemental.ability.ability import Ability, Castable
+from src.elemental.ability.ability import Ability
+from src.elemental.ability.queueable import Castable, Channelable, Queueable
 from src.elemental.elemental import Elemental
 from src.elemental.status_effect.status_effect import StatusEffect
 from src.elemental.status_effect.status_manager import StatusManager
@@ -31,7 +32,8 @@ class CombatElemental(Targetable):
         self._status_manager = StatusManager(self)
         self._actions = []  # List[ElementalAction]  A record of the actions taken by this CombatElemental.
         self._abilities = elemental.active_abilities
-        self.casting = None  # An Ability that takes time to activate or executes over multiple turns.
+        # Queueable; wrapper for an Ability that takes time to activate or executes over multiple turns:
+        self.action_queued = None
 
     def __repr__(self) -> str:
         return self.nickname
@@ -167,8 +169,12 @@ class CombatElemental(Targetable):
     def is_elemental(self, other: 'CombatElemental') -> bool:
         return self.id == other.id
 
-    def set_casting(self, casted: Castable) -> None:
-        self.casting = casted
+    def set_acting(self, acting: Queueable) -> None:
+        """
+        :param acting: What this CombatElemental is in the middle of performing.
+        Eg. it is casting a spell with a cast time, or using an attack that triggers repeatedly across turns.
+        """
+        self.action_queued = acting
 
     def add_exp(self, amount: int) -> None:
         self._elemental.add_exp(amount)
@@ -242,6 +248,11 @@ class CombatElemental(Targetable):
             self._status_manager.on_turn_start()
 
     def end_turn(self) -> None:
+        if self.action_queued:
+            if self.action_queued.has_ended:
+                self.action_queued = None
+            else:
+                self.action_queued.decrement_time()
         self._status_manager.on_turn_end()
 
     def end_round(self) -> None:
@@ -249,8 +260,17 @@ class CombatElemental(Targetable):
 
     def on_ability(self, ability: Ability) -> None:
         # Logging is handled by the ElementalAction and Casting actions.
+        if self.is_cast_in_progress:
+            # Then mana consumption was already handled on cast/channel start.
+            return
+        if ability.is_channelable:
+            self.action_queued = Channelable(ability)
         self.update_mana(-ability.mana_cost)
         self.update_defend_charges(-ability.defend_cost)
+
+    @property
+    def is_cast_in_progress(self) -> bool:
+        return self.action_queued and not self.action_queued.is_initial_use
 
     def log(self, recap: str) -> None:
         self.team.log(recap)

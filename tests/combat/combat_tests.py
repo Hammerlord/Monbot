@@ -7,7 +7,7 @@ from src.combat.combat import Combat
 from src.elemental.ability.abilities.claw import Claw
 from src.elemental.ability.abilities.defend import Defend
 from src.elemental.ability.abilities.shining_laser import ShiningLaser
-from src.elemental.ability.ability import Castable
+from src.elemental.ability.queueable import Castable
 from src.elemental.combat_elemental import CombatElemental
 from src.team.combat_team import CombatTeam
 from tests.character.character_builder import PlayerBuilder

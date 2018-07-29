@@ -6,9 +6,12 @@ from src.elemental.species.felix import Felix
 from src.elemental.species.manapher import Manapher
 from src.elemental.species.mithus import Mithus
 from src.elemental.species.nepharus import Nepharus
+from src.elemental.species.noel import Noel
 from src.elemental.species.rainatu import Rainatu
+from src.elemental.species.rex import Rex
 from src.elemental.species.roaus import Roaus
 from src.elemental.species.sithel import Sithel
+from src.elemental.species.slyfe import Slyfe
 
 
 class NPCInitializer:
@@ -38,7 +41,8 @@ class NPCInitializer:
 
     @staticmethod
     def collector() -> NPC:
-        potential_species = [Mithus(), Roaus(), Rainatu(), Sithel(), Felix(), Manapher(), Nepharus()]
+        potential_species = [Mithus(), Roaus(), Rainatu(), Sithel(),
+                             Felix(), Manapher(), Nepharus(), Slyfe(), Noel(), Rex()]
         return NPC('Collector',
                    potential_species)
 
