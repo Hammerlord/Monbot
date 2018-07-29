@@ -4,6 +4,7 @@ from unittest.mock import Mock
 from src.combat.actions.elemental_action import ElementalAction
 from src.elemental.ability.abilities.blood_fangs import BloodFangs
 from src.elemental.ability.abilities.charge import Charge
+from src.elemental.ability.abilities.cyclone import Cyclone
 from src.elemental.ability.abilities.defend import Defend
 from src.elemental.ability.abilities.fireball import Fireball
 from src.elemental.ability.abilities.razor_fangs import RazorFangs
@@ -87,3 +88,16 @@ class AbilityTests(unittest.TestCase):
                                        ).execute()
         self.assertGreater(after_action.final_damage, before_action.final_damage, error)
 
+    def test_cyclone_bonus(self):
+        error = "Cyclone didn't deal increasing damage with a consecutive hit"
+        elemental = CombatElementalBuilder().build()
+        before_action = ElementalAction(actor=elemental,
+                                        ability=Cyclone(),
+                                        target=CombatElementalBuilder().build()
+                                        ).execute()
+        elemental.add_status_effect(RendEffect())
+        after_action = ElementalAction(actor=elemental,
+                                       ability=Cyclone(),
+                                       target=CombatElementalBuilder().build()
+                                       ).execute()
+        self.assertGreater(after_action.final_damage, before_action.final_damage, error)

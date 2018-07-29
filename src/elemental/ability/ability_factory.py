@@ -3,6 +3,7 @@ from src.elemental.ability.abilities.blessed_rain import BlessedRain
 from src.elemental.ability.abilities.blood_fangs import BloodFangs
 from src.elemental.ability.abilities.charge import Charge
 from src.elemental.ability.abilities.claw import Claw
+from src.elemental.ability.abilities.cyclone import Cyclone
 from src.elemental.ability.abilities.defend import Defend
 from src.elemental.ability.abilities.enrage import Enrage
 from src.elemental.ability.abilities.fireball import Fireball
@@ -100,3 +101,7 @@ class LearnableAbilities:
     @staticmethod
     def black_pinion(level=0) -> LearnableAbility:
         return LearnableAbility(BlackPinion(), level)
+
+    @staticmethod
+    def cyclone(level=0) -> LearnableAbility:
+        return LearnableAbility(Cyclone(), level)

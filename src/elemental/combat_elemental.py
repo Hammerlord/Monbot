@@ -216,6 +216,7 @@ class CombatElemental(Targetable):
         previous = len(self._actions) - 1
         return self._actions[previous]
 
+    @property
     def actions(self):
         """
         :return: List[ElementalAction]
