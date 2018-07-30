@@ -238,9 +238,10 @@ class CombatElemental(Targetable):
     def dispel_all(self, dispeller: 'CombatElemental'):
         self._status_manager.dispel_all(dispeller)
 
-    def add_status_effect(self, status_effect: StatusEffect):
+    def add_status_effect(self, effect: StatusEffect):
         # TODO check if we can add status effects.
-        self._status_manager.add_status_effect(status_effect)
+        self._status_manager.add_status_effect(effect)
+        self.continue_recent_log(effect.application_recap)
 
     def start_turn(self) -> None:
         if not self.is_knocked_out:
@@ -282,6 +283,9 @@ class CombatElemental(Targetable):
     def append_recent_log(self, recap: str) -> None:
         self.team.append_recent_log(recap)
 
+    def continue_recent_log(self, recap: str) -> None:
+        self.team.continue_recent_log(recap)
+
     def update_defend_charges(self, amount: int) -> None:
         self._defend_charges += amount
 
@@ -306,10 +310,9 @@ class CombatElemental(Targetable):
 
     def heal(self, amount: int) -> None:
         if self.is_knocked_out or self.current_hp == self.max_hp:
-            # Regular healing effects don't work.
+            # Regular healing effects don't work when the elemental is KOed.
             return
         self._elemental.heal(amount)
-        # TODO
         self.log(f'{self.nickname} recovered health!')
 
     def is_enemy(self, other_team) -> bool:

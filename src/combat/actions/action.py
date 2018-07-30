@@ -50,14 +50,7 @@ class EventLogger:
     def add_log(self, recap: str) -> None:
         # Ignore events with no recap message.
         if recap:
-            # Fall back on empty list if there are no active elementals on a side.
-            side_a = []
-            for elemental in self.combat.side_a_active:
-                side_a.append(elemental.snapshot())
-            side_b = []
-            for elemental in self.combat.side_b_active:
-                side_b.append(elemental.snapshot())
-            log = EventLog(side_a, side_b, recap)
+            log = self._make_log(recap)
             self.events[-1].append(log)
 
     def get_previous_turn_logs(self) -> List[EventLog]:
@@ -76,6 +69,26 @@ class EventLogger:
         current_turn_events = self.events[-1]
         if recap and current_turn_events:
             current_turn_events[-1].append_recap(recap)
+
+    def continue_recent(self, recap: str) -> None:
+        """
+        Creates a new snapshot, but uses the previous log's message and appends the recap on top of it.
+        """
+        current_turn_events = self.events[-1]
+        if recap and current_turn_events:
+            previous_recap = current_turn_events[-1].recap
+            new_recap = '\n'.join([previous_recap, recap])
+            self.add_log(new_recap)
+
+    def _make_log(self, recap) -> EventLog:
+        # Fall back on empty list if there are no active elementals on a side.
+        side_a = []
+        for elemental in self.combat.side_a_active:
+            side_a.append(elemental.snapshot())
+        side_b = []
+        for elemental in self.combat.side_b_active:
+            side_b.append(elemental.snapshot())
+        return EventLog(side_a, side_b, recap)
 
 
 class Action:

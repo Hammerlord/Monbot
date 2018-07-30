@@ -87,9 +87,9 @@ class ElementalAction(Action):
         self.team.log(self.ability.get_recap(self.actor.nickname))
         self.target.on_receive_ability(self.ability, self.actor)
         self._check_damage_dealt()
+        self._check_status_effect_application()
         self._check_actor_healing()
         self._check_target_healing()
-        self._check_status_effect_application()
         self.actor.add_action(self)
         self.team.end_turn()
         return self

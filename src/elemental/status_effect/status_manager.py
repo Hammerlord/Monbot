@@ -133,14 +133,13 @@ class StatusManager:
         equivalent_effect = self.__effect_exists(effect)
         if equivalent_effect and not effect.can_add_instances:
             equivalent_effect.reapply()
-            return
+        else:
+            self._status_effects.append(effect)
         effect.target = self.combat_elemental
         if effect.applier == self.combat_elemental:
             effect.boost_turn_duration()
-        self._status_effects.append(effect)
         effect.on_effect_start()
         self.__recalculate_effects()
-        self.combat_elemental.append_recent_log(effect.application_recap)
 
     def dispel_all(self, dispeller) -> None:
         """
