@@ -4,6 +4,7 @@ from discord.ext import commands
 from src.combat.battle_manager import BattleManager
 from src.data.data_manager import DataManager
 from src.discord_token import TOKEN
+from src.elemental.elemental_factory import ElementalInitializer
 from src.team.combat_team import CombatTeam
 from src.ui.view_manager import ViewCommandManager
 
@@ -51,6 +52,22 @@ async def battle(ctx):
         combat_team = CombatTeam(player.team)
         combat = battle_manager.dummy_fight(combat_team)
         await view_manager.show_battle(player, combat, combat_team)
+
+
+@bot.command(pass_context=True)
+async def summon(ctx):
+    # Add a random Elemental to your team.
+    user = ctx.message.author
+    await view_manager.delete_message(ctx.message)
+    if user.bot:
+        return
+    player = data_manager.get_player(user)
+    if player.has_elemental():
+        elemental = ElementalInitializer.make_random(player.level, player.team.elementals)
+        player.add_elemental(elemental)
+        await view_manager.show_status(player)
+    else:
+        await view_manager.show_starter_selection(player)
 
 
 @bot.event

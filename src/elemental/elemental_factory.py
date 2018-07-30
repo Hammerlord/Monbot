@@ -1,17 +1,35 @@
+import random
+from typing import List
+
 from src.elemental.attribute.attribute_factory import AttributeFactory
 from src.elemental.elemental import Elemental
+from src.elemental.species.felix import Felix
 from src.elemental.species.manapher import Manapher
 from src.elemental.species.mithus import Mithus
+from src.elemental.species.nepharus import Nepharus
+from src.elemental.species.noel import Noel
 from src.elemental.species.rainatu import Rainatu
+from src.elemental.species.rex import Rex
 from src.elemental.species.roaus import Roaus
 from src.elemental.species.sithel import Sithel
+from src.elemental.species.slyfe import Slyfe
 
 
 class ElementalInitializer:
-
     """
     Factory methods for creating specific Elementals.
     """
+
+    ALL_SPECIES = [Mithus(),
+                   Roaus(),
+                   Rainatu(),
+                   Sithel(),
+                   Felix(),
+                   Manapher(),
+                   Nepharus(),
+                   Slyfe(),
+                   Noel(),
+                   Rex()]
 
     @staticmethod
     def make(species, level=1) -> Elemental:
@@ -25,33 +43,17 @@ class ElementalInitializer:
         return elemental
 
     @staticmethod
-    def rainatu(level=1) -> Elemental:
+    def make_random(level=1, excluding: List[Elemental]=None) -> Elemental:
         """
-        :return: The lightning starter, Rainatu
+        :param level: The desired level of the Elemental.
+        :param excluding: A List[Species] of elementals to exclude.
+        :return:
         """
-        return ElementalInitializer.make(Rainatu(), level)
-
-    @staticmethod
-    def roaus(level=1) -> Elemental:
-        """
-        :return: The earth starter, Roaus
-        """
-        return ElementalInitializer.make(Roaus(), level)
-
-    @staticmethod
-    def mithus(level=1) -> Elemental:
-        """
-        :return: The water starter, Mithus
-        """
-        return ElementalInitializer.make(Mithus(), level)
-
-    @staticmethod
-    def sithel(level=1) -> Elemental:
-        """
-        :return: The fire starter, Sithel
-        """
-        return ElementalInitializer.make(Sithel(), level)
-
-    @staticmethod
-    def manapher(level=1) -> Elemental:
-        return ElementalInitializer.make(Manapher(), level)
+        if excluding:
+            excluded_species = [elemental.species.name for elemental in excluding]
+            potential_species = [species for species in ElementalInitializer.ALL_SPECIES
+                                 if species.name not in excluded_species]
+        else:
+            potential_species = ElementalInitializer.ALL_SPECIES
+        pick = random.randint(0, len(potential_species) - 1)
+        return ElementalInitializer.make(potential_species[pick], level)
