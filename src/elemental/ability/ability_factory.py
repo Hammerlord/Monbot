@@ -11,6 +11,7 @@ from src.elemental.ability.abilities.fireball import Fireball
 from src.elemental.ability.abilities.gale_step import GaleStep
 from src.elemental.ability.abilities.geyser import Geyser
 from src.elemental.ability.abilities.ignite import Ignite
+from src.elemental.ability.abilities.quake import Quake
 from src.elemental.ability.abilities.rampage import Rampage
 from src.elemental.ability.abilities.razor_fangs import RazorFangs
 from src.elemental.ability.abilities.reap import Reap
@@ -115,3 +116,7 @@ class LearnableAbilities:
     @staticmethod
     def rampage(level=0) -> LearnableAbility:
         return LearnableAbility(Rampage(), level)
+
+    @staticmethod
+    def quake(level=0) -> LearnableAbility:
+        return LearnableAbility(Quake(), level)

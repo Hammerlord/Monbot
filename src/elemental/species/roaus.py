@@ -37,4 +37,5 @@ class Roaus(Species):
         self._growth_rate = GrowthRate()
         self._learnable_abilities = [LearnableAbilities.charge(),
                                      LearnableAbilities.slam(),
-                                     LearnableAbilities.windrush(4)]
+                                     LearnableAbilities.quake(4),
+                                     LearnableAbilities.windrush(8)]

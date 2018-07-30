@@ -40,5 +40,6 @@ class Rex(Species):
                                      LearnableAbilities.enrage(4),
                                      LearnableAbilities.rampage(9),
                                      LearnableAbilities.rend(14),
-                                     LearnableAbilities.fireball(20),
-                                     LearnableAbilities.stormbolt(25)]
+                                     LearnableAbilities.quake(18),
+                                     LearnableAbilities.fireball(23),
+                                     LearnableAbilities.stormbolt(28)]
