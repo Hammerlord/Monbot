@@ -117,6 +117,13 @@ class CombatTeam(Targetable):
         return all(elemental.is_knocked_out for elemental in self.__elementals)
 
     @property
+    def get_knocked_out(self) -> List[CombatElemental]:
+        """
+        All the knocked out elementals on this team, for rendering purposes.
+        """
+        return [elemental for elemental in self.__elementals if elemental.is_knocked_out]
+
+    @property
     def last_action(self) -> Action:
         previous = len(self._actions) - 1
         return self._actions[previous]

@@ -10,10 +10,11 @@ class FormOptions:
     """
     The dependencies of a Form.
     """
+
     def __init__(self,
                  bot: Bot,
                  player,
-                 discord_message: discord.Message=None):
+                 discord_message: discord.Message = None):
         self.bot = bot
         self.player = player
         self.discord_message = discord_message  # Optional. The form will edit an existing message.
@@ -69,6 +70,18 @@ class Form:
                 print("Message has been deleted.")
         else:
             self.discord_message = await self.bot.say(message)
+
+    async def _add_reactions(self, reactions: List[str]) -> None:
+        for reaction in reactions:
+            if not await self._add_reaction(reaction):
+                return
+
+    async def _add_reaction(self, reaction: str) -> bool:
+        try:
+            await self.bot.add_reaction(self.discord_message, reaction)
+            return True
+        except discord.errors.NotFound:
+            print("Message has been deleted.")
 
     async def _clear_reactions(self) -> None:
         """

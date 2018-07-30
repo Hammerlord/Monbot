@@ -40,7 +40,7 @@ class StatusView(ValueForm):
 
     @staticmethod
     def _get_status(index: int, elemental: Elemental) -> str:
-        return (f"{index + 1}) {elemental.left_icon}  Lv. {elemental.level} {elemental.nickname} "
+        return (f"{index + 1}) {elemental.left_icon}  Lv. {elemental.level} {elemental.nickname}  "
                 f"`{HealthBarView.from_elemental(elemental)} "
                 f"{elemental.current_hp} / {elemental.max_hp} HP` \n")
 
@@ -82,9 +82,8 @@ class StatusDetailView(Form):
 
     async def render(self) -> None:
         await self._display(self.get_main_view())
-        await self.bot.clear_reactions(self.discord_message)
-        for reaction in [BACK, ABILITIES, ATTRIBUTES, NICKNAME, NOTE]:
-            await self.bot.add_reaction(self.discord_message, reaction)
+        await self._clear_reactions()
+        await self._add_reactions([BACK, ABILITIES, ATTRIBUTES, NICKNAME, NOTE])
 
     async def pick_option(self, reaction: str) -> None:
         if self.is_awaiting_input:

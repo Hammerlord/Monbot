@@ -7,10 +7,13 @@ from discord.ext.commands import Bot
 from src.character.player import Player
 from src.combat.combat import Combat
 from src.core.constants import *
+from src.elemental.combat_elemental import CombatElemental
+from src.elemental.elemental import Elemental
 from src.team.combat_team import CombatTeam
 from src.ui.ability_option import AbilityOptionView
 from src.ui.battlefield import Battlefield
 from src.ui.forms.form import FormOptions, Form, ValueForm
+from src.ui.health_bar import HealthBarView
 
 
 class BattleViewOptions(FormOptions):
@@ -129,20 +132,50 @@ class SelectElementalView(ValueForm):
         return ValueForm.enumerated_buttons(self.values)
 
     @property
-    def values(self) -> List[any]:
+    def values(self) -> List[CombatElemental]:
         return self.combat_team.eligible_bench
 
     async def render(self) -> None:
-
+        await self._display(self.get_team())
         await self._clear_reactions()
+        await self._add_reaction(BACK)
         for button in self.buttons:
-            await self.bot.add_reaction(self.discord_message, button.reaction)
+            await self._add_reaction(button.reaction)
+
+    def get_team(self) -> str:
+        message_body = f"```{self.player.nickname}'s Team```"
+        message_body += f'**Active:** {self._get_status(self.combat_team.active_elemental)}\n'
+        for i, elemental in enumerate(self.values):
+            message_body += self._get_status(elemental, i)
+        knocked_out_elementals = self.combat_team.get_knocked_out
+        if knocked_out_elementals:
+            message_body += '\n--Knocked Out--\n'
+            for elemental in knocked_out_elementals:
+                message_body += self._get_status(elemental)
+        message_body += '```Select an Elemental to switch.```'
+        return message_body
+
+    @staticmethod
+    def _get_status(elemental: CombatElemental, index=None) -> str:
+        index = str(index + 1) + ')' if index is not None else ''
+        return (f"{index} {elemental.icon}  Lv. {elemental.level} {elemental.nickname}  "
+                f"`{HealthBarView.from_elemental(elemental)} "
+                f"{elemental.current_hp} / {elemental.max_hp} HP` \n")
 
     async def pick_option(self, reaction: str) -> None:
+        if reaction == BACK:
+            await self.back()
+            return
         await super().pick_option(reaction)
         if self.toggled:
             self.combat_team.attempt_switch(self._selected_value)
             await Form.from_form(self, BattleView)
+
+    async def back(self) -> None:
+        """
+        Rerenders the Battle view.
+        """
+        await Form.from_form(self, BattleView)
 
     def get_form_options(self) -> BattleViewOptions:
         return BattleViewOptions(self.bot,
@@ -191,14 +224,24 @@ class SelectAbilityView(ValueForm):
     async def render(self) -> None:
         await self._display(self.get_main_view())
         await self._clear_reactions()
+        await self._add_reaction(BACK)
         for button in self.buttons:
-            await self.bot.add_reaction(self.discord_message, button.reaction)
+            await self._add_reaction(button.reaction)
 
     async def pick_option(self, reaction: str):
+        if reaction == BACK:
+            await self.back()
+            return
         await super().pick_option(reaction)
         if self.toggled:
             self.combat_team.select_ability(self._selected_value)
             await Form.from_form(self, BattleView)
+
+    async def back(self) -> None:
+        """
+        Rerenders the Battle view.
+        """
+        await Form.from_form(self, BattleView)
 
     def get_form_options(self) -> BattleViewOptions:
         return BattleViewOptions(self.bot,
