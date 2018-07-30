@@ -9,16 +9,19 @@ class ElementalAction(Action):
     """
     An action taken by a CombatElemental.
     """
+
     def __init__(self,
                  actor: CombatElemental,
                  ability: Ability,
-                 target: Targetable):
+                 combat):
+        """
+        :param combat: Combat
+        """
         self.actor = actor
         self.ability = ability
-        self.target = target
-        self.damage_calculator = DamageCalculator(self.target,
-                                                  self.actor,
-                                                  self.ability)
+        self.combat = combat
+        self.target = None  # Determined on execution.
+        self.damage_calculator = None  # Instantiated on execution.
         self.total_healing = 0  # This includes overhealing.
         self.target_effects_applied = []  # List[StatusEffect]
         self.target_effects_failed = []  # List[StatusEffect]
@@ -83,6 +86,7 @@ class ElementalAction(Action):
                 and self.team.active_elemental == self.actor)
 
     def execute(self) -> 'ElementalAction':
+        self._setup_target()
         self.actor.on_ability(self.ability)
         self.team.log(self.ability.get_recap(self.actor.nickname))
         self.target.on_receive_ability(self.ability, self.actor)
@@ -93,6 +97,16 @@ class ElementalAction(Action):
         self.actor.add_action(self)
         self.team.end_turn()
         return self
+
+    def _setup_target(self) -> None:
+        """
+        Get the target only when we are actually executing this ability, as the enemy active elemental may have
+        changed beforehand, eg. because of a switch.
+        """
+        self.target = self.combat.get_target(self.ability, self.actor)
+        self.damage_calculator = DamageCalculator(self.target,
+                                                  self.actor,
+                                                  self.ability)
 
     def _check_damage_dealt(self) -> None:
         if self.ability.attack_power > 0:
@@ -108,7 +122,7 @@ class ElementalAction(Action):
         healing_percentage = self.ability.actor_recovery
         if healing_percentage > 0:
             healing_percentage *= self.ability.get_bonus_multiplier(self.target, self.actor)
-            total_healing = healing_percentage*self.actor.max_hp
+            total_healing = healing_percentage * self.actor.max_hp
             self.actor.heal(total_healing)
             self.total_healing += total_healing
 
@@ -119,7 +133,7 @@ class ElementalAction(Action):
         if healing_percentage > 0:
             # Recovery abilities don't scale off of anything besides the bonus... yet
             healing_percentage *= self.ability.get_bonus_multiplier(self.target, self.actor)
-            total_healing = healing_percentage*self.actor.max_hp
+            total_healing = healing_percentage * self.actor.max_hp
             self.target.heal(total_healing)
             self.total_healing += total_healing
 

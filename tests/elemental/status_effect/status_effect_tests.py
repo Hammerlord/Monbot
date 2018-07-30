@@ -1,5 +1,5 @@
 import unittest
-from unittest.mock import Mock
+from unittest.mock import Mock, MagicMock
 
 from src.combat.actions.elemental_action import ElementalAction
 from src.combat.combat import Combat
@@ -149,11 +149,13 @@ class StatusEffectTests(unittest.TestCase):
 
     def test_enrage(self):
         error = "Enrage didn't increase damage output"
-        before_buff = ElementalAction(self.combat_elemental, Claw(), CombatElementalBuilder().build())
+        combat = Combat()
+        combat.get_target = MagicMock(return_value=CombatElementalBuilder().build())
+        before_buff = ElementalAction(self.combat_elemental, Claw(), combat)
         before_buff.execute()
         self.combat_elemental.add_status_effect(EnrageEffect())
         self.combat_elemental.end_turn()
-        after_buff = ElementalAction(self.combat_elemental, Claw(), CombatElementalBuilder().build())
+        after_buff = ElementalAction(self.combat_elemental, Claw(), combat)
         after_buff.execute()
         self.assertGreater(after_buff.final_damage, before_buff.final_damage, error)
 

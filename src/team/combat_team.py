@@ -158,8 +158,7 @@ class CombatTeam(Targetable):
     def handle_cast_time(self, castable: Castable) -> None:
         action = Casting(
             actor=self.active_elemental,
-            castable=castable,
-            target=self.combat.get_target(castable.ability, self.active_elemental)  # This might not be the end target.
+            castable=castable
         )
         self.combat.request_action(action)
 
@@ -167,7 +166,7 @@ class CombatTeam(Targetable):
         action = ElementalAction(
             actor=self.active_elemental,
             ability=ability,
-            target=self.combat.get_target(ability, self.active_elemental)
+            combat=self.combat
         )
         self.combat.request_action(action)
 

@@ -38,9 +38,22 @@ class CombatTests(unittest.TestCase):
         team_a = self.get_combat_team(combat)
         team_b = self.get_combat_team(combat)
         combat_elemental = CombatElemental(ElementalBuilder().build(), team_b)
-        combat.request_action(ElementalAction(combat_elemental, Claw(), combat_elemental))
+        combat.request_action(ElementalAction(combat_elemental, Claw(), combat))
         combat.request_action(Switch(team_a, combat_elemental, combat_elemental))
         self.assertIsInstance(combat.previous_round_actions[0], Switch, error)
+
+    def test_switch_target(self):
+        error = "Attacks didn't retarget after a switch"
+        combat = Combat()
+        team_a = self.get_combat_team(combat)
+        team_b = self.get_combat_team(combat)
+        old_target = team_b.active_elemental
+        target = CombatElementalBuilder().build()
+        combat.request_action(ElementalAction(team_a.active_elemental, Claw(), combat))
+        hp_before = target.current_hp
+        combat.request_action(Switch(team_b, old_target, target))
+        hp_after = target.current_hp
+        self.assertLess(hp_after, hp_before, error)
 
     def test_defend_priority(self):
         error = "Defend wasn't faster than other abilities"
@@ -51,8 +64,8 @@ class CombatTests(unittest.TestCase):
         team_b.change_active_elemental(faster)
         slower = CombatElemental(ElementalBuilder().with_speed(1).build(), team_a)
         team_a.change_active_elemental(slower)
-        combat.request_action(ElementalAction(faster, Claw(), slower))
-        combat.request_action(ElementalAction(slower, Defend(), slower))
+        combat.request_action(ElementalAction(faster, Claw(), combat))
+        combat.request_action(ElementalAction(slower, Defend(), combat))
         self.assertIsInstance(combat.previous_round_actions[0].ability, Defend, error)
 
     def test_action_speed_priority(self):
@@ -64,8 +77,8 @@ class CombatTests(unittest.TestCase):
         team_a.change_active_elemental(slower)
         faster = CombatElemental(ElementalBuilder().with_level(10).with_nickname('loksy').build(), team_b)
         team_b.change_active_elemental(faster)
-        combat.request_action(ElementalAction(slower, Claw(), faster))
-        faster_action = ElementalAction(faster, Claw(), slower)
+        combat.request_action(ElementalAction(slower, Claw(), combat))
+        faster_action = ElementalAction(faster, Claw(), combat)
         combat.request_action(faster_action)
         expected = combat.previous_round_actions[0].actor.nickname
         self.assertEqual(expected, faster.nickname, error)
@@ -173,7 +186,7 @@ class CombatTests(unittest.TestCase):
         action = ElementalAction(
             actor=team.elementals[0],
             ability=Claw(),
-            target=Mock()
+            combat=Mock()
         )
         self.assertFalse(action.can_execute, error)
 
@@ -189,7 +202,7 @@ class CombatTests(unittest.TestCase):
         action = ElementalAction(
             actor=old_active,
             ability=Claw(),
-            target=Mock()
+            combat=Mock()
         )
         self.assertFalse(action.can_execute, error)
 

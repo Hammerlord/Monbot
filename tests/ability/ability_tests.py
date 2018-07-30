@@ -1,7 +1,8 @@
 import unittest
-from unittest.mock import Mock
+from unittest.mock import Mock, MagicMock
 
 from src.combat.actions.elemental_action import ElementalAction
+from src.combat.combat import Combat
 from src.elemental.ability.abilities.blood_fangs import BloodFangs
 from src.elemental.ability.abilities.charge import Charge
 from src.elemental.ability.abilities.cyclone import Cyclone
@@ -41,7 +42,7 @@ class AbilityTests(unittest.TestCase):
         previous_charges = elemental.defend_charges
         ElementalAction(actor=elemental,
                         ability=Defend(),
-                        target=CombatElementalBuilder().build()
+                        combat=self.get_mocked_combat()
                         ).execute()
         self.assertEqual(elemental.defend_charges, (previous_charges - 1), error)
 
@@ -51,7 +52,7 @@ class AbilityTests(unittest.TestCase):
         previous_mana = elemental.current_mana
         ElementalAction(actor=elemental,
                         ability=RazorFangs(),
-                        target=CombatElementalBuilder().build()
+                        combat=self.get_mocked_combat()
                         ).execute()
         self.assertLess(elemental.current_mana, previous_mana, error)
 
@@ -62,7 +63,7 @@ class AbilityTests(unittest.TestCase):
         hp_before = elemental.current_hp
         ElementalAction(actor=elemental,
                         ability=BloodFangs(),
-                        target=CombatElementalBuilder().build()
+                        combat=self.get_mocked_combat()
                         ).execute()
         hp_after = elemental.current_hp
         self.assertGreater(hp_after, hp_before, error)
@@ -72,7 +73,7 @@ class AbilityTests(unittest.TestCase):
         elemental = CombatElementalBuilder().build()
         action = ElementalAction(actor=elemental,
                                  ability=BloodFangs(),
-                                 target=CombatElementalBuilder().build()
+                                 combat=self.get_mocked_combat()
                                  ).execute()
         self.assertEqual(0.1, action.total_healing / elemental.max_hp, error)
 
@@ -82,34 +83,30 @@ class AbilityTests(unittest.TestCase):
         elemental.receive_damage(20, Mock())
         action = ElementalAction(actor=elemental,
                                  ability=BloodFangs(),
-                                 target=CombatElementalBuilder().build()
+                                 combat=self.get_mocked_combat()
                                  ).execute()
         self.assertGreater(action.total_healing / elemental.max_hp, 0.1, error)
 
     def test_reap(self):
         error = "Reap didn't scale with debuffs on the target"
-        elemental = CombatElementalBuilder().build()
-        before_action = ElementalAction(actor=CombatElementalBuilder().build(),
-                                        ability=Reap(),
-                                        target=elemental
-                                        ).execute()
-        elemental.add_status_effect(RendEffect())
-        after_action = ElementalAction(actor=CombatElementalBuilder().build(),
-                                       ability=Reap(),
-                                       target=elemental
-                                       ).execute()
-        self.assertGreater(after_action.final_damage, before_action.final_damage, error)
+        target = CombatElementalBuilder().build()
+        target.add_status_effect(RendEffect())
+        bonus = Reap().get_bonus_multiplier(target, Mock())
+        self.assertGreater(bonus, 1, error)
 
     def test_cyclone_bonus(self):
         error = "Cyclone didn't deal increasing damage with a consecutive hit"
         elemental = CombatElementalBuilder().build()
-        before_action = ElementalAction(actor=elemental,
-                                        ability=Cyclone(),
-                                        target=CombatElementalBuilder().build()
-                                        ).execute()
-        elemental.add_status_effect(RendEffect())
-        after_action = ElementalAction(actor=elemental,
-                                       ability=Cyclone(),
-                                       target=CombatElementalBuilder().build()
-                                       ).execute()
-        self.assertGreater(after_action.final_damage, before_action.final_damage, error)
+        cyclone_action = ElementalAction(actor=elemental,
+                                         ability=Cyclone(),
+                                         combat=self.get_mocked_combat()
+                                         )
+        elemental.add_action(cyclone_action)
+        bonus = Cyclone().get_bonus_multiplier(Mock(), elemental)
+        self.assertGreater(bonus, 1, error)
+
+    @staticmethod
+    def get_mocked_combat() -> Combat:
+        combat = Combat()
+        combat.get_target = MagicMock(return_value=CombatElementalBuilder().build())
+        return combat

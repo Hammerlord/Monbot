@@ -13,12 +13,10 @@ class Casting(Action):
 
     def __init__(self,
                  actor: CombatElemental,
-                 castable: Castable,
-                 target: Targetable):
+                 castable: Castable):
         assert (castable.ability.base_cast_time > 0)
         self.actor = actor
         self.castable = castable
-        self.target = target
         self.ability = self.castable.ability
 
     @property
@@ -38,9 +36,10 @@ class Casting(Action):
         return self.ability.turn_priority
 
     def execute(self) -> None:
-        self.actor.on_ability(self.castable.ability)
+        if not self.actor.action_queued:
+            self.actor.on_ability(self.castable.ability)
+            self.actor.set_acting(self.castable)
         self.actor.log(self.recap)
-        self.actor.set_acting(self.castable)
         self.actor.add_action(self)
         self.team.end_turn()
 
