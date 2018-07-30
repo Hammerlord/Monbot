@@ -138,3 +138,7 @@ class Action:
     @property
     def final_damage(self) -> int:
         return 0
+
+    @property
+    def damage_blocked(self) -> int:
+        return 0

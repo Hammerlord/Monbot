@@ -38,4 +38,4 @@ class Slyfe(Species):
         self._learnable_abilities = [LearnableAbilities.slam(),
                                      LearnableAbilities.cyclone(),
                                      LearnableAbilities.windrush(4),
-                                     LearnableAbilities.gale_step(15)]
+                                     LearnableAbilities.gale_step(8)]

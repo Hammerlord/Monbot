@@ -3,6 +3,7 @@ from src.elemental.ability.abilities.blessed_rain import BlessedRain
 from src.elemental.ability.abilities.blood_fangs import BloodFangs
 from src.elemental.ability.abilities.charge import Charge
 from src.elemental.ability.abilities.claw import Claw
+from src.elemental.ability.abilities.counter import Counter
 from src.elemental.ability.abilities.cyclone import Cyclone
 from src.elemental.ability.abilities.defend import Defend
 from src.elemental.ability.abilities.deluge import Deluge
@@ -120,3 +121,7 @@ class LearnableAbilities:
     @staticmethod
     def quake(level=0) -> LearnableAbility:
         return LearnableAbility(Quake(), level)
+
+    @staticmethod
+    def counter(level=0) -> LearnableAbility:
+        return LearnableAbility(Counter(), level)

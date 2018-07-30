@@ -43,4 +43,5 @@ class Noel(Species):
                                      LearnableAbilities.rend(12),
                                      LearnableAbilities.gale_step(17),
                                      LearnableAbilities.windrush(22),
-                                     LearnableAbilities.deluge(27)]
+                                     LearnableAbilities.deluge(27),
+                                     LearnableAbilities.counter(32)]
