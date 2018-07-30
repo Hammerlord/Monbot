@@ -13,7 +13,7 @@ class SimulatedBattle:
                                           max_level=10,
                                           min_team_size=4)
         self.npc_two = NPCInitializer().collector()
-        self.npc_two.generate_team(self.npc_one)
+        self.npc_two.generate_equal_team(self.npc_one)
 
     def fight(self):
         combat = Combat()

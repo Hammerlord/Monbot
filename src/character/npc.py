@@ -25,6 +25,17 @@ class NPC(Character):
         self._nickname = nickname
         self._potential_species = potential_species
 
+    def generate_equal_team(self, opponent: 'Character') -> None:
+        """
+        Generates a randomized Team that has the same number of Elementals as the opponent.
+        :param opponent:
+        :return:
+        """
+        self._level = opponent.level
+        for i in range(opponent.team.size):
+            elemental = self._get_random_elemental()
+            self._team.add_elemental(elemental)
+
     def generate_team(self, opponent: 'NPC' or Player) -> None:
         """
         Generates a randomized Team based on the opponent's level and Team size.
