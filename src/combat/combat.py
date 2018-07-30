@@ -208,7 +208,9 @@ class Combat:
         if not self.in_progress:
             return
         for team in self.teams:
-            team.turn_start()
+            if not self.is_awaiting_knockout_replacements():
+                # Do not regen mana while we wait for new Elementals to be sent in.
+                team.turn_start()
             if team.check_casting():
                 continue
             if team.is_npc:
