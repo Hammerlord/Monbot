@@ -62,6 +62,7 @@ class CombatTeam(Targetable):
     def end_combat(self) -> None:
         if self.owner and not self.owner.is_npc:
             self.owner.is_busy = False
+            self.owner.battles_fought += 1
 
     def log(self, recap) -> None:
         self.logger.add_log(recap)

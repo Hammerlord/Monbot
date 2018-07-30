@@ -10,6 +10,7 @@ class Player(Character):
         self.secondary_view = None  # Type: Form (eg. also having a logger open)
         self.id = user.id
         self._nickname = user.name
+        self.battles_fought = 0
 
     def has_elemental(self) -> bool:
         return len(self.elementals) > 0
