@@ -149,7 +149,9 @@ class Elemental:
         except IndexError:
             raise Exception("Tried to raise an Attribute, but it was out of bounds:", position)
 
-    def heal(self, amount: int) -> None:
+    def heal(self, amount: float) -> None:
+        # Cast percentage-based healing to int.
+        amount = int(amount)
         self._current_hp += amount
         if self._current_hp > self.max_hp:
             self._current_hp = self.max_hp

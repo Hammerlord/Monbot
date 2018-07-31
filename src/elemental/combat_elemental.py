@@ -308,7 +308,7 @@ class CombatElemental(Targetable):
             self._status_manager.clear_status_effects()
             self.action_queued = None
 
-    def heal(self, amount: int) -> None:
+    def heal(self, amount: float) -> None:
         if self.is_knocked_out or self.current_hp == self.max_hp:
             # Regular healing effects don't work when the elemental is KOed.
             return

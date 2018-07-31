@@ -124,7 +124,7 @@ class ElementalAction(Action):
             healing_percentage *= self.ability.get_bonus_multiplier(self.target, self.actor)
             total_healing = healing_percentage * self.actor.max_hp
             self.actor.heal(total_healing)
-            self.total_healing += total_healing
+            self.total_healing += int(total_healing)
 
     def _check_target_healing(self) -> None:
         # Healing is a percentage based on the caster's maximum HP.
@@ -135,7 +135,7 @@ class ElementalAction(Action):
             healing_percentage *= self.ability.get_bonus_multiplier(self.target, self.actor)
             total_healing = healing_percentage * self.actor.max_hp
             self.target.heal(total_healing)
-            self.total_healing += total_healing
+            self.total_healing += int(total_healing)
 
     def _check_status_effect_application(self) -> None:
         status_effect = self.ability.status_effect
