@@ -94,7 +94,9 @@ class CombatTests(unittest.TestCase):
         combat = Combat()
         other_team = self.get_combat_team(combat)
         combat.join_battle(player_team)
-        other_team.elementals[0].receive_damage(10000, player_team.active_elemental)
+        # Nearly fatal damage
+        damage = other_team.active_elemental.max_hp - 1
+        other_team.active_elemental.receive_damage(damage, player_team.active_elemental)
         exp_before = elemental.current_exp
         player_team.make_move(Claw())
         other_team.make_move(Claw())
@@ -110,7 +112,9 @@ class CombatTests(unittest.TestCase):
         combat = Combat()
         other_team = self.get_combat_team(combat)
         combat.join_battle(player_team)
-        other_team.elementals[0].receive_damage(10000, player_team.elementals[0])
+        # Nearly fatal damage
+        damage = other_team.active_elemental.max_hp - 1
+        other_team.active_elemental.receive_damage(damage, player_team.elementals[0])
         exp_before = player.current_exp
         player_team.make_move(Claw())
         other_team.make_move(Claw())
@@ -205,6 +209,30 @@ class CombatTests(unittest.TestCase):
             combat=Mock()
         )
         self.assertFalse(action.can_execute, error)
+
+    def test_knockout_grace_turn(self):
+        error = "An attack could incorrectly be queued while waiting for a knockout replacement"
+        combat = Combat()
+        team_a = self.get_combat_team(combat)
+        team_b = self.get_combat_team(combat)
+        team_a.active_elemental.receive_damage(10000, Mock())
+        team_b.make_move(Claw())
+        self.assertEqual(len(combat.action_requests), 0, error)
+
+    def test_knockout_replacement(self):
+        error = "A team whose elemental was knocked out couldn't select a replacement"
+        combat = Combat()
+        team_a = self.get_combat_team(combat)
+        self.get_combat_team(combat)
+        team_a.active_elemental.receive_damage(10000, Mock())
+        new_active = CombatElementalBuilder().build()
+        switch = Switch(
+            team=team_a,
+            old_active=team_a.active_elemental,
+            new_active=new_active
+        )
+        combat.request_action(switch)
+        self.assertEqual(team_a.active_elemental, new_active, error)
 
     @staticmethod
     def get_combat_team(combat=None):

@@ -73,13 +73,6 @@ class Combat:
                 team.set_side(Combat.SIDE_B)
                 team.on_combat_start()
 
-    def add_knockout_replacement(self, request: Action) -> None:
-        if not isinstance(request, Switch) or request.team not in self.get_knockouts():
-            return
-        self.action_requests.append(request)
-        if len(self.action_requests) == len(self.get_knockouts()):
-            self._resolve_requests()
-
     def is_awaiting_knockout_replacements(self) -> bool:
         """
         When an elemental has been knocked out, their teams receive a grace turn where
@@ -94,10 +87,13 @@ class Combat:
         eg., if the elemental gets knocked out before it can make a move.
         """
         if self.is_awaiting_knockout_replacements():
-            self.add_knockout_replacement(request)
-        self.action_requests.append(request)
-        if len(self.action_requests) == len(self.teams):
-            self._resolve_requests()
+            self._add_knockout_replacement(request)
+            if len(self.action_requests) == len(self.get_knockouts()):
+                self._resolve_requests()
+        else:
+            self.action_requests.append(request)
+            if len(self.action_requests) == len(self.teams):
+                self._resolve_requests()
 
     def get_target(self, ability: Ability, actor: CombatElemental) -> Targetable:
         """
@@ -137,6 +133,10 @@ class Combat:
         :return: CombatElemental
         """
         return self.get_enemy_side(team)[0].active_elemental
+
+    def _add_knockout_replacement(self, request: Action) -> None:
+        if isinstance(request, Switch) and request.team in self.get_knockouts():
+            self.action_requests.append(request)
 
     def _resolve_requests(self) -> None:
         """
