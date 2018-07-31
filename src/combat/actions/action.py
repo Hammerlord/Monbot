@@ -45,19 +45,37 @@ class EventLogger:
         :param combat: Combat
         """
         self.combat = combat
-        self.events = [[]]  # List[List[EventLog]]; events are grouped by rounds
+        self.logs = [[]]  # List[List[EventLog]]; events are grouped by rounds
 
     def add_log(self, recap: str) -> None:
         # Ignore events with no recap message.
         if recap:
             log = self._make_log(recap)
-            self.events[-1].append(log)
+            self.logs[-1].append(log)
 
-    def get_previous_turn_logs(self) -> List[EventLog]:
-        return list(self.events[-2])
+    @property
+    def most_recent_index(self) -> int:
+        return self.num_logs - 1
+
+    @property
+    def most_recent_log(self) -> EventLog:
+        return self.logs[self.most_recent_index][-1]
+
+    @property
+    def num_logs(self) -> int:
+        """
+        The number of logs, except for the most recent one (which is awaiting the current turn's logs to be appended).
+        """
+        return len(self.logs) - 1
+
+    def get_turn_logs(self, from_index: int) -> List[List[EventLog]]:
+        """
+        Show logs starting from an index, while truncating the empty entry at the end.
+        """
+        return self.logs[from_index:self.num_logs]
 
     def prepare_new_round(self) -> None:
-        self.events.append([])
+        self.logs.append([])
 
     def add_ko(self, combat_elemental) -> None:
         self.add_log(f'{combat_elemental.nickname} was knocked out!')
@@ -66,7 +84,7 @@ class EventLogger:
         """
         For the recaps that don't need to be in its own dialog box, they can be appended to the previous one.
         """
-        current_turn_events = self.events[-1]
+        current_turn_events = self.logs[-1]
         if recap and current_turn_events:
             current_turn_events[-1].append_recap(recap)
 
@@ -74,7 +92,7 @@ class EventLogger:
         """
         Creates a new snapshot, but uses the previous log's message and appends the recap on top of it.
         """
-        current_turn_events = self.events[-1]
+        current_turn_events = self.logs[-1]
         if recap and current_turn_events:
             previous_recap = current_turn_events[-1].recap
             new_recap = '\n'.join([previous_recap, recap])

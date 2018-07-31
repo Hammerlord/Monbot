@@ -204,7 +204,7 @@ class Combat:
         self.action_log.append([])
         self.action_requests = []
         self.turn_logger.prepare_new_round()
-        print([log for log in self.turn_logger.get_previous_turn_logs()])
+        print([log for log in self.turn_logger.logs[-2]])
         if not self.in_progress:
             return
         for team in self.teams:
@@ -225,15 +225,6 @@ class Combat:
         so we want to retrieve the second last log.
         """
         return self.action_log[-2]
-
-    @property
-    def previous_round_log(self) -> List[EventLog]:
-        # Get all the EventLogs from the previous round of turns.
-        return self.turn_logger.get_previous_turn_logs()
-
-    @property
-    def most_recent_recap(self) -> str:
-        return self.previous_round_log[-1].recap
 
     def _get_priority_order_requests(self) -> List[List[Action]]:
         """

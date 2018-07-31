@@ -5,6 +5,7 @@ import discord
 from discord.ext.commands import Bot
 
 from src.character.player import Player
+from src.combat.actions.action import EventLog
 from src.combat.combat import Combat
 from src.core.constants import *
 from src.elemental.combat_elemental import CombatElemental
@@ -39,13 +40,16 @@ class BattleView(Form):
     Has a number of subviews, including: selecting Ability, selecting Elemental, selecting Item
     """
 
-    def __init__(self, options: BattleViewOptions):
+    def __init__(self, options: BattleViewOptions, recap_turn=False):
+        """
+        :param recap_turn: Should we replay all the events last turn?
+        """
         super().__init__(options)
         self.combat = options.combat
         self.combat_team = options.combat_team
-
-    def get_main_view(self) -> str:
-        return '\n'.join([self.get_battlefield(), f'```{self.combat.most_recent_recap}```'])
+        self.recap_turn = recap_turn
+        self.logger = self.combat.turn_logger
+        self.log_index = self.logger.most_recent_index
 
     def get_battlefield(self) -> str:
         return Battlefield(self.combat_team.active_elemental,
@@ -55,7 +59,10 @@ class BattleView(Form):
     async def render(self) -> None:
         # TODO it is possible to have no available options, in which case, we need a skip.
         await self._clear_reactions()
-        await self._render_battle()
+        if self.recap_turn:
+            await self._render_battle_recaps()
+        else:
+            await self._render_latest_recap()
         if self.combat_team.active_elemental.is_knocked_out and self.combat_team.eligible_bench:
             # Render the mon selection view if your mon has been knocked out and you have another.
             await asyncio.sleep(1.0)
@@ -63,18 +70,22 @@ class BattleView(Form):
         else:
             await self.check_add_options()
 
-    async def _render_battle(self) -> None:
-        # if self.show_turns:
-            await self._render_events()
-        # else:
-            # await self._display(self.get_main_view())
+    async def _render_battle_recaps(self) -> None:
+        """
+        Render the turn(s) that occurred since we last updated the view.
+        """
+        turn_logs = self.logger.get_turn_logs(self.log_index)
+        for turn_log in turn_logs:
+            await self._render_events(turn_log)
 
-    async def _render_events(self) -> None:
+    async def _render_latest_recap(self) -> None:
+        await self._render_events([self.logger.most_recent_log])
+
+    async def _render_events(self, turn_log: List[EventLog]) -> None:
         """
-        Show everything that happened last turn.
+        Show everything that happened during a given turn.
         """
-        logs = self.combat.previous_round_log
-        for i, log in enumerate(logs):
+        for i, log in enumerate(turn_log):
             if not log.side_a or not log.side_b:
                 continue
             battlefield = Battlefield(log.side_a,
@@ -83,19 +94,19 @@ class BattleView(Form):
             recap = log.recap  # TODO enemy recaps
             message = '\n'.join([battlefield, f'```{recap}```'])
             await self._display(message)
-            if i != len(logs) - 1:
+            if i != len(turn_log) - 1:
                 await asyncio.sleep(1.5)
 
     async def check_add_options(self) -> None:
         if not self.combat.in_progress:
             return
-        await self.bot.add_reaction(self.discord_message, ABILITIES)
+        await self._add_reaction(ABILITIES)
         if self.combat_team.eligible_bench:
-            await self.bot.add_reaction(self.discord_message, RETURN)
+            await self._add_reaction(RETURN)
         if self.combat.allow_items:
-            await self.bot.add_reaction(self.discord_message, ITEM)
+            await self._add_reaction(ITEM)
         if self.combat.allow_flee:
-            await self.bot.add_reaction(self.discord_message, FLEE)
+            await self._add_reaction(FLEE)
 
     def get_form_options(self) -> BattleViewOptions:
         return BattleViewOptions(self.bot,
@@ -115,6 +126,13 @@ class BattleView(Form):
             pass
         elif reaction == FLEE and self.combat.allow_flee:
             pass
+
+    @staticmethod
+    async def from_form(from_form, recap_turn=False):
+        options = from_form.get_form_options()
+        new_form = BattleView(options, recap_turn)
+        options.player.set_primary_view(new_form)
+        await new_form.render()
 
 
 class SelectElementalView(ValueForm):
@@ -138,9 +156,9 @@ class SelectElementalView(ValueForm):
     async def render(self) -> None:
         await self._display(self.get_team())
         await self._clear_reactions()
-        await self._add_reaction(BACK)
         for button in self.buttons:
             await self._add_reaction(button.reaction)
+        await self._add_reaction(BACK)
 
     def get_team(self) -> str:
         message_body = f"```{self.player.nickname}'s Team```"
@@ -169,13 +187,13 @@ class SelectElementalView(ValueForm):
         await super().pick_option(reaction)
         if self.toggled:
             self.combat_team.attempt_switch(self._selected_value)
-            await Form.from_form(self, BattleView)
+            await BattleView.from_form(self, recap_turn=True)
 
     async def back(self) -> None:
         """
         Rerenders the Battle view.
         """
-        await Form.from_form(self, BattleView)
+        await BattleView.from_form(self)
 
     def get_form_options(self) -> BattleViewOptions:
         return BattleViewOptions(self.bot,
@@ -224,9 +242,9 @@ class SelectAbilityView(ValueForm):
     async def render(self) -> None:
         await self._display(self.get_main_view())
         await self._clear_reactions()
-        await self._add_reaction(BACK)
         for button in self.buttons:
             await self._add_reaction(button.reaction)
+        await self._add_reaction(BACK)
 
     async def pick_option(self, reaction: str):
         if reaction == BACK:
@@ -235,13 +253,13 @@ class SelectAbilityView(ValueForm):
         await super().pick_option(reaction)
         if self.toggled:
             self.combat_team.select_ability(self._selected_value)
-            await Form.from_form(self, BattleView)
+            await BattleView.from_form(self, recap_turn=True)
 
     async def back(self) -> None:
         """
         Rerenders the Battle view.
         """
-        await Form.from_form(self, BattleView)
+        await BattleView.from_form(self)
 
     def get_form_options(self) -> BattleViewOptions:
         return BattleViewOptions(self.bot,
