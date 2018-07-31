@@ -152,10 +152,12 @@ class StatusEffectTests(unittest.TestCase):
         combat = Combat()
         combat.get_target = MagicMock(return_value=CombatElementalBuilder().build())
         before_buff = ElementalAction(self.combat_elemental, Claw(), combat)
+        before_buff._refresh_target()
         before_buff.execute()
         self.combat_elemental.add_status_effect(EnrageEffect())
         self.combat_elemental.end_turn()
         after_buff = ElementalAction(self.combat_elemental, Claw(), combat)
+        after_buff._refresh_target()
         after_buff.execute()
         self.assertGreater(after_buff.final_damage, before_buff.final_damage, error)
 

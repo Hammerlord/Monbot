@@ -194,6 +194,19 @@ class CombatTests(unittest.TestCase):
         )
         self.assertFalse(action.can_execute, error)
 
+    def test_attack_knocked_out(self):
+        error = "Attack attempted to resolve even though the opponent was KOed"
+        combat = Combat()
+        team_a = self.get_combat_team(combat)
+        team_b = self.get_combat_team(combat)
+        team_b.active_elemental.receive_damage(10000, Mock())
+        action = ElementalAction(
+            actor=team_a.active_elemental,
+            ability=Claw(),
+            combat=combat
+        )
+        self.assertFalse(action.can_execute, error)
+
     def test_active_elemental_action(self):
         error = "ElementalAction could incorrectly trigger when the elemental forcibly switched."
         team = TeamBuilder().build()

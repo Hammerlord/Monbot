@@ -20,8 +20,8 @@ class ElementalAction(Action):
         self.actor = actor
         self.ability = ability
         self.combat = combat
-        self.target = None  # Determined on execution.
-        self.damage_calculator = None  # Instantiated on execution.
+        self.target = None  # Determined on execution check.
+        self.damage_calculator = None  # Instantiated on execution check.
         self.total_healing = 0  # This includes overhealing.
         self.target_effects_applied = []  # List[StatusEffect]
         self.target_effects_failed = []  # List[StatusEffect]
@@ -81,12 +81,13 @@ class ElementalAction(Action):
 
     @property
     def can_execute(self) -> bool:
+        self._refresh_target()
         return (self.team.active_elemental
                 and not self.team.active_elemental.is_knocked_out
-                and self.team.active_elemental == self.actor)
+                and self.team.active_elemental == self.actor
+                and not self.target.is_knocked_out)
 
     def execute(self) -> 'ElementalAction':
-        self._setup_target()
         self.actor.on_ability(self.ability)
         self.team.log(self.ability.get_recap(self.actor.nickname))
         self.target.on_receive_ability(self.ability, self.actor)
@@ -98,9 +99,9 @@ class ElementalAction(Action):
         self.team.end_turn()
         return self
 
-    def _setup_target(self) -> None:
+    def _refresh_target(self) -> None:
         """
-        Get the target only when we are actually executing this ability, as the enemy active elemental may have
+        Get the target only when we are about to execute this ability, as the enemy active elemental may have
         changed beforehand, eg. because of a switch.
         """
         self.target = self.combat.get_target(self.ability, self.actor)

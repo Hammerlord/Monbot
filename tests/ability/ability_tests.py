@@ -40,20 +40,24 @@ class AbilityTests(unittest.TestCase):
         error = "Defend didn't use a defend charge"
         elemental = CombatElementalBuilder().build()
         previous_charges = elemental.defend_charges
-        ElementalAction(actor=elemental,
-                        ability=Defend(),
-                        combat=self.get_mocked_combat()
-                        ).execute()
+        action = ElementalAction(actor=elemental,
+                                 ability=Defend(),
+                                 combat=self.get_mocked_combat()
+                                 )
+        action._refresh_target()
+        action.execute()
         self.assertEqual(elemental.defend_charges, (previous_charges - 1), error)
 
     def test_mana_consumption(self):
         error = "Mana-consuming ability didn't consume mana"
         elemental = CombatElementalBuilder().build()
         previous_mana = elemental.current_mana
-        ElementalAction(actor=elemental,
-                        ability=RazorFangs(),
-                        combat=self.get_mocked_combat()
-                        ).execute()
+        action = ElementalAction(actor=elemental,
+                                 ability=RazorFangs(),
+                                 combat=self.get_mocked_combat()
+                                 )
+        action._refresh_target()
+        action.execute()
         self.assertLess(elemental.current_mana, previous_mana, error)
 
     def test_blood_fangs_healing(self):
@@ -61,10 +65,12 @@ class AbilityTests(unittest.TestCase):
         elemental = CombatElementalBuilder().build()
         elemental.receive_damage(10, Mock())
         hp_before = elemental.current_hp
-        ElementalAction(actor=elemental,
-                        ability=BloodFangs(),
-                        combat=self.get_mocked_combat()
-                        ).execute()
+        action = ElementalAction(actor=elemental,
+                                 ability=BloodFangs(),
+                                 combat=self.get_mocked_combat()
+                                 )
+        action._refresh_target()
+        action.execute()
         hp_after = elemental.current_hp
         self.assertGreater(hp_after, hp_before, error)
 
@@ -74,7 +80,9 @@ class AbilityTests(unittest.TestCase):
         action = ElementalAction(actor=elemental,
                                  ability=BloodFangs(),
                                  combat=self.get_mocked_combat()
-                                 ).execute()
+                                 )
+        action._refresh_target()
+        action.execute()
         self.assertEqual(0.1, action.total_healing / elemental.max_hp, error)
 
     def test_blood_fangs_scaled_healing(self):
@@ -84,7 +92,9 @@ class AbilityTests(unittest.TestCase):
         action = ElementalAction(actor=elemental,
                                  ability=BloodFangs(),
                                  combat=self.get_mocked_combat()
-                                 ).execute()
+                                 )
+        action._refresh_target()
+        action.execute()
         self.assertGreater(action.total_healing / elemental.max_hp, 0.1, error)
 
     def test_reap(self):
