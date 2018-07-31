@@ -51,18 +51,12 @@ class BattleView(Form):
         self.logger = self.combat.turn_logger
         self.log_index = self.logger.most_recent_index
 
-    def get_battlefield(self) -> str:
-        return Battlefield(self.combat_team.active_elemental,
-                           self.combat.get_active_enemy(self.combat_team),
-                           self.combat_team).get_view()
-
     async def render(self) -> None:
         # TODO it is possible to have no available options, in which case, we need a skip.
         await self._clear_reactions()
         if self.recap_turn:
             await self._render_battle_recaps()
-        else:
-            await self._render_latest_recap()
+        await self._render_current()
         if self.combat_team.active_elemental.is_knocked_out and self.combat_team.eligible_bench:
             # Render the mon selection view if your mon has been knocked out and you have another.
             await asyncio.sleep(1.0)
@@ -78,14 +72,17 @@ class BattleView(Form):
         for turn_log in turn_logs:
             await self._render_events(turn_log)
 
-    async def _render_latest_recap(self) -> None:
-        await self._render_events([self.logger.most_recent_log])
+    async def _render_current(self) -> None:
+        battlefield = Battlefield(self.combat.side_a_active,
+                                  self.combat.side_b_active,
+                                  self.combat_team).get_view()
+        await self._display(battlefield)
 
     async def _render_events(self, turn_log: List[EventLog]) -> None:
         """
         Show everything that happened during a given turn.
         """
-        for i, log in enumerate(turn_log):
+        for log in turn_log:
             if not log.side_a or not log.side_b:
                 continue
             battlefield = Battlefield(log.side_a,
@@ -94,8 +91,7 @@ class BattleView(Form):
             recap = log.recap  # TODO enemy recaps
             message = '\n'.join([battlefield, f'```{recap}```'])
             await self._display(message)
-            if i != len(turn_log) - 1:
-                await asyncio.sleep(1.5)
+            await asyncio.sleep(1.5)
 
     async def check_add_options(self) -> None:
         if not self.combat.in_progress:
