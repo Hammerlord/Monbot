@@ -169,6 +169,10 @@ class CombatElemental(Targetable):
     def is_elemental(self, other: 'CombatElemental') -> bool:
         return self.id == other.id
 
+    def set_channeling(self, ability: Ability) -> None:
+        if not self.action_queued:
+            self.set_acting(Channelable(ability))
+
     def set_acting(self, acting: Queueable) -> None:
         """
         :param acting: What this CombatElemental is in the middle of performing.
@@ -266,8 +270,6 @@ class CombatElemental(Targetable):
         if self.is_cast_in_progress:
             # Then mana consumption was already handled on cast/channel start.
             return
-        if ability.is_channelable:
-            self.action_queued = Channelable(ability)
         self.update_mana(-ability.mana_cost)
         self.update_defend_charges(-ability.defend_cost)
 

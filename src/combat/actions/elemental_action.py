@@ -2,6 +2,7 @@ from src.combat.actions.action import ActionType, Action, EventLog
 from src.core.targetable_interface import Targetable
 from src.elemental.ability.ability import TurnPriority, Ability, Target
 from src.elemental.ability.damage_calculator import DamageCalculator
+from src.elemental.ability.queueable import Channelable
 from src.elemental.combat_elemental import CombatElemental, CombatElementalLog
 
 
@@ -67,7 +68,7 @@ class ElementalAction(Action):
 
     @property
     def recap(self) -> str:
-        if self.actor.is_cast_in_progress:
+        if self.ability.is_channelable and self.actor.is_cast_in_progress:
             recap = self.ability.get_channeling_message(self.actor.nickname)
         else:
             recap = self.ability.get_recap(self.actor.nickname)
@@ -89,12 +90,14 @@ class ElementalAction(Action):
 
     def execute(self) -> 'ElementalAction':
         self.actor.on_ability(self.ability)
-        self.team.log(self.ability.get_recap(self.actor.nickname))
+        self.team.log(self.recap)
         self.target.on_receive_ability(self.ability, self.actor)
         self._check_damage_dealt()
         self._check_actor_healing()
         self._check_target_healing()
         self._check_status_effect_application()
+        if self.ability.is_channelable:
+            self.actor.set_channeling(self.ability)
         self.actor.add_action(self)
         self.team.end_turn()
         return self

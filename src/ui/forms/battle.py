@@ -42,7 +42,7 @@ class BattleView(Form):
 
     def __init__(self, options: BattleViewOptions, recap_turn=False):
         """
-        :param recap_turn: Should we replay all the events last turn?
+        :param recap_turn: Should we replay events from the last turn(s)?
         """
         super().__init__(options)
         self.combat = options.combat
