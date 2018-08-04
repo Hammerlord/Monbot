@@ -179,7 +179,7 @@ class ValueForm(Form):
     def enumerated_buttons(values: List[any]) -> List[Button]:
         # Creates buttons with reaction emojis that enumerate values.
         # For now, this gets around the issues of duplicates and needing custom icons.
-        reactions = [ONE, TWO, THREE, FOUR, FIVE, SIX]
+        reactions = [ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, TEN]
         return [ValueForm.Button(reactions[i], value) for i, value in enumerate(values)]
 
     @property
