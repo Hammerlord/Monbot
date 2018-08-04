@@ -30,14 +30,15 @@ class StatusView(ValueForm):
 
     async def render(self) -> None:
         await self._clear_reactions()
-        await self._display(self._get_page())
+        await self._display(self._view)
         for button in self.buttons:
             await self._add_reaction(button.reaction)
         await self._add_reaction(ITEM)
         if self.player.team.size > 1:
             await self._add_reaction(RETURN)
 
-    def _get_page(self) -> str:
+    @property
+    def _view(self) -> str:
         message_body = f"```{self.player.nickname}'s team (Slots: {self.player.team.size}/4)```"
         for i, elemental in enumerate(self.values):
             message_body += self._get_status(i, elemental)
@@ -48,7 +49,7 @@ class StatusView(ValueForm):
         return (f"{index + 1}) {elemental.left_icon}  Lv. {elemental.level} {elemental.nickname}  "
                 f"`{HealthBarView.from_elemental(elemental)} "
                 f"{elemental.current_hp} / {elemental.max_hp} HP`  "
-                f"{elemental.current_exp} / {elemental.exp_to_level} EXP \n")
+                f"`{elemental.current_exp} / {elemental.exp_to_level} EXP` \n")
 
     async def pick_option(self, reaction: str) -> None:
         if reaction == ITEM:
@@ -287,7 +288,7 @@ class UseItemView(ValueForm):
         return (f"{index + 1}) {elemental.left_icon}  Lv. {elemental.level} {elemental.nickname}  "
                 f"`{HealthBarView.from_elemental(elemental)} "
                 f"{elemental.current_hp} / {elemental.max_hp} HP`  "
-                f"{elemental.current_exp} / {elemental.exp_to_level} EXP {feedback}\n")
+                f"`{elemental.current_exp} / {elemental.exp_to_level} EXP` {feedback}\n")
 
     async def pick_option(self, reaction: str) -> None:
         if reaction == BACK:
