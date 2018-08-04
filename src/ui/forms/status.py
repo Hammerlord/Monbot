@@ -179,12 +179,11 @@ class ItemsView(ValueForm):
 
     @property
     def values(self) -> List[ItemSlot]:
-        return self.player.inventory.items
+        return [item_slot for item_slot in self.player.inventory.items if item_slot.amount > 0]
 
     @property
     def buttons(self) -> List[ValueForm.Button]:
-        return [ValueForm.Button(item_slot.item.icon, item_slot.item) for item_slot in self.values
-                if item_slot.amount > 0]
+        return [ValueForm.Button(item_slot.item.icon, item_slot.item) for item_slot in self.values]
 
     async def render(self) -> None:
         await self._clear_reactions()
@@ -202,8 +201,6 @@ class ItemsView(ValueForm):
     def _item_views(self) -> str:
         item_slots = []
         for slot in self.values:
-            if slot.amount == 0:
-                continue
             view = (f"{slot.item.icon} **{slot.item.name} x{slot.amount}** {slot.item.properties} \n "
                     f"{slot.item.description}")
             item_slots.append(view)
