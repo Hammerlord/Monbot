@@ -1,5 +1,5 @@
-from src.character.inventory import Item
-from src.core.constants import PEACH, HAMMER
+from src.character.inventory import Item, ItemTypes
+from src.core.constants import PEACH, HAMMER, MANA_SHARD
 
 
 class Peach(Item):
@@ -22,3 +22,13 @@ class Revive(Item):
         self.healing_percentage = 0.15
         self.resurrects_target = True
         self.sell_price = 10
+
+
+class ManaShard(Item):
+    def __init__(self):
+        super().__init__()
+        self.name = 'Mana Shard'
+        self.description = 'A crystal of pure mana. It pulses with a faint light.'
+        self.icon = MANA_SHARD
+        self.item_type = ItemTypes.MATERIAL
+        self.sell_price = None
