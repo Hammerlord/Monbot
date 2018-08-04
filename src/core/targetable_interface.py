@@ -39,3 +39,7 @@ class Targetable:
     @property
     def nickname(self) -> str:
         raise NotImplementedError
+
+    @property
+    def is_knocked_out(self) -> bool:
+        raise NotImplementedError

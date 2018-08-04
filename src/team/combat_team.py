@@ -273,6 +273,10 @@ class CombatTeam(Targetable):
         return self.active_elemental.nickname
 
     @property
+    def is_knocked_out(self) -> bool:
+        return self.active_elemental.is_knocked_out
+
+    @property
     def physical_def(self) -> int:
         return self.active_elemental.physical_def
 
