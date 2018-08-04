@@ -178,18 +178,12 @@ class SelectElementalView(ValueForm):
 
     async def pick_option(self, reaction: str) -> None:
         if reaction == BACK:
-            await self.back()
+            await self._back()
             return
         await super().pick_option(reaction)
         if self.toggled:
             self.combat_team.attempt_switch(self._selected_value)
             await BattleView.from_form(self, recap_turn=True)
-
-    async def back(self) -> None:
-        """
-        Rerenders the Battle view.
-        """
-        await BattleView.from_form(self)
 
     def get_form_options(self) -> BattleViewOptions:
         return BattleViewOptions(self.bot,
@@ -244,18 +238,12 @@ class SelectAbilityView(ValueForm):
 
     async def pick_option(self, reaction: str):
         if reaction == BACK:
-            await self.back()
+            await self._back()
             return
         await super().pick_option(reaction)
         if self.toggled:
             self.combat_team.select_ability(self._selected_value)
             await BattleView.from_form(self, recap_turn=True)
-
-    async def back(self) -> None:
-        """
-        Rerenders the Battle view.
-        """
-        await BattleView.from_form(self)
 
     def get_form_options(self) -> BattleViewOptions:
         return BattleViewOptions(self.bot,

@@ -1,16 +1,20 @@
 from src.character.character import Character
+from src.character.consumables import Peach, Revive
 from src.ui.forms.form import Form
 
 
 class Player(Character):
     def __init__(self, user):
         super().__init__()
+        self._level = 3
         self._is_busy = False
         self.primary_view = None  # Type: Form
         self.secondary_view = None  # Type: Form (eg. also having a logger open)
         self.id = user.id
         self._nickname = user.name
         self.battles_fought = 0
+        self.inventory.add_item(Peach(), 2)
+        self.inventory.add_item(Revive(), 1)
 
     def has_elemental(self) -> bool:
         return len(self.elementals) > 0

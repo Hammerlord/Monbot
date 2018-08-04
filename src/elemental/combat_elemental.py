@@ -311,7 +311,8 @@ class CombatElemental(Targetable):
             self.action_queued = None
 
     def heal(self, amount: float) -> None:
-        if self.is_knocked_out or self.current_hp == self.max_hp:
+        # TODO block ability healing when knocked out.
+        if self.current_hp == self.max_hp:
             # Regular healing effects don't work when the elemental is KOed.
             return
         self._elemental.heal(amount)

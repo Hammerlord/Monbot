@@ -1,8 +1,11 @@
 from typing import List
 
+import asyncio
 import discord
 from discord.ext.commands import Bot
 
+from src.character.inventory import ItemSlot, Item
+from src.character.player import Player
 from src.core.constants import *
 from src.elemental.elemental import Elemental
 from src.ui.forms.form import Form, FormOptions, ValueForm
@@ -16,7 +19,6 @@ class StatusView(ValueForm):
     """
     def __init__(self, options: FormOptions):
         super().__init__(options)
-        self.initial_render = True
 
     @property
     def values(self) -> List[Elemental]:
@@ -30,10 +32,13 @@ class StatusView(ValueForm):
         await self._clear_reactions()
         await self._display(self._get_page())
         for button in self.buttons:
-            await self.bot.add_reaction(self.discord_message, button.reaction)
+            await self._add_reaction(button.reaction)
+        await self._add_reaction(ITEM)
+        if self.player.team.size > 1:
+            await self._add_reaction(RETURN)
 
     def _get_page(self) -> str:
-        message_body = f"```{self.player.nickname}'s Team (Slots: {self.player.team.size}/4)```"
+        message_body = f"```{self.player.nickname}'s team (Slots: {self.player.team.size}/4)```"
         for i, elemental in enumerate(self.values):
             message_body += self._get_status(i, elemental)
         return message_body
@@ -42,18 +47,23 @@ class StatusView(ValueForm):
     def _get_status(index: int, elemental: Elemental) -> str:
         return (f"{index + 1}) {elemental.left_icon}  Lv. {elemental.level} {elemental.nickname}  "
                 f"`{HealthBarView.from_elemental(elemental)} "
-                f"{elemental.current_hp} / {elemental.max_hp} HP` \n")
+                f"{elemental.current_hp} / {elemental.max_hp} HP`  "
+                f"{elemental.current_exp} / {elemental.exp_to_level} EXP \n")
 
     async def pick_option(self, reaction: str) -> None:
+        if reaction == ITEM:
+            await Form.from_form(self, ItemsView)
+            return
+        if reaction == RETURN:
+            return
         await super().pick_option(reaction)
         if self._selected_value is not None:
             await self._create_detail_view(self._selected_value)
 
     async def _create_detail_view(self, elemental: Elemental) -> None:
-        options = StatusDetailOptions(self.bot, self.player, elemental, self.discord_message)
+        options = StatusDetailOptions(self.bot, self.player, elemental, self.discord_message, self)
         form = StatusDetailView(options)
-        self.player.set_primary_view(form)
-        await form.render()
+        await form.show()
 
 
 class StatusDetailOptions(FormOptions):
@@ -61,8 +71,9 @@ class StatusDetailOptions(FormOptions):
                  bot: Bot,
                  player,
                  elemental: Elemental,
-                 discord_message: discord.Message = None):
-        super().__init__(bot, player, discord_message)
+                 discord_message: discord.Message = None,
+                 previous_form=None):
+        super().__init__(bot, player, discord_message, previous_form)
         self.elemental = elemental
 
 
@@ -83,13 +94,13 @@ class StatusDetailView(Form):
     async def render(self) -> None:
         await self._display(self.get_main_view())
         await self._clear_reactions()
-        await self._add_reactions([BACK, ABILITIES, ATTRIBUTES, NICKNAME, NOTE])
+        await self._add_reactions([ABILITIES, ATTRIBUTES, NICKNAME, NOTE, BACK])
 
     async def pick_option(self, reaction: str) -> None:
         if self.is_awaiting_input:
             return
         if reaction == BACK:
-            await self.back()
+            await self._back()
         elif reaction == ABILITIES:
             pass
         elif reaction == ATTRIBUTES:
@@ -158,8 +169,126 @@ class StatusDetailView(Form):
             return f"**{nickname}** [{name}]"
         return f"**{name}**"
 
-    async def back(self) -> None:
-        """
-        Rerenders the Status form.
-        """
-        await Form.from_form(self, StatusView)
+
+class ItemsView(ValueForm):
+    """
+    Displays the items in your inventory. TODO only consumables are usable.
+    """
+    def __init__(self, options: FormOptions):
+        super().__init__(options)
+
+    @property
+    def values(self) -> List[ItemSlot]:
+        return self.player.inventory.items
+
+    @property
+    def buttons(self) -> List[ValueForm.Button]:
+        return [ValueForm.Button(item_slot.item.icon, item_slot.item) for item_slot in self.values
+                if item_slot.amount > 0]
+
+    async def render(self) -> None:
+        await self._clear_reactions()
+        await self._display(self._get_view())
+        for button in self.buttons:
+            await self._add_reaction(button.reaction)
+        await self._add_reaction(BACK)
+
+    def _get_view(self) -> str:
+        view = f"```{self.player.nickname}'s bag```"
+        view += self._item_views
+        return view
+
+    @property
+    def _item_views(self) -> str:
+        item_slots = []
+        for slot in self.values:
+            if slot.amount == 0:
+                continue
+            view = (f"{slot.item.icon} **{slot.item.name} x{slot.amount}** {slot.item.properties} \n "
+                    f"{slot.item.description}")
+            item_slots.append(view)
+        return '\n'.join(item_slots)
+
+    async def pick_option(self, reaction: str) -> None:
+        if reaction == BACK:
+            await self._back()
+            return
+        await super().pick_option(reaction)
+        item = self._selected_value
+        if item is not None:
+            options = UseItemOptions(self.bot, self.player, item, self.discord_message, self)
+            form = UseItemView(options)
+            await form.show()
+
+
+class UseItemOptions(FormOptions):
+    def __init__(self,
+                 bot: Bot,
+                 player: Player,
+                 item: Item,
+                 discord_message: discord.Message = None,
+                 previous_form: Form = None):
+        super().__init__(bot, player, discord_message, previous_form)
+        self.item = item
+
+
+class UseItemView(ValueForm):
+    """
+    Pick a member of your current team to use an item on.
+    """
+    def __init__(self, options: UseItemOptions):
+        super().__init__(options)
+        self.item = options.item
+        self.inventory = self.player.inventory
+        self.recently_affected_elemental = None
+
+    @property
+    def values(self) -> List[Elemental]:
+        return self.player.team.elementals
+
+    @property
+    def buttons(self) -> List[ValueForm.Button]:
+        return self.enumerated_buttons(self.values)
+
+    async def render(self) -> None:
+        await self._display(self._view)
+        await self._clear_reactions()
+        print(self.inventory.amount_left(self.item))
+        if self.inventory.amount_left(self.item) == 0:
+            await asyncio.sleep(1.0)
+            await self._back()
+            return
+        for button in self.buttons:
+            await self._add_reaction(button.reaction)
+        await self._add_reaction(BACK)
+
+    @property
+    def _view(self) -> str:
+        items_left = self.inventory.amount_left(self.item)
+        message_body = (f"Selected **{self.item.icon} {self.item.name} ({items_left} left)** \n"
+                        f"{self.item.properties} \n\n")
+        for i, elemental in enumerate(self.values):
+            message_body += self._get_status(i, elemental)
+        if self.recently_affected_elemental:
+            message_body += f"```Gave {self.item.name} to {self.recently_affected_elemental.nickname}.```"
+        elif items_left > 0:
+            message_body += f"```Give {self.item.name} to who?```"
+        return message_body
+
+    def _get_status(self, index: int, elemental: Elemental) -> str:
+        feedback = ':heart:' if self.recently_affected_elemental == elemental else ''
+        return (f"{index + 1}) {elemental.left_icon}  Lv. {elemental.level} {elemental.nickname}  "
+                f"`{HealthBarView.from_elemental(elemental)} "
+                f"{elemental.current_hp} / {elemental.max_hp} HP`  "
+                f"{elemental.current_exp} / {elemental.exp_to_level} EXP {feedback}\n")
+
+    async def pick_option(self, reaction: str) -> None:
+        if reaction == BACK:
+            await self._back()
+            return
+        await super().pick_option(reaction)
+        elemental = self._selected_value
+        if elemental is not None:
+            if self.inventory.use_item(self.item, elemental):
+                self.recently_affected_elemental = elemental
+                await self._display(self._view)

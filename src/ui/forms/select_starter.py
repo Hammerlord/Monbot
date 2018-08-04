@@ -42,7 +42,7 @@ class SelectStarterView(ValueForm):
     async def render_initial(self) -> None:
         await self._display(self._get_initial_page())
         for button in self.buttons:
-            await self.bot.add_reaction(self.discord_message, button.reaction)
+            await self._add_reaction(button.reaction)
         self.initial_render = False
 
     async def pick_option(self, reaction: str) -> None:
@@ -54,7 +54,7 @@ class SelectStarterView(ValueForm):
             await self.render()
             # If there's a valid selection, we add an OK button.
             # The selection can become invalidated afterward, in which case OK safely does nothing.
-            await self.bot.add_reaction(self.discord_message, OK)
+            await self._add_reaction(OK)
 
     async def remove_option(self, reaction: str) -> None:
         is_valid_removal = await super().remove_option(reaction)
@@ -75,11 +75,12 @@ class SelectStarterView(ValueForm):
 
         return (f"{starter.left_icon} **{starter.name}** [{Elements.get_icon(starter.element)} type]\n"
                 f"{starter.description}\n\n"
-                f"{abilities_view}")
+                f"{abilities_view}"
+                f"```Click [OK] to choose this one.```")
 
     async def _confirm(self):
         if self.player.num_elementals > 0 or self._selected_value is None:
             return
         starter = self._selected_value
-        self.player.add_elemental(ElementalInitializer.make(starter))
+        self.player.add_elemental(ElementalInitializer.make(starter, level=self.player.level))
         await Form.from_form(self, StatusView)

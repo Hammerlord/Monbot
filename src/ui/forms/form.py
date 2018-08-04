@@ -14,10 +14,12 @@ class FormOptions:
     def __init__(self,
                  bot: Bot,
                  player,
-                 discord_message: discord.Message = None):
+                 discord_message: discord.Message = None,
+                 previous_form: 'Form' = None):
         self.bot = bot
         self.player = player
         self.discord_message = discord_message  # Optional. The form will edit an existing message.
+        self.previous_form = previous_form
 
 
 class Form:
@@ -31,6 +33,7 @@ class Form:
         self.bot = options.bot
         self.player = options.player
         self.discord_message = options.discord_message  # The Discord.message object representing this form.
+        self.previous_form = options.previous_form
 
     @property
     def is_awaiting_input(self) -> bool:
@@ -83,6 +86,10 @@ class Form:
         except discord.errors.NotFound:
             print("Message has been deleted.")
 
+    async def remove_option(self, reaction: str) -> bool:
+        # No op. Removing a reaction doesn't do anything by default.
+        pass
+
     async def _clear_reactions(self) -> None:
         """
         Attempt to clear reactions from the message.
@@ -97,7 +104,8 @@ class Form:
     def get_form_options(self) -> FormOptions:
         return FormOptions(self.bot,
                            self.player,
-                           self.discord_message)
+                           self.discord_message,
+                           previous_form=self)
 
     @staticmethod
     async def from_form(from_form: 'Form', to_form) -> None:
@@ -110,6 +118,14 @@ class Form:
         new_form = to_form(options)
         options.player.set_primary_view(new_form)
         await new_form.render()
+
+    async def show(self) -> None:
+        self.player.set_primary_view(self)
+        await self.render()
+
+    async def _back(self) -> None:
+        if self.previous_form:
+            await self.previous_form.show()
 
 
 class ValueForm(Form):
