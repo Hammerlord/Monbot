@@ -244,7 +244,10 @@ class UseItemView(ValueForm):
 
     @property
     def values(self) -> List[Elemental]:
-        return self.player.team.elementals
+        """
+        Only show elementals who are eligible for the item's effect.
+        """
+        return [elemental for elemental in self.player.team.elementals if self.item.is_usable_on(elemental)]
 
     @property
     def buttons(self) -> List[ValueForm.Button]:
@@ -252,10 +255,10 @@ class UseItemView(ValueForm):
 
     async def render(self) -> None:
         await self._display(self._view)
+        self.recently_affected_elemental = None
         await self._clear_reactions()
-        print(self.inventory.amount_left(self.item))
         if self.inventory.amount_left(self.item) == 0:
-            await asyncio.sleep(1.0)
+            await asyncio.sleep(1.5)
             await self._back()
             return
         for button in self.buttons:
@@ -265,8 +268,15 @@ class UseItemView(ValueForm):
     @property
     def _view(self) -> str:
         items_left = self.inventory.amount_left(self.item)
-        message_body = (f"Selected **{self.item.icon} {self.item.name} ({items_left} left)** \n"
-                        f"{self.item.properties} \n\n")
+        return (f"Selected **{self.item.icon} {self.item.name} ({items_left} left)** \n"
+                f"{self.item.properties} \n {self._eligible_elementals}")
+
+    @property
+    def _eligible_elementals(self) -> str:
+        if len(self.values) == 0:
+            return "```(You don't have anyone to use this item on.)```"
+        message_body = ''
+        items_left = self.inventory.amount_left(self.item)
         for i, elemental in enumerate(self.values):
             message_body += self._get_status(i, elemental)
         if self.recently_affected_elemental:
@@ -291,4 +301,4 @@ class UseItemView(ValueForm):
         if elemental is not None:
             if self.inventory.use_item(self.item, elemental):
                 self.recently_affected_elemental = elemental
-                await self._display(self._view)
+                await self.render()

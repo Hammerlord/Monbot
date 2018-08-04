@@ -70,12 +70,19 @@ class Item:
         self.item_type = ItemTypes.CONSUMABLE
         self.sell_price = 0
 
+    def is_usable_on(self, target: Elemental or CombatElemental) -> bool:
+        if self.healing_percentage == 0 and self.exp == 0:
+            return False
+        if self.resurrects_target:
+            return target.is_knocked_out
+        return not target.is_knocked_out
+
     def use_on(self, target: Elemental or CombatElemental) -> bool:
         """
         Use this item on an Elemental/CombatElemental.
         :return bool: True if this item could be used.
         """
-        if self.resurrects_target or not target.is_knocked_out:
+        if self.is_usable_on(target):
             heal_amount = target.max_hp * self.healing_percentage
             target.heal(heal_amount)
             target.add_exp(self.exp)
@@ -91,7 +98,7 @@ class Item:
         if self.resurrects_target:
             properties.append("[Revives KO]")
         if self.healing_percentage > 0:
-            properties.append(f"[Restores {int(self.healing_percentage * 100)}% HP]")
+            properties.append(f"[+{int(self.healing_percentage * 100)}% HP]")
         if self.exp > 0:
             properties.append(f"[+{self.exp} EXP]")
         return ' '.join(properties)
