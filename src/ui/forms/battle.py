@@ -80,12 +80,16 @@ class BattleView(Form):
             await self._render_events(turn_log)
 
     async def _render_current(self) -> None:
+        """
+        Render the current state of the battlefield and options, if available.
+        """
         side_a = self.combat.side_a_active
         side_b = self.combat.side_b_active
         allies = side_a if self.combat_team.side == Combat.SIDE_A else side_b
         opponents = side_b if allies == side_a else side_a
         battlefield = Battlefield(allies, opponents).get_view()
-        await self._display(battlefield)
+        view = f"{battlefield}{self._display_options()}"
+        await self._display(view)
 
     async def _render_events(self, turn_log: List[EventLog]) -> None:
         """
@@ -99,7 +103,7 @@ class BattleView(Form):
             battlefield = Battlefield(allies, opponents).get_view()
             is_enemy_action = log.acting_team.side != self.combat_team.side
             recap = f"{'<Enemy> ' if is_enemy_action else ''}{log.recap}"
-            message = '\n'.join([battlefield, f'```{recap}```'])
+            message = ''.join([battlefield, f'```{recap}```'])
             await self._display(message)
             await asyncio.sleep(1.5)
 
@@ -113,6 +117,18 @@ class BattleView(Form):
             await self._add_reaction(ITEM)
         if self.combat.allow_flee:
             await self._add_reaction(FLEE)
+
+    def _display_options(self) -> str:
+        if not self.combat.in_progress:
+            return ''
+        options = [f"{ABILITIES} `Abilities`"]
+        if self.combat_team.eligible_bench:
+            options.append(f"{RETURN} `Switch`")
+        if self.combat.allow_items and self.player.consumables:
+            options.append(f"{ITEM} `Items`")
+        if self.combat.allow_flee:
+            options.append(f"{FLEE} `Flee`")
+        return ' '.join(options)
 
     def get_form_options(self) -> BattleViewOptions:
         return BattleViewOptions(self.bot,
@@ -227,7 +243,7 @@ class SelectAbilityView(ValueForm):
         return '\n'.join(ability_views)
 
     def get_main_view(self) -> str:
-        return '\n'.join([self.get_battlefield(), self.get_abilities()])
+        return ''.join([self.get_battlefield(), self.get_abilities()])
 
     async def render(self) -> None:
         await self._display(self.get_main_view())

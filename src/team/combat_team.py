@@ -99,6 +99,13 @@ class CombatTeam(Targetable):
                 if elemental != self.__active_elemental and not elemental.is_knocked_out]
 
     @property
+    def status_effects(self) -> List[StatusEffect]:
+        """
+        :return: A list of team-targeting status effects (as opposed to forwarding the active elemental's).
+        """
+        return list(self._status_effects)
+
+    @property
     def is_npc(self) -> bool:
         """
         Should this CombatTeam auto-battle?

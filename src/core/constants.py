@@ -30,3 +30,4 @@ ROLLING_THUNDER = '🌩'
 PEACH = '🍑'
 HAMMER = '🔨'
 MANA_SHARD = '💎'
+PLACEHOLDER = '<:placeholder:475536369876467722>'  # An empty emoji.

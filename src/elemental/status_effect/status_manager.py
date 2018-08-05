@@ -46,7 +46,7 @@ class StatusManager:
 
     @property
     def status_effects(self) -> List[StatusEffect]:
-        return self._status_effects
+        return list(self._status_effects)
 
     @property
     def num_debuffs(self) -> int:

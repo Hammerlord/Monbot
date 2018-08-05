@@ -152,7 +152,11 @@ class CombatElemental(Targetable):
 
     @property
     def status_effects(self) -> List[StatusEffect]:
-        return list(self._status_manager.status_effects)
+        return self._status_manager.status_effects
+
+    @property
+    def team_status_effects(self):
+        return self.team.status_effects
 
     @property
     def num_status_effects(self) -> int:
@@ -330,7 +334,7 @@ class CombatElemental(Targetable):
 
 class CombatElementalLog:
     """
-    Containing visible details about a CombatElemental and a few identity attrs.
+    Containing visible details about a CombatElemental for rendering.
     """
     def __init__(self, combat_elemental: CombatElemental):
         self.level = combat_elemental.level
@@ -342,9 +346,5 @@ class CombatElementalLog:
         self.nickname = combat_elemental.nickname
         self.defend_charges = combat_elemental.defend_charges
         self.icon = combat_elemental.icon
-        self.id = combat_elemental.id
-        self.team = combat_elemental.team
         self.health_percent = combat_elemental.health_percent
-
-    def is_enemy(self, other_team) -> bool:
-        return other_team.side != self.team.side
+        self.team_status_effects = combat_elemental.team_status_effects
