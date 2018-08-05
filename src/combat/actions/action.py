@@ -60,7 +60,7 @@ class EventLogger:
 
     @property
     def most_recent_index(self) -> int:
-        return self.num_logs - 1
+        return self.num_logs
 
     @property
     def most_recent_log(self) -> EventLog:

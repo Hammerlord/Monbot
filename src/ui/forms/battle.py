@@ -47,6 +47,7 @@ class BattleView(Form):
         self.combat = options.combat
         self.combat_team = options.combat_team
         self.logger = self.combat.turn_logger
+        self.log_index = self.logger.most_recent_index
 
     async def render(self) -> None:
         # TODO it is possible to have no available options, in which case, we need a skip.
@@ -75,9 +76,10 @@ class BattleView(Form):
         """
         Render the turn(s) that occurred since we last updated the view.
         """
-        turn_logs = self.logger.get_turn_logs(self.logger.most_recent_index)
+        turn_logs = self.logger.get_turn_logs(self.log_index)
         for turn_log in turn_logs:
             await self._render_events(turn_log)
+        self.log_index = self.logger.most_recent_index
 
     async def _render_current(self) -> None:
         """
