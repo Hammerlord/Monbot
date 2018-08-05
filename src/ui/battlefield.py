@@ -24,24 +24,35 @@ class Battlefield:
     @property
     def _opponent_view(self) -> str:
         opponent = self.opponents[0]  # TODO 1v1 only
-        return (f"{self.get_team_status_effects(opponent)}\n"
-                f"{opponent.nickname} Lv. {opponent.level}  {self.get_status_effects(opponent)}\n"
-                f"`{HealthBarView.from_elemental(opponent)} ({opponent.health_percent}%)`  {opponent.icon}")
+        return (f"{self._get_team_status_effects(opponent)}\n"
+                f"{opponent.nickname} Lv. {opponent.level}  {self._get_status_effects(opponent)}\n"
+                f"`{HealthBarView.from_elemental(opponent)} ({opponent.health_percent}%)`  {self._get_icon(opponent)}")
 
     @property
     def _ally_view(self) -> str:
         elemental = self.allies[0]  # TODO 1v1 only
-        return (f"{elemental.icon}   {elemental.nickname} Lv. {elemental.level}  {self.get_status_effects(elemental)}\n"
-                f"         `{HealthBarView.from_elemental(elemental)} ({elemental.current_hp}/{elemental.max_hp})\n`"
-                f"{MANA}`{elemental.current_mana}/{elemental.max_mana}`   {DEFEND} `{elemental.defend_charges}`\n"
-                f"{self.get_team_status_effects(elemental)}\n")
+        return (
+            f"{self._get_icon(elemental)}   {elemental.nickname} "
+            f"Lv. {elemental.level}  {self._get_status_effects(elemental)}\n"
+            f"         `{HealthBarView.from_elemental(elemental)} ({elemental.current_hp}/{elemental.max_hp})\n`"
+            f"{MANA}`{elemental.current_mana}/{elemental.max_mana}`   {DEFEND} `{elemental.defend_charges}`\n"
+            f"{self._get_team_status_effects(elemental)}\n")
 
     @staticmethod
-    def get_status_effects(elemental) -> str:
+    def _get_status_effects(elemental) -> str:
         return ' '.join([status_effect.icon for status_effect in elemental.status_effects])
 
     @staticmethod
-    def get_team_status_effects(elemental) -> str:
+    def _get_team_status_effects(elemental) -> str:
         if not elemental.team_status_effects:
             return PLACEHOLDER
         return ' '.join([status_effect.icon for status_effect in elemental.team_status_effects])
+
+    @staticmethod
+    def _get_icon(elemental) -> str:
+        """
+        Show a blank emoji if the elemental is dead.
+        """
+        if elemental.is_knocked_out:
+            return PLACEHOLDER
+        return elemental.icon

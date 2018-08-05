@@ -348,3 +348,4 @@ class CombatElementalLog:
         self.icon = combat_elemental.icon
         self.health_percent = combat_elemental.health_percent
         self.team_status_effects = combat_elemental.team_status_effects
+        self.is_knocked_out = combat_elemental.is_knocked_out
