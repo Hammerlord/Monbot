@@ -1,3 +1,4 @@
+from src.core.constants import WARNING
 from src.core.elements import Elements, Category
 from src.elemental.ability.ability import Ability
 
@@ -20,4 +21,4 @@ class ShiningLaser(Ability):
 
     @staticmethod
     def get_casting_message(elemental_name: str) -> str:
-        return f"{elemental_name} is shining mightily!!"
+        return f"{WARNING} {elemental_name} is shining mightily!!"
