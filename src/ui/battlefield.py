@@ -8,15 +8,14 @@ class Battlefield:
     A string representation of the active elemental(s) on both sides of the field.
     """
     def __init__(self,
-                 side_a,
-                 side_b,
-                 for_team):
+                 allies,
+                 opponents):
         """
-        :param side_a: List[CombatElementalLog]
-        :param side_b: List[CombatElementalLog]
+        :param allies: List[CombatElementalLog]
+        :param opponents: List[CombatElementalLog]
         """
-        self.allies = side_a if for_team.side == Combat.SIDE_A else side_b
-        self.opponents = side_b if self.allies == side_a else side_a
+        self.allies = allies
+        self.opponents = opponents
 
     def get_view(self) -> str:
         # TODO 1v1 only

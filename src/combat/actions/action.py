@@ -22,10 +22,15 @@ class EventLog:
     def __init__(self,
                  side_a: List[CombatElementalLog],
                  side_b: List[CombatElementalLog],
-                 recap: str):
+                 recap: str,
+                 acting_team):
+        """
+        :param acting_team: CombatTeam
+        """
         self.side_a = side_a
         self.side_b = side_b
         self.recap = recap
+        self.acting_team = acting_team
 
     def __repr__(self) -> str:
         return self.recap
@@ -47,10 +52,10 @@ class EventLogger:
         self.combat = combat
         self.logs = [[]]  # List[List[EventLog]]; events are grouped by rounds
 
-    def add_log(self, recap: str) -> None:
+    def add_log(self, recap: str, acting_team) -> None:
         # Ignore events with no recap message.
         if recap:
-            log = self._make_log(recap)
+            log = self._make_log(recap, acting_team)
             self.logs[-1].append(log)
 
     @property
@@ -78,7 +83,7 @@ class EventLogger:
         self.logs.append([])
 
     def add_ko(self, combat_elemental) -> None:
-        self.add_log(f'{combat_elemental.nickname} was knocked out!')
+        self.add_log(f'{combat_elemental.nickname} was knocked out!', combat_elemental.team)
 
     def append_recent(self, recap: str) -> None:
         """
@@ -88,7 +93,7 @@ class EventLogger:
         if recap and current_turn_events:
             current_turn_events[-1].append_recap(recap)
 
-    def continue_recent(self, recap: str) -> None:
+    def continue_recent(self, recap: str, acting_team) -> None:
         """
         Creates a new snapshot, but uses the previous log's message and appends the recap on top of it.
         """
@@ -96,9 +101,9 @@ class EventLogger:
         if recap and current_turn_events:
             previous_recap = current_turn_events[-1].recap
             new_recap = '\n'.join([previous_recap, recap])
-            self.add_log(new_recap)
+            self.add_log(new_recap, acting_team)
 
-    def _make_log(self, recap) -> EventLog:
+    def _make_log(self, recap, acting_team) -> EventLog:
         # Fall back on empty list if there are no active elementals on a side.
         side_a = []
         for elemental in self.combat.side_a_active:
@@ -106,7 +111,7 @@ class EventLogger:
         side_b = []
         for elemental in self.combat.side_b_active:
             side_b.append(elemental.snapshot())
-        return EventLog(side_a, side_b, recap)
+        return EventLog(side_a, side_b, recap, acting_team)
 
 
 class Action:

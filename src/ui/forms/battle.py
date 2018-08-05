@@ -80,9 +80,11 @@ class BattleView(Form):
             await self._render_events(turn_log)
 
     async def _render_current(self) -> None:
-        battlefield = Battlefield(self.combat.side_a_active,
-                                  self.combat.side_b_active,
-                                  self.combat_team).get_view()
+        side_a = self.combat.side_a_active
+        side_b = self.combat.side_b_active
+        allies = side_a if self.combat_team.side == Combat.SIDE_A else side_b
+        opponents = side_b if allies == side_a else side_a
+        battlefield = Battlefield(allies, opponents).get_view()
         await self._display(battlefield)
 
     async def _render_events(self, turn_log: List[EventLog]) -> None:
@@ -92,10 +94,11 @@ class BattleView(Form):
         for log in turn_log:
             if not log.side_a or not log.side_b:
                 continue
-            battlefield = Battlefield(log.side_a,
-                                      log.side_b,
-                                      self.combat_team).get_view()
-            recap = log.recap  # TODO enemy recaps
+            allies = log.side_a if self.combat_team.side == Combat.SIDE_A else log.side_b
+            opponents = log.side_b if allies == log.side_a else log.side_a
+            battlefield = Battlefield(allies, opponents).get_view()
+            is_enemy_action = log.acting_team.side != self.combat_team.side
+            recap = f"{'<Enemy> ' if is_enemy_action else ''}{log.recap}"
             message = '\n'.join([battlefield, f'```{recap}```'])
             await self._display(message)
             await asyncio.sleep(1.5)
@@ -206,9 +209,12 @@ class SelectAbilityView(ValueForm):
         return self.combat_team.active_elemental.available_abilities
 
     def get_battlefield(self) -> str:
-        return Battlefield(self.combat.side_a_active,
-                           self.combat.side_b_active,
-                           self.combat_team).get_view()
+        side_a = self.combat.side_a_active
+        side_b = self.combat.side_b_active
+        allies = side_a if self.combat_team.side == Combat.SIDE_A else side_b
+        opponents = side_b if allies == side_a else side_a
+        return Battlefield(allies,
+                           opponents).get_view()
 
     def get_abilities(self) -> str:
         """

@@ -64,9 +64,6 @@ class CombatTeam(Targetable):
             self.owner.is_busy = False
             self.owner.battles_fought += 1
 
-    def log(self, recap) -> None:
-        self.logger.add_log(recap)
-
     @property
     def last_action(self) -> Action:
         return self._actions[-1]
@@ -269,11 +266,14 @@ class CombatTeam(Targetable):
     def update_mana(self, amount: int) -> None:
         self.active_elemental.update_mana(amount)
 
+    def log(self, recap) -> None:
+        self.logger.add_log(recap, acting_team=self)
+
     def append_recent_log(self, recap: str) -> None:
         self.logger.append_recent(recap)
 
     def continue_recent_log(self, recap: str) -> None:
-        self.logger.continue_recent(recap)
+        self.logger.continue_recent(recap, acting_team=self)
 
     @property
     def nickname(self) -> str:
