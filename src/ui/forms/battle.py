@@ -177,7 +177,7 @@ class SelectElementalView(ValueForm):
         await self._add_reaction(BACK)
 
     def get_team(self) -> str:
-        message_body = f"```{self.player.nickname}'s Team```"
+        message_body = f"```{self.player.nickname}'s team```"
         message_body += f'**Active:** {self._get_status(self.combat_team.active_elemental)}\n'
         for i, elemental in enumerate(self.values):
             message_body += self._get_status(elemental, i)
@@ -194,7 +194,8 @@ class SelectElementalView(ValueForm):
         index = str(index + 1) + ') ' if index is not None else ''
         return (f"{index}{elemental.icon}  Lv. {elemental.level} {elemental.nickname}  "
                 f"`{HealthBarView.from_elemental(elemental)} "
-                f"{elemental.current_hp} / {elemental.max_hp} HP` \n")
+                f"{elemental.current_hp}/{elemental.max_hp} HP` "
+                f"{MANA} `{elemental.current_mana}/{elemental.max_mana}`\n")
 
     async def pick_option(self, reaction: str) -> None:
         if reaction == BACK:
