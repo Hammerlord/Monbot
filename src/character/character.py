@@ -1,7 +1,8 @@
 import math
 from typing import List
 
-from src.character.inventory import Inventory
+from src.character.inventory import Inventory, ItemSlot
+from src.elemental.combat_elemental import CombatElemental
 from src.elemental.elemental import Elemental
 from src.team.team import Team
 
@@ -70,6 +71,27 @@ class Character:
     @property
     def gold(self) -> int:
         return self._gold
+
+    @property
+    def items(self) -> List[ItemSlot]:
+        return self.inventory.items
+
+    @property
+    def materials(self) -> List[ItemSlot]:
+        return self.inventory.materials
+
+    @property
+    def consumables(self) -> List[ItemSlot]:
+        return self.inventory.consumables
+
+    def use_item(self, item, target: Elemental or CombatElemental) -> bool:
+        """
+        :return: True if this item was used.
+        """
+        return self.inventory.use_item(item, target)
+
+    def add_item(self, item, amount: int) -> None:
+        self.inventory.add_item(item, amount)
 
     def add_exp(self, amount: int) -> None:
         if self._is_max_level():

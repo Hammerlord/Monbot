@@ -1,7 +1,7 @@
 from typing import List
 
 from src.combat.actions.casting import Casting
-from src.combat.actions.combat_actions import Switch, Action
+from src.combat.actions.combat_actions import Switch, Action, UseItem
 from src.combat.actions.elemental_action import ElementalAction
 from src.core.elements import Elements
 from src.core.targetable_interface import Targetable
@@ -200,6 +200,13 @@ class CombatTeam(Targetable):
         )
         self.combat.request_action(switch)
         return True
+
+    def use_item(self, item, elemental: CombatElemental):
+        self.combat.request_action(UseItem(
+            item,
+            elemental,
+            combat_team=self
+        ))
 
     def change_active_elemental(self, elemental: CombatElemental) -> None:
         # Logging is handled in Switch action as it has a detailed recap.

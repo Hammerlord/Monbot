@@ -4,6 +4,7 @@ from typing import List
 import discord
 from discord.ext.commands import Bot
 
+from src.character.inventory import ItemSlot, Item
 from src.character.player import Player
 from src.combat.actions.action import EventLog
 from src.combat.combat import Combat
@@ -27,8 +28,9 @@ class BattleViewOptions(FormOptions):
                  player: Player,
                  combat: Combat,
                  combat_team: CombatTeam,
-                 discord_message: discord.Message = None):
-        super().__init__(bot, player, discord_message)
+                 discord_message: discord.Message = None,
+                 previous_form: 'BattleView' or Form = None):
+        super().__init__(bot, player, discord_message, previous_form)
         self.combat = combat
         self.combat_team = combat_team
 
@@ -40,22 +42,27 @@ class BattleView(Form):
     Has a number of subviews, including: selecting Ability, selecting Elemental, selecting Item
     """
 
-    def __init__(self, options: BattleViewOptions, recap_turn=False):
-        """
-        :param recap_turn: Should we replay events from the last turn(s)?
-        """
+    def __init__(self, options: BattleViewOptions):
         super().__init__(options)
         self.combat = options.combat
         self.combat_team = options.combat_team
-        self.recap_turn = recap_turn
         self.logger = self.combat.turn_logger
-        self.log_index = self.logger.most_recent_index
 
     async def render(self) -> None:
         # TODO it is possible to have no available options, in which case, we need a skip.
         await self._clear_reactions()
-        if self.recap_turn:
-            await self._render_battle_recaps()
+        await self._render_main()
+
+    async def rerender(self) -> None:
+        """
+        Show this screen again after making a move.
+        """
+        self.player.set_primary_view(self)
+        await self._clear_reactions()
+        await self._render_battle_recaps()
+        await self._render_main()
+
+    async def _render_main(self) -> None:
         await self._render_current()
         if self.combat_team.active_elemental.is_knocked_out and self.combat_team.eligible_bench:
             # Render the mon selection view if your mon has been knocked out and you have another.
@@ -68,7 +75,7 @@ class BattleView(Form):
         """
         Render the turn(s) that occurred since we last updated the view.
         """
-        turn_logs = self.logger.get_turn_logs(self.log_index)
+        turn_logs = self.logger.get_turn_logs(self.logger.most_recent_index)
         for turn_log in turn_logs:
             await self._render_events(turn_log)
 
@@ -99,7 +106,7 @@ class BattleView(Form):
         await self._add_reaction(ABILITIES)
         if self.combat_team.eligible_bench:
             await self._add_reaction(RETURN)
-        if self.combat.allow_items:
+        if self.combat.allow_items and self.player.consumables:
             await self._add_reaction(ITEM)
         if self.combat.allow_flee:
             await self._add_reaction(FLEE)
@@ -109,7 +116,8 @@ class BattleView(Form):
                                  self.player,
                                  self.combat,
                                  self.combat_team,
-                                 self.discord_message)
+                                 self.discord_message,
+                                 previous_form=self)
 
     async def pick_option(self, reaction: str) -> None:
         if not self.combat.in_progress:
@@ -118,17 +126,10 @@ class BattleView(Form):
             await Form.from_form(self, SelectAbilityView)
         elif reaction == RETURN and self.combat_team.eligible_bench:
             await Form.from_form(self, SelectElementalView)
-        elif reaction == ITEM and self.combat.allow_items:
-            pass
+        elif reaction == ITEM and self.combat.allow_items and self.player.consumables:
+            await Form.from_form(self, SelectConsumableView)
         elif reaction == FLEE and self.combat.allow_flee:
             pass
-
-    @staticmethod
-    async def from_form(from_form, recap_turn=False):
-        options = from_form.get_form_options()
-        new_form = BattleView(options, recap_turn)
-        options.player.set_primary_view(new_form)
-        await new_form.render()
 
 
 class SelectElementalView(ValueForm):
@@ -171,8 +172,8 @@ class SelectElementalView(ValueForm):
 
     @staticmethod
     def _get_status(elemental: CombatElemental, index=None) -> str:
-        index = str(index + 1) + ')' if index is not None else ''
-        return (f"{index} {elemental.icon}  Lv. {elemental.level} {elemental.nickname}  "
+        index = str(index + 1) + ') ' if index is not None else ''
+        return (f"{index}{elemental.icon}  Lv. {elemental.level} {elemental.nickname}  "
                 f"`{HealthBarView.from_elemental(elemental)} "
                 f"{elemental.current_hp} / {elemental.max_hp} HP` \n")
 
@@ -183,14 +184,7 @@ class SelectElementalView(ValueForm):
         await super().pick_option(reaction)
         if self.toggled:
             self.combat_team.attempt_switch(self._selected_value)
-            await BattleView.from_form(self, recap_turn=True)
-
-    def get_form_options(self) -> BattleViewOptions:
-        return BattleViewOptions(self.bot,
-                                 self.player,
-                                 self.combat,
-                                 self.combat_team,
-                                 self.discord_message)
+            await self.previous_form.rerender()
 
 
 class SelectAbilityView(ValueForm):
@@ -238,16 +232,136 @@ class SelectAbilityView(ValueForm):
 
     async def pick_option(self, reaction: str):
         if reaction == BACK:
+            # TODO this is broken.
             await self._back()
             return
         await super().pick_option(reaction)
         if self.toggled:
             self.combat_team.select_ability(self._selected_value)
-            await BattleView.from_form(self, recap_turn=True)
+            await self.previous_form.rerender()
 
-    def get_form_options(self) -> BattleViewOptions:
-        return BattleViewOptions(self.bot,
-                                 self.player,
-                                 self.combat,
-                                 self.combat_team,
-                                 self.discord_message)
+
+class SelectConsumableView(ValueForm):
+    """
+    Displays items eligible for use in combat. You can only use one at a time,
+    which submits an Action request to the battle.
+    """
+
+    def __init__(self, options: BattleViewOptions):
+        super().__init__(options)
+        self.combat = options.combat
+        self.combat_team = options.combat_team
+
+    @property
+    def values(self) -> List[ItemSlot]:
+        return self.player.consumables
+
+    @property
+    def buttons(self) -> List[ValueForm.Button]:
+        return [ValueForm.Button(item_slot.item.icon, item_slot.item) for item_slot in self.values]
+
+    async def render(self) -> None:
+        await self._clear_reactions()
+        await self._display(self._view)
+        for button in self.buttons:
+            await self._add_reaction(button.reaction)
+        await self._add_reaction(BACK)
+
+    @property
+    def _view(self) -> str:
+        return f"```Usable items``` " f"{self._item_views}"
+
+    @property
+    def _item_views(self) -> str:
+        return '\n'.join([f"{slot.item.icon} **{slot.item.name} x{slot.amount}** {slot.item.properties}"
+                          for slot in self.values])
+
+    async def pick_option(self, reaction: str) -> None:
+        if reaction == BACK:
+            await self._back()
+            return
+        await super().pick_option(reaction)
+        item = self._selected_value
+        if item is not None:
+            options = UseConsumableOptions(self.bot,
+                                           self.player,
+                                           item,
+                                           self.combat_team,
+                                           battle_view=self.previous_form,
+                                           discord_message=self.discord_message,
+                                           previous_form=self)
+            form = UseConsumableView(options)
+            await form.show()
+
+
+class UseConsumableOptions(FormOptions):
+    """
+    Dependencies of in-combat UseConsumableView.
+    """
+
+    def __init__(self,
+                 bot: Bot,
+                 player: Player,
+                 item: Item,
+                 combat_team: CombatTeam,
+                 battle_view: BattleView,
+                 discord_message: discord.Message,
+                 previous_form: Form):
+        super().__init__(bot, player, discord_message, previous_form)
+        self.combat_team = combat_team
+        self.battle_view = battle_view
+        self.item = item
+
+
+class UseConsumableView(ValueForm):
+    def __init__(self, options: UseConsumableOptions):
+        super().__init__(options)
+        self.item = options.item
+        self.combat_team = options.combat_team
+        self.battle_view = options.battle_view
+
+    @property
+    def values(self) -> List[any]:
+        return [elemental for elemental in self.combat_team.elementals if self.item.is_usable_on(elemental)]
+
+    @property
+    def buttons(self) -> List[ValueForm.Button]:
+        return ValueForm.enumerated_buttons(self.values)
+
+    async def render(self) -> None:
+        await self._display(self._view)
+        await self._clear_reactions()
+        for button in self.buttons:
+            await self._add_reaction(button.reaction)
+        await self._add_reaction(BACK)
+
+    @property
+    def _view(self) -> str:
+        items_left = self.player.inventory.amount_left(self.item)
+        return (f"Selected **{self.item.icon} {self.item.name} ({items_left} left)** \n"
+                f"{self.item.properties} \n {self._eligible_elementals}")
+
+    @property
+    def _eligible_elementals(self) -> str:
+        if len(self.values) == 0:
+            return "```(You don't have anyone to use this item on.)```"
+        message_body = '\n'.join([self._get_status(elemental, i) for i, elemental in enumerate(self.values)])
+        message_body += f"```Give {self.item.name} to who?```"
+        return message_body
+
+    @staticmethod
+    def _get_status(elemental: CombatElemental, index=None) -> str:
+        index = str(index + 1) + ') ' if index is not None else ''
+        return (f"{index}{elemental.icon}  Lv. {elemental.level} {elemental.nickname}  "
+                f"`{HealthBarView.from_elemental(elemental)} "
+                f"{elemental.current_hp} / {elemental.max_hp} HP` \n")
+
+    async def pick_option(self, reaction: str) -> None:
+        if reaction == BACK:
+            await self._back()
+            return
+        await super().pick_option(reaction)
+        elemental = self._selected_value
+        if self.toggled:
+            self.combat_team.use_item(self.item, elemental)
+            await self.battle_view.rerender()

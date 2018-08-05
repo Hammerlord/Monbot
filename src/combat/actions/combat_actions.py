@@ -73,3 +73,56 @@ class Switch(Action):
         :return bool: True if we don't have an active elemental, but false if it is dead.
         """
         return not self.team.active_elemental or self.team.active_elemental.is_knocked_out
+
+
+class UseItem(Action):
+    """
+    Uses an item on a target CombatElemental.
+    """
+
+    def __init__(self,
+                 item,
+                 elemental,
+                 combat_team):
+        """
+        :param item: Item
+        :param elemental: The CombatElemental the item is being used on.
+        :param combat_team: CombatTeam
+        """
+        self.item = item
+        self.combat_team = combat_team
+        self.character = combat_team.owner  # Could be None.
+        self.elemental = elemental
+
+    @property
+    def action_type(self) -> ActionType:
+        return ActionType.ITEM
+
+    @property
+    def team(self):
+        return self.combat_team
+
+    def execute(self) -> None:
+        self.team.log(self.recap)
+        self.item.use_on(self.elemental)
+
+    @property
+    def turn_priority(self) -> TurnPriority:
+        return TurnPriority.ITEM
+
+    @property
+    def speed(self) -> int:
+        # Doesn't matter. Items are always used before abilities.
+        return 0
+
+    @property
+    def recap(self) -> str:
+        if self.character:
+            return f"{self.character.nickname} gave {self.item.name} to {self.elemental.nickname}!"
+        return f"{self.elemental.nickname} used {self.item.name}!"
+
+    def can_execute(self) -> bool:
+        """
+        :return bool: True if the item can be used, but this should already have been checked beforehand.
+        """
+        return self.item.is_usable_on(self.elemental)

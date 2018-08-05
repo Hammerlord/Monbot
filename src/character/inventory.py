@@ -8,12 +8,28 @@ from src.elemental.elemental import Elemental
 
 
 class ItemSlot:
+    """
+    How an Item occupies a space in Inventory.
+    """
+
     def __init__(self, item: 'Item', amount: int):
         self.item = item
         self.amount = amount
 
     def update_amount(self, amount: int) -> None:
         self.amount += amount
+
+    @property
+    def item_type(self) -> 'ItemTypes':
+        return self.item.item_type
+
+    @property
+    def name(self) -> str:
+        return self.item.name
+
+    @property
+    def icon(self) -> str:
+        return self.item.icon
 
 
 class Inventory:
@@ -22,35 +38,37 @@ class Inventory:
 
     @property
     def items(self) -> List[ItemSlot]:
-        return [item_slot for item_slot in self._bag.values()]
+        return [item_slot for item_slot in self._bag.values() if item_slot.amount > 0]
 
     @property
     def consumables(self) -> List[ItemSlot]:
-        return [item_slot for item_slot in self._bag.values() if item_slot.item_type == ItemTypes.CONSUMABLE]
+        return [item_slot for item_slot in self._bag.values()
+                if item_slot.item_type == ItemTypes.CONSUMABLE and item_slot.amount > 0]
 
     @property
     def materials(self) -> List[ItemSlot]:
-        return [item_slot for item_slot in self._bag.values() if item_slot.item_type == ItemTypes.MATERIAL]
+        return [item_slot for item_slot in self._bag.values()
+                if item_slot.item_type == ItemTypes.MATERIAL and item_slot.amount > 0]
 
     def use_item(self, item: 'Item', target: Elemental or CombatElemental) -> bool:
-        if self._has_item(item) and item.use_on(target):
+        if self.has_item(item) and item.use_on(target):
             self._bag[item.name].update_amount(-1)
             return True
         return False
 
     def add_item(self, item: 'Item', amount=1) -> None:
-        if self._has_item(item):
+        if self.has_item(item):
             self._bag[item.name].update_amount(amount)
         else:
             self._bag[item.name] = ItemSlot(item, amount)
 
     def amount_left(self, item: 'Item') -> int:
-        if self._bag[item.name]:
+        if item.name in self._bag:
             return self._bag[item.name].amount
         return 0
 
-    def _has_item(self, item: 'Item') -> bool:
-        return item.name in self._bag and self._bag[item.name].amount > 0
+    def has_item(self, item: 'Item') -> bool:
+        return self.amount_left(item) > 0
 
 
 class ItemTypes(Enum):

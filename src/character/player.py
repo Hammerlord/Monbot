@@ -16,6 +16,9 @@ class Player(Character):
         self.inventory.add_item(Peach(), 2)
         self.inventory.add_item(Revive(), 1)
 
+    def has_item(self, item) -> bool:
+        return self.inventory.has_item(item)
+
     def has_elemental(self) -> bool:
         return len(self.elementals) > 0
 
