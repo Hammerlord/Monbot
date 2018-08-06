@@ -14,6 +14,7 @@ from src.elemental.elemental import Elemental
 from src.team.combat_team import CombatTeam
 from src.ui.ability_option import AbilityOptionView
 from src.ui.battlefield import Battlefield
+from src.ui.forms.battle_results import BattleResults
 from src.ui.forms.form import FormOptions, Form, ValueForm
 from src.ui.health_bar import HealthBarView
 
@@ -64,6 +65,10 @@ class BattleView(Form):
         await self._render_main()
 
     async def _render_main(self) -> None:
+        if not self.combat.in_progress:
+            await asyncio.sleep(1.0)
+            await Form.from_form(self, BattleResults)
+            return
         await self._render_current()
         if self.combat_team.active_elemental.is_knocked_out and self.combat_team.eligible_bench:
             # Render the mon selection view if your mon has been knocked out and you have another.

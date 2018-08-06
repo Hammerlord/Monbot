@@ -1,5 +1,6 @@
 from typing import List
 
+from src.character.inventory import ItemSlot
 from src.combat.actions.casting import Casting
 from src.combat.actions.combat_actions import Switch, Action, UseItem
 from src.combat.actions.elemental_action import ElementalAction
@@ -9,6 +10,7 @@ from src.elemental.ability.ability import Ability
 from src.elemental.ability.queueable import Castable, Channelable
 from src.elemental.combat_elemental import CombatElemental, CombatElementalLog
 from src.elemental.elemental import Elemental
+from src.elemental.species.species import Loot
 from src.elemental.status_effect.status_effect import StatusEffect
 from src.team.team import Team
 
@@ -33,6 +35,9 @@ class CombatTeam(Targetable):
         self._actions = []  # list[Action] taken by this team.
         self.side = None  # Str. The side of the battlefield this CombatTeam is on.
         self.logger = None  # Later set by Combat.
+        self.exp_earned = 0  # Counts how much experience was earned this battle.
+        self.gold_earned = 0
+        self._items_earned = {}  # {item_name: ItemSlot}
 
     @staticmethod
     def from_elementals(elementals: List[Elemental]) -> 'CombatTeam':
@@ -136,6 +141,45 @@ class CombatTeam(Targetable):
     @property
     def available_abilities(self) -> List[Ability]:
         return self.active_elemental.available_abilities.copy()
+
+    @property
+    def items_earned(self):
+        return self._items_earned.values()
+
+    def add_items(self, items) -> None:
+        """
+        :param items: List[Item]
+        self.items_earned is a dict {item_name: ItemSlot}, similar to Inventory.
+        """
+        if self.owner is None:
+            return
+        for item in items:
+            if item.name in self._items_earned:
+                self._items_earned[item.name].update_amount(1)
+            else:
+                self._items_earned[item.name] = ItemSlot(item, 1)
+            self.owner.add_item(item)
+
+    def add_gold(self, amount: int) -> None:
+        self.gold_earned += amount
+        if self.owner:
+            self.owner.update_gold(amount)
+
+    def add_exp(self, amount: int) -> None:
+        self.exp_earned += amount
+        if self.owner:
+            self.owner.add_exp(amount)
+        for elemental in self.elementals:
+            if not elemental.is_knocked_out:
+                elemental.add_exp(amount)
+
+    @property
+    def loot(self) -> List[Loot]:
+        total_loot = []
+        for elemental in self.elementals:
+            for loot in elemental.loot:
+                total_loot.append(loot)
+        return total_loot
 
     def check_casting(self) -> bool:
         """

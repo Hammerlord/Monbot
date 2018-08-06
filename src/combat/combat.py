@@ -1,4 +1,5 @@
 from itertools import groupby
+from random import random
 from typing import List
 
 from src.combat.actions.action import EventLogger, EventLog
@@ -33,6 +34,8 @@ class Combat:
         self.action_log = [[]]  # List[List[Action]]  Actions made this battle, in order, grouped by turn rounds.
         self.turn_logger = EventLogger(self)
         self.num_rounds = 0
+        self.winning_side = None  # List[CombatTeam] The teams who won.
+        self.losing_side = None
 
     @property
     def teams(self):
@@ -180,11 +183,8 @@ class Combat:
         raw_exp = from_elemental.level * 6 + 10
         exp_gained = int(raw_exp // len(enemy_side) + raw_exp * len(enemy_side) * 0.25)
         for enemy_team in enemy_side:
-            if enemy_team.is_npc:
-                continue
-            enemy_team.owner.add_exp(exp_gained)
-            for elemental in enemy_team.elementals:
-                elemental.add_exp(exp_gained)
+            if not enemy_team.is_npc:
+                enemy_team.add_exp(exp_gained)
 
     def _resolve_request(self, action: Action) -> None:
         if action.can_execute:
@@ -238,16 +238,60 @@ class Combat:
         return action_groups
 
     def check_combat_end(self) -> bool:
-        if (all([team.is_all_knocked_out for team in self.side_a]) or
-                all([team.is_all_knocked_out for team in self.side_b])):
+        did_side_a_lose = all([team.is_all_knocked_out for team in self.side_a])
+        did_side_b_lose = all([team.is_all_knocked_out for team in self.side_b])
+        if did_side_a_lose and did_side_b_lose:
+            pass  # Tie
+        elif did_side_a_lose:
+            self.winning_side = self.side_b
+            self.losing_side = self.side_a
+        elif did_side_b_lose:
+            self.winning_side = self.side_a
+            self.losing_side = self.side_b
+        if did_side_a_lose or did_side_b_lose:
             self.end_combat()
             return True
 
     def end_combat(self) -> None:
         self.in_progress = False
+        self._grant_loot()
         for team in self.teams:
             team.end_combat()
         print(f"Completed battle in {self.num_rounds} rounds.")
+
+    def _grant_loot(self) -> None:
+        if self.losing_side is None:
+            return
+        gold_earned = self._calculate_gold_earned()
+        items_dropped = self._roll_items_dropped()
+        for team in self.winning_side:
+            team.add_gold(gold_earned)
+            team.add_items(items_dropped)
+
+    def _roll_items_dropped(self):
+        """
+        Only wild Elementals drop loot.
+        :return: List[Item]
+        """
+        items = []
+        for team in self.losing_side:
+            if team.owner is not None:
+                continue
+            for loot in team.loot:
+                if random() <= loot.drop_rate:
+                    items.append(loot.item)
+        return items
+
+    def _calculate_gold_earned(self) -> int:
+        """
+        Calculate gold based on the losing side, if their teams have an owner (and therefore money).
+        Note this doesn't actually deduct any gold.
+        """
+        gold = 0
+        for team in self.losing_side:
+            if team.owner:
+                gold += team.owner.level
+        return gold
 
     def get_knockouts(self):
         """

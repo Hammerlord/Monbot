@@ -7,7 +7,7 @@ from src.elemental.ability.ability import Ability
 from src.elemental.ability.ability_manager import AbilityManager
 from src.elemental.attribute.attribute import Attribute
 from src.elemental.attribute.attribute_manager import AttributeManager
-from src.elemental.species.species import Species
+from src.elemental.species.species import Species, Loot
 
 
 class Elemental:
@@ -142,6 +142,10 @@ class Elemental:
     @property
     def is_knocked_out(self) -> bool:
         return self.current_hp == 0
+
+    @property
+    def loot(self) -> List[Loot]:
+        return self.species.loot
 
     def raise_attribute(self, position: int) -> None:
         try:

@@ -1,6 +1,7 @@
+from src.character.consumables import Peach, ManaShard
 from src.core.elements import Elements
 from src.elemental.ability.ability_factory import LearnableAbilities
-from src.elemental.species.species import Species, StatsInterface
+from src.elemental.species.species import Species, StatsInterface, Loot
 
 
 class GrowthRate(StatsInterface):
@@ -40,3 +41,5 @@ class Tophu(Species):
         self._growth_rate = GrowthRate()
         self._learnable_abilities = [LearnableAbilities.claw(),
                                      LearnableAbilities.slam()]
+        self._loot = [Loot(Peach()),
+                      Loot(ManaShard())]

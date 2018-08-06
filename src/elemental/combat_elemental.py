@@ -7,6 +7,7 @@ from src.core.targetable_interface import Targetable
 from src.elemental.ability.ability import Ability
 from src.elemental.ability.queueable import Castable, Channelable, Queueable
 from src.elemental.elemental import Elemental
+from src.elemental.species.species import Loot
 from src.elemental.status_effect.status_effect import StatusEffect
 from src.elemental.status_effect.status_manager import StatusManager
 
@@ -138,6 +139,10 @@ class CombatElemental(Targetable):
     @property
     def can_switch(self) -> bool:
         return self._status_manager.can_switch
+
+    @property
+    def loot(self) -> List[Loot]:
+        return self._elemental.loot
 
     @property
     def available_abilities(self) -> List[Ability]:

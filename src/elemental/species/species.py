@@ -81,6 +81,7 @@ class Species(StatsInterface):
         self._portrait = None
         self._growth_rate = GrowthRate()  # Must be overridden to customize the stat growth!
         self._learnable_abilities = []  # List[LearnableAbility]. TBD by descendants.
+        self._loot = []  # Items that this species can drop.
 
     @property
     def left_icon(self) -> str:
@@ -138,3 +139,22 @@ class Species(StatsInterface):
     @property
     def defend_charges(self) -> int:
         return self._defend_charges
+
+    @property
+    def loot(self) -> List['Loot']:
+        return list(self._loot)
+
+
+class Loot:
+    """
+    An item dropped by an Elemental upon knock-out.
+    """
+    def __init__(self,
+                 item,
+                 drop_rate: float=1):
+        """
+        :param item: Item
+        :param drop_rate: The percentage chance that this item will drop upon combat resolution.
+        """
+        self.item = item
+        self.drop_rate = drop_rate

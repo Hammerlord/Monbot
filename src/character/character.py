@@ -90,7 +90,7 @@ class Character:
         """
         return self.inventory.use_item(item, target)
 
-    def add_item(self, item, amount: int) -> None:
+    def add_item(self, item, amount=1) -> None:
         self.inventory.add_item(item, amount)
 
     def add_exp(self, amount: int) -> None:
