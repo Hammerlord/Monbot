@@ -11,7 +11,6 @@ from src.combat.battle_manager import BattleManager
 from src.combat.combat import Combat
 from src.core.constants import *
 from src.elemental.combat_elemental import CombatElemental
-from src.elemental.elemental import Elemental
 from src.team.combat_team import CombatTeam
 from src.ui.ability_option import AbilityOptionView
 from src.ui.battlefield import Battlefield
@@ -398,12 +397,12 @@ class UseConsumableView(ValueForm):
             await self.battle_view.rerender()
 
 
-
 class BattleResults(Form):
     """
     Shows the results of a battle after it ends.
     Presents options to keep fighting or view status.
     """
+
     def __init__(self, options):
         """
         :param options: BattleViewOptions
