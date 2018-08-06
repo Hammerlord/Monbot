@@ -16,6 +16,10 @@ class Player(Character):
         self.inventory.add_item(Peach(), 2)
         self.inventory.add_item(Revive(), 1)
 
+    @property
+    def can_battle(self) -> bool:
+        return not self.team.is_all_knocked_out
+
     def has_item(self, item) -> bool:
         return self.inventory.has_item(item)
 

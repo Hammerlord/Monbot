@@ -414,7 +414,9 @@ class BattleResults(Form):
     async def render(self) -> None:
         await self._display(self._view)
         await self._clear_reactions()
-        await self._add_reactions([FIGHT, STATUS])
+        if self.player.can_battle:
+            await self._add_reaction(FIGHT)
+        await self._add_reaction(STATUS)
 
     @property
     def _view(self) -> str:
@@ -459,7 +461,7 @@ class BattleResults(Form):
             view.append(f"{item.icon} {item.name} x{item_slot.amount}")
 
     async def pick_option(self, reaction: str) -> None:
-        if reaction == FIGHT:
+        if self.player.can_battle and reaction == FIGHT:
             combat_options = BattleManager().get_fight(self.player)
             view_options = BattleViewOptions(
                 self.bot,

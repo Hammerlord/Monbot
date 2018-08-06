@@ -50,11 +50,13 @@ async def battle(ctx):
         await view_manager.show_starter_selection(player)
     elif player.is_busy:
         await player.primary_view.render()
-    else:
+    elif player.can_battle:
         combat_options = battle_manager.get_fight(player)
         await view_manager.show_battle(player,
                                        combat_options.combat,
                                        combat_options.player_team)
+    else:
+        await view_manager.show_status(player)
 
 
 @bot.command(pass_context=True)
