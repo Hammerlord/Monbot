@@ -7,6 +7,7 @@ from discord.ext.commands import Bot
 from src.character.inventory import ItemSlot, Item
 from src.character.player import Player
 from src.combat.actions.action import EventLog
+from src.combat.battle_manager import BattleManager
 from src.combat.combat import Combat
 from src.core.constants import *
 from src.elemental.combat_elemental import CombatElemental
@@ -14,8 +15,8 @@ from src.elemental.elemental import Elemental
 from src.team.combat_team import CombatTeam
 from src.ui.ability_option import AbilityOptionView
 from src.ui.battlefield import Battlefield
-from src.ui.forms.battle_results import BattleResults
 from src.ui.forms.form import FormOptions, Form, ValueForm
+from src.ui.forms.status import StatusView
 from src.ui.health_bar import HealthBarView
 
 
@@ -395,3 +396,80 @@ class UseConsumableView(ValueForm):
         if self.toggled:
             self.combat_team.use_item(self.item, elemental)
             await self.battle_view.rerender()
+
+
+
+class BattleResults(Form):
+    """
+    Shows the results of a battle after it ends.
+    Presents options to keep fighting or view status.
+    """
+    def __init__(self, options):
+        """
+        :param options: BattleViewOptions
+        """
+        super().__init__(options)
+        self.combat = options.combat
+        self.combat_team = options.combat_team
+
+    async def render(self) -> None:
+        await self._display(self._view)
+        await self._clear_reactions()
+        await self._add_reactions([FIGHT, STATUS])
+
+    @property
+    def _view(self) -> str:
+        view = []
+        if self.combat.winning_side is None:
+            view.append('```--- Tie ---```')
+        elif self.combat_team in self.combat.winning_side:
+            self._render_victory(view)
+        else:
+            self._render_defeat(view)
+        view.append(f'Earned {self.combat_team.exp_earned} EXP.')
+        self._render_loot(view)
+        view.append(f"\n {self._display_options}")
+        return '\n'.join(view)
+
+    @property
+    def _display_options(self) -> str:
+        return '  '.join([f'{FIGHT} `Next Battle`', f'{STATUS} `Status`'])
+
+    def _render_victory(self, view: List[str]) -> None:
+        enemy_side = self.combat.get_enemy_side(self.combat_team)
+        view.append('```--- Victory! ---```')
+        enemy_names = ', '.join([team.owner.name for team in enemy_side if team.owner is not None])
+        if enemy_names:
+            view.append(f'You won against {enemy_names}.')
+
+    def _render_defeat(self, view: List[str]) -> None:
+        view.append('```--- Defeat ---```')
+        enemy_side = self.combat.get_enemy_side(self.combat_team)
+        enemy_names = ', '.join([team.owner.name for team in enemy_side if team.owner is not None])
+        if enemy_names:
+            view.append(f'You lost against {enemy_names}.')
+
+    def _render_loot(self, view: List[str]) -> None:
+        if self.combat_team.gold_earned > 0:
+            view.append(f"Received {self.combat_team.gold_earned} gold.")
+        if not self.combat_team.items_earned:
+            return
+        view.append("Obtained:")
+        for item_slot in self.combat_team.items_earned:
+            item = item_slot.item
+            view.append(f"{item.icon} {item.name} x{item_slot.amount}")
+
+    async def pick_option(self, reaction: str) -> None:
+        if reaction == FIGHT:
+            combat_options = BattleManager().get_fight(self.player)
+            view_options = BattleViewOptions(
+                self.bot,
+                self.player,
+                combat=combat_options.combat,
+                combat_team=combat_options.player_team,
+                discord_message=self.discord_message
+            )
+            await BattleView(view_options).show()
+        elif reaction == STATUS:
+            options = FormOptions(self.bot, self.player, self.discord_message)
+            await StatusView(options).show()
