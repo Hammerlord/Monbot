@@ -23,6 +23,7 @@ class Player(Character):
     def has_item(self, item) -> bool:
         return self.inventory.has_item(item)
 
+    @property
     def has_elemental(self) -> bool:
         return len(self.elementals) > 0
 

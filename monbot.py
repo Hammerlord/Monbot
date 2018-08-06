@@ -32,7 +32,7 @@ async def status(ctx):
     player = data_manager.get_player(user)
     if player.is_busy:
         return
-    if player.has_elemental():
+    if player.has_elemental:
         await view_manager.show_status(player)
     else:
         await view_manager.show_starter_selection(player)
@@ -46,7 +46,7 @@ async def battle(ctx):
     if user.bot:
         return
     player = data_manager.get_player(user)
-    if not player.has_elemental():
+    if not player.has_elemental:
         await view_manager.show_starter_selection(player)
     elif player.is_busy:
         await player.primary_view.render()
@@ -69,7 +69,7 @@ async def summon(ctx):
     player = data_manager.get_player(user)
     if player.is_busy:
         return
-    if player.has_elemental():
+    if player.has_elemental:
         elemental = ElementalInitializer.make_random(player.level, player.team.elementals)
         player.add_elemental(elemental)
         await view_manager.show_status(player)
