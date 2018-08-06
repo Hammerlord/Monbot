@@ -34,3 +34,5 @@ MANA_SHARD = '💎'
 PLACEHOLDER = '<:placeholder:475536369876467722>'  # An empty emoji.
 WARNING = '⚠'
 STATUS = '📊'
+TEAM_INDICATOR = '🔸'
+TEAM_KO = '❌'

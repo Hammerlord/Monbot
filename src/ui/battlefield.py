@@ -1,5 +1,7 @@
+from typing import List
+
 from src.combat.combat import Combat
-from src.core.constants import MANA, DEFEND, PLACEHOLDER, WARNING
+from src.core.constants import MANA, DEFEND, PLACEHOLDER, WARNING, TEAM_INDICATOR, TEAM_KO
 from src.ui.health_bar import HealthBarView
 
 
@@ -24,7 +26,7 @@ class Battlefield:
     @property
     def _opponent_view(self) -> str:
         opponent = self.opponents[0]  # TODO 1v1 only
-        return (f"{self._get_team_status_effects(opponent)}\n"
+        return (f"{self.get_team_indicators(opponent)}  {self._get_team_status_effects(opponent)}\n"
                 f"{opponent.nickname} Lv. {opponent.level}  {self._get_status_effects(opponent)}\n"
                 f"`{HealthBarView.from_elemental(opponent)} ({opponent.health_percent}%)`  "
                 f"{self._get_icon(opponent)} {self._get_casting(opponent)}")
@@ -38,6 +40,21 @@ class Battlefield:
             f"          `{HealthBarView.from_elemental(elemental)} ({elemental.current_hp}/{elemental.max_hp})\n`"
             f"{MANA}`{elemental.current_mana}/{elemental.max_mana}`   {DEFEND} `{elemental.defend_charges}`\n"
             f"{self._get_team_status_effects(elemental)}\n")
+
+    @staticmethod
+    def get_team_indicators(elemental) -> str:
+        """
+        Indicators that show the number of elementals on a team and whether they have been knocked out.
+        """
+        indicators = []
+        for elemental_status in elemental.team_status:
+            # If the team member is alive, show an alive indicator. If not, show X.
+            if elemental_status:
+                # Boolean resolves to true
+                indicators.append(TEAM_INDICATOR)
+            else:
+                indicators.append(TEAM_KO)
+        return ''.join(indicators)
 
     @staticmethod
     def _get_status_effects(elemental) -> str:

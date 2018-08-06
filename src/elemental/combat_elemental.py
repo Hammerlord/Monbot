@@ -336,6 +336,12 @@ class CombatElemental(Targetable):
         """
         return CombatElementalLog(self)
 
+    @property
+    def team_status(self) -> List[bool]:
+        """
+        A list of which elementals have or have not been knocked out on the team, as booleans.
+        """
+        return [not elemental.is_knocked_out for elemental in self.team.elementals]
 
 class CombatElementalLog:
     """
@@ -355,3 +361,4 @@ class CombatElementalLog:
         self.team_status_effects = combat_elemental.team_status_effects
         self.is_knocked_out = combat_elemental.is_knocked_out
         self.action_queued = combat_elemental.action_queued
+        self.team_status = combat_elemental.team_status

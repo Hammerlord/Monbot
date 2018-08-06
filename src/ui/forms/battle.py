@@ -437,14 +437,14 @@ class BattleResults(Form):
     def _render_victory(self, view: List[str]) -> None:
         enemy_side = self.combat.get_enemy_side(self.combat_team)
         view.append('```--- Victory! ---```')
-        enemy_names = ', '.join([team.owner.name for team in enemy_side if team.owner is not None])
+        enemy_names = ', '.join([team.owner.nickname for team in enemy_side if team.owner is not None])
         if enemy_names:
             view.append(f'You won against {enemy_names}.')
 
     def _render_defeat(self, view: List[str]) -> None:
         view.append('```--- Defeat ---```')
         enemy_side = self.combat.get_enemy_side(self.combat_team)
-        enemy_names = ', '.join([team.owner.name for team in enemy_side if team.owner is not None])
+        enemy_names = ', '.join([team.owner.nickname for team in enemy_side if team.owner is not None])
         if enemy_names:
             view.append(f'You lost against {enemy_names}.')
 
