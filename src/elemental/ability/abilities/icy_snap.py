@@ -9,7 +9,7 @@ class IcySnap(Ability):
     def __init__(self):
         super().__init__()
         self.name = "Icy Snap"
-        self._description = "Chills the target, and damage increased by 20% if the target is chilled."
+        self._description = "Chills the target. Damage increased by 20% if the target is chilled."
         self.element = Elements.WATER
         self.category = Category.PHYSICAL
         self.icon = FROST

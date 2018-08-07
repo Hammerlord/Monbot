@@ -48,4 +48,6 @@ class Felix(Species):
                                      LearnableAbilities.windrush(10),
                                      LearnableAbilities.gale_step(15),
                                      LearnableAbilities.cyclone(20),
-                                     LearnableAbilities.deluge(25)]
+                                     LearnableAbilities.deluge(25),
+                                     LearnableAbilities.frost_barrier(30),
+                                     LearnableAbilities.icy_snap(35)]
