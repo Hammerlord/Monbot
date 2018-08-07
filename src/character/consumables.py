@@ -1,5 +1,5 @@
 from src.character.inventory import Item, ItemTypes
-from src.core.constants import PEACH, HAMMER, MANA_SHARD, CAKE, PUDDING
+from src.core.constants import PEACH, HAMMER, MANA_SHARD, CAKE, PUDDING, MEAT
 
 
 class Peach(Item):
@@ -40,7 +40,7 @@ class Meat(Item):
         super().__init__()
         self.name = 'Meat on Bone'
         self.description = 'Succulent meat on a bone. Makes a hearty meal.'
-        self.icon = CAKE
+        self.icon = MEAT
         self.exp = 20
         self.healing_percentage = 0.7
         self.sell_price = 8
