@@ -17,6 +17,7 @@ class StatusView(ValueForm):
     """
     def __init__(self, options: FormOptions):
         super().__init__(options)
+        self._selecting_leader_mode = False
 
     @property
     def values(self) -> List[Elemental]:
@@ -31,6 +32,9 @@ class StatusView(ValueForm):
         await self._display(self._view)
         for button in self.buttons:
             await self._add_reaction(button.reaction)
+        if self._selecting_leader_mode:
+            await self._add_reaction(CANCEL)
+            return
         await self._add_reaction(MEAT)
         if self.player.team.size > 1:
             await self._add_reaction(RETURN)
@@ -40,6 +44,8 @@ class StatusView(ValueForm):
         message_body = f"```{self.player.nickname}'s team (Slots: {self.player.team.size}/4)```"
         for i, elemental in enumerate(self.values):
             message_body += self._get_status(i, elemental)
+        if self._selecting_leader_mode:
+            message_body += '```Select a new team leader, or click [X] to cancel.```'
         return message_body
 
     @staticmethod
@@ -54,12 +60,29 @@ class StatusView(ValueForm):
             await Form.from_form(self, ItemsView)
             return
         if reaction == RETURN:
+            self._selecting_leader_mode = True
+            await self.render()
+            return
+        if reaction == CANCEL:
+            self._selecting_leader_mode = False
+            await self.render()
             return
         await super().pick_option(reaction)
-        if self._selected_value is not None:
-            await self._create_detail_view(self._selected_value)
+        if self._selected_value is None:
+            return
+        if self._selecting_leader_mode:
+            await self._select_leader()
+        else:
+            await self._create_detail_view()
 
-    async def _create_detail_view(self, elemental: Elemental) -> None:
+    async def _select_leader(self) -> None:
+        elemental = self._selected_value
+        self.player.team.set_leader(elemental)
+        self._selecting_leader_mode = False
+        await self.render()
+
+    async def _create_detail_view(self) -> None:
+        elemental = self._selected_value
         options = StatusDetailOptions(self.bot, self.player, elemental, self.discord_message, self)
         form = StatusDetailView(options)
         await form.show()

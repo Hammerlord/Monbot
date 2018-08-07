@@ -66,6 +66,13 @@ class Team:
         if self._is_valid_reorder(first, second):
             self.__elementals[first], self.__elementals[second] = self.__elementals[second], self.__elementals[first]
 
+    def set_leader(self, elemental: Elemental) -> None:
+        """
+        Set an elemental on the team as the leader.
+        """
+        if elemental in self.elementals:
+            self.reorder(0, self.elementals.index(elemental))
+
     def _is_valid_reorder(self, first: int, second: int) -> bool:
         return self._is_valid_slot(first) and self._is_valid_slot(second)
 
