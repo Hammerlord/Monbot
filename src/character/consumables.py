@@ -1,5 +1,5 @@
 from src.character.inventory import Item, ItemTypes
-from src.core.constants import PEACH, HAMMER, MANA_SHARD
+from src.core.constants import PEACH, HAMMER, MANA_SHARD, CAKE, PUDDING
 
 
 class Peach(Item):
@@ -21,14 +21,37 @@ class Revive(Item):
         self.icon = HAMMER
         self.healing_percentage = 0.15
         self.resurrects_target = True
-        self.sell_price = 10
+        self.sell_price = 5
 
 
-class ManaShard(Item):
+class Cake(Item):
     def __init__(self):
         super().__init__()
-        self.name = 'Mana Shard'
-        self.description = 'A crystal of pure mana. It pulses with a faint light.'
-        self.icon = MANA_SHARD
-        self.item_type = ItemTypes.MATERIAL
-        self.sell_price = None
+        self.name = 'Slice of Cake'
+        self.description = 'A delicious frosted cake topped with a strawberry.'
+        self.icon = CAKE
+        self.exp = 15
+        self.healing_percentage = 0.5
+        self.sell_price = 5
+
+
+class Meat(Item):
+    def __init__(self):
+        super().__init__()
+        self.name = 'Meat on Bone'
+        self.description = 'Succulent meat on a bone. Makes a hearty meal.'
+        self.icon = CAKE
+        self.exp = 20
+        self.healing_percentage = 0.7
+        self.sell_price = 8
+
+
+class Pudding(Item):
+    def __init__(self):
+        super().__init__()
+        self.name = 'Pudding'
+        self.description = 'A mango pudding with a chocolate top.'
+        self.icon = PUDDING
+        self.exp = 100
+        self.healing_percentage = 0.2
+        self.sell_price = 15

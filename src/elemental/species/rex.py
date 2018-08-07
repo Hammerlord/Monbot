@@ -1,6 +1,8 @@
+from src.character.consumables import Meat
+from src.character.materials import EarthShard, ManaShard
 from src.core.elements import Elements
 from src.elemental.ability.ability_factory import LearnableAbilities
-from src.elemental.species.species import Species, StatsInterface
+from src.elemental.species.species import Species, StatsInterface, Loot
 
 
 class GrowthRate(StatsInterface):
@@ -35,6 +37,9 @@ class Rex(Species):
         self._right_icon = ':rhino:'
         self._portrait = None
         self._growth_rate = GrowthRate()
+        self._loot = [Loot(EarthShard(), 0.75),
+                      Loot(Meat(), 0.8),
+                      Loot(ManaShard(), 0.2)]
         self._learnable_abilities = [LearnableAbilities.slam(),
                                      LearnableAbilities.charge(),
                                      LearnableAbilities.enrage(4),

@@ -1,6 +1,8 @@
+from src.character.consumables import Meat
+from src.character.materials import WaterShard, ManaShard
 from src.core.elements import Elements
 from src.elemental.ability.ability_factory import LearnableAbilities
-from src.elemental.species.species import StatsInterface, Species
+from src.elemental.species.species import StatsInterface, Species, Loot
 
 
 class GrowthRate(StatsInterface):
@@ -36,6 +38,9 @@ class Noel(Species):
         self._right_icon = ':wolf:'
         self._portrait = None
         self._growth_rate = GrowthRate()
+        self._loot = [Loot(WaterShard(), 0.75),
+                      Loot(Meat(), 0.5),
+                      Loot(ManaShard(), 0.2)]
         self._learnable_abilities = [LearnableAbilities.reap(),
                                      LearnableAbilities.razor_fangs(),
                                      LearnableAbilities.geyser(4),

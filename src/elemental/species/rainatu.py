@@ -1,6 +1,8 @@
+from src.character.consumables import Peach, Cake
+from src.character.materials import LightningShard, ManaShard
 from src.core.elements import Elements
 from src.elemental.ability.ability_factory import LearnableAbilities
-from src.elemental.species.species import Species, StatsInterface
+from src.elemental.species.species import Species, StatsInterface, Loot
 
 
 class GrowthRate(StatsInterface):
@@ -35,6 +37,10 @@ class Rainatu(Species):
         self._right_icon = ':pineapple:'
         self._portrait = None
         self._growth_rate = GrowthRate()
+        self._loot = [Loot(LightningShard(), 0.75),
+                      Loot(Peach(), 0.8),
+                      Loot(ManaShard(), 0.2),
+                      Loot(Cake(), 0.3)]
         self._learnable_abilities = [LearnableAbilities.slam(),
                                      LearnableAbilities.rolling_thunder(),
                                      LearnableAbilities.stormbolt(4),

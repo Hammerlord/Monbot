@@ -1,4 +1,5 @@
-from src.character.consumables import Peach, ManaShard
+from src.character.consumables import Peach
+from src.character.materials import ManaShard
 from src.core.elements import Elements
 from src.elemental.ability.ability_factory import LearnableAbilities
 from src.elemental.species.species import Species, StatsInterface, Loot
@@ -39,7 +40,7 @@ class Manapher(Species):
         self._right_icon = ':koala:'
         self._portrait = None
         self._growth_rate = GrowthRate()
-        self._learnable_abilities = [LearnableAbilities.claw(),
-                                     LearnableAbilities.shining_laser()]
         self._loot = [Loot(Peach()),
                       Loot(ManaShard())]
+        self._learnable_abilities = [LearnableAbilities.claw(),
+                                     LearnableAbilities.shining_laser()]

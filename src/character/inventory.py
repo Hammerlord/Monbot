@@ -2,7 +2,7 @@ from collections import namedtuple
 from enum import Enum
 from typing import List, NamedTuple
 
-from src.core.constants import ITEM
+from src.core.constants import MEAT
 from src.elemental.combat_elemental import CombatElemental
 from src.elemental.elemental import Elemental
 
@@ -84,9 +84,14 @@ class Item:
         self.name = 'Meat on a Bone'
         self.description = 'An item.'
         # Item icons are used as reactions, and must be unicode or custom. See Discord add_reaction().
-        self.icon = ITEM
+        self.icon = MEAT
         self.item_type = ItemTypes.CONSUMABLE
         self.sell_price = 0
+
+    @property
+    def buy_price(self) -> int:
+        if self.sell_price is not None:
+            return self.sell_price * 3
 
     def is_usable_on(self, target: Elemental or CombatElemental) -> bool:
         if self.healing_percentage == 0 and self.exp == 0:

@@ -20,7 +20,7 @@ class ElementalInitializer:
     Factory methods for creating specific Elementals.
     """
 
-    # Actually, except Manapher, which is currently more like a tutorial monster:
+    # Except for tutorial monsters such as Manapher and Tophu:
     ALL_SPECIES = [Mithus(),
                    Roaus(),
                    Rainatu(),

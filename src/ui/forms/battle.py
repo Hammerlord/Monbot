@@ -121,7 +121,7 @@ class BattleView(Form):
         if self.combat_team.eligible_bench:
             await self._add_reaction(RETURN)
         if self.combat.allow_items and self.player.consumables:
-            await self._add_reaction(ITEM)
+            await self._add_reaction(MEAT)
         if self.combat.allow_flee:
             await self._add_reaction(FLEE)
 
@@ -132,7 +132,7 @@ class BattleView(Form):
         if self.combat_team.eligible_bench:
             options.append(f"{RETURN} `Switch`")
         if self.combat.allow_items and self.player.consumables:
-            options.append(f"{ITEM} `Items`")
+            options.append(f"{MEAT} `Items`")
         if self.combat.allow_flee:
             options.append(f"{FLEE} `Flee`")
         return ' '.join(options)
@@ -152,7 +152,7 @@ class BattleView(Form):
             await Form.from_form(self, SelectAbilityView)
         elif reaction == RETURN and self.combat_team.eligible_bench:
             await Form.from_form(self, SelectElementalView)
-        elif reaction == ITEM and self.combat.allow_items and self.player.consumables:
+        elif reaction == MEAT and self.combat.allow_items and self.player.consumables:
             await Form.from_form(self, SelectConsumableView)
         elif reaction == FLEE and self.combat.allow_flee:
             pass

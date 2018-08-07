@@ -1,6 +1,8 @@
+from src.character.consumables import Cake, Pudding, Peach
+from src.character.materials import WaterShard, ManaShard
 from src.core.elements import Elements
 from src.elemental.ability.ability_factory import LearnableAbilities
-from src.elemental.species.species import StatsInterface, Species
+from src.elemental.species.species import StatsInterface, Species, Loot
 
 
 class GrowthRate(StatsInterface):
@@ -35,6 +37,11 @@ class Felix(Species):
         self._right_icon = ':fox:'
         self._portrait = None
         self._growth_rate = GrowthRate()
+        self._loot = [Loot(Peach(), 0.75),
+                      Loot(WaterShard(), 0.5),
+                      Loot(Cake(), 0.5),
+                      Loot(Pudding(), 0.2),
+                      Loot(ManaShard(), 0.1)]
         self._learnable_abilities = [LearnableAbilities.slam(),
                                      LearnableAbilities.blessed_rain(),
                                      LearnableAbilities.geyser(5),

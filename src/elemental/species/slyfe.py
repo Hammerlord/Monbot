@@ -1,6 +1,8 @@
+from src.character.consumables import Peach
+from src.character.materials import ManaShard, WindShard
 from src.core.elements import Elements
 from src.elemental.ability.ability_factory import LearnableAbilities
-from src.elemental.species.species import StatsInterface, Species
+from src.elemental.species.species import StatsInterface, Species, Loot
 
 
 class GrowthRate(StatsInterface):
@@ -35,6 +37,9 @@ class Slyfe(Species):
         self._right_icon = ':dove:'
         self._portrait = None
         self._growth_rate = GrowthRate()
+        self._loot = [Loot(WindShard(), 0.75),
+                      Loot(Peach(), 0.8),
+                      Loot(ManaShard(), 0.2)]
         self._learnable_abilities = [LearnableAbilities.slam(),
                                      LearnableAbilities.cyclone(),
                                      LearnableAbilities.windrush(4),

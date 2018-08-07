@@ -31,7 +31,7 @@ class StatusView(ValueForm):
         await self._display(self._view)
         for button in self.buttons:
             await self._add_reaction(button.reaction)
-        await self._add_reaction(ITEM)
+        await self._add_reaction(MEAT)
         if self.player.team.size > 1:
             await self._add_reaction(RETURN)
 
@@ -50,7 +50,7 @@ class StatusView(ValueForm):
                 f"`{elemental.current_exp} / {elemental.exp_to_level} EXP` \n")
 
     async def pick_option(self, reaction: str) -> None:
-        if reaction == ITEM:
+        if reaction == MEAT:
             await Form.from_form(self, ItemsView)
             return
         if reaction == RETURN:

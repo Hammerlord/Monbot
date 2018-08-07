@@ -1,6 +1,8 @@
+from src.character.consumables import Peach
+from src.character.materials import FireShard, ManaShard
 from src.core.elements import Elements
 from src.elemental.ability.ability_factory import LearnableAbilities
-from src.elemental.species.species import Species, StatsInterface
+from src.elemental.species.species import Species, StatsInterface, Loot
 
 
 class GrowthRate(StatsInterface):
@@ -35,6 +37,9 @@ class Sithel(Species):
         self._right_icon = ':spaghetti:'
         self._portrait = None
         self._growth_rate = GrowthRate()
+        self._loot = [Loot(FireShard(), 0.75),
+                      Loot(Peach(), 0.8),
+                      Loot(ManaShard(), 0.2)]
         self._learnable_abilities = [LearnableAbilities.claw(),
                                      LearnableAbilities.enrage(),
                                      LearnableAbilities.fireball(4),
