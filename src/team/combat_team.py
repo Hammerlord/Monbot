@@ -7,8 +7,8 @@ from src.combat.actions.elemental_action import ElementalAction
 from src.core.elements import Elements
 from src.core.targetable_interface import Targetable
 from src.elemental.ability.ability import Ability
-from src.elemental.ability.queueable import Castable, Channelable
-from src.elemental.combat_elemental import CombatElemental, CombatElementalLog
+from src.elemental.ability.queueable import Castable
+from src.elemental.combat_elemental import CombatElemental
 from src.elemental.elemental import Elemental
 from src.elemental.species.species import Loot
 from src.elemental.status_effect.status_effect import StatusEffect
