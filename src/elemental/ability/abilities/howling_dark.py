@@ -13,4 +13,4 @@ class HowlingDark(Ability):
         self.attack_power = 35
         self.mana_cost = 25
         self.defend_cost = 0
-        self.targeting = Target.CLEAVE
+        self.targeting = Target.ENEMY_CLEAVE
