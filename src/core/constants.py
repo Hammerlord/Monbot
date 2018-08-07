@@ -32,6 +32,7 @@ WARNING = '⚠'
 STATUS = '📊'
 TEAM_INDICATOR = '🔸'
 TEAM_KO = '❌'
+FROST = '❄'
 
 PEACH = '🍑'
 HAMMER = '🔨'

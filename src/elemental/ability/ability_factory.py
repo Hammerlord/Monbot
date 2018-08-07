@@ -7,10 +7,14 @@ from src.elemental.ability.abilities.counter import Counter
 from src.elemental.ability.abilities.cyclone import Cyclone
 from src.elemental.ability.abilities.defend import Defend
 from src.elemental.ability.abilities.deluge import Deluge
+from src.elemental.ability.abilities.dissonant_roar import DissonantRoar
 from src.elemental.ability.abilities.enrage import Enrage
 from src.elemental.ability.abilities.fireball import Fireball
+from src.elemental.ability.abilities.frost_barrier import FrostBarrier
 from src.elemental.ability.abilities.gale_step import GaleStep
 from src.elemental.ability.abilities.geyser import Geyser
+from src.elemental.ability.abilities.howling_dark import HowlingDark
+from src.elemental.ability.abilities.icy_snap import IcySnap
 from src.elemental.ability.abilities.ignite import Ignite
 from src.elemental.ability.abilities.quake import Quake
 from src.elemental.ability.abilities.rampage import Rampage
@@ -125,3 +129,19 @@ class LearnableAbilities:
     @staticmethod
     def counter(level=0) -> LearnableAbility:
         return LearnableAbility(Counter(), level)
+
+    @staticmethod
+    def dissonant_roar(level=0) -> LearnableAbility:
+        return LearnableAbility(DissonantRoar(), level)
+
+    @staticmethod
+    def howling_dark(level=0) -> LearnableAbility:
+        return LearnableAbility(HowlingDark(), level)
+
+    @staticmethod
+    def frost_barrier(level=0) -> LearnableAbility:
+        return LearnableAbility(FrostBarrier(), level)
+
+    @staticmethod
+    def icy_snap(level=0) -> LearnableAbility:
+        return LearnableAbility(IcySnap(), level)

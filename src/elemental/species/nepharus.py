@@ -45,4 +45,8 @@ class Nepharus(Species):
                                      LearnableAbilities.reap(),
                                      LearnableAbilities.blood_fangs(5),
                                      LearnableAbilities.rend(10),
-                                     LearnableAbilities.black_pinion(15)]
+                                     LearnableAbilities.black_pinion(15),
+                                     LearnableAbilities.geyser(20),
+                                     LearnableAbilities.quake(25),
+                                     LearnableAbilities.dissonant_roar(30),
+                                     LearnableAbilities.howling_dark(35)]

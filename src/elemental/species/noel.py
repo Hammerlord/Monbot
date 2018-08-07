@@ -1,4 +1,4 @@
-from src.character.consumables import Meat
+from src.character.consumables import Meat, Pudding
 from src.character.materials import WaterShard, ManaShard
 from src.core.elements import Elements
 from src.elemental.ability.ability_factory import LearnableAbilities
@@ -40,7 +40,8 @@ class Noel(Species):
         self._growth_rate = GrowthRate()
         self._loot = [Loot(WaterShard(), 0.75),
                       Loot(Meat(), 0.5),
-                      Loot(ManaShard(), 0.2)]
+                      Loot(ManaShard(), 0.2),
+                      Loot(Pudding(), 0.1)]
         self._learnable_abilities = [LearnableAbilities.reap(),
                                      LearnableAbilities.razor_fangs(),
                                      LearnableAbilities.geyser(4),
@@ -48,5 +49,7 @@ class Noel(Species):
                                      LearnableAbilities.rend(12),
                                      LearnableAbilities.gale_step(17),
                                      LearnableAbilities.windrush(22),
+                                     LearnableAbilities.frost_barrier(25),
                                      LearnableAbilities.deluge(27),
-                                     LearnableAbilities.counter(32)]
+                                     LearnableAbilities.icy_snap(32),
+                                     LearnableAbilities.counter(37)]

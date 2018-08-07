@@ -43,4 +43,7 @@ class Mithus(Species):
         self._learnable_abilities = [LearnableAbilities.razor_fangs(),
                                      LearnableAbilities.claw(),
                                      LearnableAbilities.geyser(4),
-                                     LearnableAbilities.deluge(25)]
+                                     LearnableAbilities.frost_barrier(8),
+                                     LearnableAbilities.icy_snap(12),
+                                     LearnableAbilities.deluge(25),
+                                     LearnableAbilities.dissonant_roar(30)]
