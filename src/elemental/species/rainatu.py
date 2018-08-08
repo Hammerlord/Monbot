@@ -45,4 +45,5 @@ class Rainatu(Species):
                                      LearnableAbilities.rolling_thunder(),
                                      LearnableAbilities.stormbolt(4),
                                      LearnableAbilities.windrush(8),
-                                     LearnableAbilities.gale_step(15)]
+                                     LearnableAbilities.recharge(12),
+                                     LearnableAbilities.gale_step(16)]

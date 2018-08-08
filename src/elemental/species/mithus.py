@@ -45,5 +45,6 @@ class Mithus(Species):
                                      LearnableAbilities.geyser(4),
                                      LearnableAbilities.frost_barrier(8),
                                      LearnableAbilities.icy_snap(12),
+                                     LearnableAbilities.enrage(16),
                                      LearnableAbilities.deluge(25),
                                      LearnableAbilities.dissonant_roar(30)]

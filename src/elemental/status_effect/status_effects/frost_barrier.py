@@ -22,8 +22,9 @@ class FrostBarrierEffect(StatusEffect):
     def apply_stat_changes(self):
         self.target.update_damage_reduction(self.damage_reduction)
 
-    def on_receive_damage(self, amount: int, actor) -> None:
+    def on_receive_ability(self, ability, actor) -> True:
         """
         :param actor: CombatElemental
         """
         actor.add_status_effect(Chill())
+        return True

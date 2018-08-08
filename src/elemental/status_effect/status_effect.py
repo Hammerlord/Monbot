@@ -45,6 +45,7 @@ class StatusEffect(Technique):
         self.can_add_instances = False  # Ie. can we apply multiple instances of this effect?
         self.bonus_multiplier = 1
         self.refresh_duration()
+        self.active = True  # Effect may be disabled for a reason besides duration ending.
 
     @property
     def is_debuff(self) -> bool:
@@ -126,6 +127,13 @@ class StatusEffect(Technique):
     def add_stack(self) -> None:
         if self.can_stack:
             self.current_stacks += 1
+            self._on_add_stack()
+
+    def _on_add_stack(self) -> None:
+        pass
+
+    def reset_stacks(self) -> None:
+        self.current_stacks = 1
 
     def refresh_duration(self) -> None:
         self.turns_remaining = self.turn_duration

@@ -8,7 +8,6 @@ from src.elemental.ability.abilities.charge import Charge
 from src.elemental.ability.abilities.cyclone import Cyclone
 from src.elemental.ability.abilities.defend import Defend
 from src.elemental.ability.abilities.fireball import Fireball
-from src.elemental.ability.abilities.rampage import Rampage
 from src.elemental.ability.abilities.razor_fangs import RazorFangs
 from src.elemental.ability.abilities.reap import Reap
 from src.elemental.ability.damage_calculator import DamageCalculator

@@ -140,7 +140,7 @@ class CombatTests(unittest.TestCase):
         elemental_a = team_a.elementals[0]
         team_a.handle_cast_time(Castable(ShiningLaser()))
         team_b.make_move(Claw())
-        self.assertEqual(elemental_a.last_action.recap, 'Thefaketofu is shining mightily!!', error)
+        self.assertIn('Thefaketofu is shining mightily!!', elemental_a.last_action.recap, error)
 
     def test_cast_time_resolution(self):
         error = "Casted spell didn't resolve when ready"

@@ -158,6 +158,7 @@ class StatusManager:
         for effect in self._status_effects:
             if effect.on_receive_ability(ability, actor):
                 self.combat_elemental.append_recent_log(effect.trigger_recap)
+                self.__check_effect_end(effect)
 
     def on_receive_damage(self, amount, actor) -> None:
         """
@@ -167,6 +168,7 @@ class StatusManager:
         for effect in self._status_effects:
             if effect.on_receive_damage(amount, actor):
                 self.combat_elemental.append_recent_log(effect.trigger_recap)
+                self.__check_effect_end(effect)
 
     def on_turn_start(self) -> None:
         for effect in self._status_effects:
@@ -226,7 +228,9 @@ class StatusManager:
         return calculation - stats
 
     def __check_effect_end(self, effect: StatusEffect) -> None:
-        if effect in self._status_effects and effect.duration_ended:
+        if effect not in self._status_effects:
+            return
+        if effect.duration_ended or not effect.active:
             self._status_effects.remove(effect)
             self.combat_elemental.log(effect.fade_recap)
 

@@ -68,6 +68,10 @@ class CombatElemental(Targetable):
         return self._status_manager.is_frozen
 
     @property
+    def can_act(self) -> bool:
+        return not self.is_stunned and not self.is_frozen and not self.is_knocked_out
+
+    @property
     def is_chilled(self) -> bool:
         return self._status_manager.is_chilled
 
@@ -317,7 +321,10 @@ class CombatElemental(Targetable):
         self._status_manager.on_receive_damage(amount, actor)
         if self.is_knocked_out:
             self._status_manager.clear_status_effects()
-            self.action_queued = None
+            self.cancel_casting()
+
+    def cancel_casting(self) -> None:
+        self.action_queued = None
 
     def heal(self, amount: float) -> None:
         # TODO block ability healing when knocked out.

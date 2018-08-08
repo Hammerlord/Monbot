@@ -20,10 +20,12 @@ from src.elemental.ability.abilities.quake import Quake
 from src.elemental.ability.abilities.rampage import Rampage
 from src.elemental.ability.abilities.razor_fangs import RazorFangs
 from src.elemental.ability.abilities.reap import Reap
+from src.elemental.ability.abilities.recharge import Recharge
 from src.elemental.ability.abilities.rend import Rend
 from src.elemental.ability.abilities.rolling_thunder import RollingThunder
 from src.elemental.ability.abilities.shining_laser import ShiningLaser
 from src.elemental.ability.abilities.slam import Slam
+from src.elemental.ability.abilities.stone_hide import Stonehide
 from src.elemental.ability.abilities.stormbolt import Stormbolt
 from src.elemental.ability.abilities.wind_rush import Windrush
 from src.elemental.ability.ability import LearnableAbility, Ability
@@ -145,3 +147,11 @@ class LearnableAbilities:
     @staticmethod
     def icy_snap(level=0) -> LearnableAbility:
         return LearnableAbility(IcySnap(), level)
+
+    @staticmethod
+    def recharge(level=0) -> LearnableAbility:
+        return LearnableAbility(Recharge(), level)
+
+    @staticmethod
+    def stonehide(level=0) -> LearnableAbility:
+        return LearnableAbility(Stonehide(), level)

@@ -4,10 +4,16 @@ from unittest.mock import Mock, MagicMock
 from src.combat.actions.elemental_action import ElementalAction
 from src.combat.combat import Combat
 from src.elemental.ability.abilities.claw import Claw
+from src.elemental.ability.abilities.rampage import Rampage
+from src.elemental.status_effect.status_effects.bleeds import RendEffect
 from src.elemental.status_effect.status_effects.blessed_rain import BlessedRainEffect
+from src.elemental.status_effect.status_effects.chill import Chill
 from src.elemental.status_effect.status_effects.defend import DefendEffect
 from src.elemental.status_effect.status_effects.enrage import EnrageEffect
+from src.elemental.status_effect.status_effects.freeze import Freeze
+from src.elemental.status_effect.status_effects.frost_barrier import FrostBarrierEffect
 from src.elemental.status_effect.status_effects.rolling_thunder import RollingThunderEffect
+from src.elemental.status_effect.status_effects.stonehide import StonehideEffect
 from src.team.combat_team import CombatTeam
 from src.team.team import Team
 from tests.elemental.elemental_builder import CombatElementalBuilder, ElementalBuilder
@@ -221,3 +227,62 @@ class StatusEffectTests(unittest.TestCase):
         combat_team.end_turn()
         health_after = elemental.current_hp
         self.assertGreater(health_after, health_before, error)
+
+    def test_stonehide_duration(self):
+        error = "Stonehide didn't fade upon four consecutive attacks"
+        elemental = CombatElementalBuilder().build()
+        stonehide = StonehideEffect()
+        stonehide.applier = elemental
+        elemental.add_status_effect(stonehide)
+        for i in range(4):
+            elemental.receive_damage(1, Mock())
+        self.assertEqual(elemental.num_status_effects, 0, error)
+
+    def test_stonehide_debuff_duration(self):
+        error = "Stonehide charge didn't decrement upon receiving damage from a debuff"
+        elemental = CombatElementalBuilder().build()
+        stonehide = StonehideEffect()
+        stonehide.applier = elemental
+        elemental.add_status_effect(stonehide)
+        rend = RendEffect()
+        rend.applier = CombatElementalBuilder().build()
+        elemental.add_status_effect(rend)
+        elemental.end_turn()
+        self.assertEqual(stonehide.charges, 3, error)
+
+    def test_frost_barrier_chill(self):
+        error = "Attackers were not chilled by Frost Barrier"
+        elemental = CombatElementalBuilder().build()
+        frost_barrier = FrostBarrierEffect()
+        frost_barrier.applier = elemental
+        elemental.add_status_effect(frost_barrier)
+        attacker = CombatElementalBuilder().build()
+        elemental.on_receive_ability(Claw(), attacker)
+        self.assertIsInstance(attacker.status_effects[0], Chill, error)
+
+    def test_chill_state(self):
+        error = "A chilled target wasn't flagged as such"
+        elemental = CombatElementalBuilder().build()
+        elemental.add_status_effect(Chill())
+        self.assertTrue(elemental.is_chilled, error)
+
+    def test_chill_freeze(self):
+        error = "Target was not frozen after 5 applications of Chill"
+        chill = Chill()
+        elemental = CombatElementalBuilder().build()
+        for i in range(5):
+            elemental.add_status_effect(chill)
+        self.assertEqual(elemental.num_status_effects, 2, error)
+
+    def test_freeze_state(self):
+        error = "Target who was frozen wasn't flagged as such"
+        elemental = CombatElementalBuilder().build()
+        elemental.add_status_effect(Freeze())
+        self.assertTrue(elemental.is_frozen, error)
+
+    def test_freeze_cast_cancel(self):
+        error = "Frozen target didn't have its cast cleared"
+        elemental = CombatElementalBuilder().build()
+        elemental.set_channeling(Rampage())
+        elemental.add_status_effect(Freeze())
+        self.assertIsNone(elemental.action_queued, error)

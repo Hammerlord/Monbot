@@ -44,4 +44,5 @@ class Roaus(Species):
                                      LearnableAbilities.slam(),
                                      LearnableAbilities.windrush(4),
                                      LearnableAbilities.quake(8),
-                                     LearnableAbilities.counter(12)]
+                                     LearnableAbilities.counter(12),
+                                     LearnableAbilities.stonehide(16)]
