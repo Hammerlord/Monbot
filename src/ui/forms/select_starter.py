@@ -28,7 +28,7 @@ class SelectStarterView(ValueForm):
 
     @property
     def buttons(self) -> List[ValueForm.Button]:
-        return self.enumerated_buttons(self.values)
+        return [ValueForm.Button(species.left_icon, species) for species in self.values]
 
     async def render(self) -> None:
         if self.initial_render:
@@ -65,7 +65,7 @@ class SelectStarterView(ValueForm):
         message_body = ("```Welcome to the dangerous world of elementals!\n"
                         "It's impossible to go alone, so please take a companion with you.```")
         for i, starter in enumerate(self.values):
-            message_body += f"{i + 1}) {starter.left_icon} {starter.name}\n"
+            message_body += f"{starter.left_icon} {starter.name}\n"
         return message_body
 
     @staticmethod

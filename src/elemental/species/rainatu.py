@@ -1,5 +1,6 @@
 from src.character.consumables import Peach, Cake
 from src.character.materials import LightningShard, ManaShard
+from src.core.constants import PINEAPPLE
 from src.core.elements import Elements
 from src.elemental.ability.ability_factory import LearnableAbilities
 from src.elemental.species.species import Species, StatsInterface, Loot
@@ -33,8 +34,8 @@ class Rainatu(Species):
         self._speed = 14
         self._mana_per_turn = 5
         self._defend_charges = 2
-        self._left_icon = ':pineapple:'
-        self._right_icon = ':pineapple:'
+        self._left_icon = PINEAPPLE
+        self._right_icon = PINEAPPLE
         self._portrait = None
         self._growth_rate = GrowthRate()
         self._loot = [Loot(LightningShard(), 0.75),

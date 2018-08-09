@@ -133,6 +133,8 @@ class ValueForm(Form):
     A type of form that allows multiple selection of choices by implementing pick_option.
     """
     Button = namedtuple('Button', 'reaction, value')
+    ORDERED_REACTIONS = [A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S]
+    ENUMERATED_REACTIONS = [ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, TEN]
 
     def __init__(self, options: FormOptions):
         super().__init__(options)
@@ -179,8 +181,12 @@ class ValueForm(Form):
     def enumerated_buttons(values: List[any]) -> List[Button]:
         # Creates buttons with reaction emojis that enumerate values.
         # For now, this gets around the issues of duplicates and needing custom icons.
-        reactions = [ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, TEN]
-        return [ValueForm.Button(reactions[i], value) for i, value in enumerate(values)]
+        return [ValueForm.Button(ValueForm.ENUMERATED_REACTIONS[i], value) for i, value in enumerate(values)]
+
+    @staticmethod
+    def ordered_buttons(values: List[any]) -> List[Button]:
+        # Creates buttons with alphabeticized emojis. There are more emojis in this set.
+        return [ValueForm.Button(ValueForm.ORDERED_REACTIONS[i], value) for i, value in enumerate(values)]
 
     @property
     def _selected_value(self) -> any or None:

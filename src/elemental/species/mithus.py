@@ -1,5 +1,6 @@
 from src.character.consumables import Meat
 from src.character.materials import WaterShard, ManaShard
+from src.core.constants import WHALE
 from src.core.elements import Elements
 from src.elemental.ability.ability_factory import LearnableAbilities
 from src.elemental.species.species import Species, StatsInterface, Loot
@@ -33,8 +34,8 @@ class Mithus(Species):
         self._speed = 10
         self._mana_per_turn = 5
         self._defend_charges = 2
-        self._left_icon = ':whale2:'
-        self._right_icon = ':whale2:'
+        self._left_icon = WHALE
+        self._right_icon = WHALE
         self._portrait = None
         self._growth_rate = GrowthRate()
         self._loot = [Loot(WaterShard(), 0.75),

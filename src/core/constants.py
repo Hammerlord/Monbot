@@ -12,6 +12,28 @@ SEVEN = "7⃣"
 EIGHT = "8⃣"
 NINE = "9⃣"
 TEN = "🔟"
+
+ABCD = '🔠'
+A = '🇦'
+B = '🇧'
+C = '🇨'
+D = '🇩'
+E = '🇪'
+F = '🇫'
+G = '🇬'
+H = '🇭'
+I = '🇮'
+J = '🇯'
+K = '🇰'
+L = '🇱'
+M = '🇲'
+N = '🇳'
+O = '🇴'
+P = '🇵'
+Q = '🇶'
+R = '🇷'
+S = '🇸'
+
 OK = '🆗'
 BACK = '🔙'
 ABILITIES = '⚔'
@@ -43,6 +65,11 @@ HAMMER = '🔨'
 CAKE = '🍰'
 PUDDING = '🍮'
 MEAT = '🍖'
+PINEAPPLE = '🍍'
+SPAGHETTI = '🍝'
+
+WHALE = '🐋'
+OX = '🐂'
 
 EARTH_SHARD = '🍂'
 MANA_SHARD = '💎'

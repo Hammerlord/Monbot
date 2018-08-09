@@ -1,5 +1,6 @@
 from src.character.consumables import Peach
 from src.character.materials import EarthShard, ManaShard
+from src.core.constants import OX
 from src.core.elements import Elements
 from src.elemental.ability.ability_factory import LearnableAbilities
 from src.elemental.species.species import Species, StatsInterface, Loot
@@ -33,8 +34,8 @@ class Roaus(Species):
         self._speed = 14
         self._mana_per_turn = 5
         self._defend_charges = 2
-        self._left_icon = ':ox:'
-        self._right_icon = ':ox:'
+        self._left_icon = OX
+        self._right_icon = OX
         self._portrait = None
         self._growth_rate = GrowthRate()
         self._loot = [Loot(EarthShard(), 0.75),

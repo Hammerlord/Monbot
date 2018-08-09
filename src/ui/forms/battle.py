@@ -247,7 +247,7 @@ class SelectAbilityView(ValueForm):
         elemental = self.combat_team.active_elemental
         ability_views = []
         for i, ability in enumerate(elemental.available_abilities):
-            ability_views.append(f'{i + 1}) {AbilityOptionView(ability).get_summary()}')
+            ability_views.append(f'{ValueForm.ENUMERATED_REACTIONS[i]} {AbilityOptionView(ability).get_summary()}')
         return '\n'.join(ability_views)
 
     def get_main_view(self) -> str:
@@ -381,8 +381,8 @@ class UseConsumableView(ValueForm):
 
     @staticmethod
     def _get_status(elemental: CombatElemental, index=None) -> str:
-        index = str(index + 1) + ') ' if index is not None else ''
-        return (f"{index}{elemental.icon}  Lv. {elemental.level} {elemental.nickname}  "
+        index = ValueForm.ENUMERATED_REACTIONS[index] if index is not None else ''
+        return (f"{index} {elemental.icon}  Lv. {elemental.level} {elemental.nickname}  "
                 f"`{HealthBarView.from_elemental(elemental)} "
                 f"{elemental.current_hp} / {elemental.max_hp} HP` \n")
 

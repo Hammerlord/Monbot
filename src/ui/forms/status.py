@@ -4,7 +4,9 @@ import discord
 from discord.ext.commands import Bot
 
 from src.core.constants import *
+from src.elemental.ability.abilities.defend import Defend
 from src.elemental.elemental import Elemental
+from src.ui.ability_option import AbilityOptionView
 from src.ui.forms.form import Form, FormOptions, ValueForm
 from src.ui.forms.inventory_form import ItemsView
 from src.ui.health_bar import HealthBarView
@@ -25,7 +27,7 @@ class StatusView(ValueForm):
 
     @property
     def buttons(self) -> List[ValueForm.Button]:
-        return self.enumerated_buttons(self.values)
+        return self.ordered_buttons(self.values)
 
     async def render(self) -> None:
         await self._clear_reactions()
@@ -50,7 +52,8 @@ class StatusView(ValueForm):
 
     @staticmethod
     def _get_status(index: int, elemental: Elemental) -> str:
-        return (f"{index + 1}) {elemental.left_icon}  Lv. {elemental.level} {elemental.nickname}  "
+        return (f"{ValueForm.ORDERED_REACTIONS[index]} {elemental.left_icon}  "
+                f"Lv. {elemental.level} {elemental.nickname}  "
                 f"`{HealthBarView.from_elemental(elemental)} "
                 f"{elemental.current_hp} / {elemental.max_hp} HP`  "
                 f"`{elemental.current_exp} / {elemental.exp_to_level} EXP` \n")
@@ -114,7 +117,7 @@ class StatusDetailView(Form):
         return self.is_setting_note or self.is_setting_nickname
 
     async def render(self) -> None:
-        await self._display(self.get_main_view())
+        await self._display(self._view)
         await self._clear_reactions()
         await self._add_reactions([ABILITIES, ATTRIBUTES, NICKNAME, NOTE, BACK])
 
@@ -124,7 +127,7 @@ class StatusDetailView(Form):
         if reaction == BACK:
             await self._back()
         elif reaction == ABILITIES:
-            pass
+            await self._to_ability_view()
         elif reaction == ATTRIBUTES:
             pass
         elif reaction == NICKNAME:
@@ -160,8 +163,9 @@ class StatusDetailView(Form):
         self.is_setting_note = False
         await self.render()
 
-    def get_main_view(self) -> str:
-        return '\n\n'.join([self.get_status(), self.option_descriptions])
+    @property
+    def _view(self) -> str:
+        return '\n\n'.join([self.get_status(), self._option_descriptions])
 
     def get_status(self) -> str:
         """
@@ -169,24 +173,92 @@ class StatusDetailView(Form):
         """
         elemental = self.elemental
         note = f"```Note: {elemental.note}```" if elemental.note else ''
-        return (f"{elemental.left_icon} {self.get_elemental_name()} "
+        return (f"{elemental.left_icon} {self._get_elemental_name()} "
                 f"Lv. {elemental.level}  (EXP: {elemental.current_exp} / {elemental.exp_to_level})\n"
                 f"`{HealthBarView.from_elemental(elemental)} {elemental.current_hp} / {elemental.max_hp} HP`\n"
                 f"{note}"
                 f"{StatsView(elemental).get_view()}")
 
     @property
-    def option_descriptions(self) -> str:
+    def _option_descriptions(self) -> str:
         # Show what each reaction maps to.
         return (f"{ABILITIES}`Abilities`   "
                 f"{ATTRIBUTES}`Attributes`   "
                 f"{NICKNAME}`Nickname`   "
                 f"{NOTE}`Note`")
 
-    def get_elemental_name(self) -> str:
+    def _get_elemental_name(self) -> str:
         # If the Elemental has a nickname, also display its actual species name.
         name = self.elemental.name
         nickname = self.elemental.nickname
         if nickname != name:
             return f"**{nickname}** [{name}]"
         return f"**{name}**"
+
+    async def _to_ability_view(self) -> None:
+        options = StatusDetailOptions(self.bot, self.player, self.elemental, self.discord_message, self)
+        form = AbilitiesView(options)
+        await form.show()
+
+
+class AbilitiesView(ValueForm):
+    """
+    A view showing all the currently-learned abilities for a particular elemental.
+    Allows users to swap active abilities.
+    """
+    def __init__(self, options: StatusDetailOptions):
+        super().__init__(options)
+        self.elemental = options.elemental
+
+    @property
+    def values(self) -> List[any]:
+        # Defend cannot be switched out.
+        return [ability for ability in self.elemental.active_abilities if ability.name != 'Defend']
+
+    @property
+    def buttons(self) -> List[ValueForm.Button]:
+        return self.ordered_buttons(self.values)
+
+    async def render(self) -> None:
+        await self._display(self._view)
+        await self._clear_reactions()
+        if self.elemental.eligible_abilities:
+            for button in self.buttons:
+                await self._add_reaction(button.reaction)
+            await self._add_reaction(RETURN)
+        await self._add_reaction(BACK)
+
+    @property
+    def _view(self) -> str:
+        elemental = self.elemental
+        return '\n'.join([
+            f"Lv. {elemental.level} {elemental.left_icon} {elemental.nickname}'s abilities\n",
+            self.active_abilities,
+            self.eligible_abilities
+         ])
+
+    @property
+    def active_abilities(self) -> str:
+        ability_views = ["**Currently active:**"]
+        # Only visibly enumerate the abilities if we have eligible abilities to swap.
+        if self.elemental.eligible_abilities:
+            for i, ability in enumerate(self.values):
+                ability_views.append(f"{ValueForm.ORDERED_REACTIONS[i]} {AbilityOptionView(ability).get_detail()}")
+        else:
+            for ability in self.values:
+                ability_views.append(f"{AbilityOptionView(ability).get_detail()}")
+        ability_views.append(AbilityOptionView(Defend()).get_detail())
+        return '\n'.join(ability_views)
+
+    @property
+    def eligible_abilities(self) -> str:
+        if self.elemental.eligible_abilities:
+            return '\n'.join(["**Learned:**",
+                              AbilityOptionView.detail_from_list(self.elemental.eligible_abilities),
+                              f'{ABCD} `Swap an ability`   {RETURN} `Swap all abilities`'])
+        return ''
+
+    async def _pick_option(self, reaction: str):
+        if reaction == BACK:
+            await self._back()
+            return
