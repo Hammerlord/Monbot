@@ -49,7 +49,7 @@ class AbilityOptionView:
 
     def get_detail(self) -> str:
         ability = self.ability
-        return '\n'.join([self.get_summary(), ability.description])
+        return '\n'.join([self.get_summary(), f"        {ability.description}"])  # Indent for description display.
 
     def _get_mana_cost(self) -> str:
         mana_cost = self.ability.mana_cost

@@ -13,8 +13,13 @@ class AbilityManager:
         self._learnable_abilities = self._initialize_abilities()  # List[LearnableAbility]
         self._available_abilities = []
         self._active_abilities = []
-        self._max_active = 5
+        self._total_active_abilities = 5
         self.check_learnable_abilities()
+
+    @property
+    def max_active_abilities(self) -> int:
+        # Excluding Defend.
+        return self._total_active_abilities - 1
 
     @property
     def active_abilities(self) -> List[Ability]:
@@ -28,7 +33,7 @@ class AbilityManager:
         """
         :return: Abilities that have been learned by the Elemental.
         """
-        return self._available_abilities
+        return list(self._available_abilities)
 
     @property
     def eligible_abilities(self) -> List[Ability]:
@@ -47,15 +52,29 @@ class AbilityManager:
             if self._can_learn(learnable_ability):
                 self._learn_ability(learnable_ability)
 
-    def swap_ability(self, active_position: int, available_position: int) -> None:
+    def set_abilities(self, abilities: List[Ability]) -> None:
+        """
+        Be lenient when setting excessive abilities (however that may happen) but reject sets that aren't full.
+        :param abilities: To replace currently active abilities.
+        """
+        if len(abilities) < self.max_active_abilities:
+            return
+        defend = next(ability for ability in self.active_abilities if ability.name == 'Defend')
+        self._active_abilities = []
+        for i in range(self.max_active_abilities):
+            self._active_abilities.append(abilities[i])
+        # Defend is a part of every Elemental's toolkit.
+        self._active_abilities.append(defend)
+
+    def swap_ability(self, active_ability: Ability, eligible_ability: Ability) -> None:
         """
         Replaces an Ability in active_abilities with one from eligible_abilities.
-        Uses position in the respective lists.
         """
-        if self._active_abilities[active_position].name == 'Defend':
-            # Defend is not swappable.
+        if active_ability.name == "Defend":
+            # Defend is not swappable. This shouldn't ever be reached anyway.
             return
-        self._active_abilities[active_position] = self.eligible_abilities[available_position]
+        index = self._active_abilities.index(active_ability)
+        self._active_abilities[index] = eligible_ability
 
     def find_ability_by_name(self, name: str) -> Ability or None:
         for ability in self._available_abilities:
@@ -68,7 +87,7 @@ class AbilityManager:
 
     def _learn_ability(self, learnable_ability: LearnableAbility) -> None:
         ability = learnable_ability.ability
-        if len(self._active_abilities) < self._max_active:
+        if len(self._active_abilities) < self._total_active_abilities:
             self._active_abilities.insert(0, ability)  # Keep Defend last in the list.
         self._available_abilities.append(ability)
 

@@ -211,6 +211,10 @@ class Elemental:
         self._owner = owner
 
     @property
+    def max_active_abilities(self) -> int:
+        return self._ability_manager.max_active_abilities
+
+    @property
     def active_abilities(self) -> List[Ability]:
         return self._ability_manager.active_abilities
 
@@ -225,8 +229,15 @@ class Elemental:
         """
         return self._ability_manager.eligible_abilities
 
-    def swap_ability(self, active_position: int, available_position: int) -> None:
-        self._ability_manager.swap_ability(active_position, available_position)
+    def swap_ability(self, active_ability: Ability, eligible_ability: Ability) -> None:
+        """
+        :param active_ability: The currently-active Ability to swap out.
+        :param eligible_ability: The inactive Ability to swap in.
+        """
+        self._ability_manager.swap_ability(active_ability, eligible_ability)
+
+    def set_abilities(self, abilities: List[Ability]) -> None:
+        self._ability_manager.set_abilities(abilities)
 
     @property
     def rank(self):

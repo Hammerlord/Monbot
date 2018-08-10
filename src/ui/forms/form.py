@@ -195,3 +195,11 @@ class ValueForm(Form):
         """
         if len(self.toggled) > 0:
             return self.toggled[-1].value
+
+    @property
+    def _selected_values(self) -> List[any] or None:
+        """
+        Values of all toggled buttons.
+        """
+        if len(self.toggled) > 0:
+            return [toggled.value for toggled in self.toggled]

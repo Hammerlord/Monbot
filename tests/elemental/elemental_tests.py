@@ -1,5 +1,11 @@
 import unittest
 
+from src.elemental.ability.abilities.claw import Claw
+from src.elemental.ability.abilities.defend import Defend
+from src.elemental.ability.abilities.fireball import Fireball
+from src.elemental.ability.abilities.rend import Rend
+from src.elemental.ability.abilities.rolling_thunder import RollingThunder
+from src.elemental.ability.abilities.slam import Slam
 from src.elemental.ability.ability import Ability, LearnableAbility
 from src.elemental.attribute.attribute_factory import AttributeFactory
 from src.elemental.attribute.attribute_manager import AttributeManager
@@ -21,9 +27,9 @@ class ElementalTests(unittest.TestCase):
 
     def get_learnable_ability(self, level: int) -> LearnableAbility:
         """
-        Returns a tests LearnableAbility for checking requirements.
+        Returns a test LearnableAbility for checking requirements.
         """
-        learnable = LearnableAbility(Ability())
+        learnable = LearnableAbility(Claw())
         learnable.level_required = level
         return learnable
 
@@ -281,10 +287,52 @@ class ElementalTests(unittest.TestCase):
         num_eligible = len(elemental.eligible_abilities)
         self.assertEqual(num_eligible, num_available - num_active, error)
 
+    def test_swap_ability(self):
+        error = "Elemental couldn't swap an ability"
+        species = self.get_species()
+        elemental = ElementalBuilder().with_level(5).with_species(species).build()
+        active_ability = elemental.active_abilities[0]
+        eligible_ability = elemental.eligible_abilities[0]
+        elemental.swap_ability(active_ability, eligible_ability)
+        self.assertIn(eligible_ability, elemental.active_abilities, error)
+
     def test_swap_defend(self):
         error = "Elemental can incorrectly swap out Defend for another ability"
         species = self.get_species()
         elemental = ElementalBuilder().with_level(5).with_species(species).build()
-        elemental.swap_ability(4, 0)
-        ability_name = elemental.active_abilities[4].name
-        self.assertEqual(ability_name, 'Defend', error)
+        defend = next(ability for ability in elemental.active_abilities if ability.name == 'Defend')
+        other_ability = elemental.eligible_abilities[0]
+        elemental.swap_ability(defend, other_ability)
+        self.assertIn(defend, elemental.active_abilities, error)
+
+    def test_set_abilities(self):
+        error = "Elemental abilities couldn't be replaced"
+        species = self.get_species()
+        elemental = ElementalBuilder().with_level(5).with_species(species).build()
+        abilities = [Slam(), RollingThunder(), Rend(), Fireball()]
+        elemental.set_abilities(abilities)
+        correctly_added = 0
+        ability_names = [ability.name for ability in elemental.active_abilities]
+        for ability in abilities:
+            if ability.name in ability_names:
+                correctly_added += 1
+        self.assertEqual(correctly_added, len(abilities), error)
+
+    def test_set_excessive_abilities(self):
+        error = "Replacing an elemental's abilities with an excessive set wasn't handled correctly"
+        species = self.get_species()
+        elemental = ElementalBuilder().with_level(5).with_species(species).build()
+        abilities = [Slam(), RollingThunder(), Rend(), Fireball(), Claw()]
+        elemental.set_abilities(abilities)
+        ability_names = [ability.name for ability in elemental.active_abilities]
+        self.assertNotIn(Claw().name, ability_names, error)
+        self.assertEqual(5, len(elemental.active_abilities))
+
+    def test_set_abilities_readd_defend(self):
+        error = "Defend wasn't re-added when replacing an elemental's abilities"
+        species = self.get_species()
+        elemental = ElementalBuilder().with_level(5).with_species(species).build()
+        abilities = [Slam(), RollingThunder(), Rend(), Fireball()]
+        elemental.set_abilities(abilities)
+        ability_names = [ability.name for ability in elemental.active_abilities]
+        self.assertIn(Defend().name, ability_names, error)

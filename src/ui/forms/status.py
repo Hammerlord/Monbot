@@ -5,6 +5,7 @@ from discord.ext.commands import Bot
 
 from src.core.constants import *
 from src.elemental.ability.abilities.defend import Defend
+from src.elemental.ability.ability import Ability
 from src.elemental.elemental import Elemental
 from src.ui.ability_option import AbilityOptionView
 from src.ui.forms.form import Form, FormOptions, ValueForm
@@ -17,6 +18,7 @@ class StatusView(ValueForm):
     """
     Shows the status of your team.
     """
+
     def __init__(self, options: FormOptions):
         super().__init__(options)
         self._selecting_leader_mode = False
@@ -39,7 +41,7 @@ class StatusView(ValueForm):
             return
         await self._add_reaction(MEAT)
         if self.player.team.size > 1:
-            await self._add_reaction(RETURN)
+            await self._add_reaction(SWITCH)
 
     @property
     def _view(self) -> str:
@@ -62,7 +64,7 @@ class StatusView(ValueForm):
         if reaction == MEAT:
             await Form.from_form(self, ItemsView)
             return
-        if reaction == RETURN:
+        if reaction == SWITCH:
             self._selecting_leader_mode = True
             await self.render()
             return
@@ -106,6 +108,7 @@ class StatusDetailView(Form):
     """
     A detail view for an Elemental on your team.
     """
+
     def __init__(self, options: StatusDetailOptions):
         super().__init__(options)
         self.elemental = options.elemental
@@ -206,6 +209,7 @@ class AbilitiesView(ValueForm):
     A view showing all the currently-learned abilities for a particular elemental.
     Allows users to swap active abilities.
     """
+
     def __init__(self, options: StatusDetailOptions):
         super().__init__(options)
         self.elemental = options.elemental
@@ -225,40 +229,150 @@ class AbilitiesView(ValueForm):
         if self.elemental.eligible_abilities:
             for button in self.buttons:
                 await self._add_reaction(button.reaction)
-            await self._add_reaction(RETURN)
+            await self._add_reaction(SWITCH)
         await self._add_reaction(BACK)
 
     @property
     def _view(self) -> str:
         elemental = self.elemental
         return '\n'.join([
-            f"Lv. {elemental.level} {elemental.left_icon} {elemental.nickname}'s abilities\n",
+            f"Lv. {elemental.level} {elemental.left_icon} {elemental.nickname}'s abilities",
             self.active_abilities,
             self.eligible_abilities
-         ])
+        ])
 
     @property
     def active_abilities(self) -> str:
         ability_views = ["**Currently active:**"]
-        # Only visibly enumerate the abilities if we have eligible abilities to swap.
+        # Only visually enumerate active abilities if we have eligible abilities to swap.
         if self.elemental.eligible_abilities:
             for i, ability in enumerate(self.values):
                 ability_views.append(f"{ValueForm.ORDERED_REACTIONS[i]} {AbilityOptionView(ability).get_detail()}")
         else:
             for ability in self.values:
-                ability_views.append(f"{AbilityOptionView(ability).get_detail()}")
+                ability_views.append(AbilityOptionView(ability).get_detail())
         ability_views.append(AbilityOptionView(Defend()).get_detail())
         return '\n'.join(ability_views)
 
     @property
     def eligible_abilities(self) -> str:
         if self.elemental.eligible_abilities:
-            return '\n'.join(["**Learned:**",
+            return '\n'.join(["\n**Learned:**",
                               AbilityOptionView.detail_from_list(self.elemental.eligible_abilities),
-                              f'{ABCD} `Swap an ability`   {RETURN} `Swap all abilities`'])
+                              f'\n{ABCD} `Swap an ability`   {SWITCH} `Swap all abilities`'])
         return ''
 
-    async def _pick_option(self, reaction: str):
+    async def pick_option(self, reaction: str) -> None:
         if reaction == BACK:
             await self._back()
             return
+        await super().pick_option(reaction)
+        if self._selected_value is not None or reaction == SWITCH:
+            await self._to_switch_ability_view()
+
+    async def _to_switch_ability_view(self) -> None:
+        options = SwitchAbilityViewOptions(self.bot,
+                                           self.player,
+                                           self.elemental,
+                                           self._selected_value,
+                                           self.discord_message,
+                                           self)
+        form = SwitchAbilityView(options)
+        await form.show()
+
+
+class SwitchAbilityViewOptions(FormOptions):
+    def __init__(self,
+                 bot: Bot,
+                 player,
+                 elemental: Elemental,
+                 selected_ability: Ability = None,
+                 discord_message: discord.Message = None,
+                 previous_form=None):
+        super().__init__(bot, player, discord_message, previous_form)
+        self.elemental = elemental
+        self.selected_ability = selected_ability
+
+
+class SwitchAbilityView(ValueForm):
+    """
+    A view to switch a single ability, or to select a new set of abilities.
+    """
+
+    def __init__(self, options: SwitchAbilityViewOptions):
+        super().__init__(options)
+        self._elemental = options.elemental
+        self._selected_ability = options.selected_ability  # Ability or None; if None, we are swapping all abilities.
+
+    @property
+    def values(self) -> List[any]:
+        if self._selected_ability is not None:
+            return self._elemental.eligible_abilities
+        # Else, show all abilities available for multiple selection.
+        # Defend is automatically re-added, so we don't need it here.
+        return [ability for ability in self._elemental.available_abilities if ability.name != 'Defend']
+
+    @property
+    def buttons(self) -> List[ValueForm.Button]:
+        return self.ordered_buttons(self.values)
+
+    async def render(self) -> None:
+        await self._clear_reactions()
+        await self._display(self._view)
+        for button in self.buttons:
+            await self._add_reaction(button.reaction)
+        await self._add_reaction(BACK)
+
+    @property
+    def _view(self) -> str:
+        view = []
+        for i, ability in enumerate(self.values):
+            view.append(f"{ValueForm.ORDERED_REACTIONS[i]} {AbilityOptionView(ability).get_detail()}")
+        if self._selected_ability:
+            view.append(f"```Select an ability to replace {self._selected_ability.name} "
+                        f"for {self._elemental.nickname}```")
+        else:
+            view.append(self._multiple_selection_message)
+        return '\n'.join(view)
+
+    @property
+    def _multiple_selection_message(self) -> str:
+        max_num = self._elemental.max_active_abilities
+        if self._is_selection_complete:
+            return f"```Click [OK] to confirm this set.```"
+        elif self._num_selections == 0:
+            return (f"```Select a new set of abilities for {self._elemental.nickname}. "
+                    f"({max_num} needed)```")
+        return (f"```Currently selected: {', '.join([ability.name for ability in self._selected_values])} \n"
+                f"({self._num_selections}/{max_num} needed)```")
+
+    async def pick_option(self, reaction: str):
+        if reaction == BACK:
+            await self._back()
+            return
+        if reaction == OK and self._is_selection_complete:
+            abilities = self._selected_values
+            self._elemental.set_abilities(abilities)
+            await self._back()
+            return
+        await super().pick_option(reaction)
+        if self._selected_ability:
+            eligible_ability = self._selected_value
+            self._elemental.swap_ability(self._selected_ability, eligible_ability)
+            await self._back()
+        else:
+            await self._display(self._view)
+            if self._is_selection_complete:
+                await self._add_reaction(OK)
+
+    async def remove_option(self, reaction: str) -> None:
+        super().remove_option(reaction)
+        await self._display(self._view)
+
+    @property
+    def _num_selections(self) -> int:
+        return len(self.toggled)
+
+    @property
+    def _is_selection_complete(self) -> bool:
+        return self._num_selections == self._elemental.max_active_abilities
