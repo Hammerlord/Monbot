@@ -15,7 +15,7 @@ class RollingThunderEffect(StatusEffect):
         self.icon = ROLLING_THUNDER
         self.element = Elements.LIGHTNING
         self.category = Category.MAGIC
-        self.attack_power = 20
+        self.attack_power = 17
         self.can_add_instances = True
 
     @property

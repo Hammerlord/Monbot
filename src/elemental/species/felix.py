@@ -40,7 +40,7 @@ class Felix(Species):
 class GrowthRate(Stats):
     def __init__(self):
         super().__init__()
-        self._max_hp = 4
+        self._max_hp = 4.5
         self._physical_att = 4
         self._magic_att = 4
         self._physical_def = 4

@@ -130,7 +130,7 @@ class Elemental:
 
     @property
     def max_hp(self) -> int:
-        return self._max_hp + self._attribute_manager.max_hp
+        return int(self._max_hp + self._attribute_manager.max_hp)
 
     @property
     def defend_potency(self) -> float:

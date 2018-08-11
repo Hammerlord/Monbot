@@ -37,10 +37,10 @@ class GrowthRate(Stats):
 
     def __init__(self):
         super().__init__()
-        self._max_hp = 5
+        self._max_hp = 6
         self._physical_att = 4
-        self._magic_att = 4
-        self._physical_def = 3
+        self._magic_att = 5
+        self._physical_def = 4
         self._magic_def = 5
         self._speed = 4
         self._base_damage = 1
