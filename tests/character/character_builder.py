@@ -21,6 +21,10 @@ class CharacterBuilder:
         self._level = level
         return self
 
+    def with_max_level(self) -> 'CharacterBuilder':
+        self._level = Character.MAX_LEVEL
+        return self
+
 
 class NPCBuilder:
     def __init__(self):

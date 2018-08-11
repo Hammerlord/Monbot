@@ -12,6 +12,10 @@ class Team:
         self._max_size = 4
 
     @property
+    def average_elemental_level(self) -> int:
+        return sum([elemental.level for elemental in self.elementals]) // self.size
+
+    @property
     def elementals(self) -> List[Elemental]:
         """
         :return: A reference to this Team's Elementals

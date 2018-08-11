@@ -46,13 +46,13 @@ class CharacterTests(unittest.TestCase):
 
     def test_max_level_exp_gain(self):
         error = "Character was incorrectly able to gain experience at max level"
-        character = CharacterBuilder().with_level(60).build()
+        character = CharacterBuilder().with_max_level().build()
         character.add_exp(100)
         self.assertEqual(character.current_exp, 0, error)
 
     def test_max_level_current_exp(self):
         error = "Character's current exp wasn't set to 0 at max level"
-        character = CharacterBuilder().with_level(59).build()
+        character = CharacterBuilder().with_level(49).build()
         exp = character.exp_to_level + 5
         character.add_exp(exp)
         self.assertEqual(character.current_exp, 0, error)

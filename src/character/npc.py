@@ -63,10 +63,11 @@ class NPC(Character):
     def _generate_level(self, opponent: 'NPC' or Player) -> None:
         """
         :param opponent: This NPC's upcoming opponent, usually a Player.
-        When called, the NPC's level will be based off of the opponent's.
+        When called, the NPC's level will be based off of the opponent's average team level.
         """
-        min_level = max(1, opponent.level - 2)  # Cannot be below 1
-        max_level = opponent.level + 1
+        team_average_level = opponent.team.average_elemental_level
+        min_level = max(1, team_average_level - 3)  # Cannot be below 1
+        max_level = team_average_level + 1
         self._level = randint(min_level, max_level)
 
     @staticmethod

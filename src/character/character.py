@@ -11,14 +11,14 @@ class Character:
     """
     Base class of NPCs and Players (Discord user avatars).
     """
+    MAX_LEVEL = 50
 
     def __init__(self):
         self._nickname = 'Anonymous'  # TBD
         self._level = 1
-        self._max_level = 50
         self._gold = 0
         self._current_exp = 0
-        self._exp_to_level = 10
+        self._exp_to_level = 15
         self._location = 0  # TODO
         self._team = Team(self)
         self._is_npc = False
@@ -114,7 +114,7 @@ class Character:
                 return
 
     def _is_max_level(self) -> bool:
-        return self._level == self._max_level
+        return self._level == Character.MAX_LEVEL
 
     def _level_up(self) -> None:
         self._current_exp -= self._exp_to_level

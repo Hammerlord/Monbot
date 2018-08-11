@@ -16,8 +16,8 @@ class NPCTests(unittest.TestCase):
         :return: A Player object with 2 Elementals on their Team.
         """
         player = PlayerBuilder().with_level(10).build()
-        player.add_elemental(ElementalBuilder().build())
-        player.add_elemental(ElementalBuilder().build())
+        player.add_elemental(ElementalBuilder().with_level(10).build())
+        player.add_elemental(ElementalBuilder().with_level(10).build())
         return player
 
     def test_is_npc(self):
@@ -43,24 +43,24 @@ class NPCTests(unittest.TestCase):
         self.assertTrue(is_correct_size, error)
 
     def test_max_level(self):
-        error = "NPC level is potentially too much higher than the opponent's"
+        error = "NPC level is potentially too much higher than the opponent's average team level"
         is_correct_level = True
         player = self.get_player()
         for i in range(100):
             npc = NPCBuilder().with_opponent(player).build()
-            accepted_max_level = player.level + 1
+            accepted_max_level = player.team.average_elemental_level + 1
             if npc.level > accepted_max_level:
                 is_correct_level = False
                 break
         self.assertTrue(is_correct_level, error)
 
     def test_min_level(self):
-        error = "NPC level is potentially too much lower than the opponent's"
+        error = "NPC level is potentially too much lower than the opponent's average team level"
         is_correct_level = True
         player = self.get_player()
         for i in range(100):
             npc = NPCBuilder().with_opponent(player).build()
-            accepted_min_level = player.level - 2
+            accepted_min_level = player.team.average_elemental_level - 3
             if npc.level < accepted_min_level:
                 is_correct_level = False
                 break
