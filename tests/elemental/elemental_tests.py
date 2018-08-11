@@ -173,13 +173,6 @@ class ElementalTests(unittest.TestCase):
         elemental.add_exp(exp)
         self.assertEqual(player.level, elemental.level, error)
 
-    def test_rank_restricts_level(self):
-        error = "Elemental must have be rank 2 to grow past level 10"
-        elemental = ElementalBuilder().with_level(10).build()
-        exp = elemental.exp_to_level * 5  # Arbitrary large amount of exp
-        elemental.add_exp(exp)
-        self.assertEqual(elemental.level, 10, error)
-
     def test_exp_gain_rank_restriction(self):
         error = "Elemental should be allowed to overflow experience even when it is under-ranked"
         elemental = ElementalBuilder().with_level(10).with_rank(1).build()
