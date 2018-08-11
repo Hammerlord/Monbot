@@ -15,7 +15,7 @@ class Character:
     def __init__(self):
         self._nickname = 'Anonymous'  # TBD
         self._level = 1
-        self._max_level = 60
+        self._max_level = 50
         self._gold = 0
         self._current_exp = 0
         self._exp_to_level = 10

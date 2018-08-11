@@ -23,7 +23,7 @@ class Attribute:
         self._name = None  # Str. TBD by descendants.
         self._description = None  # Str. TBD by descendants.
         self._current_level = 0
-        self._max_level = 6
+        self._max_level = 5
 
     def can_level_up(self) -> bool:
         return self._current_level < self._max_level
@@ -56,16 +56,23 @@ class Attribute:
         for i in range(self._current_level):
             self.add_stats(attribute_manager)
 
+    @property
+    def _stat_gain(self) -> int:
+        """
+        The amount of stats you gain per Attribute level.
+        """
+        return 7 + self.level
+
 
 class Ferocity(Attribute):
     def __init__(self):
         super().__init__()
         self._stat_type = AttributeType.PHYSICAL_ATT
         self._name = "Ferocity"
-        self._description = "Increases physical attack power."
+        self._description = "Increases physical attack."
 
     def add_stats(self, attribute_manager):
-        attribute_manager.add_physical_att(10)
+        attribute_manager.add_physical_att(self._stat_gain)
 
 
 class Attunement(Attribute):
@@ -73,10 +80,10 @@ class Attunement(Attribute):
         super().__init__()
         self._stat_type = AttributeType.MAGIC_ATT
         self._name = "Attunement"
-        self._description = "Increases magic attack power."
+        self._description = "Increases magic attack."
 
     def add_stats(self, attribute_manager):
-        attribute_manager.add_magic_att(10)
+        attribute_manager.add_magic_att(self._stat_gain)
 
 
 class Sturdiness(Attribute):
@@ -87,7 +94,7 @@ class Sturdiness(Attribute):
         self._description = "Increases physical defence."
 
     def add_stats(self, attribute_manager):
-        attribute_manager.add_physical_def(10)
+        attribute_manager.add_physical_def(self._stat_gain)
 
 
 class Resolve(Attribute):
@@ -98,7 +105,7 @@ class Resolve(Attribute):
         self._description = "Increases maximum health."
 
     def add_stats(self, attribute_manager):
-        attribute_manager.add_max_hp(10)
+        attribute_manager.add_max_hp(self._stat_gain)
 
 
 class Resistance(Attribute):
@@ -109,7 +116,7 @@ class Resistance(Attribute):
         self._description = "Increases magic defence."
 
     def add_stats(self, attribute_manager):
-        attribute_manager.add_magic_def(10)
+        attribute_manager.add_magic_def(self._stat_gain)
 
 
 class Swiftness(Attribute):
@@ -120,5 +127,5 @@ class Swiftness(Attribute):
         self._description = "Increases speed."
 
     def add_stats(self, attribute_manager):
-        attribute_manager.add_speed(10)
+        attribute_manager.add_speed(self._stat_gain)
 

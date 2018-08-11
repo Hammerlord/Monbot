@@ -325,10 +325,10 @@ class Elemental:
 
     def _check_raise_rank(self) -> None:
         """
-        Elementals gain a rank at level 6, 12, 18...
+        Elementals gain a rank at level 5, 10, 15...
         TODO: Item requirements.
         """
-        if self._level % 6 == 0:
+        if self._level % 5 == 0:
             self._attribute_manager.raise_rank()
             self._ability_manager.check_learnable_abilities()
 
