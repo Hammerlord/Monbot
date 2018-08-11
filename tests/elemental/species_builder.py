@@ -2,7 +2,8 @@ from typing import List
 
 from src.core.elements import Elements
 from src.elemental.ability.ability import LearnableAbility, Ability
-from src.elemental.species.species import GrowthRate, Species
+from src.elemental.species.manapher import Manapher
+from src.elemental.species.species import Species, Stats
 
 
 class StatsBuilder:
@@ -43,8 +44,8 @@ class StatsBuilder:
         self._speed = amount
         return self
 
-    def build(self) -> GrowthRate:
-        growth_rate = GrowthRate()
+    def build(self) -> Stats:
+        growth_rate = Stats()
         growth_rate._max_hp = self._max_hp
         growth_rate._physical_att = self._physical_att
         growth_rate._magic_att = self._magic_att
@@ -59,15 +60,15 @@ class SpeciesBuilder(StatsBuilder):
         super().__init__()
         self._name = "Thefaketofu"
         self._element = Elements.LIGHT
-        self._growth_rate = StatsBuilder().build()
+        self.growth_rate = StatsBuilder().build()
         self._abilities = [LearnableAbility(Ability())]
 
     def with_name(self, name: str) -> 'SpeciesBuilder':
         self._name = name
         return self
 
-    def with_growth_rate(self, growth_rate: GrowthRate) -> 'SpeciesBuilder':
-        self._growth_rate = growth_rate
+    def with_growth_rate(self, growth_rate) -> 'SpeciesBuilder':
+        self.growth_rate = growth_rate
         return self
 
     def with_abilities(self, abilities: List[LearnableAbility]) -> 'SpeciesBuilder':
@@ -79,10 +80,10 @@ class SpeciesBuilder(StatsBuilder):
         return self
 
     def build(self) -> Species:
-        species = Species()
+        species = Manapher()
         species._name = self._name
         species._element = self._element
-        species._growth_rate = self._growth_rate
+        # species.growth_rate = self.growth_rate
         species._learnable_abilities = self._abilities
         species._max_hp = self._max_hp
         species._physical_att = self._physical_att
