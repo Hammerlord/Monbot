@@ -65,7 +65,7 @@ class Ferocity(Attribute):
         self._description = "Increases physical attack power."
 
     def add_stats(self, attribute_manager):
-        attribute_manager.add_physical_att(7)
+        attribute_manager.add_physical_att(10)
 
 
 class Attunement(Attribute):
@@ -76,7 +76,7 @@ class Attunement(Attribute):
         self._description = "Increases magic attack power."
 
     def add_stats(self, attribute_manager):
-        attribute_manager.add_magic_att(7)
+        attribute_manager.add_magic_att(10)
 
 
 class Sturdiness(Attribute):
@@ -87,7 +87,7 @@ class Sturdiness(Attribute):
         self._description = "Increases physical defence."
 
     def add_stats(self, attribute_manager):
-        attribute_manager.add_physical_def(7)
+        attribute_manager.add_physical_def(10)
 
 
 class Resolve(Attribute):
@@ -109,7 +109,7 @@ class Resistance(Attribute):
         self._description = "Increases magic defence."
 
     def add_stats(self, attribute_manager):
-        attribute_manager.add_magic_def(7)
+        attribute_manager.add_magic_def(10)
 
 
 class Swiftness(Attribute):
@@ -120,5 +120,5 @@ class Swiftness(Attribute):
         self._description = "Increases speed."
 
     def add_stats(self, attribute_manager):
-        attribute_manager.add_speed(7)
+        attribute_manager.add_speed(10)
 
