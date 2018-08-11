@@ -7,6 +7,7 @@ class Burn(StatusEffect):
 
     def __init__(self):
         super().__init__()
+        self.name = 'Burn'
         self.effect_type = EffectType.BURN
         self.category = Category.MAGIC  # Are all burns magical? Maybe?
         self.attack_power = 1
@@ -35,7 +36,7 @@ class IgniteEffect(Burn):
 
     def __init__(self):
         super().__init__()
-        self.attack_power = 6
+        self.attack_power = 2
 
     @property
     def turn_duration(self) -> float:

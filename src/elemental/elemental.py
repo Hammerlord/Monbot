@@ -22,6 +22,7 @@ class Elemental:
         self._current_hp = species.max_hp
         self._starting_mana = species.starting_mana
         self._max_mana = species.max_mana
+        self._base_damage = species.base_damage
         self._physical_att = species.physical_att
         self._magic_att = species.magic_att
         self._physical_def = species.physical_def
@@ -52,24 +53,28 @@ class Elemental:
         return self._species
 
     @property
+    def base_damage(self) -> int:
+        return int(self._base_damage)
+
+    @property
     def physical_att(self) -> int:
-        return self._physical_att + self._attribute_manager.physical_att
+        return int(self._physical_att + self._attribute_manager.physical_att)
 
     @property
     def magic_att(self) -> int:
-        return self._magic_att + self._attribute_manager.magic_att
+        return int(self._magic_att + self._attribute_manager.magic_att)
 
     @property
     def physical_def(self) -> int:
-        return self._physical_def + self._attribute_manager.physical_def
+        return int(self._physical_def + self._attribute_manager.physical_def)
 
     @property
     def magic_def(self) -> int:
-        return self._magic_def + self._attribute_manager.magic_def
+        return int(self._magic_def + self._attribute_manager.magic_def)
 
     @property
     def speed(self) -> int:
-        return self._speed + self._attribute_manager.speed
+        return int(self._speed + self._attribute_manager.speed)
 
     @property
     def ferocity(self) -> int:
@@ -309,6 +314,7 @@ class Elemental:
         self._physical_def += growth_rate.physical_def + self._bonus_stat()
         self._magic_def += growth_rate.magic_def + self._bonus_stat()
         self._speed += growth_rate.speed + self._bonus_stat()
+        self._base_damage += growth_rate.base_damage
 
     def _bonus_stat(self) -> int:
         """

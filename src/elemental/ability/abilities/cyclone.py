@@ -10,7 +10,7 @@ class Cyclone(Ability):
                              "Deals 25% more damage for every consecutive use.")
         self.element = Elements.WIND
         self.category = Category.PHYSICAL
-        self.attack_power = 14
+        self.attack_power = 10
         self.mana_cost = 12
         self.defend_cost = 0
         self.targeting = Target.ENEMY

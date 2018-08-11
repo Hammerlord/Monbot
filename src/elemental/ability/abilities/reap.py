@@ -9,7 +9,7 @@ class Reap(Ability):
         self._description = "Damage increased by 25% for each debuff on the enemy, up to 4."
         self.element = Elements.DARK
         self.category = Category.PHYSICAL
-        self.attack_power = 8
+        self.attack_power = 6
         self.mana_cost = 0
         self.defend_cost = 0
         self.targeting = Target.ENEMY

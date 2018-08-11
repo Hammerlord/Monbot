@@ -10,7 +10,7 @@ class HowlingDark(Ability):
         self._description = "Unleash a torrent of dark energy at opponents."
         self.element = Elements.DARK
         self.category = Category.MAGIC
-        self.attack_power = 35
+        self.attack_power = 20
         self.mana_cost = 25
         self.defend_cost = 0
         self.targeting = Target.ENEMY_CLEAVE

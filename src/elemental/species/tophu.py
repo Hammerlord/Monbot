@@ -2,19 +2,7 @@ from src.character.consumables import Peach
 from src.character.materials import ManaShard
 from src.core.elements import Elements
 from src.elemental.ability.ability_factory import LearnableAbilities
-from src.elemental.species.species import Species, StatsInterface, Loot
-
-
-class GrowthRate(StatsInterface):
-
-    def __init__(self):
-        super().__init__()
-        self._max_hp = 3
-        self._physical_att = 1
-        self._magic_att = 2
-        self._physical_def = 2
-        self._magic_def = 4
-        self._speed = 2
+from src.elemental.species.species import Species, Stats, Loot
 
 
 class Tophu(Species):
@@ -26,21 +14,27 @@ class Tophu(Species):
         self._name = 'Tophu'
         self._description = 'A lesser elemental, also called an elemental mote.'
         self._element = Elements.LIGHT
-        self._max_hp = 50
-        self._starting_mana = 20
-        self._max_mana = 50
-        self._physical_att = 5
-        self._magic_att = 5
-        self._physical_def = 20
-        self._magic_def = 20
-        self._speed = 10
-        self._mana_per_turn = 5
-        self._defend_charges = 2
         self._left_icon = '✨'
         self._right_icon = '✨'
         self._portrait = None
-        self._growth_rate = GrowthRate()
         self._loot = [Loot(Peach()),
                       Loot(ManaShard())]
         self._learnable_abilities = [LearnableAbilities.claw(),
                                      LearnableAbilities.slam()]
+
+    @property
+    def growth_rate(self) -> 'GrowthRate':
+        return GrowthRate()
+
+
+class GrowthRate(Stats):
+
+    def __init__(self):
+        super().__init__()
+        self._max_hp = 5
+        self._physical_att = 4
+        self._magic_att = 4
+        self._physical_def = 5
+        self._magic_def = 4
+        self._speed = 4
+        self._base_damage = 1

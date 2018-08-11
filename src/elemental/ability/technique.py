@@ -11,7 +11,7 @@ class Technique:
         self._description = ''  # Str. TBD by descendants
         self.element = Elements.NONE
         self.category = Category.NONE  # Eg. magic or physical.
-        self.attack_power = 0  # Ie. a damage stat.
+        self.attack_power = 0  # Int damage multiplier. 10 = 1x multiplier, 15 = 1.5x, etc.
         self.target_recovery = 0  # The amount of healing this Technique does, based on % of maximum HP.
         self.actor_recovery = 0  # The amount of healing this Technique does to the actor, based on % of maximum HP.
         self.icon = ''  # A str icon representing this ability.

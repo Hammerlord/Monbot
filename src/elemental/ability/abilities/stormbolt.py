@@ -11,7 +11,7 @@ class Stormbolt(Ability):
                              "reducing its magic defence until the end of the next round.")
         self.element = Elements.LIGHTNING
         self.category = Category.MAGIC
-        self.attack_power = 14
+        self.attack_power = 11
         self.mana_cost = 15
         self.defend_cost = 0
         self.targeting = Target.ENEMY

@@ -44,14 +44,14 @@ class DamageCalculatorTests(unittest.TestCase):
         calculator.calculate()
         self.assertGreater(calculator.damage_blocked, 0, error)
 
-    def test_defend_damage(self):
-        error = "Defensive stats didn't mitigate any damage"
+    def test_stat_multiplier(self):
+        error = "Stat multiplier didn't calculate correctly"
         ability = AbilityBuilder().with_attack_power(10).with_category(Category.PHYSICAL).build()
         target = CombatElementalBuilder().build()
         actor = CombatElementalBuilder().build()
         calculator = DamageCalculator(target, actor, ability)
         calculator.calculate()
-        self.assertGreater(calculator.damage_defended, 0, error)
+        self.assertEqual(calculator.stat_multiplier, actor.physical_att/target.physical_def, error)
 
     def test_no_damage(self):
         error = "Ability with no base power somehow did damage"
@@ -92,7 +92,7 @@ class DamageCalculatorTests(unittest.TestCase):
     def test_physical_defence(self):
         error = "Physical defence didn't reduce any damage"
         low_def = CombatElementalBuilder().with_elemental(ElementalBuilder()
-                                                          .with_physical_def(0)
+                                                          .with_physical_def(1)
                                                           .build()).build()
         high_def = CombatElementalBuilder().with_elemental(ElementalBuilder()
                                                            .with_physical_def(30)

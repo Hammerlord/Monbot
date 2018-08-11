@@ -9,7 +9,7 @@ class Rampage(Ability):
         self._description = "Enter a rampage, striking the opponent in a fury for the next 3 turns."
         self.element = Elements.EARTH
         self.mana_cost = 20
-        self.attack_power = 30
+        self.attack_power = 12
         self.category = Category.PHYSICAL
 
     @property

@@ -11,7 +11,7 @@ class Quake(Ability):
         self._description = "Quake the earth, reducing enemy speed by 1 stage for 3 turns."
         self.element = Elements.EARTH
         self.category = Category.MAGIC
-        self.attack_power = 20
+        self.attack_power = 13
         self.mana_cost = 15
         self.defend_cost = 0
         self.targeting = Target.ENEMY

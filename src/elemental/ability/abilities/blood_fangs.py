@@ -10,7 +10,7 @@ class BloodFangs(Ability):
                              f"Damage and healing increased up to 2x based on missing health.")
         self.element = Elements.DARK
         self.category = Category.PHYSICAL
-        self.attack_power = 15
+        self.attack_power = 8
         self.actor_recovery = 0.1
         self.mana_cost = 15
         self.defend_cost = 0

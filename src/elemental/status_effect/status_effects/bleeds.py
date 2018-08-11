@@ -10,7 +10,7 @@ class Bleed(StatusEffect):
         super().__init__()
         self.effect_type = EffectType.BLEED
         self.category = Category.PHYSICAL
-        self.attack_power = 1
+        self.attack_power = 3
         self.icon = BLEED
 
     @property
@@ -38,7 +38,7 @@ class RazorFangsEffect(Bleed):
 
     def __init__(self):
         super().__init__()
-        self.attack_power = 9
+        self.attack_power = 7
         self.name = "Razor Fangs"
 
 
@@ -46,7 +46,7 @@ class RendEffect(Bleed):
 
     def __init__(self):
         super().__init__()
-        self.attack_power = 12
+        self.attack_power = 9
         self.name = "Rend"
 
     @property

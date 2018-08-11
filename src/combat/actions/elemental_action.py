@@ -83,7 +83,6 @@ class ElementalAction(Action):
     @property
     def can_execute(self) -> bool:
         self._refresh_target()
-        print(self.team.active_elemental)
         return (self.team.active_elemental == self.actor
                 and self.team.active_elemental.can_act
                 and not self.target.is_knocked_out)

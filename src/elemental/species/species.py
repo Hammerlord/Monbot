@@ -3,7 +3,7 @@ from typing import List
 from src.core.elements import Elements
 
 
-class StatsInterface:
+class Stats:
 
     """
     Getter properties for classes that implement the main 5 stats:
@@ -17,6 +17,7 @@ class StatsInterface:
         self._physical_def = 0
         self._magic_def = 0
         self._speed = 0
+        self._base_damage = 0
 
     @property
     def physical_att(self) -> int:
@@ -42,24 +43,12 @@ class StatsInterface:
     def max_hp(self) -> int:
         return self._max_hp
 
-
-class GrowthRate(StatsInterface):
-
-    """
-    How much of each stat an Elemental of a specific Species is supposed to gain per level.
-    """
-
-    def __init__(self):
-        super().__init__()
-        self._max_hp = 3
-        self._physical_att = 3
-        self._magic_att = 3
-        self._physical_def = 3
-        self._magic_def = 3
-        self._speed = 3
+    @property
+    def base_damage(self) -> int:
+        return self._base_damage
 
 
-class Species(StatsInterface):
+class Species(Stats):
 
     """
     Static information used to set up a level 1 Elemental.
@@ -70,16 +59,21 @@ class Species(StatsInterface):
         self._name = 'Anonymous Species'
         self._description = 'Something interesting here.'
         self._element = Elements.NONE
-        self._max_hp = 50
+        self._max_hp = 50 + self.growth_rate.max_hp
+        self._physical_att = 20 + self.growth_rate.physical_att
+        self._magic_att = 20 + self.growth_rate.magic_att
+        self._physical_def = 20 + self.growth_rate.physical_def
+        self._magic_def = 20 + self.growth_rate.magic_def
+        self._speed = 20 + self.growth_rate.speed
         self._starting_mana = 15
         self._max_mana = 50
         self._mana_per_turn = 5
         self._bench_mana_per_turn = 2
         self._defend_charges = 2
+        self._base_damage = 10  # How much base damage this Species does at level 1.
         self._left_icon = ''  # This Elemental's emote, facing right.
         self._right_icon = ''  # This Elemental's emote, facing left.
         self._portrait = None
-        self._growth_rate = GrowthRate()  # Must be overridden to customize the stat growth!
         self._learnable_abilities = []  # List[LearnableAbility]. TBD by descendants.
         self._loot = []  # Items that this species can drop.
 
@@ -110,8 +104,11 @@ class Species(StatsInterface):
         return self._element
 
     @property
-    def growth_rate(self) -> GrowthRate:
-        return self._growth_rate
+    def growth_rate(self) -> 'Stats':
+        """
+        How much of each stat the Elemental is supposed to gain per level.
+        """
+        raise NotImplementedError
 
     @property
     def learnable_abilities(self):

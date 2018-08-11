@@ -20,6 +20,7 @@ class CombatElemental(Targetable):
         """
         self._elemental = elemental
         self.team = team
+        self._base_damage = elemental.base_damage
         self.base_physical_att = elemental.physical_att
         self.base_magic_att = elemental.magic_att
         self.base_physical_def = elemental.physical_def
@@ -99,6 +100,10 @@ class CombatElemental(Targetable):
     @property
     def health_percent(self) -> int:
         return int((self.current_hp / self.max_hp) * 100)
+
+    @property
+    def base_damage(self) -> int:
+        return self._base_damage
 
     @property
     def physical_att(self) -> int:

@@ -10,7 +10,7 @@ class BlackPinion(Ability):
         self._description = "Strike the opponent with a flurry of shadows."
         self.element = Elements.DARK
         self.category = Category.MAGIC
-        self.attack_power = 22
+        self.attack_power = 13
         self.mana_cost = 15
         self.defend_cost = 0
         self.targeting = Target.ENEMY

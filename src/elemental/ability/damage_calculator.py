@@ -31,7 +31,7 @@ class DamageCalculator:
         self.damage_source = damage_source
         self.raw_damage = 0
         self.damage_blocked = 0
-        self.damage_defended = 0
+        self.stat_multiplier = 0
         self.final_damage = 0
         self.effectiveness_multiplier = 1
         self.same_element_multiplier = 1
@@ -52,8 +52,8 @@ class DamageCalculator:
         self.same_element_multiplier = self.__get_same_element_multiplier()
         self.raw_damage = self.__get_raw_damage()
         self.damage_blocked = self.__get_damage_blocked()  # From damage_reduction
-        self.damage_defended = self.__get_damage_defended()  # From def stats
-        final_difference = self.raw_damage - self.damage_blocked - self.damage_defended
+        self.stat_multiplier = self.__get_stat_comparison_multiplier()  # From def stats
+        final_difference = self.raw_damage * self.stat_multiplier - self.damage_blocked
         if final_difference < 1:
             self.final_damage = 1
         else:
@@ -61,21 +61,12 @@ class DamageCalculator:
         return self.final_damage
 
     def __get_raw_damage(self) -> int:
-        raw_damage = self.damage_source.attack_power
-        raw_damage += self.__get_attack_power()
+        raw_damage = self.actor.base_damage
+        raw_damage *= self.damage_source.attack_power / 10
         raw_damage *= self.effectiveness_multiplier
         raw_damage *= self.same_element_multiplier
         raw_damage *= self.bonus_multiplier
         return raw_damage
-
-    def __get_attack_power(self) -> int:
-        # Match the ability to the actor's physical or magic attack.
-        if self.damage_source.category == Category.PHYSICAL:
-            return self.actor.physical_att // 3
-        if self.damage_source.category == Category.MAGIC:
-            return self.actor.magic_att // 3
-        print("Damage source has no category:", self.damage_source.name)
-        return 0
 
     def __get_same_element_multiplier(self) -> float:
         """
@@ -108,13 +99,15 @@ class DamageCalculator:
         """
         return int(self.raw_damage * self.target.damage_reduction)
 
-    def __get_damage_defended(self) -> int:
+    def __get_stat_comparison_multiplier(self) -> float:
         """
-        Match the target's defensive stat against the incoming ability.
-        :return: Int damage reduced by defenses.
+        Match the target's defensive stat against the actor's attack stat.
+        :return: The percentage of attack/def.
         """
         if self.damage_source.category == Category.PHYSICAL:
-            return self.target.physical_def // 3
+            assert(self.target.physical_def > 0)
+            return self.actor.physical_att / self.target.physical_def
         if self.damage_source.category == Category.MAGIC:
-            return self.target.magic_def // 3
+            assert(self.target.magic_def > 0)
+            return self.actor.magic_att / self.target.magic_def
         return 0

@@ -3,19 +3,7 @@ from src.character.materials import WaterShard, ManaShard
 from src.core.constants import WHALE
 from src.core.elements import Elements
 from src.elemental.ability.ability_factory import LearnableAbilities
-from src.elemental.species.species import Species, StatsInterface, Loot
-
-
-class GrowthRate(StatsInterface):
-
-    def __init__(self):
-        super().__init__()
-        self._max_hp = 4
-        self._physical_att = 2
-        self._magic_att = 3
-        self._physical_def = 2
-        self._magic_def = 3
-        self._speed = 1
+from src.elemental.species.species import Species, Stats, Loot
 
 
 class Mithus(Species):
@@ -24,20 +12,9 @@ class Mithus(Species):
         self._name = 'Mithus'
         self._description = 'Avatar of water'
         self._element = Elements.WATER
-        self._max_hp = 55
-        self._starting_mana = 20
-        self._max_mana = 50
-        self._physical_att = 11
-        self._magic_att = 14
-        self._physical_def = 10
-        self._magic_def = 13
-        self._speed = 10
-        self._mana_per_turn = 5
-        self._defend_charges = 2
         self._left_icon = WHALE
         self._right_icon = WHALE
         self._portrait = None
-        self._growth_rate = GrowthRate()
         self._loot = [Loot(WaterShard(), 0.75),
                       Loot(Meat(), 0.5),
                       Loot(ManaShard(), 0.2)]
@@ -49,3 +26,20 @@ class Mithus(Species):
                                      LearnableAbilities.enrage(16),
                                      LearnableAbilities.deluge(25),
                                      LearnableAbilities.dissonant_roar(30)]
+
+    @property
+    def growth_rate(self) -> 'GrowthRate':
+        return GrowthRate()
+
+
+class GrowthRate(Stats):
+
+    def __init__(self):
+        super().__init__()
+        self._max_hp = 5
+        self._physical_att = 3
+        self._magic_att = 4
+        self._physical_def = 5
+        self._magic_def = 5
+        self._speed = 3
+        self._base_damage = 1

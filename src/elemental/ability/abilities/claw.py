@@ -14,7 +14,7 @@ class Claw(Ability):
         self._description = "Rake the opponent."
         self.element = Elements.NONE
         self.category = Category.PHYSICAL
-        self.attack_power = 10
-        self.mana_cost = 0
+        self.attack_power = 6
+        self.mana_cost = -1
         self.defend_cost = 0
         self.targeting = Target.ENEMY

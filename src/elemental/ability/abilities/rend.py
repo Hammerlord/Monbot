@@ -10,7 +10,7 @@ class Rend(Ability):
         self._description = f"Rend up to 3 enemies, opening a wound for {self.status_effect.turn_duration} turns."
         self.element = Elements.WIND
         self.category = Category.PHYSICAL
-        self.attack_power = 1
+        self.attack_power = 2
         self.mana_cost = 5
         self.defend_cost = 0
         self.targeting = Target.ENEMY_CLEAVE

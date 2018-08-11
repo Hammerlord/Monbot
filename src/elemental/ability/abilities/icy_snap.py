@@ -13,7 +13,7 @@ class IcySnap(Ability):
         self.element = Elements.WATER
         self.category = Category.PHYSICAL
         self.icon = FROST
-        self.attack_power = 15
+        self.attack_power = 9
         self.mana_cost = 15
         self.defend_cost = 0
         self.targeting = Target.ENEMY
