@@ -145,6 +145,10 @@ class Elemental:
         return self._attribute_manager.attributes
 
     @property
+    def has_attribute_points(self) -> bool:
+        return self._attribute_manager.has_attribute_points
+
+    @property
     def is_knocked_out(self) -> bool:
         return self.current_hp == 0
 
@@ -152,11 +156,8 @@ class Elemental:
     def loot(self) -> List[Loot]:
         return self.species.loot
 
-    def raise_attribute(self, position: int) -> None:
-        try:
-            self._attribute_manager.raise_attribute(position)
-        except IndexError:
-            raise Exception("Tried to raise an Attribute, but it was out of bounds:", position)
+    def raise_attribute(self, attribute: Attribute) -> None:
+        self._attribute_manager.raise_attribute(attribute)
 
     def heal(self, amount: float) -> None:
         # Cast percentage-based healing to int.

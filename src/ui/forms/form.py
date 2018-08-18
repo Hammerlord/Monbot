@@ -203,3 +203,6 @@ class ValueForm(Form):
         """
         if len(self.toggled) > 0:
             return [toggled.value for toggled in self.toggled]
+
+    def _clear_options(self) -> None:
+        self.toggled = []

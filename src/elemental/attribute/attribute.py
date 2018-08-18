@@ -1,32 +1,36 @@
-from enum import Enum
-
-
-class AttributeType(Enum):
-    NONE = 0
-    PHYSICAL_ATT = 1
-    MAGIC_ATT = 2
-    PHYSICAL_DEF = 3
-    MAGIC_DEF = 4
-    SPEED = 5
-    HP = 6
-    MANA = 7
-
-
 class Attribute:
 
     """
     Each Elemental has three random Attributes, which can be ranked up to gain stats and unlock abilities.
     """
+    MAX_LEVEL = 5
 
     def __init__(self):
-        self._stat_type = AttributeType.NONE
-        self._name = None  # Str. TBD by descendants.
-        self._description = None  # Str. TBD by descendants.
+        self.name = None  # Str. TBD by descendants.
+        self.description = None  # Str. TBD by descendants.
         self._current_level = 0
-        self._max_level = 5
+        self.manager = None  # TBD when added to an AttributeManager.
+
+    @property
+    def level(self) -> int:
+        return self._current_level
+
+    @property
+    def total_stat_gain(self) -> int:
+        """
+        The amount of stats gained by this Attribute.
+        """
+        raise NotImplementedError
+
+    @property
+    def base_stat_gain(self) -> int:
+        """
+        The amount of stats gained for a particular level.
+        """
+        return 7 + self.level
 
     def can_level_up(self) -> bool:
-        return self._current_level < self._max_level
+        return self._current_level < Attribute.MAX_LEVEL
 
     def level_up(self, attribute_manager) -> None:
         """
@@ -35,97 +39,86 @@ class Attribute:
         self._current_level += 1
         self.add_stats(attribute_manager)
 
-    @property
-    def name(self) -> str:
-        return self._name
-
-    @property
-    def level(self) -> int:
-        return self._current_level
-
     def reset(self) -> None:
         self._current_level = 0
 
     def add_stats(self, attribute_manager) -> None:
         raise NotImplementedError
 
-    def readd_stats(self, attribute_manager) -> None:
-        """
-        If AttributeManager stats have been reset and need to be recalculated.
-        """
-        for i in range(self._current_level):
-            self.add_stats(attribute_manager)
-
-    @property
-    def _stat_gain(self) -> int:
-        """
-        The amount of stats you gain per Attribute level.
-        """
-        return 7 + self.level
-
 
 class Ferocity(Attribute):
     def __init__(self):
         super().__init__()
-        self._stat_type = AttributeType.PHYSICAL_ATT
-        self._name = "Ferocity"
-        self._description = "Increases physical attack."
+        self.name = "Ferocity"
+        self.description = "Physical Attack"
 
-    def add_stats(self, attribute_manager):
-        attribute_manager.add_physical_att(self._stat_gain)
+    def add_stats(self, attribute_manager) -> None:
+        attribute_manager.add_physical_att(self.base_stat_gain)
+
+    def total_stat_gain(self) -> int:
+        return self.manager.physical_att
 
 
 class Attunement(Attribute):
     def __init__(self):
         super().__init__()
-        self._stat_type = AttributeType.MAGIC_ATT
-        self._name = "Attunement"
-        self._description = "Increases magic attack."
+        self.name = "Attunement"
+        self.description = "Magic Attack"
 
-    def add_stats(self, attribute_manager):
-        attribute_manager.add_magic_att(self._stat_gain)
+    def add_stats(self, attribute_manager) -> None:
+        attribute_manager.add_magic_att(self.base_stat_gain)
+
+    def total_stat_gain(self) -> int:
+        return self.manager.magic_att
 
 
 class Sturdiness(Attribute):
     def __init__(self):
         super().__init__()
-        self._stat_type = AttributeType.PHYSICAL_DEF
-        self._name = "Sturdiness"
-        self._description = "Increases physical defence."
+        self.name = "Sturdiness"
+        self.description = "Physical Defence"
 
-    def add_stats(self, attribute_manager):
-        attribute_manager.add_physical_def(self._stat_gain)
+    def add_stats(self, attribute_manager) -> None:
+        attribute_manager.add_physical_def(self.base_stat_gain)
+
+    def total_stat_gain(self) -> int:
+        return self.manager.physical_def
 
 
 class Resolve(Attribute):
     def __init__(self):
         super().__init__()
-        self._stat_type = AttributeType.HP
-        self._name = "Resolve"
-        self._description = "Increases maximum health."
+        self.name = "Resolve"
+        self.description = "Max HP"
 
-    def add_stats(self, attribute_manager):
-        attribute_manager.add_max_hp(self._stat_gain)
+    def add_stats(self, attribute_manager) -> None:
+        attribute_manager.add_max_hp(self.base_stat_gain)
+
+    def total_stat_gain(self) -> int:
+        return self.manager.max_hp
 
 
 class Resistance(Attribute):
     def __init__(self):
         super().__init__()
-        self._stat_type = AttributeType.MAGIC_DEF
-        self._name = "Resistance"
-        self._description = "Increases magic defence."
+        self.name = "Resistance"
+        self.description = "Magic Defence"
 
-    def add_stats(self, attribute_manager):
-        attribute_manager.add_magic_def(self._stat_gain)
+    def add_stats(self, attribute_manager) -> None:
+        attribute_manager.add_magic_def(self.base_stat_gain)
+
+    def total_stat_gain(self) -> int:
+        return self.manager.magic_def
 
 
 class Swiftness(Attribute):
     def __init__(self):
         super().__init__()
-        self._stat_type = AttributeType.SPEED
-        self._name = "Swiftness"
-        self._description = "Increases speed."
+        self.name = "Swiftness"
+        self.description = "Speed"
 
-    def add_stats(self, attribute_manager):
-        attribute_manager.add_speed(self._stat_gain)
+    def add_stats(self, attribute_manager) -> None:
+        attribute_manager.add_speed(self.base_stat_gain)
 
+    def total_stat_gain(self) -> int:
+        return self.manager.speed

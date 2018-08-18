@@ -204,7 +204,7 @@ class ElementalTests(unittest.TestCase):
     def test_raise_attribute(self):
         error = "Elemental who met requirements couldn't raise an attribute"
         elemental = ElementalBuilder().with_level(10).build()
-        elemental.raise_attribute(0)
+        elemental.raise_attribute(elemental.attributes[0])
         attributes = elemental.attributes
         attribute_level = attributes[0].level
         self.assertEqual(attribute_level, 1, error)
@@ -217,7 +217,7 @@ class ElementalTests(unittest.TestCase):
             .with_level(10) \
             .build()
         p_att_before = elemental.physical_att
-        elemental.raise_attribute(0)
+        elemental.raise_attribute(elemental.attributes[0])
         p_att_after = elemental.physical_att
         self.assertGreater(p_att_after, p_att_before, error)
 

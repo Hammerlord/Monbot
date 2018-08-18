@@ -1,4 +1,4 @@
-from typing import List, Type
+from typing import List
 
 from src.elemental.attribute.attribute import Attribute
 
@@ -33,6 +33,7 @@ class AttributeManager:
         self._swiftness = 0
 
     def add_attribute(self, attribute: Attribute) -> None:
+        attribute.manager = self
         self._attributes.append(attribute)
 
     @property
@@ -69,7 +70,7 @@ class AttributeManager:
 
     @property
     def attributes(self) -> List[Attribute]:
-        return self._attributes.copy()
+        return list(self._attributes)
 
     @property
     def physical_att(self) -> int:
@@ -159,9 +160,8 @@ class AttributeManager:
         self._rank += 1
         self._points_remaining += 1
 
-    def raise_attribute(self, position: int):
-        attribute = self._attributes[position]
-        if self._are_points_available() and attribute.can_level_up():
+    def raise_attribute(self, attribute: Attribute):
+        if self.has_attribute_points and attribute.can_level_up():
             attribute.level_up(self)
             self._points_remaining -= 1
 
@@ -169,14 +169,11 @@ class AttributeManager:
         self._reset_stat_bonuses()
         for attribute in self._attributes:
             attribute.reset()
+        self._points_remaining = self._rank - 1
 
-    def _are_points_available(self) -> bool:
+    @property
+    def has_attribute_points(self) -> bool:
         return self._points_remaining > 0
-
-    def _recalculate_ranks(self) -> None:
-        self._reset_stat_bonuses()
-        for attribute in self._attributes:
-            attribute.readd_stats(self)
 
     def _reset_stat_bonuses(self):
         self._physical_att = 0
@@ -189,4 +186,3 @@ class AttributeManager:
         self._defend_charges = 0
         self._mana_per_turn = 0
         self._starting_mana = 0
-        self._points_remaining = self._rank - 1

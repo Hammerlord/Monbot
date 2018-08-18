@@ -6,6 +6,7 @@ from discord.ext.commands import Bot
 from src.core.constants import *
 from src.elemental.ability.abilities.defend import Defend
 from src.elemental.ability.ability import Ability
+from src.elemental.attribute.attribute import Attribute
 from src.elemental.elemental import Elemental
 from src.ui.ability_option import AbilityOptionView
 from src.ui.forms.form import Form, FormOptions, ValueForm
@@ -132,7 +133,7 @@ class StatusDetailView(Form):
         elif reaction == ABILITIES:
             await self._to_ability_view()
         elif reaction == ATTRIBUTES:
-            pass
+            await self._to_attributes_view()
         elif reaction == NICKNAME:
             await self.set_nickname_mode()
         elif reaction == NOTE:
@@ -201,6 +202,11 @@ class StatusDetailView(Form):
     async def _to_ability_view(self) -> None:
         options = StatusDetailOptions(self.bot, self.player, self.elemental, self.discord_message, self)
         form = AbilitiesView(options)
+        await form.show()
+
+    async def _to_attributes_view(self) -> None:
+        options = StatusDetailOptions(self.bot, self.player, self.elemental, self.discord_message, self)
+        form = AttributesView(options)
         await form.show()
 
 
@@ -376,3 +382,77 @@ class SwitchAbilityView(ValueForm):
     @property
     def _is_selection_complete(self) -> bool:
         return self._num_selections == self._elemental.max_active_abilities
+
+
+class AttributesView(ValueForm):
+    """
+    A view to spend an Elemental's Attribute points.
+    """
+
+    def __init__(self, options):
+        super().__init__(options)
+        self.elemental = options.elemental
+
+    @property
+    def buttons(self) -> List[ValueForm.Button]:
+        return self.ordered_buttons(self.values)
+
+    @property
+    def values(self) -> List[any]:
+        return self.elemental.attributes
+
+    async def render(self) -> None:
+        await self._display(self._view)
+        await self._clear_reactions()
+        selected_attribute = self._selected_value
+        if selected_attribute:
+            for reaction in [ADD, UP, CANCEL]:
+                await self._add_reaction(reaction)
+            return
+        if self.elemental.has_attribute_points:
+            for button in self.buttons:
+                await self._add_reaction(button.reaction)
+        await self._add_reaction(BACK)
+
+    async def pick_option(self, reaction: str) -> None:
+        if reaction == BACK:
+            await self._back()
+            return
+        if reaction == CANCEL:
+            self._clear_options()
+            await self.render()
+            return
+        await super().pick_option(reaction)
+        selected_attribute = self._selected_value
+        if not selected_attribute:
+            return
+        if reaction == ADD:
+            self.elemental.raise_attribute(selected_attribute)
+        elif reaction == UP:
+            for i in range(self.elemental.attribute_points):
+                self.elemental.raise_attribute(selected_attribute)
+        await self.render()
+
+    @property
+    def _view(self) -> str:
+        view = [f"```{self.elemental.nickname}'s attributes```",
+                self._attributes_list]
+        if self.elemental.has_attribute_points:
+            view.append(f"{self.elemental.attribute_points} points to assign. \n")
+        selected_attribute = self._selected_value
+        if selected_attribute:
+            view.append(f"Selected: `{selected_attribute.name}`")
+            view.append(f"{ADD} `+1 point`    {UP} `Add all pts`    {CANCEL} `Cancel`")
+        return '\n'.join(view)
+
+    @property
+    def _attributes_list(self) -> str:
+        view = []
+        for i, attribute in enumerate(self.elemental.attributes):
+            index = ValueForm.ORDERED_REACTIONS[i]
+            stat_gained = f"[+{attribute.total_stat_gain()} {attribute.description}]" if attribute.level > 0 else ""
+            header = f"{index} **{attribute.name}** Lv. {attribute.level} / {Attribute.MAX_LEVEL}  {stat_gained}\n"
+            view.append(header)
+            if attribute.can_level_up():
+                view.append(f"Next rank: +{attribute.base_stat_gain} {attribute.description} \n")
+        return ''.join(view)
