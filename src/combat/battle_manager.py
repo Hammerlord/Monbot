@@ -48,6 +48,14 @@ class BattleManager:
             opponent.generate_team(player)
             opponent_team = CombatTeam(opponent.team)
         else:
-            opponent_team = CombatTeam.from_elementals([ElementalInitializer.make_random(player.level)])
+            opponent_team = BattleManager.get_wild_elemental(player)
         combat.join_battle(opponent_team)
         return combat
+
+    @staticmethod
+    def get_wild_elemental(player: Player) -> CombatTeam:
+        team_average = player.team.average_elemental_level
+        min_level = team_average - 1
+        max_level = team_average + player.team.size
+        level = random.randint(min_level, max_level)
+        return CombatTeam.from_elementals([ElementalInitializer.make_random(level)])
