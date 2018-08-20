@@ -14,6 +14,7 @@ from src.elemental.status_effect.status_effects.freeze import Freeze
 from src.elemental.status_effect.status_effects.frost_barrier import FrostBarrierEffect
 from src.elemental.status_effect.status_effects.rolling_thunder import RollingThunderEffect
 from src.elemental.status_effect.status_effects.stonehide import StonehideEffect
+from src.elemental.status_effect.status_effects.wind_rush import WindrushEffect
 from src.team.combat_team import CombatTeam
 from src.team.team import Team
 from tests.elemental.elemental_builder import CombatElementalBuilder, ElementalBuilder
@@ -47,7 +48,7 @@ class StatusEffectTests(unittest.TestCase):
     def test_effect_duration_self_team(self):
         error = "StatusEffect duration wasn't boosted by 1 when applied to own team"
         # The duration decrements on turn end, so it loses 1 duration when applied to self.
-        effect = RollingThunderEffect()
+        effect = WindrushEffect()
         effect.applier = self.combat_elemental
         team = CombatTeam(Team(Mock()))
         team.set_combat(Combat())
@@ -191,9 +192,9 @@ class StatusEffectTests(unittest.TestCase):
         enemy = CombatElementalBuilder().with_team(team).build()
         team.change_active_elemental(enemy)
         team.add_status_effect(effect)
-        duration_before = effect.turns_remaining
-        team.end_turn()
-        duration_after = effect.turns_remaining
+        duration_before = effect.rounds_remaining
+        team.end_round()
+        duration_after = effect.rounds_remaining
         self.assertLess(duration_after, duration_before, error)
 
     def test_rolling_thunder(self):
@@ -206,8 +207,8 @@ class StatusEffectTests(unittest.TestCase):
         team.change_active_elemental(enemy)
         team.add_status_effect(effect)
         health_before = enemy.current_hp
-        team.end_turn()
-        team.end_turn()
+        team.end_round()
+        team.end_round()
         health_after = enemy.current_hp
         self.assertLess(health_after, health_before, error)
 

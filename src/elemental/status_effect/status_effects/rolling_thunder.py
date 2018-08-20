@@ -8,9 +8,10 @@ class RollingThunderEffect(StatusEffect):
     """
     A debuff that eventually detonates for damage.
     """
+
     def __init__(self):
         super().__init__()
-        self._description = f"Detonates after 1 turn."
+        self._description = f"Detonates at the end of the next round."
         self.name = "Rolling Thunder"
         self.icon = ROLLING_THUNDER
         self.element = Elements.LIGHTNING
@@ -19,11 +20,15 @@ class RollingThunderEffect(StatusEffect):
         self.can_add_instances = True
 
     @property
-    def turn_duration(self):
+    def turn_duration(self) -> int:
+        return -1
+
+    @property
+    def round_duration(self):
         return 2
 
-    def on_turn_end(self) -> bool:
-        if self.turns_remaining == 1:
+    def on_round_end(self) -> bool:
+        if self.rounds_remaining == 1:
             damage_calculator = DamageCalculator(self.target, self.applier, self)
             damage = damage_calculator.calculate()
             self.target.receive_damage(damage, self.applier)

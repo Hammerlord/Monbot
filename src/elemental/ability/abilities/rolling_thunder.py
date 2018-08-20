@@ -5,12 +5,13 @@ from src.elemental.status_effect.status_effects.rolling_thunder import RollingTh
 
 class RollingThunder(Ability):
     """
-    Applies a debuff onto the enemy team. After a turn, it will detonate onto the enemy team's active elemental.
+    Applies a debuff onto the enemy team.
     """
     def __init__(self):
         super().__init__()
         self.name = "Rolling Thunder"
-        self._description = f"Gather thunder clouds around the enemy. After 1 turn, they detonate."
+        self._description = (f"Gather thunder clouds over the opponent's team "
+                             f"that detonate at the end of the next round.")
         self.element = Elements.LIGHTNING
         self.category = Category.MAGIC
         self.mana_cost = 15
