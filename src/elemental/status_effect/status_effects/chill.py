@@ -19,7 +19,9 @@ class Chill(StatusEffect):
 
     @property
     def application_recap(self) -> str:
-        return f"{self.target.nickname} has been chilled!"
+        if self.current_stacks == 1:
+            return f"{self.target.nickname} has been chilled!"
+        return f"{self.target.nickname} is growing numb from cold. ({self.current_stacks})"
 
     def apply_stat_changes(self) -> None:
         self._update_p_att_stages(-1)
