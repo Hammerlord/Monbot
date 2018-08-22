@@ -25,7 +25,9 @@ class FrostBarrierEffect(StatusEffect):
 
     def on_receive_ability(self, ability, actor) -> True:
         """
+        :param ability: Ability
         :param actor: CombatElemental
         """
-        actor.add_status_effect(Chill())
-        return True
+        if ability.attack_power > 0:
+            actor.add_status_effect(Chill())
+            return True
