@@ -93,6 +93,9 @@ class Character:
     def add_item(self, item, amount=1) -> None:
         self.inventory.add_item(item, amount)
 
+    def remove_item(self, item, amount=1) -> None:
+        self.inventory.remove_item(item, amount)
+
     def add_exp(self, amount: int) -> None:
         if self._is_max_level():
             return

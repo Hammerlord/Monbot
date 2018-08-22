@@ -35,6 +35,7 @@ R = '🇷'
 S = '🇸'
 
 OK = '🆗'
+BUY = '💸'
 BACK = '🔙'
 ABILITIES = '⚔'
 FIGHT = '⚔'

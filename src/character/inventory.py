@@ -62,6 +62,10 @@ class Inventory:
         else:
             self._bag[item.name] = ItemSlot(item, amount)
 
+    def remove_item(self, item: 'Item', amount=1) -> None:
+        if self.has_item(item):
+            self._bag[item.name].update_amount(-amount)
+
     def amount_left(self, item: 'Item') -> int:
         if item.name in self._bag:
             return self._bag[item.name].amount

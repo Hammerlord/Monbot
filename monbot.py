@@ -5,6 +5,7 @@ from src.combat.battle_manager import BattleManager
 from src.data.data_manager import DataManager
 from src.discord_token import TOKEN
 from src.elemental.elemental_factory import ElementalInitializer
+from src.shop.general_shop import GeneralShop
 from src.team.combat_team import CombatTeam
 from src.ui.view_manager import ViewCommandManager
 
@@ -36,6 +37,18 @@ async def status(ctx):
         await view_manager.show_status(player)
     else:
         await view_manager.show_starter_selection(player)
+
+
+@bot.command(pass_context=True)
+async def shop(ctx):
+    user = ctx.message.author
+    await view_manager.delete_message(ctx.message)
+    if user.bot:
+        return
+    player = data_manager.get_player(user)
+    if not player.has_elemental or player.is_busy:
+        return
+    await view_manager.show_shop(GeneralShop(), player)
 
 
 @bot.command(pass_context=True)
