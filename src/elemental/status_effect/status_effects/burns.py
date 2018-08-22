@@ -1,3 +1,4 @@
+from src.core.constants import FIRE
 from src.core.elements import Category
 from src.elemental.ability.damage_calculator import DamageCalculator
 from src.elemental.status_effect.status_effect import StatusEffect, EffectType
@@ -8,6 +9,7 @@ class Burn(StatusEffect):
     def __init__(self):
         super().__init__()
         self.name = 'Burn'
+        self.icon = FIRE
         self.effect_type = EffectType.BURN
         self.category = Category.MAGIC  # Are all burns magical? Maybe?
         self.attack_power = 1

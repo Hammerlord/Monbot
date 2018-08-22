@@ -1,3 +1,4 @@
+from src.core.constants import FROST_BARRIER
 from src.elemental.status_effect.status_effect import StatusEffect
 from src.elemental.status_effect.status_effects.chill import Chill
 
@@ -9,7 +10,7 @@ class FrostBarrierEffect(StatusEffect):
         self.damage_reduction = 0.1
         self._description = (f"Reduces damage taken by {int(self.damage_reduction * 10)}%, "
                              f"and attackers are Chilled.")
-        self.icon = "☃"
+        self.icon = FROST_BARRIER
 
     @property
     def turn_duration(self):

@@ -1,3 +1,4 @@
+from src.core.constants import DISSONANT_ROAR
 from src.core.elements import Elements, Category
 from src.elemental.status_effect.status_effect import StatusEffect
 
@@ -8,7 +9,7 @@ class DissonantRoarEffect(StatusEffect):
         super().__init__()
         self._description = f"Reduces magic attack by 2 stages for {self.turn_duration} turns."
         self.name = "Rattled"
-        self.icon = '😱'
+        self.icon = DISSONANT_ROAR
         self.element = Elements.DARK
         self.category = Category.MAGIC
         self.can_add_instances = True

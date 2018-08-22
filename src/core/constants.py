@@ -63,6 +63,12 @@ RECHARGE = '🎇'
 SHELL = '🐚'
 FREEZE = '⏹'
 
+DELUGE = '⚓'
+DISSONANT_ROAR = '😱'
+FROST_BARRIER = '☃'
+GALESTEP = '💨'
+GEYSER = '🌊'
+
 PEACH = '🍑'
 HAMMER = '🔨'
 CAKE = '🍰'
