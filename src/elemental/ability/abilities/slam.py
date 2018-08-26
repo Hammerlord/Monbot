@@ -11,7 +11,6 @@ class Slam(Ability):
     def __init__(self):
         super().__init__()
         self.name = "Slam"
-        self._description = "Slam the opponent."
         self.element = Elements.NONE
         self.category = Category.PHYSICAL
         self.attack_power = 7

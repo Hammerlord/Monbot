@@ -1,3 +1,4 @@
+from src.core.constants import STORMBOLT
 from src.core.elements import Elements, Category
 from src.elemental.status_effect.status_effect import StatusEffect
 
@@ -8,7 +9,7 @@ class Thunderstruck(StatusEffect):
         super().__init__()
         self._description = f"Reduces magic defence by 1 stage until the end of the next round."
         self.name = "Thunderstruck"
-        self.icon = ':part_alternation_mark:'
+        self.icon = STORMBOLT
         self.element = Elements.LIGHTNING
         self.category = Category.MAGIC
         self.can_add_instances = True

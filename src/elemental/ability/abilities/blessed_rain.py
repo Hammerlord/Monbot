@@ -8,7 +8,7 @@ class BlessedRain(Ability):
         super().__init__()
         self.name = "Blessed Rain"
         self._description = ("Heals your active elemental for 15% of the "
-                             f"user's health every turn for {self.status_effect.turn_duration} turns.")
+                             f"caster's health every turn for {self.status_effect.turn_duration} turns.")
         self.icon = ':cloud_rain:'
         self.element = Elements.WATER
         self.category = Category.MAGIC

@@ -8,7 +8,6 @@ class Geyser(Ability):
     def __init__(self):
         super().__init__()
         self.name = "Geyser"
-        self._description = "Blast an opponent with a torrent of water."
         self.icon = GEYSER
         self.element = Elements.WATER
         self.category = Category.MAGIC

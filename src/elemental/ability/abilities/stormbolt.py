@@ -1,3 +1,4 @@
+from src.core.constants import STORMBOLT
 from src.core.elements import Elements, Category
 from src.elemental.ability.ability import Ability, Target
 from src.elemental.status_effect.status_effects.thunderstruck import Thunderstruck
@@ -7,10 +8,10 @@ class Stormbolt(Ability):
     def __init__(self):
         super().__init__()
         self.name = "Stormbolt"
-        self._description = ("Strike the opponent with lightning, "
-                             "reducing its magic defence until the end of the next round.")
+        self._description = "Reduce the opponent's magic defence until the end of the next round."
         self.element = Elements.LIGHTNING
         self.category = Category.MAGIC
+        self.icon = STORMBOLT
         self.attack_power = 10
         self.mana_cost = 15
         self.defend_cost = 0
