@@ -291,6 +291,12 @@ class CombatElemental(Targetable):
         self.update_mana(-ability.mana_cost)
         self.update_defend_charges(-ability.defend_cost)
 
+    def on_switch_out(self) -> None:
+        self._status_manager.on_switch_out()
+
+    def on_switch_in(self) -> None:
+        self._status_manager.on_switch_in()
+
     @property
     def is_cast_in_progress(self) -> bool:
         if self.action_queued:

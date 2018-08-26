@@ -42,7 +42,9 @@ class Switch(Action):
         self.team.change_active_elemental(self.new_active)
         self.team.log(self.recap)
         if self.old_active:
+            self.old_active.on_switch_out()
             self.old_active.add_action(self)
+        self.new_active.on_switch_in()
         self.new_active.add_action(self)
         self.team.end_turn()
 
