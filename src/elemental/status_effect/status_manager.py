@@ -179,6 +179,8 @@ class StatusManager:
         for effect in self._status_effects:
             if effect.on_turn_end():
                 self.combat_elemental.append_recent_log(effect.trigger_recap)
+        # Only decrement and check duration end after all effects have been resolved.
+        for effect in self._status_effects:
             effect.reduce_turn_duration()
             self.__check_effect_end(effect)
         self.__recalculate_effects()
@@ -187,6 +189,8 @@ class StatusManager:
         for effect in self._status_effects:
             if effect.on_round_end():
                 self.combat_elemental.append_recent_log(effect.trigger_recap)
+        # Only decrement and check duration end after all effects have been resolved.
+        for effect in self._status_effects:
             effect.reduce_round_duration()
             self.__check_effect_end(effect)
         self.__recalculate_effects()
