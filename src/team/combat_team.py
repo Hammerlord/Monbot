@@ -56,7 +56,7 @@ class CombatTeam(Targetable):
         self.combat = combat
         self.logger = combat.turn_logger
         if self.owner and not self.owner.is_npc:
-            self.owner.is_busy = True
+            self.owner.set_combat_team(combat)
 
     def set_side(self, side: str) -> None:
         self.side = side
@@ -66,8 +66,7 @@ class CombatTeam(Targetable):
 
     def end_combat(self) -> None:
         if self.owner and not self.owner.is_npc:
-            self.owner.is_busy = False
-            self.owner.battles_fought += 1
+            self.owner.clear_combat()
 
     @property
     def last_action(self) -> Action:

@@ -27,12 +27,10 @@ class BattleViewOptions(FormOptions):
     def __init__(self,
                  bot: Bot,
                  player: Player,
-                 combat: Combat,
                  combat_team: CombatTeam,
                  discord_message: discord.Message = None,
                  previous_form: 'BattleView' or Form = None):
         super().__init__(bot, player, discord_message, previous_form)
-        self.combat = combat
         self.combat_team = combat_team
 
 
@@ -45,8 +43,8 @@ class BattleView(Form):
 
     def __init__(self, options: BattleViewOptions):
         super().__init__(options)
-        self.combat = options.combat
         self.combat_team = options.combat_team
+        self.combat = options.combat_team.combat
         self.logger = self.combat.turn_logger
         self.log_index = self.logger.most_recent_index
 
@@ -462,12 +460,11 @@ class BattleResults(Form):
 
     async def pick_option(self, reaction: str) -> None:
         if self.player.can_battle and reaction == FIGHT:
-            combat_options = BattleManager().get_fight(self.player)
+            combat_team = BattleManager().create_pve_combat(self.player)
             view_options = BattleViewOptions(
                 self.bot,
                 self.player,
-                combat=combat_options.combat,
-                combat_team=combat_options.player_team,
+                combat_team=combat_team,
                 discord_message=self.discord_message
             )
             await BattleView(view_options).show()

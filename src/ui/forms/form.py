@@ -111,6 +111,7 @@ class Form:
     async def from_form(from_form: 'Form', to_form) -> None:
         """
         Creates a form from another form, allowing the same Discord message to be reused.
+        TODO do not use this anymore.
         :param from_form: The old form to take dependencies from.
         :param to_form: Reference to the Form class being generated
         """

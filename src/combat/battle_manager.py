@@ -15,18 +15,29 @@ class BattleManager:
     How a user enters combat.
     """
 
-    def get_fight(self, player: Player):
+    @staticmethod
+    def create_duel(player: Player, other_player: Player) -> None:
+        """
+        Start a fight between two players.
+        """
+        combat = Combat(allow_flee=False,
+                        allow_items=False)
         player_team = CombatTeam(player.team)
-        if player.battles_fought < 2:
-            combat = self.tutorial_fight(player)
-        else:
-            combat = self.get_random_fight(player)
+        other_player_team = CombatTeam(other_player.team)
         combat.join_battle(player_team)
-        options = namedtuple('Options', 'combat, player_team')
-        return options(combat, player_team)
+        combat.join_battle(other_player_team)
+
+    def create_pve_combat(self, player: Player) -> CombatTeam:
+        if player.battles_fought < 2:
+            combat = self._tutorial_fight(player)
+        else:
+            combat = self._get_random_fight(player)
+        player_team = CombatTeam(player.team)
+        combat.join_battle(player_team)
+        return player_team
 
     @staticmethod
-    def tutorial_fight(player: Player) -> Combat:
+    def _tutorial_fight(player: Player) -> Combat:
         if player.battles_fought == 0:
             tutorial_elemental = Tophu()
         else:
@@ -37,7 +48,7 @@ class BattleManager:
         return combat
 
     @staticmethod
-    def get_random_fight(player: Player) -> Combat:
+    def _get_random_fight(player: Player) -> Combat:
         """
         A random encounter with an Elemental or NPC.
         """
@@ -48,12 +59,12 @@ class BattleManager:
             opponent.generate_team(player)
             opponent_team = CombatTeam(opponent.team)
         else:
-            opponent_team = BattleManager.get_wild_elemental(player)
+            opponent_team = BattleManager._get_wild_elemental(player)
         combat.join_battle(opponent_team)
         return combat
 
     @staticmethod
-    def get_wild_elemental(player: Player) -> CombatTeam:
+    def _get_wild_elemental(player: Player) -> CombatTeam:
         team_average = player.team.average_elemental_level
         min_level = team_average - 1
         max_level = team_average + player.team.size

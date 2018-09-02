@@ -4,12 +4,13 @@ from src.elemental.elemental import Elemental
 
 
 class Team:
+    MAX_SIZE = 4
+
     def __init__(self, owner):
         self.__elementals = []  # List[Elemental]
         self._nickname = None
         self._note = None
         self._owner = owner
-        self._max_size = 4
 
     @property
     def average_elemental_level(self) -> int:
@@ -31,7 +32,7 @@ class Team:
 
     @property
     def is_space_available(self) -> bool:
-        return len(self.__elementals) < self._max_size
+        return len(self.__elementals) < Team.MAX_SIZE
 
     @property
     def size(self) -> int:

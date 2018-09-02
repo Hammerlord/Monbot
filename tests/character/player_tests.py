@@ -22,11 +22,6 @@ class PlayerTests(unittest.TestCase):
         team_size = self.player.team.size
         self.assertEqual(team_size, 1, error)
 
-    def test_set_busy_flag(self):
-        error = "Busy flag couldn't be set"
-        self.player.is_busy = True
-        self.assertIs(self.player.is_busy, True, error)
-
     def test_is_busy_combat(self):
         error = "Player is incorrectly able to enter combat while busy"
         # TODO

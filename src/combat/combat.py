@@ -66,6 +66,10 @@ class Combat:
         self.check_combat_start()
         return True
 
+    @property
+    def is_waiting_for_players(self) -> bool:
+        return len(self.teams) < 2 and not self.in_progress
+
     def check_combat_start(self) -> None:
         if len(self.teams) >= 2 and not self.in_progress:  # TODO 1v1 only right now
             self.in_progress = True

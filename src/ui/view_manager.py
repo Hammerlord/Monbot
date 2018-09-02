@@ -9,12 +9,14 @@ from src.ui.forms.form import Form, FormOptions
 from src.ui.forms.select_starter import SelectStarterView
 from src.ui.forms.shop import ShopViewOptions, ShopView
 from src.ui.forms.status import StatusView
+from src.ui.forms.versus import VersusViewOptions, VersusForm
 
 
 class ViewCommandManager:
     """
     Routes user commands to the appropriate view.
     """
+
     def __init__(self, bot: Bot):
         self.bot = bot
 
@@ -30,12 +32,18 @@ class ViewCommandManager:
         options = ShopViewOptions(self.bot, player, shop)
         await self._set_view(player, ShopView(options))
 
-    async def show_battle(self, player, combat, combat_team) -> None:
+    async def show_battle(self, player, combat_team) -> None:
         view_options = BattleViewOptions(self.bot,
                                          player,
-                                         combat,
                                          combat_team)
         await self._set_view(player, BattleView(view_options))
+
+    async def show_versus(self, player, data_manager, server) -> None:
+        view_options = VersusViewOptions(self.bot,
+                                         player,
+                                         data_manager,
+                                         server)
+        await self._set_view(player, VersusForm(view_options))
 
     async def delete_message(self, message: discord.Message) -> None:
         try:
