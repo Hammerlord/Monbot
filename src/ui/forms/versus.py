@@ -9,6 +9,7 @@ from src.combat.battle_manager import BattleManager
 from src.core.constants import FIGHT, CANCEL
 from src.data.data_manager import DataManager
 from src.team.team import Team
+from src.ui.forms.battle import BattleViewOptions, BattleView
 from src.ui.forms.form import ValueForm, FormOptions, Form
 
 
@@ -161,7 +162,22 @@ class ChallengeForm(Form):
             return
         self.is_waiting_to_start = False
         BattleManager.create_duel(self.player, self.opponent)
-        # TODO send PMs to the respective duelists
+        await self._show_fight_start(self.player)
+        await self._show_fight_start(self.opponent)
+
+    async def _show_fight_start(self, player: Player) -> None:
+        server = self.channel.server
+        user = server.get_member(player.id)
+        discord_message = await self.bot.send_message(user, f"```Fight vs {self.opponent.nickname} starting!```")
+        options = BattleViewOptions(
+            self.bot,
+            player,
+            player.combat_team,
+            discord_message
+        )
+        battle_form = BattleView(options)
+        player.set_primary_view(battle_form)
+        await battle_form.render()
 
     async def _render_cancel(self, player: Player) -> None:
         await self._clear_reactions()

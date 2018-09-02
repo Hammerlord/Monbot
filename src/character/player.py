@@ -52,8 +52,8 @@ class Player(Character):
         """
         return self.combat_team is not None
 
-    def set_combat_team(self, combat) -> None:
-        self.combat_team = combat
+    def set_combat_team(self, combat_team) -> None:
+        self.combat_team = combat_team
         self.battles_fought += 1
 
     def clear_combat(self) -> None:

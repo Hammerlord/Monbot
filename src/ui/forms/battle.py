@@ -79,6 +79,12 @@ class BattleView(Form):
         """
         Render the turn(s) that occurred since we last updated the view.
         """
+        while self.combat.is_awaiting_team_owners():
+            player_names = ','.join([player.nickname for player in self.combat.awaiting_team_owners()])
+            view = '\n'.join([self._current_battlefield,
+                              f"```Waiting for {player_names}...```"])
+            await self._display(view)
+            await asyncio.sleep(1.0)
         turn_logs = self.logger.get_turn_logs(self.log_index)
         for turn_log in turn_logs:
             await self._render_events(turn_log)
@@ -88,13 +94,16 @@ class BattleView(Form):
         """
         Render the current state of the battlefield and options, if available.
         """
+        view = f"{self._current_battlefield}{self._display_options()}"
+        await self._display(view)
+
+    @property
+    def _current_battlefield(self) -> str:
         side_a = self.combat.side_a_active
         side_b = self.combat.side_b_active
         allies = side_a if self.combat_team.side == Combat.SIDE_A else side_b
         opponents = side_b if allies == side_a else side_a
-        battlefield = Battlefield(allies, opponents).get_view()
-        view = f"{battlefield}{self._display_options()}"
-        await self._display(view)
+        return Battlefield(allies, opponents).get_view()
 
     async def _render_events(self, turn_log: List[EventLog]) -> None:
         """
@@ -138,7 +147,6 @@ class BattleView(Form):
     def get_form_options(self) -> BattleViewOptions:
         return BattleViewOptions(self.bot,
                                  self.player,
-                                 self.combat,
                                  self.combat_team,
                                  self.discord_message,
                                  previous_form=self)
@@ -163,7 +171,6 @@ class SelectElementalView(ValueForm):
 
     def __init__(self, options: BattleViewOptions):
         super().__init__(options)
-        self.combat = options.combat
         self.combat_team = options.combat_team
 
     @property
@@ -219,8 +226,8 @@ class SelectAbilityView(ValueForm):
 
     def __init__(self, options: BattleViewOptions):
         super().__init__(options)
-        self.combat = options.combat
         self.combat_team = options.combat_team
+        self.combat = options.combat_team.combat
 
     @property
     def buttons(self) -> List[ValueForm.Button]:
@@ -230,7 +237,8 @@ class SelectAbilityView(ValueForm):
     def values(self) -> List[any]:
         return self.combat_team.active_elemental.available_abilities
 
-    def get_battlefield(self) -> str:
+    @property
+    def battlefield_view(self) -> str:
         side_a = self.combat.side_a_active
         side_b = self.combat.side_b_active
         allies = side_a if self.combat_team.side == Combat.SIDE_A else side_b
@@ -249,11 +257,11 @@ class SelectAbilityView(ValueForm):
         return '\n'.join(ability_views)
 
     def get_main_view(self) -> str:
-        return ''.join([self.get_battlefield(), self.get_abilities()])
+        return ''.join([self.battlefield_view, self.get_abilities()])
 
     async def render(self) -> None:
-        await self._display(self.get_main_view())
         await self._clear_reactions()
+        await self._display(self.get_main_view())
         for button in self.buttons:
             await self._add_reaction(button.reaction)
         await self._add_reaction(BACK)
@@ -277,7 +285,6 @@ class SelectConsumableView(ValueForm):
 
     def __init__(self, options: BattleViewOptions):
         super().__init__(options)
-        self.combat = options.combat
         self.combat_team = options.combat_team
 
     @property
@@ -406,8 +413,8 @@ class BattleResults(Form):
         :param options: BattleViewOptions
         """
         super().__init__(options)
-        self.combat = options.combat
         self.combat_team = options.combat_team
+        self.combat = options.combat_team.combat
 
     async def render(self) -> None:
         await self._display(self._view)

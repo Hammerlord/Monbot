@@ -56,7 +56,7 @@ class CombatTeam(Targetable):
         self.combat = combat
         self.logger = combat.turn_logger
         if self.owner and not self.owner.is_npc:
-            self.owner.set_combat_team(combat)
+            self.owner.set_combat_team(self)
 
     def set_side(self, side: str) -> None:
         self.side = side

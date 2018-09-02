@@ -36,7 +36,7 @@ def sim_damage(elemental, opponent, level):
             print(f"{status_effect.name} total damage:", calculator.final_damage, '-',
                   f"({int(damage_percentage)}%", f"of {combat_opponent.nickname}'s {combat_opponent.max_hp} HP)")
 
-level = 35
+level = 50
 for species in ElementalInitializer.ALL_SPECIES:
     for opponent in ElementalInitializer.ALL_SPECIES:
         elemental = ElementalInitializer.make(species, level)

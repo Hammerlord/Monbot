@@ -70,13 +70,16 @@ class Form:
             try:
                 await self.bot.edit_message(self.discord_message, message)
             except discord.errors.NotFound:
-                print("Message has been deleted.")
+                self.discord_message = await self.bot.send_message(
+                    self.discord_message.channel,
+                    message
+                )
         else:
             self.discord_message = await self.bot.say(message)
 
     async def _add_reactions(self, reactions: List[str]) -> None:
         for reaction in reactions:
-            if not await self._add_reaction(reaction):
+            if not await self._add_reaction(reaction) or self.player.primary_view != self:
                 return
 
     async def _add_reaction(self, reaction: str) -> bool:
@@ -93,13 +96,15 @@ class Form:
     async def _clear_reactions(self) -> None:
         """
         Attempt to clear reactions from the message.
-        TODO should delete the message and repost if we don't have permission to clear reactions.
+        If it has no permission, it deletes the message and reposts it.
         """
         if self.discord_message:
             try:
                 await self.bot.clear_reactions(self.discord_message)
             except discord.errors.NotFound:
                 print("Message has been deleted.")
+            except discord.errors.Forbidden:
+                await self.bot.delete_message(self.discord_message)
 
     def get_form_options(self) -> FormOptions:
         return FormOptions(self.bot,

@@ -2,7 +2,8 @@ from itertools import groupby
 from random import random
 from typing import List
 
-from src.combat.actions.action import EventLogger, EventLog
+from src.character.character import Character
+from src.combat.actions.action import EventLogger
 from src.combat.actions.combat_actions import Action, Switch
 from src.combat.combat_ai import CombatAI
 from src.core.targetable_interface import Targetable
@@ -52,6 +53,13 @@ class Combat:
     def side_b_active(self) -> List[CombatElemental]:
         return [team.active_elemental for team in self.side_b if team.active_elemental]
 
+    def is_awaiting_team_owners(self) -> bool:
+        return len(self.action_requests) > 0
+
+    def awaiting_team_owners(self) -> List[Character]:
+        request_teams = [request.team for request in self.action_requests]
+        return [team.owner for team in self.teams if team not in request_teams]
+
     def join_battle(self, combat_team) -> bool:
         """
         :param combat_team: CombatTeam
@@ -65,10 +73,6 @@ class Combat:
         combat_team.set_combat(self)
         self.check_combat_start()
         return True
-
-    @property
-    def is_waiting_for_players(self) -> bool:
-        return len(self.teams) < 2 and not self.in_progress
 
     def check_combat_start(self) -> None:
         if len(self.teams) >= 2 and not self.in_progress:  # TODO 1v1 only right now
