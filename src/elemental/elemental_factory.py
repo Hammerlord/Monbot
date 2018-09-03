@@ -63,6 +63,7 @@ class ElementalInitializer:
         pick = random.randint(0, len(potential_species) - 1)
         return ElementalInitializer.make(potential_species[pick], level)
 
+"""
 for species in ElementalInitializer.SUMMONABLE_SPECIES:
     print(species.name)
     for learnable in species.learnable_abilities:
@@ -71,3 +72,4 @@ for species in ElementalInitializer.SUMMONABLE_SPECIES:
               f"Mana cost: {learnable.mana_cost}  Power: {learnable.attack_power}\n"
               f"{learnable.description}\n")
     print('\n')
+"""
