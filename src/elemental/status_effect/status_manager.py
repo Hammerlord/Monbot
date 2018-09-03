@@ -41,6 +41,10 @@ class StatusManager:
         return not self.__has_effect(EffectType.SWITCH_PREVENTION)
 
     @property
+    def is_defending(self) -> bool:
+        return self.__has_effect(EffectType.DEFEND)
+
+    @property
     def is_blocking(self) -> bool:
         return self._damage_reduction > 0
 

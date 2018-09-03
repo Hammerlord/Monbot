@@ -1,5 +1,5 @@
 from src.core.constants import DEFEND
-from src.elemental.status_effect.status_effect import StatusEffect
+from src.elemental.status_effect.status_effect import StatusEffect, EffectType
 
 
 class DefendEffect(StatusEffect):
@@ -10,6 +10,7 @@ class DefendEffect(StatusEffect):
     def __init__(self):
         super().__init__()
         self.icon = DEFEND
+        self.effect_type = EffectType.DEFEND
 
     @property
     def turn_duration(self) -> int:

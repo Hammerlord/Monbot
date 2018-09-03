@@ -77,6 +77,10 @@ class CombatElemental(Targetable):
         return self._status_manager.is_chilled
 
     @property
+    def is_defending(self) -> bool:
+        return self._status_manager.is_defending
+
+    @property
     def is_blocking(self) -> bool:
         return self._status_manager.is_blocking
 

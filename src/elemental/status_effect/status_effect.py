@@ -20,6 +20,7 @@ class EffectType(Enum):
     STAT_REDUCTION = 8
     STAT_INCREASE = 9
     HEAL_OVER_TIME = 10
+    DEFEND = 11
 
 
 class StatusEffect(Technique):
@@ -53,6 +54,7 @@ class StatusEffect(Technique):
         TODO there are probably buff categories
         """
         return (self.effect_type != EffectType.NONE and
+                self.effect_type != EffectType.DEFEND and
                 self.effect_type != EffectType.STAT_INCREASE and
                 self.effect_type != EffectType.HEAL_OVER_TIME)
 

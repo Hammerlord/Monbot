@@ -76,7 +76,7 @@ class ElementalAction(Action):
             recap += " It's super effective."
         elif self.damage_calculator.is_resisted:
             recap += f' The attack was resisted...'
-        if self.damage_blocked > 0:
+        if self.damage_blocked > 0 and self.target.is_defending:
             recap += f'\n{self.target.nickname} defended the attack!'
         return recap
 
