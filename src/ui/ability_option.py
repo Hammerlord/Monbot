@@ -45,18 +45,19 @@ class AbilityOptionView:
         element_icon = Elements.get_icon(ability.element)
         element = f"[{ability.category.name}{element_icon}]" if ability.element != Elements.NONE else ''
         return (f"{ability.icon} {ability.name} {element} "
-                f"[{self._get_mana_cost()}{MANA}]{self._get_power(ability)}")
+                f"[{self._mana_cost}{MANA}]{self._get_power(ability)}")
 
     def get_detail(self) -> str:
         ability = self.ability
         return '\n'.join([self.get_summary(), f"        {ability.description}"])  # Indent for description display.
 
-    def _get_mana_cost(self) -> str:
+    @property
+    def _mana_cost(self) -> str:
         mana_cost = self.ability.mana_cost
         if mana_cost > 0:
             return f"Cost: {mana_cost}"
         if mana_cost < 0:
-            return f"+{mana_cost}"
+            return f"+{-mana_cost}"
         return "0"
 
     @staticmethod
