@@ -17,9 +17,6 @@ class Player(Character):
         self.inventory.add_item(Peach(), 2)
         self.inventory.add_item(Revive(), 1)
 
-    def __eq__(self, other):
-        return self.team.average_elemental_level == other.team.average_elemental_level
-
     def __lt__(self, other):
         return self.team.average_elemental_level < other.team.average_elemental_level
 

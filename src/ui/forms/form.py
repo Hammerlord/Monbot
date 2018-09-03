@@ -79,7 +79,7 @@ class Form:
 
     async def _add_reactions(self, reactions: List[str]) -> None:
         for reaction in reactions:
-            if not await self._add_reaction(reaction) or self.player.primary_view != self:
+            if not await self._add_reaction(reaction):
                 return
 
     async def _add_reaction(self, reaction: str) -> bool:
@@ -131,6 +131,7 @@ class Form:
 
     async def _back(self) -> None:
         if self.previous_form:
+            self.previous_form.discord_message = self.discord_message
             await self.previous_form.show()
 
 

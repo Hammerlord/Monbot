@@ -51,16 +51,28 @@ class BattleView(Form):
     async def render(self) -> None:
         # TODO it is possible to have no available options, in which case, we need a skip.
         await self._clear_reactions()
+        await self._check_waiting()
         await self._render_main()
 
-    async def rerender(self) -> None:
+    async def rerender(self, discord_message: discord.message) -> None:
         """
         Show this screen again after making a move.
+        :param discord_message: This may have changed across forms (ie. if we cleared reactions by deleting
+        and reposting the message), so we reset it.
         """
+        self.discord_message = discord_message
         self.player.set_primary_view(self)
         await self._clear_reactions()
+        await self._check_waiting()
         await self._render_battle_recaps()
         await self._render_main()
+
+    async def _check_waiting(self) -> None:
+        while self.combat.is_awaiting_request(self.player):
+            player_names = ', '.join([player.nickname for player in self.combat.awaiting_team_owners()])
+            view = f"{self._current_battlefield} ```Waiting for {player_names}...```"
+            await self._display(view)
+            await asyncio.sleep(1.0)
 
     async def _render_main(self) -> None:
         if not self.combat.in_progress:
@@ -79,12 +91,6 @@ class BattleView(Form):
         """
         Render the turn(s) that occurred since we last updated the view.
         """
-        while self.combat.is_awaiting_team_owners():
-            player_names = ','.join([player.nickname for player in self.combat.awaiting_team_owners()])
-            view = '\n'.join([self._current_battlefield,
-                              f"```Waiting for {player_names}...```"])
-            await self._display(view)
-            await asyncio.sleep(1.0)
         turn_logs = self.logger.get_turn_logs(self.log_index)
         for turn_log in turn_logs:
             await self._render_events(turn_log)
@@ -142,7 +148,7 @@ class BattleView(Form):
             options.append(f"{MEAT} `Items`")
         if self.combat.allow_flee:
             options.append(f"{FLEE} `Flee`")
-        return ' '.join(options)
+        return '  '.join(options)
 
     def get_form_options(self) -> BattleViewOptions:
         return BattleViewOptions(self.bot,
@@ -182,8 +188,8 @@ class SelectElementalView(ValueForm):
         return self.combat_team.eligible_bench
 
     async def render(self) -> None:
-        await self._display(self.get_team())
         await self._clear_reactions()
+        await self._display(self.get_team())
         for button in self.buttons:
             await self._add_reaction(button.reaction)
         await self._add_reaction(BACK)
@@ -216,7 +222,7 @@ class SelectElementalView(ValueForm):
         await super().pick_option(reaction)
         if self.toggled:
             self.combat_team.attempt_switch(self._selected_value)
-            await self.previous_form.rerender()
+            await self.previous_form.rerender(self.discord_message)
 
 
 class SelectAbilityView(ValueForm):
@@ -274,7 +280,7 @@ class SelectAbilityView(ValueForm):
         await super().pick_option(reaction)
         if self.toggled:
             self.combat_team.select_ability(self._selected_value)
-            await self.previous_form.rerender()
+            await self.previous_form.rerender(self.discord_message)
 
 
 class SelectConsumableView(ValueForm):
@@ -399,7 +405,7 @@ class UseConsumableView(ValueForm):
         elemental = self._selected_value
         if self.toggled:
             self.combat_team.use_item(self.item, elemental)
-            await self.battle_view.rerender()
+            await self.battle_view.rerender(self.discord_message)
 
 
 class BattleResults(Form):

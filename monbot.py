@@ -77,7 +77,6 @@ async def battle(ctx):
     if not player.has_elemental:
         await view_manager.show_starter_selection(player)
     elif player.is_busy:
-        # TODO this doesn't work if the message got deleted.
         await player.primary_view.render()
     elif player.can_battle:
         combat_team = battle_manager.create_pve_combat(player)

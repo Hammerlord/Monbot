@@ -53,8 +53,14 @@ class Combat:
     def side_b_active(self) -> List[CombatElemental]:
         return [team.active_elemental for team in self.side_b if team.active_elemental]
 
-    def is_awaiting_team_owners(self) -> bool:
-        return len(self.action_requests) > 0
+    def is_awaiting_request(self, player) -> bool:
+        """
+        Are we waiting for somebody to make a move?
+        True if there is somebody who still needs to make a move, and that person is not the player arg.
+        This is for display purposes.
+        """
+        awaiting = self.awaiting_team_owners()
+        return len(awaiting) > 0 and player not in awaiting
 
     def awaiting_team_owners(self) -> List[Character]:
         request_teams = [request.team for request in self.action_requests]
