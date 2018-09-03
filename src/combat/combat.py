@@ -63,7 +63,7 @@ class Combat:
         return len(awaiting) > 0 and player not in awaiting
 
     def awaiting_team_owners(self) -> List[Character]:
-        return [team.owner for team in self.teams if self._is_request_needed(team)]
+        return [team.owner for team in self.teams if team.owner is not None and self._is_request_needed(team)]
 
     def join_battle(self, combat_team) -> bool:
         """
