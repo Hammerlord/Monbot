@@ -65,10 +65,10 @@ class Species(Stats):
         self._physical_def = 20 + self.growth_rate.physical_def
         self._magic_def = 20 + self.growth_rate.magic_def
         self._speed = 20 + self.growth_rate.speed
-        self._starting_mana = 15
-        self._max_mana = 50
-        self._mana_per_turn = 5
-        self._bench_mana_per_turn = 2
+        self._starting_mana = 5
+        self._max_mana = 20
+        self._mana_per_turn = 3
+        self._bench_mana_per_turn = 1
         self._defend_charges = 2
         self._base_damage = 10  # How much base damage this Species does at level 1.
         self._left_icon = ''  # This Elemental's emote, facing right.

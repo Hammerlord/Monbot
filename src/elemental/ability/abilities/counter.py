@@ -11,7 +11,7 @@ class Counter(Ability):
         self.element = Elements.EARTH
         self.category = Category.PHYSICAL
         self.attack_power = 10
-        self.mana_cost = 10
+        self.mana_cost = 6
         self.defend_cost = 0
         self.targeting = Target.ENEMY
 

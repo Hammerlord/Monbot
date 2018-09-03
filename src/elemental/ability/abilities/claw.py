@@ -15,6 +15,6 @@ class Claw(Ability):
         self.element = Elements.NONE
         self.category = Category.PHYSICAL
         self.attack_power = 5
-        self.mana_cost = -1
+        self.mana_cost = -2
         self.defend_cost = 0
         self.targeting = Target.ENEMY

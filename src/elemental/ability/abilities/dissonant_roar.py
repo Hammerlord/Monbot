@@ -15,7 +15,7 @@ class DissonantRoar(Ability):
         self.category = Category.MAGIC
         self.icon = DISSONANT_ROAR
         self.attack_power = 0
-        self.mana_cost = 10
+        self.mana_cost = 5
         self.defend_cost = 0
         self.targeting = Target.ENEMY
 

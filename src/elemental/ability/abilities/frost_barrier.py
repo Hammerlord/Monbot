@@ -12,7 +12,7 @@ class FrostBarrier(Ability):
                              "and attackers are Chilled.")
         self.icon = FROST_BARRIER
         self.targeting = Target.SELF
-        self.mana_cost = 10
+        self.mana_cost = 4
 
     @property
     def status_effect(self) -> FrostBarrierEffect:

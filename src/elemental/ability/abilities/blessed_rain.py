@@ -12,7 +12,7 @@ class BlessedRain(Ability):
         self.icon = ':cloud_rain:'
         self.element = Elements.WATER
         self.category = Category.MAGIC
-        self.mana_cost = 15
+        self.mana_cost = 8
         self.turn_priority = TurnPriority.NORMAL
         self.targeting = Target.SELF_TEAM
 

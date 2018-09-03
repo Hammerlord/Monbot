@@ -16,7 +16,7 @@ class RollingThunder(Ability):
         self.element = Elements.LIGHTNING
         self.icon = ROLLING_THUNDER
         self.category = Category.MAGIC
-        self.mana_cost = 15
+        self.mana_cost = 6
         self.turn_priority = TurnPriority.NORMAL
         self.targeting = Target.ENEMY_TEAM
 

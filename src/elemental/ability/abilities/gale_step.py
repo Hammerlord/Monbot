@@ -13,7 +13,7 @@ class GaleStep(Ability):
         self.icon = GALESTEP
         self.category = Category.NONE
         self.attack_power = 0
-        self.mana_cost = 10
+        self.mana_cost = 4
         self.defend_cost = 0
         self.turn_priority = TurnPriority.NORMAL
         self.targeting = Target.SELF

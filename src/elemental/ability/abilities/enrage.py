@@ -13,7 +13,7 @@ class Enrage(Ability):
         self._description = EnrageEffect().description
         self.turn_priority = TurnPriority.NORMAL
         self.icon = ENRAGE
-        self.mana_cost = 15
+        self.mana_cost = 7
         self.targeting = Target.SELF
 
     @property

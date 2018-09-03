@@ -14,6 +14,6 @@ class Slam(Ability):
         self.element = Elements.NONE
         self.category = Category.PHYSICAL
         self.attack_power = 7
-        self.mana_cost = 0
+        self.mana_cost = -1
         self.defend_cost = 0
         self.targeting = Target.ENEMY

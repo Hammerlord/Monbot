@@ -12,10 +12,10 @@ class WindrushEffect(StatusEffect):
         self.category = Category.MAGIC
         self.element = Elements.WIND
         self._description = (f"Increases mana gained by your active elemental "
-                             f"by 3 per turn for {self.turn_duration} turns.")
+                             f"by 2 per turn for {self.turn_duration} turns.")
 
     def on_turn_start(self) -> True:
-        self.target.update_mana(3)
+        self.target.update_mana(2)
         return True
 
     @property

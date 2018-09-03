@@ -11,7 +11,7 @@ class Charge(Ability):
         self.element = Elements.NONE
         self.category = Category.PHYSICAL
         self.attack_power = 10
-        self.mana_cost = 10
+        self.mana_cost = 5
         self.defend_cost = 0
         self.turn_priority = TurnPriority.HIGH
         self.targeting = Target.ENEMY

@@ -15,7 +15,7 @@ class Fireball(Ability):
         self.element = Elements.FIRE
         self.category = Category.MAGIC
         self.attack_power = 10
-        self.mana_cost = 10
+        self.mana_cost = 6
         self.defend_cost = 0
         self.targeting = Target.ENEMY
 

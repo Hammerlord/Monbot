@@ -11,6 +11,6 @@ class BlackPinion(Ability):
         self.element = Elements.DARK
         self.category = Category.MAGIC
         self.attack_power = 13
-        self.mana_cost = 15
+        self.mana_cost = 7
         self.defend_cost = 0
         self.targeting = Target.ENEMY

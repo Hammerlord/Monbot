@@ -12,7 +12,7 @@ class Cyclone(Ability):
         self.icon = CYCLONE
         self.category = Category.PHYSICAL
         self.attack_power = 9
-        self.mana_cost = 12
+        self.mana_cost = 5
         self.defend_cost = 0
         self.targeting = Target.ENEMY
 

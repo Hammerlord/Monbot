@@ -12,5 +12,5 @@ class Recharge(Ability):
         self.icon = RECHARGE
         self.element = Elements.LIGHTNING
         self.targeting = Target.SELF
-        self.mana_cost = 12
+        self.mana_cost = 5
         self.actor_recovery = 0.4

@@ -11,7 +11,7 @@ class Rend(Ability):
         self.element = Elements.WIND
         self.category = Category.PHYSICAL
         self.attack_power = 2
-        self.mana_cost = 5
+        self.mana_cost = 3
         self.defend_cost = 0
         self.targeting = Target.ENEMY_CLEAVE
 

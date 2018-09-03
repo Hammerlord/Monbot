@@ -11,7 +11,7 @@ class ShiningLaser(Ability):
         super().__init__()
         self.name = 'Shining Laser'
         self.element = Elements.LIGHT
-        self.mana_cost = 15
+        self.mana_cost = 7
         self.attack_power = 20
         self.category = Category.MAGIC
 

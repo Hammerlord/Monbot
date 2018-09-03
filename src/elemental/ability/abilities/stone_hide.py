@@ -11,7 +11,7 @@ class Stonehide(Ability):
         self._description = f"Reduces damage taken by the next 4 attacks or harmful effects by 30%."
         self.icon = SHELL
         self.targeting = Target.SELF
-        self.mana_cost = 10
+        self.mana_cost = 4
 
     @property
     def status_effect(self) -> StonehideEffect:

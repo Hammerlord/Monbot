@@ -12,7 +12,7 @@ class BloodFangs(Ability):
         self.category = Category.PHYSICAL
         self.attack_power = 8
         self.actor_recovery = 0.1
-        self.mana_cost = 15
+        self.mana_cost = 7
         self.defend_cost = 0
         self.targeting = Target.ENEMY
 

@@ -8,11 +8,11 @@ class Windrush(Ability):
         super().__init__()
         self.name = "Windrush"
         self._description = ("Increases mana gained by your active elemental by "
-                             f"3 per turn for {self.status_effect.turn_duration} turns.")
+                             f"2 per turn for {self.status_effect.turn_duration} turns.")
         self.icon = ':wind_blowing_face:'
         self.element = Elements.WIND
         self.category = Category.MAGIC
-        self.mana_cost = 5
+        self.mana_cost = 4
         self.turn_priority = TurnPriority.NORMAL
         self.targeting = Target.SELF_TEAM
 
