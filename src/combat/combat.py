@@ -170,12 +170,13 @@ class Combat:
                     self.prepare_new_round()  # Currently, logging needs the empty []
                     return
         self._end_round()
+        self._check_kos(kos)
+        self._check_combat_end()
 
     def _end_round(self):
         self.num_rounds += 1
         for team in self.teams:
             team.end_round()
-        self._check_combat_end()
         self.prepare_new_round()
 
     def _check_kos(self, already_checked: List[CombatElemental]) -> None:
