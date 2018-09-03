@@ -165,3 +165,29 @@ class Action:
     @property
     def damage_blocked(self) -> int:
         return 0
+
+
+class ActionLogger:
+    """
+    A collection of Actions taken across a match.
+    """
+
+    def __init__(self):
+        self.logs = [[]]  # List[List[Action]]
+
+    def add_log(self, action: Action) -> None:
+        # Add Action to the most recent round of turns:
+        self.logs[-1].append(action)
+
+    def prepare_new_round(self) -> None:
+        self.logs.append([])
+
+    @property
+    def previous_round_actions(self) -> List[Action]:
+        """
+        Get all the Actions from the previous round of turns.
+        prepare_new_round() adds an empty list, so we want to get the most recent non-empty one.
+        """
+        for action_group in reversed(self.logs):
+            if len(action_group) > 0:
+                return action_group

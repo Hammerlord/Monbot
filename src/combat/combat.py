@@ -3,7 +3,7 @@ from random import random
 from typing import List
 
 from src.character.character import Character
-from src.combat.actions.action import EventLogger
+from src.combat.actions.action import EventLogger, ActionLogger
 from src.combat.actions.combat_actions import Action, Switch
 from src.combat.combat_ai import CombatAI
 from src.core.targetable_interface import Targetable
@@ -32,7 +32,7 @@ class Combat:
         self.allow_flee = allow_flee
         self.allow_exp_gain = allow_exp_gain
         self.action_requests = []  # List[ActionRequest]
-        self.action_log = [[]]  # List[List[Action]]  Actions made this battle, in order, grouped by turn rounds.
+        self.action_logger = ActionLogger()
         self.turn_logger = EventLogger(self)
         self.num_rounds = 0
         self.winning_side = None  # List[CombatTeam] The teams who won.
@@ -52,6 +52,10 @@ class Combat:
     @property
     def side_b_active(self) -> List[CombatElemental]:
         return [team.active_elemental for team in self.side_b if team.active_elemental]
+
+    @property
+    def previous_round_actions(self) -> List[Action]:
+        return self.action_logger.previous_round_actions
 
     def is_awaiting_request(self, player) -> bool:
         """
@@ -167,17 +171,12 @@ class Combat:
                 self._resolve_request(action)
                 self._check_kos(kos)
                 if self._check_combat_end():
-                    self.prepare_new_round()  # Currently, logging needs the empty []
                     return
-        self._end_round()
-        self._check_kos(kos)
-        self._check_combat_end()
-
-    def _end_round(self):
-        self.num_rounds += 1
         for team in self.teams:
             team.end_round()
-        self.prepare_new_round()
+            self._check_kos(kos)
+        if not self._check_combat_end():
+            self._prepare_new_round()
 
     def _check_kos(self, already_checked: List[CombatElemental]) -> None:
         """
@@ -204,19 +203,11 @@ class Combat:
     def _resolve_request(self, action: Action) -> None:
         if action.can_execute:
             action.execute()
-            self._add_log(action)
+            self.action_logger.add_log(action)
 
-    def _add_log(self, action: Action) -> None:
-        # Add Action to the most recent round of turns:
-        self.action_log[-1].append(action)
-
-    def prepare_new_round(self) -> None:
-        """
-        Add an empty list where the next turn's Actions will be logged. We always add one as the logger looks
-        at the second last entry.
-        Then, reset action_requests for the next round of moves.
-        """
-        self.action_log.append([])
+    def _prepare_new_round(self) -> None:
+        self.num_rounds += 1
+        self.action_logger.prepare_new_round()
         self.action_requests = []
         self.turn_logger.prepare_new_round()
         print([log for log in self.turn_logger.logs[-2]])
@@ -231,15 +222,6 @@ class Combat:
             if team.is_npc:
                 # Automatically make a move for NPC teams.
                 CombatAI(team, self).pick_move()
-
-    @property
-    def previous_round_actions(self) -> List[Action]:
-        """
-        Get all the Actions from the previous round of turns.
-        prepare_new_round() always creates an empty new log [] by the time this is called,
-        so we want to retrieve the second last log.
-        """
-        return self.action_log[-2]
 
     def _get_priority_order_requests(self) -> List[List[Action]]:
         """
@@ -264,10 +246,10 @@ class Combat:
             self.winning_side = self.side_a
             self.losing_side = self.side_b
         if did_side_a_lose or did_side_b_lose:
-            self.end_combat()
+            self._end_combat()
             return True
 
-    def end_combat(self) -> None:
+    def _end_combat(self) -> None:
         self.in_progress = False
         self._grant_loot()
         for team in self.teams:
