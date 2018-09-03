@@ -175,6 +175,7 @@ class Combat:
         self.num_rounds += 1
         for team in self.teams:
             team.end_round()
+        self._check_combat_end()
         self.prepare_new_round()
 
     def _check_kos(self, already_checked: List[CombatElemental]) -> None:
