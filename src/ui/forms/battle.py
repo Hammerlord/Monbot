@@ -68,10 +68,12 @@ class BattleView(Form):
         await self._render_main()
 
     async def _check_waiting(self) -> None:
+        previous_names = None
         while self.combat.is_awaiting_request(self.player):
             player_names = ', '.join([player.nickname for player in self.combat.awaiting_team_owners()])
-            view = f"{self._current_battlefield} ```Waiting for {player_names}...```"
-            await self._display(view)
+            if player_names != previous_names:
+                view = f"{self._current_battlefield} ```Waiting for {player_names}...```"
+                await self._display(view)
             await asyncio.sleep(1.0)
 
     async def _render_main(self) -> None:
