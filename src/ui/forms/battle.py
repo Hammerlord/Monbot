@@ -370,8 +370,8 @@ class UseConsumableView(ValueForm):
         return ValueForm.enumerated_buttons(self.values)
 
     async def render(self) -> None:
-        await self._display(self._view)
         await self._clear_reactions()
+        await self._display(self._view)
         for button in self.buttons:
             await self._add_reaction(button.reaction)
         await self._add_reaction(BACK)
@@ -423,9 +423,10 @@ class BattleResults(Form):
         self.combat = options.combat_team.combat
 
     async def render(self) -> None:
-        await self._display(self._view)
         await self._clear_reactions()
+        await self._display(self._view)
         if self.player.can_battle:
+            # TODO it shouldn't show this if it was PVP.
             await self._add_reaction(FIGHT)
         await self._add_reaction(STATUS)
 
