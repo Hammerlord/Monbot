@@ -63,8 +63,7 @@ class Combat:
         return len(awaiting) > 0 and player not in awaiting
 
     def awaiting_team_owners(self) -> List[Character]:
-        request_teams = [request.team for request in self.action_requests]
-        return [team.owner for team in self.teams if team not in request_teams]
+        return [team.owner for team in self.teams if self._is_request_needed(team)]
 
     def join_battle(self, combat_team) -> bool:
         """
@@ -95,7 +94,7 @@ class Combat:
         When an elemental has been knocked out, their teams receive a grace turn where
         a new elemental can be sent out without the opponent making an attack against it.
         """
-        return len(self.get_knockouts()) > 0
+        return len(self._get_knockouts()) > 0
 
     def request_action(self, request: Action) -> None:
         """
@@ -105,7 +104,7 @@ class Combat:
         """
         if self.is_awaiting_knockout_replacements():
             self._add_knockout_replacement(request)
-            if len(self.action_requests) == len(self.get_knockouts()):
+            if len(self.action_requests) == len(self._get_knockouts()):
                 self._resolve_requests()
         else:
             self.action_requests.append(request)
@@ -152,7 +151,7 @@ class Combat:
         return self.get_enemy_side(team)[0].active_elemental
 
     def _add_knockout_replacement(self, request: Action) -> None:
-        if isinstance(request, Switch) and request.team in self.get_knockouts():
+        if isinstance(request, Switch) and request.team in self._get_knockouts():
             self.action_requests.append(request)
 
     def _resolve_requests(self) -> None:
@@ -167,7 +166,7 @@ class Combat:
             for action in action_group:
                 self._resolve_request(action)
                 self._check_kos(kos)
-                if self.check_combat_end():
+                if self._check_combat_end():
                     self.prepare_new_round()  # Currently, logging needs the empty []
                     return
         self._end_round()
@@ -251,7 +250,7 @@ class Combat:
             action_groups.append(list(group))
         return action_groups
 
-    def check_combat_end(self) -> bool:
+    def _check_combat_end(self) -> bool:
         did_side_a_lose = all([team.is_all_knocked_out for team in self.side_a])
         did_side_b_lose = all([team.is_all_knocked_out for team in self.side_b])
         if did_side_a_lose and did_side_b_lose:
@@ -307,12 +306,22 @@ class Combat:
                 gold += team.owner.level
         return gold
 
-    def get_knockouts(self):
+    def _get_knockouts(self):
         """
         :return: List[CombatTeam] Return teams whose active Elemental was knocked out last turn.
         We then wait for them to send out a new one.
         """
         return [team for team in self.teams if team.active_elemental and team.active_elemental.is_knocked_out]
+
+    def _is_request_needed(self, team) -> bool:
+        """
+        :param team: CombatTeam
+        :return: True if we're waiting on this team to make a move.
+        """
+        team_in_request = next((request.team for request in self.action_requests if request == team), None)
+        if self.is_awaiting_knockout_replacements():
+            return team.active_elemental and team.active_elemental.is_knocked_out and team_in_request is None
+        return team_in_request is None
 
     def __can_join_battle(self, combat_team) -> bool:
         """

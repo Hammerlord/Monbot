@@ -39,7 +39,7 @@ class Battlefield:
             f"Lv. {elemental.level} {self._get_status_effects(elemental)}\n"
             f"          `{HealthBarView.from_elemental(elemental)} ({elemental.current_hp}/{elemental.max_hp})\n`"
             f"{MANA}`{elemental.current_mana}/{elemental.max_mana}`   {DEFEND} `{elemental.defend_charges}`\n"
-            f"{self._get_team_status_effects(elemental)}\n")
+            f"{self.get_team_indicators(elemental)}  {self._get_team_status_effects(elemental)}\n")
 
     @staticmethod
     def get_team_indicators(elemental) -> str:

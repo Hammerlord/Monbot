@@ -121,8 +121,8 @@ class StatusDetailView(Form):
         return self.is_setting_note or self.is_setting_nickname
 
     async def render(self) -> None:
-        await self._display(self._view)
         await self._clear_reactions()
+        await self._display(self._view)
         await self._add_reactions([ABILITIES, ATTRIBUTES, NICKNAME, NOTE, BACK])
 
     async def pick_option(self, reaction: str) -> None:
@@ -230,8 +230,8 @@ class AbilitiesView(ValueForm):
         return self.ordered_buttons(self.values)
 
     async def render(self) -> None:
-        await self._display(self._view)
         await self._clear_reactions()
+        await self._display(self._view)
         if self.elemental.eligible_abilities:
             for button in self.buttons:
                 await self._add_reaction(button.reaction)
@@ -402,8 +402,8 @@ class AttributesView(ValueForm):
         return self.elemental.attributes
 
     async def render(self) -> None:
-        await self._display(self._view)
         await self._clear_reactions()
+        await self._display(self._view)
         selected_attribute = self._selected_value
         if selected_attribute:
             for reaction in [ADD, UP, CANCEL]:
