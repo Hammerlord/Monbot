@@ -9,7 +9,7 @@ class DissonantRoar(Ability):
     def __init__(self):
         super().__init__()
         self.name = "Dissonant Roar"
-        self._description = (f"Greatly reduces the opponent's magic attack "
+        self._description = (f"Reduce the opponent's magic attack by 2 stages "
                              f"for {self.status_effect.turn_duration} turns.")
         self.element = Elements.DARK
         self.category = Category.MAGIC

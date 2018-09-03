@@ -6,7 +6,7 @@ class EnrageEffect(StatusEffect):
     def __init__(self):
         super().__init__()
         self.name = "Enraged!"
-        self._description = f"Gain physical and magic attack every turn for {self.turn_duration} turns."
+        self._description = f"+1 stage of physical and magic attack every turn for {self.turn_duration} turns."
         self.icon = ENRAGE
         self.uptime = 0  # The number of turns this effect has been up.
 
@@ -14,18 +14,13 @@ class EnrageEffect(StatusEffect):
     def turn_duration(self):
         return 3
 
-    def on_turn_end(self) -> bool:
+    def on_turn_end(self):
         if self.turns_remaining > 0:
             self.uptime += 1
-            return True
 
     def on_effect_start(self):
         self.uptime = 0
         super().on_effect_start()
-
-    @property
-    def trigger_recap(self) -> str:
-        return f"{self.target.nickname}'s rage increases."
 
     @property
     def fade_recap(self) -> str:

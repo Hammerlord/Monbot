@@ -7,7 +7,6 @@ class Thunderstruck(StatusEffect):
 
     def __init__(self):
         super().__init__()
-        self._description = f"Reduces magic defence by 1 stage until the end of the next round."
         self.name = "Thunderstruck"
         self.icon = STORMBOLT
         self.element = Elements.LIGHTNING

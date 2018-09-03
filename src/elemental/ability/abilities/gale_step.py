@@ -8,7 +8,7 @@ class GaleStep(Ability):
     def __init__(self):
         super().__init__()
         self.name = "Gale Step"
-        self._description = f"Increase speed significantly for {self.status_effect.turn_duration} turns."
+        self._description = f"Increase speed by 2 stages for {self.status_effect.turn_duration} turns."
         self.element = Elements.WIND
         self.icon = GALESTEP
         self.category = Category.NONE

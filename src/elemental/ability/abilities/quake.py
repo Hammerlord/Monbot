@@ -8,7 +8,7 @@ class Quake(Ability):
     def __init__(self):
         super().__init__()
         self.name = "Quake"
-        self._description = "Quake the earth, reducing enemy speed by 1 stage for 3 turns."
+        self._description = f"Reduces enemy speed by 1 stage for {self.status_effect.turn_duration} turns."
         self.element = Elements.EARTH
         self.category = Category.MAGIC
         self.attack_power = 13

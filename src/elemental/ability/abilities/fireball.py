@@ -11,12 +11,11 @@ class Fireball(Ability):
     def __init__(self):
         super().__init__()
         self.name = "Fireball"
-        self._description = "Launch a fireball. +30% damage to burning enemies."
+        self._description = "+30% damage to a burning enemy."
         self.element = Elements.FIRE
         self.category = Category.MAGIC
         self.attack_power = 10
         self.mana_cost = 6
-        self.defend_cost = 0
         self.targeting = Target.ENEMY
 
     @staticmethod

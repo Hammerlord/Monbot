@@ -6,13 +6,11 @@ class Charge(Ability):
     def __init__(self):
         super().__init__()
         self.name = "Charge"
-        self._description = ("Charge before the opponent can attack! "
-                             "175% damage on targets at full health.")
+        self._description = "Attack first. +75% damage on a full HP target."
         self.element = Elements.NONE
         self.category = Category.PHYSICAL
         self.attack_power = 10
         self.mana_cost = 5
-        self.defend_cost = 0
         self.turn_priority = TurnPriority.HIGH
         self.targeting = Target.ENEMY
 

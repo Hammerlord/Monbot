@@ -7,7 +7,6 @@ class HowlingDark(Ability):
     def __init__(self):
         super().__init__()
         self.name = "Howling Dark"
-        self._description = "Unleash a torrent of dark energy at opponents."
         self.element = Elements.DARK
         self.category = Category.MAGIC
         self.attack_power = 20

@@ -13,7 +13,6 @@ class Cyclone(Ability):
         self.category = Category.PHYSICAL
         self.attack_power = 9
         self.mana_cost = 5
-        self.defend_cost = 0
         self.targeting = Target.ENEMY
 
     @staticmethod

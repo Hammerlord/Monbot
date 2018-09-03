@@ -8,8 +8,8 @@ class FrostBarrier(Ability):
     def __init__(self):
         super().__init__()
         self.name = "Frost Barrier"
-        self._description = (f"For {self.status_effect.turn_duration} turns, reduces damage taken by 10%, "
-                             "and attackers are Chilled.")
+        self._description = (f"Reduce damage taken by 10% and chill attackers "
+                             f"for {self.status_effect.turn_duration} turns.")
         self.icon = FROST_BARRIER
         self.targeting = Target.SELF
         self.mana_cost = 4

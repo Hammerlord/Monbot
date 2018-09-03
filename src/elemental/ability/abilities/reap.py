@@ -6,7 +6,7 @@ class Reap(Ability):
     def __init__(self):
         super().__init__()
         self.name = "Reap"
-        self._description = "Damage increased by 25% for each debuff on the enemy, up to 4."
+        self._description = "+25% damage for each negative effect on the enemy."
         self.element = Elements.DARK
         self.category = Category.PHYSICAL
         self.attack_power = 6

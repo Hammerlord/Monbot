@@ -7,7 +7,7 @@ class Ignite(Ability):
     def __init__(self):
         super().__init__()
         self.name = "Ignite"
-        self._description = f"Set enemies on fire for {self.status_effect.turn_duration} turns."
+        self._description = f"Inflicts a burn that lasts {self.status_effect.turn_duration} turns."
         self.element = Elements.FIRE
         self.category = Category.MAGIC
         self.attack_power = 5

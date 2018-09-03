@@ -70,6 +70,7 @@ DISSONANT_ROAR = '😱'
 FROST_BARRIER = '☃'
 GALESTEP = '💨'
 GEYSER = '🌊'
+WINDRUSH = '🌬'
 
 PEACH = '🍑'
 HAMMER = '🔨'
