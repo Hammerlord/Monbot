@@ -1,3 +1,4 @@
+from src.elemental.ability.abilities.aurora import Aurora
 from src.elemental.ability.abilities.black_pinion import BlackPinion
 from src.elemental.ability.abilities.blessed_rain import BlessedRain
 from src.elemental.ability.abilities.blood_fangs import BloodFangs
@@ -16,6 +17,7 @@ from src.elemental.ability.abilities.geyser import Geyser
 from src.elemental.ability.abilities.howling_dark import HowlingDark
 from src.elemental.ability.abilities.icy_snap import IcySnap
 from src.elemental.ability.abilities.ignite import Ignite
+from src.elemental.ability.abilities.inferno import Inferno
 from src.elemental.ability.abilities.quake import Quake
 from src.elemental.ability.abilities.rampage import Rampage
 from src.elemental.ability.abilities.razor_fangs import RazorFangs
@@ -63,6 +65,10 @@ class LearnableAbilities:
     @staticmethod
     def fireball(level=0) -> LearnableAbility:
         return LearnableAbility(Fireball(), level)
+
+    @staticmethod
+    def inferno(level=0) -> LearnableAbility:
+        return LearnableAbility(Inferno(), level)
 
     @staticmethod
     def shining_laser(level=0) -> LearnableAbility:
@@ -155,3 +161,7 @@ class LearnableAbilities:
     @staticmethod
     def stonehide(level=0) -> LearnableAbility:
         return LearnableAbility(Stonehide(), level)
+
+    @staticmethod
+    def aurora(level=0) -> LearnableAbility:
+        return LearnableAbility(Aurora(), level)

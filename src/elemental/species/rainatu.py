@@ -25,7 +25,8 @@ class Rainatu(Species):
                                      LearnableAbilities.stormbolt(4),
                                      LearnableAbilities.windrush(8),
                                      LearnableAbilities.recharge(12),
-                                     LearnableAbilities.gale_step(16)]
+                                     LearnableAbilities.gale_step(16),
+                                     LearnableAbilities.aurora(25)]
 
     @property
     def growth_rate(self) -> 'GrowthRate':

@@ -63,6 +63,7 @@ RECHARGE = '🎇'
 STORMBOLT = '〽'
 SHELL = '🐚'
 FREEZE = '⏹'
+STUN = '💫'
 
 CYCLONE = '🌪'
 DELUGE = '⚓'

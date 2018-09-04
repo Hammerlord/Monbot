@@ -22,7 +22,8 @@ class Sithel(Species):
                                      LearnableAbilities.enrage(),
                                      LearnableAbilities.fireball(4),
                                      LearnableAbilities.ignite(8),
-                                     LearnableAbilities.gale_step(15)]
+                                     LearnableAbilities.gale_step(15),
+                                     LearnableAbilities.inferno(25)]
 
     @property
     def growth_rate(self) -> 'GrowthRate':
