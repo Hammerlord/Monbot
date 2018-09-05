@@ -12,7 +12,6 @@ class Ignite(Ability):
         self.category = Category.MAGIC
         self.attack_power = 5
         self.mana_cost = 3
-        self.defend_cost = 0
         self.turn_priority = TurnPriority.NORMAL
         self.targeting = Target.ENEMY_AOE
 

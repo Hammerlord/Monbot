@@ -163,13 +163,12 @@ class Combat:
         When all players have made an action request, resolve the order and execution of those requests.
         """
         kos = []  # List[CombatElemental]: elementals knocked out this turn
+        recently_active = [team.active_elemental for team in self.teams if team.active_elemental is not None]
         for action_group in self._get_priority_order_requests():
-            # If multiple Actions share the same TurnPriority,
-            # next determine order by the speed of the elemental. TODO same speed should roll.
-            action_group = sorted(action_group, key=lambda action: action.speed, reverse=True)
-            for action in action_group:
+            for action in self._sort_fastest(action_group):
                 self._resolve_request(action)
                 self._check_kos(kos)
+                self._check_opponent_change(recently_active)
                 if self._check_combat_end():
                     return
         for team in self.teams:
@@ -177,6 +176,19 @@ class Combat:
             self._check_kos(kos)
         if not self._check_combat_end():
             self._prepare_new_round()
+
+    @staticmethod
+    def _sort_fastest(actions: List[Action]) -> List[Action]:
+        return sorted(actions, key=lambda action: action.speed, reverse=True)
+
+    def _check_opponent_change(self, recently_active: List[CombatElemental]) -> None:
+        if len(recently_active) == 0:
+            return
+        for team in self.teams:
+            if team.active_elemental not in recently_active or team.active_elemental.is_knocked_out:
+                old_active = next(active for active in recently_active if active.team == team)
+                for opposing_team in self.get_enemy_side(team):
+                    opposing_team.active_elemental.on_opponent_changed(old_active)
 
     def _check_kos(self, already_checked: List[CombatElemental]) -> None:
         """

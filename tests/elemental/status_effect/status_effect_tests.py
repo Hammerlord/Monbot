@@ -12,6 +12,7 @@ from src.elemental.status_effect.status_effects.defend import DefendEffect
 from src.elemental.status_effect.status_effects.enrage import EnrageEffect
 from src.elemental.status_effect.status_effects.freeze import Freeze
 from src.elemental.status_effect.status_effects.frost_barrier import FrostBarrierEffect
+from src.elemental.status_effect.status_effects.provoke import ProvokeEffect
 from src.elemental.status_effect.status_effects.rolling_thunder import RollingThunderEffect
 from src.elemental.status_effect.status_effects.stonehide import StonehideEffect
 from src.elemental.status_effect.status_effects.wind_rush import WindrushEffect
@@ -287,3 +288,19 @@ class StatusEffectTests(unittest.TestCase):
         elemental.set_channeling(Rampage())
         elemental.add_status_effect(Freeze())
         self.assertIsNone(elemental.action_queued, error)
+
+    def test_switch_prevention(self):
+        error = "Elemental who has been provoked wasn't flagged as such"
+        elemental = CombatElementalBuilder().build()
+        elemental.add_status_effect(ProvokeEffect())
+        self.assertFalse(elemental.can_switch, error)
+
+    def test_provoke_applier_switch(self):
+        error = "Provoke didn't clear on opponent changed"
+        applier = CombatElementalBuilder().build()
+        provoke = ProvokeEffect()
+        provoke.applier = applier
+        elemental = CombatElementalBuilder().build()
+        elemental.add_status_effect(provoke)
+        elemental.on_opponent_changed(applier)
+        self.assertEqual(0, elemental.num_status_effects, error)

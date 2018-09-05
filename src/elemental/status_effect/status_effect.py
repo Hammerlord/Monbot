@@ -41,6 +41,7 @@ class StatusEffect(Technique):
         self.rounds_remaining = -1
         self.is_dispellable = True
         self.ends_on_switch = True
+        self.ends_on_applier_changed = False
         self.max_stacks = 1  # Ie. can we apply multiple of this effect?
         self.current_stacks = 1
         self.can_add_instances = False  # Ie. can we apply multiple instances of this effect?

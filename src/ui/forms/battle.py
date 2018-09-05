@@ -133,7 +133,7 @@ class BattleView(Form):
         if not self.combat.in_progress:
             return
         await self._add_reaction(ABILITIES)
-        if self.combat_team.eligible_bench:
+        if self.combat_team.can_switch:
             await self._add_reaction(SWITCH)
         if self.combat.allow_items and self.player.consumables:
             await self._add_reaction(MEAT)
@@ -144,7 +144,7 @@ class BattleView(Form):
         if not self.combat.in_progress:
             return ''
         options = [f"{ABILITIES} `Abilities`"]
-        if self.combat_team.eligible_bench:
+        if self.combat_team.can_switch:
             options.append(f"{SWITCH} `Switch`")
         if self.combat.allow_items and self.player.consumables:
             options.append(f"{MEAT} `Items`")

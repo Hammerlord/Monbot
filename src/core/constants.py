@@ -64,6 +64,7 @@ STORMBOLT = '〽'
 SHELL = '🐚'
 FREEZE = '⏹'
 STUN = '💫'
+PROVOKE = '👎'
 
 CYCLONE = '🌪'
 DELUGE = '⚓'

@@ -199,6 +199,14 @@ class StatusManager:
             self.__check_effect_end(effect)
         self.__recalculate_effects()
 
+    def on_opponent_changed(self, old_opponent) -> None:
+        """
+        :param old_opponent: CombatElemental
+        """
+        for effect in self._status_effects:
+            if effect.ends_on_applier_changed and effect.applier == old_opponent:
+                self._status_effects.remove(effect)
+
     def on_switch_out(self) -> None:
         """
         Presently, there are no on_switch_out effects.

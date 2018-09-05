@@ -295,6 +295,9 @@ class CombatElemental(Targetable):
         self.update_mana(-ability.mana_cost)
         self.update_defend_charges(-ability.defend_cost)
 
+    def on_opponent_changed(self, opponent: 'CombatElemental') -> None:
+        self._status_manager.on_opponent_changed(opponent)
+
     def on_switch_out(self) -> None:
         self._status_manager.on_switch_out()
 
@@ -364,6 +367,7 @@ class CombatElemental(Targetable):
         A list of which elementals have or have not been knocked out on the team, as booleans.
         """
         return [not elemental.is_knocked_out for elemental in self.team.elementals]
+
 
 class CombatElementalLog:
     """

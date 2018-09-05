@@ -92,7 +92,9 @@ class CombatTeam(Targetable):
 
     @property
     def can_switch(self) -> bool:
-        return len(self.eligible_bench) > 0
+        if not self.active_elemental:
+            return len(self.eligible_bench) > 0
+        return self.active_elemental.can_switch and len(self.eligible_bench) > 0
 
     @property
     def eligible_bench(self) -> List[CombatElemental]:
