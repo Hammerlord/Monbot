@@ -22,19 +22,19 @@ class Character:
         self._location = 0  # TODO
         self._team = Team(self)
         self._is_npc = False
-        self.__elementals = []
+        self._elementals = []
         self._inventory = Inventory()
 
     @property
     def num_elementals(self) -> int:
-        return len(self.__elementals)
+        return len(self._elementals)
 
     @property
     def elementals(self) -> List[Elemental]:
         """
         :return: All elementals that this Character owns, including those not on their current team.
         """
-        return self.__elementals.copy()
+        return self._elementals.copy()
 
     @property
     def nickname(self) -> str:
@@ -108,7 +108,7 @@ class Character:
     def add_elemental(self, elemental: Elemental) -> None:
         elemental.owner = self
         self._team.add_elemental(elemental)
-        self.__elementals.append(elemental)
+        self._elementals.append(elemental)
 
     def _check_level_up(self) -> None:
         while self._current_exp >= self._exp_to_level:

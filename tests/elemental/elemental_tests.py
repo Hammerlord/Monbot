@@ -51,10 +51,7 @@ class ElementalTests(unittest.TestCase):
             .build()
 
     def get_preset_manager(self) -> AttributeManager:
-        manager = AttributeFactory.create_empty_manager()
-        AttributeFactory.add_ferocity(manager)
-        AttributeFactory.add_attunement(manager)
-        AttributeFactory.add_resolve(manager)
+        manager = AttributeFactory.create_from_attributes(['Ferocity', 'Attunement', 'Resolve'])
         return manager
 
     def level_up(self, elemental) -> None:

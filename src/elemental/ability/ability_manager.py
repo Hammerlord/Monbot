@@ -52,6 +52,14 @@ class AbilityManager:
             if self._can_learn(learnable_ability):
                 self._learn_ability(learnable_ability)
 
+    def set_abilities_from_names(self, ability_names: List[str]) -> None:
+        name_map = {}
+        for ability in self.eligible_abilities:
+            name_map[ability.name] = ability
+        self._active_abilities = []
+        for name in ability_names:
+            self._active_abilities.append(name_map[name])
+
     def set_abilities(self, abilities: List[Ability]) -> None:
         """
         Be lenient when setting excessive abilities (however that may happen) but reject sets that aren't full.

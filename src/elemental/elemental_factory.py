@@ -1,6 +1,7 @@
 import random
 from typing import List
 
+from src.data.resources import ElementalResource
 from src.elemental.attribute.attribute_factory import AttributeFactory
 from src.elemental.elemental import Elemental
 from src.elemental.species.felix import Felix
@@ -36,6 +37,10 @@ class ElementalInitializer:
         Tophu()
     ]
 
+    NAME_MAP = {}
+    for species in ALL_SPECIES:
+        NAME_MAP[species.name] = species
+
     @staticmethod
     def make(species, level=1) -> Elemental:
         """
@@ -43,9 +48,19 @@ class ElementalInitializer:
         :param level: How much to level up the Elemental
         """
         elemental = Elemental(species,
-                              AttributeFactory.create_manager())
+                              AttributeFactory.create_random())
         elemental.level_to(level)
         return elemental
+
+    @staticmethod
+    def from_server(resource: ElementalResource) -> Elemental:
+        species_name = resource.species
+        species = ElementalInitializer.NAME_MAP[species_name]
+        elemental = Elemental(species,
+                              AttributeFactory.create_from_resources(resource.attributes),
+                              resource.id,
+                              )
+        return elemental.load_from_resource(resource)
 
     @staticmethod
     def make_random(level=1, excluding: List[Elemental] = None) -> Elemental:

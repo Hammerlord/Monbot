@@ -1,5 +1,6 @@
 from typing import List
 
+from src.data.resources import AttributesResource
 from src.elemental.attribute.attribute import Attribute
 
 
@@ -8,6 +9,8 @@ class AttributeManager:
     Elementals come with three random Attributes. Points can be invested into these Attributes,
     which increase the Elemental's stats and grant other bonuses.
     """
+
+    MAX_NUM_ATTRIBUTES = 3
 
     def __init__(self):
         self._rank = 1
@@ -162,7 +165,7 @@ class AttributeManager:
 
     def raise_attribute(self, attribute: Attribute):
         if self.has_attribute_points and attribute.can_level_up():
-            attribute.level_up(self)
+            attribute.level_up()
             self._points_remaining -= 1
 
     def reset_attributes(self) -> None:
@@ -174,6 +177,10 @@ class AttributeManager:
     @property
     def has_attribute_points(self) -> bool:
         return self._points_remaining > 0
+
+    def to_server(self) -> List[dict]:
+        return [AttributesResource(attribute.name, attribute.level)._asdict()
+                for attribute in self.attributes]
 
     def _reset_stat_bonuses(self):
         self._physical_att = 0

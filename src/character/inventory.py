@@ -3,6 +3,7 @@ from enum import Enum
 from typing import List, NamedTuple
 
 from src.core.constants import MEAT
+from src.data.resources import ItemResource, InventoryResource
 from src.elemental.combat_elemental import CombatElemental
 from src.elemental.elemental import Elemental
 
@@ -33,8 +34,10 @@ class ItemSlot:
 
 
 class Inventory:
-    def __init__(self):
+
+    def __init__(self, owner_id=None):
         self._bag = {}  # {item_name: ItemSlot}
+        self.id = owner_id
 
     @property
     def items(self) -> List[ItemSlot]:
@@ -73,6 +76,12 @@ class Inventory:
 
     def has_item(self, item: 'Item') -> bool:
         return self.amount_left(item) > 0
+
+    def to_server(self) -> dict:
+        return InventoryResource(
+            id=self.id,
+            items=[ItemResource(item.name, item.amount) for item in self._bag]
+        )._asdict()
 
 
 class ItemTypes(Enum):

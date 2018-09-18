@@ -23,7 +23,7 @@ class ElementalBuilder:
         self._speed = 5
         self._owner = Player(UserBuilder().build())
         self._owner._level = 60  # Max level, as Elemental levels are restricted by owner level
-        self._attribute_manager = AttributeFactory.create_manager()
+        self._attribute_manager = AttributeFactory.create_random()
 
     def with_element(self, element: Elements) -> 'ElementalBuilder':
         self._species = SpeciesBuilder().with_element(element).build()

@@ -1,21 +1,49 @@
+from typing import List
+
 from src.character.character import Character
 from src.character.consumables import Peach, Revive
+from src.data.resources import PlayerResource, ItemResource
 from src.ui.forms.form import Form
 
 
 class Player(Character):
-    def __init__(self, user):
+    def __init__(self,
+                 id: str,
+                 name: str,
+                 level=1,
+                 gold=5,
+                 items=list([]),
+                 location=0):
         super().__init__()
-        self._level = 30
+        self._level = level
         self.primary_view = None  # Type: Form
         self.combat_team = None  # Type: CombatTeam
         self._challenges = {}  # {discord.message.id: ChallengeForm}: A map of all the challenges issued to this Player.
-        self.id = user.id
-        self._nickname = user.name
+        self.id = id
+        self._nickname = name
         self.battles_fought = 0
-        self._gold = 5
-        self.inventory.add_item(Peach(), 2)
-        self.inventory.add_item(Revive(), 1)
+        self._gold = gold
+        self.init_inventory(items)
+        self.location = location  # TODO
+
+    def init_inventory(self, items: List[ItemResource]):
+        if not items:
+            self.inventory.add_item(Peach(), 2)
+            self.inventory.add_item(Revive(), 1)
+            return
+        # TODO
+
+    @staticmethod
+    def from_user(user) -> 'Player':
+        return Player(user.id, user.name)
+
+    @staticmethod
+    def from_resource(resource: PlayerResource) -> 'Player':
+        # TODO items and location
+        return Player(resource.id,
+                      resource.name,
+                      resource.level,
+                      resource.gold)
 
     def __lt__(self, other):
         return self.team.average_elemental_level < other.team.average_elemental_level
@@ -30,6 +58,14 @@ class Player(Character):
     @property
     def has_elemental(self) -> bool:
         return len(self.elementals) > 0
+
+    def set_elementals(self, elementals) -> None:
+        for elemental in elementals:
+            self.add_elemental(elemental)
+
+    def set_team(self, elementals) -> None:
+        for elemental in elementals:
+            self.team.add_elemental(elemental)
 
     def set_primary_view(self, view: Form) -> None:
         self.primary_view = view
@@ -78,3 +114,18 @@ class Player(Character):
         for challenge in self._challenges:
             challenge.cancel()
         self._challenges = {}
+
+    def to_server(self) -> dict:
+        """
+        Return a structure uploadable to the server.
+        """
+        return PlayerResource(
+            id=self.id,
+            name=self._nickname,
+            level=self._level,
+            current_exp=self.current_exp,
+            gold=self.gold,
+            battles_fought=self.battles_fought,
+            team=[elemental.id for elemental in self.team.elementals],
+            elementals=[elemental.id for elemental in self.elementals],
+        )._asdict()

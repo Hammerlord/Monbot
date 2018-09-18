@@ -3,6 +3,7 @@ import uuid
 from typing import List
 
 from src.core.elements import Elements
+from src.data.resources import ElementalResource
 from src.elemental.ability.ability import Ability
 from src.elemental.ability.ability_manager import AbilityManager
 from src.elemental.attribute.attribute import Attribute
@@ -13,11 +14,12 @@ from src.elemental.species.species import Species, Loot
 class Elemental:
     def __init__(self,
                  species: Species,
-                 attribute_manager: AttributeManager):
+                 attribute_manager: AttributeManager,
+                 id=uuid.uuid4()):
         super().__init__()
         self._species = species  # TBD by descendants
         self._level = 1
-        self._id = uuid.uuid4().int  # TODO this is a dependency
+        self._id = id
         self._max_hp = species.max_hp
         self._current_hp = species.max_hp
         self._starting_mana = species.starting_mana
@@ -156,6 +158,13 @@ class Elemental:
     def loot(self) -> List[Loot]:
         return self.species.loot
 
+    def load_from_resource(self, resource: ElementalResource) -> 'Elemental':
+        self.level_to(resource.level)
+        self._current_exp = resource.current_exp
+        self._check_level_up()
+        self._ability_manager.set_abilities_from_names(resource.active_abilities)
+        return self
+
     def raise_attribute(self, attribute: Attribute) -> None:
         self._attribute_manager.raise_attribute(attribute)
 
@@ -286,6 +295,21 @@ class Elemental:
         TODO Sets the note based on the Elemental's Attributes.
         """
         pass
+
+    def to_server(self) -> dict:
+        """
+        Returns a structure uploadable to the server.
+        Things like stats and exp to level are generated at runtime.
+        """
+        return ElementalResource(
+            id=self._id,
+            level=self._level,
+            current_exp=self.current_exp,
+            current_hp=self.current_hp,
+            species=self.species.name,
+            active_abilities=[ability.name for ability in self.active_abilities],
+            attributes=self._attribute_manager.to_server()
+        )._asdict()
 
     def _can_gain_exp(self) -> bool:
         return self.level <= self._owner.level

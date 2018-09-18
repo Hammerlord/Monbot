@@ -32,18 +32,23 @@ class Attribute:
     def can_level_up(self) -> bool:
         return self._current_level < Attribute.MAX_LEVEL
 
-    def level_up(self, attribute_manager) -> None:
-        """
-        :param attribute_manager: The AttributeManager that owns this Attribute.
-        """
+    def level_up(self) -> None:
         self._current_level += 1
-        self.add_stats(attribute_manager)
+        self.add_stats()
 
     def reset(self) -> None:
         self._current_level = 0
 
-    def add_stats(self, attribute_manager) -> None:
+    def add_stats(self) -> None:
         raise NotImplementedError
+
+    def level_to(self, level: int) -> None:
+        if level < self._current_level:
+            return
+        for i in range(level - self._current_level):
+            if not self.can_level_up():
+                return
+            self.level_up()
 
 
 class Ferocity(Attribute):
@@ -52,8 +57,8 @@ class Ferocity(Attribute):
         self.name = "Ferocity"
         self.description = "Physical Attack"
 
-    def add_stats(self, attribute_manager) -> None:
-        attribute_manager.add_physical_att(self.base_stat_gain)
+    def add_stats(self) -> None:
+        self.manager.add_physical_att(self.base_stat_gain)
 
     def total_stat_gain(self) -> int:
         return self.manager.physical_att
@@ -65,8 +70,8 @@ class Attunement(Attribute):
         self.name = "Attunement"
         self.description = "Magic Attack"
 
-    def add_stats(self, attribute_manager) -> None:
-        attribute_manager.add_magic_att(self.base_stat_gain)
+    def add_stats(self) -> None:
+        self.manager.add_magic_att(self.base_stat_gain)
 
     def total_stat_gain(self) -> int:
         return self.manager.magic_att
@@ -78,8 +83,8 @@ class Sturdiness(Attribute):
         self.name = "Sturdiness"
         self.description = "Physical Defence"
 
-    def add_stats(self, attribute_manager) -> None:
-        attribute_manager.add_physical_def(self.base_stat_gain)
+    def add_stats(self) -> None:
+        self.manager.add_physical_def(self.base_stat_gain)
 
     def total_stat_gain(self) -> int:
         return self.manager.physical_def
@@ -91,8 +96,8 @@ class Resolve(Attribute):
         self.name = "Resolve"
         self.description = "Max HP"
 
-    def add_stats(self, attribute_manager) -> None:
-        attribute_manager.add_max_hp(self.base_stat_gain)
+    def add_stats(self) -> None:
+        self.manager.add_max_hp(self.base_stat_gain)
 
     def total_stat_gain(self) -> int:
         return self.manager.max_hp
@@ -104,8 +109,8 @@ class Resistance(Attribute):
         self.name = "Resistance"
         self.description = "Magic Defence"
 
-    def add_stats(self, attribute_manager) -> None:
-        attribute_manager.add_magic_def(self.base_stat_gain)
+    def add_stats(self) -> None:
+        self.manager.add_magic_def(self.base_stat_gain)
 
     def total_stat_gain(self) -> int:
         return self.manager.magic_def
@@ -117,8 +122,8 @@ class Swiftness(Attribute):
         self.name = "Swiftness"
         self.description = "Speed"
 
-    def add_stats(self, attribute_manager) -> None:
-        attribute_manager.add_speed(self.base_stat_gain)
+    def add_stats(self) -> None:
+        self.manager.add_speed(self.base_stat_gain)
 
     def total_stat_gain(self) -> int:
         return self.manager.speed
