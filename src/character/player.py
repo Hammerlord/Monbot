@@ -12,7 +12,6 @@ class Player(Character):
                  name: str,
                  level=1,
                  gold=5,
-                 items=list([]),
                  location=0):
         super().__init__()
         self._level = level
@@ -23,15 +22,11 @@ class Player(Character):
         self._nickname = name
         self.battles_fought = 0
         self._gold = gold
-        self.init_inventory(items)
         self.location = location  # TODO
 
-    def init_inventory(self, items: List[ItemResource]):
-        if not items:
-            self.inventory.add_item(Peach(), 2)
-            self.inventory.add_item(Revive(), 1)
-            return
-        # TODO
+    def add_starter_items(self):
+        self.inventory.add_item(Peach(), 2)
+        self.inventory.add_item(Revive(), 1)
 
     @staticmethod
     def from_user(user) -> 'Player':
@@ -39,11 +34,11 @@ class Player(Character):
 
     @staticmethod
     def from_resource(resource: PlayerResource) -> 'Player':
-        # TODO items and location
         return Player(resource.id,
                       resource.name,
                       resource.level,
-                      resource.gold)
+                      resource.gold,
+                      resource.location)
 
     def __lt__(self, other):
         return self.team.average_elemental_level < other.team.average_elemental_level
@@ -128,4 +123,5 @@ class Player(Character):
             battles_fought=self.battles_fought,
             team=[elemental.id for elemental in self.team.elementals],
             elementals=[elemental.id for elemental in self.elementals],
+            location=self.location
         )._asdict()

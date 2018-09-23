@@ -35,3 +35,4 @@ class PlayerResource(NamedTuple):
     battles_fought: int
     team: List[str]
     elementals: List[str]
+    location: int
