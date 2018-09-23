@@ -1,8 +1,9 @@
-from src.character.consumables import Peach
-from src.character.materials import ManaShard, WindShard
+
 from src.core.elements import Elements
 from src.elemental.ability.ability_factory import LearnableAbilities
 from src.elemental.species.species import Stats, Species, Loot
+from src.items.consumables import Peach
+from src.items.materials import WindShard, ManaShard
 
 
 class Slyfe(Species):

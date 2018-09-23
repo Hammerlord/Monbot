@@ -1,8 +1,10 @@
-from src.character.consumables import Peach, Cake
-from src.character.materials import ManaShard
+
+
 from src.core.elements import Elements
 from src.elemental.ability.ability_factory import LearnableAbilities
 from src.elemental.species.species import Stats, Species, Loot
+from src.items.consumables import Peach, Cake
+from src.items.materials import ManaShard
 
 
 class Nepharus(Species):

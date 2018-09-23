@@ -48,7 +48,7 @@ class PlayerBuilder:
         self._nickname = None
 
     def build(self) -> Player:
-        player = Player(self.user)
+        player = Player(self.user.id, self.user.name)
         if self._nickname:
             player.nickname = self._nickname
         for elemental in self.elementals:

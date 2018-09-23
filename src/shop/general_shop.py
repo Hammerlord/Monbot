@@ -1,4 +1,4 @@
-from src.character.consumables import Peach, Revive, Meat
+from src.items.consumables import Peach, Revive, Meat
 from src.shop.shop import Shop, ShopItemSlot
 
 

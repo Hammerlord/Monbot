@@ -1,8 +1,8 @@
 from typing import List
 
 from src.character.character import Character
-from src.character.consumables import Peach, Revive
 from src.data.resources import PlayerResource, ItemResource
+from src.items.consumables import Peach, Revive
 from src.ui.forms.form import Form
 
 

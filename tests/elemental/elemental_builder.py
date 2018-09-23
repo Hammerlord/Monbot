@@ -21,7 +21,8 @@ class ElementalBuilder:
         self._starting_mana = 15
         self._physical_def = 5
         self._speed = 5
-        self._owner = Player(UserBuilder().build())
+        user = UserBuilder().build()
+        self._owner = Player(user.id, user.name)
         self._owner._level = 60  # Max level, as Elemental levels are restricted by owner level
         self._attribute_manager = AttributeFactory.create_random()
 

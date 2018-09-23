@@ -1,8 +1,9 @@
-from src.character.consumables import Meat, Pudding
-from src.character.materials import WaterShard, ManaShard
+
 from src.core.elements import Elements
 from src.elemental.ability.ability_factory import LearnableAbilities
 from src.elemental.species.species import Stats, Species, Loot
+from src.items.consumables import Meat, Pudding
+from src.items.materials import WaterShard, ManaShard
 
 
 class Noel(Species):

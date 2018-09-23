@@ -1,9 +1,11 @@
-from src.character.consumables import Peach, Cake
-from src.character.materials import LightningShard, ManaShard
+
+
 from src.core.constants import PINEAPPLE
 from src.core.elements import Elements
 from src.elemental.ability.ability_factory import LearnableAbilities
 from src.elemental.species.species import Species, Stats, Loot
+from src.items.consumables import Peach, Cake
+from src.items.materials import LightningShard, ManaShard
 
 
 class Rainatu(Species):

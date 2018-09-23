@@ -1,9 +1,10 @@
-from src.character.consumables import Peach
-from src.character.materials import EarthShard, ManaShard
+
 from src.core.constants import OX
 from src.core.elements import Elements
 from src.elemental.ability.ability_factory import LearnableAbilities
 from src.elemental.species.species import Species, Stats, Loot
+from src.items.consumables import Peach
+from src.items.materials import EarthShard, ManaShard
 
 
 class Roaus(Species):

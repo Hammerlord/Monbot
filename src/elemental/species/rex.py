@@ -1,8 +1,9 @@
-from src.character.consumables import Meat
-from src.character.materials import EarthShard, ManaShard
+
 from src.core.elements import Elements
 from src.elemental.ability.ability_factory import LearnableAbilities
 from src.elemental.species.species import Species, Stats, Loot
+from src.items.consumables import Meat
+from src.items.materials import EarthShard, ManaShard
 
 
 class Rex(Species):

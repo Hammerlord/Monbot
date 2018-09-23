@@ -1,5 +1,6 @@
-from src.character.inventory import Item, ItemTypes
+
 from src.core.constants import PEACH, HAMMER, MANA_SHARD, CAKE, PUDDING, MEAT
+from src.items.item import Item
 
 
 class Peach(Item):

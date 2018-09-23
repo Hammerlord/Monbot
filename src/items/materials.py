@@ -1,5 +1,6 @@
-from src.character.inventory import Item, ItemTypes
+
 from src.core.constants import MANA_SHARD, EARTH_SHARD, LIGHTNING, FIRE, WATER, WIND
+from src.items.item import Item, ItemTypes
 
 
 class ManaShard(Item):
