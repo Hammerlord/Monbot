@@ -11,16 +11,20 @@ class Player(Character):
                  id: str,
                  name: str,
                  level=1,
+                 current_exp=0,
                  gold=5,
+                 battles_fought=0,
                  location=0):
         super().__init__()
-        self._level = level
+        self._level_to(level)
+        self._current_exp = current_exp
+        self._check_level_up()
         self.primary_view = None  # Type: Form
         self.combat_team = None  # Type: CombatTeam
         self._challenges = {}  # {discord.message.id: ChallengeForm}: A map of all the challenges issued to this Player.
         self.id = id
         self._nickname = name
-        self.battles_fought = 0
+        self.battles_fought = battles_fought
         self._gold = gold
         self.location = location  # TODO
 
@@ -34,10 +38,15 @@ class Player(Character):
 
     @staticmethod
     def from_resource(resource: PlayerResource) -> 'Player':
+        """
+        Load a player from server data. Elementals and inventory handled separately.
+        """
         return Player(resource.id,
                       resource.name,
                       resource.level,
+                      resource.current_exp,
                       resource.gold,
+                      resource.battles_fought,
                       resource.location)
 
     def __lt__(self, other):
@@ -125,3 +134,8 @@ class Player(Character):
             elementals=[elemental.id for elemental in self.elementals],
             location=self.location
         )._asdict()
+
+    def _level_to(self, level: int) -> None:
+        while self.level < level:
+            self._level += 1
+            self._increase_exp_to_level()
