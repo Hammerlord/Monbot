@@ -33,6 +33,11 @@ class DataManager:
             return fetched
         return self._create_profile(user)
 
+    def save_all(self, player: Player) -> None:
+        self.update_player(player)
+        self.update_inventory(player)
+        self.update_elementals(player)
+
     def update_player(self, player: Player) -> None:
         self.player_table.put_item(Item=player.to_server())
 

@@ -14,15 +14,8 @@ from tests.team.team_builder import TeamBuilder
 class CombatTeamTests(unittest.TestCase):
 
     @staticmethod
-    def get_combat_team(team) -> CombatTeam:
-        """
-        :return: A test CombatTeam with two Elementals.
-        """
-        combat_team = CombatTeam(team)
-        combat = Combat()
-        combat.join_battle(combat_team)
-        combat_team.on_combat_start()  # Triggers the initial switch in.
-        return combat_team
+    def get_mocked_combat() -> Combat:
+        return Combat(data_manager=Mock())
 
     @staticmethod
     def get_team() -> Team:
@@ -33,10 +26,19 @@ class CombatTeamTests(unittest.TestCase):
         team.add_elemental(loksy)
         return team
 
+    def get_combat_team(self, team=None) -> CombatTeam:
+        if not team:
+            team = self.get_team()
+        combat_team = CombatTeam(team)
+        combat = self.get_mocked_combat()
+        combat.join_battle(combat_team)
+        combat_team.on_combat_start()
+        return combat_team
+
     def test_setup_active(self):
         error = "CombatTeam didn't assign an active CombatElemental on combat start"
         self.assertIsInstance(
-            self.get_combat_team(self.get_team()).active_elemental,
+            self.get_combat_team().active_elemental,
             CombatElemental, error)
 
     def test_skip_ko_active(self):
@@ -47,7 +49,7 @@ class CombatTeamTests(unittest.TestCase):
         team.add_elemental(smurggle)
         team.add_elemental(loksy)
         combat_team = self.get_combat_team(team)
-        self.assertEqual(combat_team.active_elemental.id, loksy.id, error)
+        self.assertGreater(combat_team.active_elemental.current_hp, 0, error)
 
     def test_is_npc(self):
         error = "CombatTeam didn't flag itself as NPC when its owner was an NPC"
@@ -100,7 +102,7 @@ class CombatTeamTests(unittest.TestCase):
 
     def test_mana_per_turn(self):
         error = "CombatTeam eligible Elementals on the bench didn't gain mana on turn start"
-        combat_team = self.get_combat_team(self.get_team())
+        combat_team = self.get_combat_team()
         bench = combat_team.eligible_bench
         starting_mana = bench[0].current_mana
         combat_team.turn_start()
@@ -121,10 +123,9 @@ class CombatTeamTests(unittest.TestCase):
         error = "Ability that targets an enemy didn't get the correct target"
         team_a = self.get_combat_team(self.get_team())
         team_b = self.get_combat_team(self.get_team())
-        combat = Combat()
+        combat = self.get_mocked_combat()
         combat.join_battle(team_a)
         combat.join_battle(team_b)
-        combat.check_combat_start()
         ability = Mock()
         ability.targeting = Target.ENEMY
         target = combat.get_target(ability, team_a.active_elemental)
@@ -134,10 +135,9 @@ class CombatTeamTests(unittest.TestCase):
         error = "Ability that targets self didn't get the correct target"
         team_a = self.get_combat_team(self.get_team())
         team_b = self.get_combat_team(self.get_team())
-        combat = Combat()
+        combat = self.get_mocked_combat()
         combat.join_battle(team_a)
         combat.join_battle(team_b)
-        combat.check_combat_start()
         ability = Mock()
         ability.targeting = Target.SELF
         target = combat.get_target(ability, team_a.active_elemental)

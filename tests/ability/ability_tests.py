@@ -117,6 +117,6 @@ class AbilityTests(unittest.TestCase):
 
     @staticmethod
     def get_mocked_combat() -> Combat:
-        combat = Combat()
+        combat = Combat(data_manager=Mock())
         combat.get_target = MagicMock(return_value=CombatElementalBuilder().build())
         return combat

@@ -7,6 +7,7 @@ from src.combat.actions.action import EventLogger, ActionLogger
 from src.combat.actions.combat_actions import Action, Switch
 from src.combat.combat_ai import CombatAI
 from src.core.targetable_interface import Targetable
+from src.data.data_manager import DataManager
 from src.elemental.ability.ability import Ability, Target
 from src.elemental.combat_elemental import CombatElemental
 
@@ -21,6 +22,7 @@ class Combat:
     SIDE_B = 'b'
 
     def __init__(self,
+                 data_manager: DataManager,
                  allow_items=True,
                  allow_flee=True,
                  allow_exp_gain=True):
@@ -37,6 +39,7 @@ class Combat:
         self.num_rounds = 0
         self.winning_side = None  # List[CombatTeam] The teams who won.
         self.losing_side = None
+        self.data_manager = data_manager
 
     @property
     def teams(self):
@@ -266,7 +269,13 @@ class Combat:
         self._grant_loot()
         for team in self.teams:
             team.end_combat()
+        self._save_results()
         print(f"Completed battle in {self.num_rounds} rounds.")
+
+    def _save_results(self) -> None:
+        for team in self.teams:
+            if team.owner and not team.owner.is_npc:
+                self.data_manager.save_all(team.owner)
 
     def _grant_loot(self) -> None:
         if self.losing_side is None:

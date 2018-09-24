@@ -4,6 +4,7 @@ from collections import namedtuple
 from src.character.npc_initializer import NPCInitializer
 from src.character.player import Player
 from src.combat.combat import Combat
+from src.data.data_manager import DataManager
 from src.elemental.elemental_factory import ElementalInitializer
 from src.elemental.species.manapher import Manapher
 from src.elemental.species.tophu import Tophu
@@ -20,7 +21,8 @@ class BattleManager:
         """
         Start a fight between two players.
         """
-        combat = Combat(allow_flee=False,
+        combat = Combat(data_manager=DataManager(),
+                        allow_flee=False,
                         allow_items=False)
         player_team = CombatTeam(player.team)
         other_player_team = CombatTeam(other_player.team)
@@ -42,7 +44,7 @@ class BattleManager:
             tutorial_elemental = Tophu()
         else:
             tutorial_elemental = Manapher()
-        combat = Combat()
+        combat = Combat(data_manager=DataManager())
         opponent = CombatTeam.from_elementals([ElementalInitializer.make(tutorial_elemental)])
         combat.join_battle(opponent)
         return combat
@@ -53,7 +55,7 @@ class BattleManager:
         A random encounter with an Elemental or NPC.
         """
         coin_flip = random.randint(0, 1)
-        combat = Combat()
+        combat = Combat(data_manager=DataManager())
         if coin_flip:
             opponent = NPCInitializer().collector()
             opponent.generate_team(player)

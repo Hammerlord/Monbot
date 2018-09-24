@@ -1,5 +1,5 @@
 from unittest import TestCase
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, Mock
 
 from src.combat.actions.casting import Casting
 from src.combat.actions.elemental_action import ElementalAction
@@ -17,7 +17,7 @@ class RecapTests(TestCase):
 
     def test_cast_execution_recap(self):
         error = "Recap for execution of a cast was incorrect"
-        combat = Combat()
+        combat = Combat(Mock())
         team_a = self.get_combat_team(combat)
         team_b = self.get_combat_team(combat)
         team_a.handle_cast_time(Castable(ShiningLaser()))
@@ -29,7 +29,7 @@ class RecapTests(TestCase):
 
     def test_channel_recap(self):
         error = "Recap for the execution of a channeled ability was incorrect"
-        combat = Combat()
+        combat = Combat(Mock())
         team_a = self.get_combat_team(combat)
         team_b = self.get_combat_team(combat)
         team_a.make_move(Rampage())
@@ -42,7 +42,7 @@ class RecapTests(TestCase):
 
     @staticmethod
     def get_mocked_combat() -> Combat:
-        combat = Combat()
+        combat = Combat(Mock())
         combat.get_target = MagicMock(return_value=CombatElementalBuilder().build())
         return combat
 

@@ -30,6 +30,10 @@ class StatusEffectTests(unittest.TestCase):
     def tearDown(self):
         self.combat_elemental = None
 
+    @staticmethod
+    def get_stub_combat() -> Combat:
+        return Combat(data_manager=Mock())
+
     def test_add_status_effect(self):
         error = "StatusEffect couldn't be added"
         self.combat_elemental.add_status_effect(GenericBuff())
@@ -52,7 +56,7 @@ class StatusEffectTests(unittest.TestCase):
         effect = WindrushEffect()
         effect.applier = self.combat_elemental
         team = CombatTeam(Team(Mock()))
-        team.set_combat(Combat())
+        team.set_combat(self.get_stub_combat())
         team.change_active_elemental(self.combat_elemental)
         duration_before = effect.turns_remaining
         team.add_status_effect(effect)
@@ -157,7 +161,7 @@ class StatusEffectTests(unittest.TestCase):
 
     def test_enrage(self):
         error = "Enrage didn't increase damage output"
-        combat = Combat()
+        combat = self.get_stub_combat()
         combat.get_target = MagicMock(return_value=CombatElementalBuilder().build())
         before_buff = ElementalAction(self.combat_elemental, Claw(), combat)
         before_buff._refresh_target()
@@ -189,7 +193,7 @@ class StatusEffectTests(unittest.TestCase):
         error = "Rolling Thunder turn duration didn't decrement"
         effect = RollingThunderEffect()
         team = CombatTeam(Team(Mock()))
-        team.set_combat(Combat())
+        team.set_combat(self.get_stub_combat())
         enemy = CombatElementalBuilder().with_team(team).build()
         team.change_active_elemental(enemy)
         team.add_status_effect(effect)
@@ -203,7 +207,7 @@ class StatusEffectTests(unittest.TestCase):
         effect = RollingThunderEffect()
         effect.applier = self.combat_elemental
         team = CombatTeam(Team(Mock()))
-        team.set_combat(Combat())
+        team.set_combat(self.get_stub_combat())
         enemy = CombatElementalBuilder().with_team(team).build()
         team.change_active_elemental(enemy)
         team.add_status_effect(effect)
@@ -219,7 +223,7 @@ class StatusEffectTests(unittest.TestCase):
         elemental = ElementalBuilder().build()
         team.add_elemental(elemental)
         combat_team = CombatTeam(team)
-        combat_team.set_combat(Combat())
+        combat_team.set_combat(self.get_stub_combat())
         effect = BlessedRainEffect()
         effect.applier = CombatElementalBuilder().build()
         elemental.receive_damage(10)
