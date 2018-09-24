@@ -1,7 +1,7 @@
 import random
 from typing import List
 
-from src.data.resources import ElementalResource
+from src.data.resources import ElementalResource, AttributeResource
 from src.elemental.attribute.attribute_factory import AttributeFactory
 from src.elemental.elemental import Elemental
 from src.elemental.species.felix import Felix
@@ -56,11 +56,12 @@ class ElementalInitializer:
     def from_server(resource: ElementalResource) -> Elemental:
         species_name = resource.species
         species = ElementalInitializer.NAME_MAP[species_name]
+        attributes = [AttributeResource(**attribute) for attribute in resource.attributes]
         elemental = Elemental(species,
-                              AttributeFactory.create_from_resources(resource.attributes),
-                              resource.id,
-                              )
-        return elemental.load_from_resource(resource)
+                              AttributeFactory.create_from_resources(attributes),
+                              id=resource.id)
+        elemental.load_from_resource(resource)
+        return elemental
 
     @staticmethod
     def make_random(level=1, excluding: List[Elemental] = None) -> Elemental:

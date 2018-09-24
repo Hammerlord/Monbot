@@ -33,9 +33,8 @@ class ItemSlot:
 
 class Inventory:
 
-    def __init__(self, owner_id=None):
+    def __init__(self):
         self._bag = {}  # {item_name: ItemSlot}
-        self.id = owner_id
 
     @property
     def items(self) -> List[ItemSlot]:
@@ -75,9 +74,6 @@ class Inventory:
     def has_item(self, item: 'Item') -> bool:
         return self.amount_left(item) > 0
 
-    def to_server(self) -> dict:
-        return InventoryResource(
-            id=self.id,
-            items=[ItemResource(item.name, item.amount) for item in self._bag]
-        )._asdict()
+    def to_server(self) -> List[dict]:
+        return [ItemResource(item.name, item.amount)._asdict() for item in self._bag.values()]
 

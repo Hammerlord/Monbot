@@ -1,5 +1,5 @@
 from src.character.character import Character
-from src.data.resources import PlayerResource
+from src.data.resources import PlayerResource, InventoryResource
 from src.items.consumables import Peach, Revive
 from src.ui.forms.form import Form
 
@@ -62,12 +62,17 @@ class Player(Character):
         return len(self.elementals) > 0
 
     def set_elementals(self, elementals) -> None:
+        """
+        :param elementals: List[Elemental]
+        """
         for elemental in elementals:
             self.add_elemental(elemental)
 
     def set_team(self, elementals) -> None:
-        for elemental in elementals:
-            self.team.add_elemental(elemental)
+        """
+        :param elementals: List[Elemental]
+        """
+        self._team.set(elementals)
 
     def set_primary_view(self, view: Form) -> None:
         self.primary_view = view
@@ -133,7 +138,13 @@ class Player(Character):
             location=self.location
         )._asdict()
 
+    def inventory_to_server(self) -> dict:
+        return InventoryResource(
+            id=self.id,
+            items=self.inventory.to_server()
+        )._asdict()
+
     def _level_to(self, level: int) -> None:
-        while self.level < level:
+        while self.level < int(level):
             self._level += 1
             self._increase_exp_to_level()

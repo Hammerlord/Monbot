@@ -1,7 +1,7 @@
 from typing import NamedTuple, List
 
 
-class AttributesResource(NamedTuple):
+class AttributeResource(NamedTuple):
     name: str
     level: int
 
@@ -9,11 +9,12 @@ class AttributesResource(NamedTuple):
 class ElementalResource(NamedTuple):
     id: str
     level: int
+    nickname: str
     current_hp: int
     current_exp: int
     species: str
     active_abilities: List[str]
-    attributes: List[AttributesResource]
+    attributes: List[AttributeResource]
 
 
 class ItemResource(NamedTuple):

@@ -46,6 +46,9 @@ class Team:
         """
         return all(elemental.is_knocked_out for elemental in self.elementals)
 
+    def set(self, elementals: List[Elemental]) -> None:
+        self.__elementals = elementals
+
     def swap(self, slot: int, elemental: Elemental) -> None:
         """
         Swap an external Elemental into a slot on the Team.

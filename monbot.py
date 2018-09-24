@@ -140,7 +140,9 @@ async def on_message(message):
     if message.author.bot:
         return
     await bot.process_commands(message)
-    player = data_manager.get_created_player(message.author)
+    player = data_manager.get_player(message.author)
+    if not player:
+        return
     view = player.primary_view
     if view and view.is_awaiting_input:
         await view.receive_input(message)

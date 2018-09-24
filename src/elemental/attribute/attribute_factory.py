@@ -1,7 +1,7 @@
 from random import randint
 from typing import List, Type
 
-from src.data.resources import AttributesResource
+from src.data.resources import AttributeResource
 from src.elemental.attribute.attribute import Attribute, Ferocity, Resolve, Sturdiness, Swiftness, Resistance, \
     Attunement
 from src.elemental.attribute.attribute_manager import AttributeManager
@@ -43,7 +43,7 @@ class AttributeFactory:
         return manager
 
     @staticmethod
-    def create_from_resources(resources: List[AttributesResource]) -> AttributeManager:
+    def create_from_resources(resources: List[AttributeResource]) -> AttributeManager:
         manager = AttributeManager()
         for resource in resources:
             attribute = AttributeFactory.NAME_MAP[resource.name]

@@ -54,7 +54,7 @@ class AbilityManager:
 
     def set_abilities_from_names(self, ability_names: List[str]) -> None:
         name_map = {}
-        for ability in self.eligible_abilities:
+        for ability in self._available_abilities:
             name_map[ability.name] = ability
         self._active_abilities = []
         for name in ability_names:

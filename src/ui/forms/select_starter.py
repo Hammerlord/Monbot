@@ -87,5 +87,5 @@ class SelectStarterView(ValueForm):
         self.player.add_elemental(elemental)
         data_manager = DataManager()
         data_manager.update_player(self.player)
-        data_manager.update_elementals(self.player)
+        data_manager.update_team(self.player)
         await Form.from_form(self, StatusView)

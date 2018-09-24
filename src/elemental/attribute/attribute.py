@@ -29,6 +29,7 @@ class Attribute:
         """
         return 7 + self.level
 
+    @property
     def can_level_up(self) -> bool:
         return self._current_level < Attribute.MAX_LEVEL
 
@@ -43,10 +44,8 @@ class Attribute:
         raise NotImplementedError
 
     def level_to(self, level: int) -> None:
-        if level < self._current_level:
-            return
-        for i in range(level - self._current_level):
-            if not self.can_level_up():
+        while self._current_level < int(level):
+            if not self.can_level_up:
                 return
             self.level_up()
 

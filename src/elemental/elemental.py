@@ -19,7 +19,7 @@ class Elemental:
         super().__init__()
         self._species = species  # TBD by descendants
         self._level = 1
-        self._id = id
+        self._id = str(id)
         self._max_hp = species.max_hp
         self._current_hp = species.max_hp
         self._starting_mana = species.starting_mana
@@ -160,9 +160,11 @@ class Elemental:
 
     def load_from_resource(self, resource: ElementalResource) -> 'Elemental':
         self.level_to(resource.level)
-        self._current_exp = resource.current_exp
+        self._current_exp = int(resource.current_exp)
         self._check_level_up()
         self._ability_manager.set_abilities_from_names(resource.active_abilities)
+        self._nickname = resource.nickname
+        self._current_hp = resource.current_hp
         return self
 
     def raise_attribute(self, attribute: Attribute) -> None:
@@ -200,7 +202,7 @@ class Elemental:
         return self._max_mana + self._attribute_manager.max_mana
 
     @property
-    def id(self) -> int:
+    def id(self) -> str:
         return self._id
 
     @property
@@ -282,7 +284,7 @@ class Elemental:
         """
         Eg. to generate level-appropriate Elementals or test Elementals.
         """
-        while self.level < level:
+        while self._level < int(level):
             self._level += 1
             self._gain_stats()
             self._increase_exp_to_level()
@@ -304,6 +306,7 @@ class Elemental:
         return ElementalResource(
             id=self._id,
             level=self._level,
+            nickname=self.nickname,
             current_exp=self.current_exp,
             current_hp=self.current_hp,
             species=self.species.name,

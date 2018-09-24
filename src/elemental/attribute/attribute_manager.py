@@ -1,6 +1,6 @@
 from typing import List
 
-from src.data.resources import AttributesResource
+from src.data.resources import AttributeResource
 from src.elemental.attribute.attribute import Attribute
 
 
@@ -164,7 +164,7 @@ class AttributeManager:
         self._points_remaining += 1
 
     def raise_attribute(self, attribute: Attribute):
-        if self.has_attribute_points and attribute.can_level_up():
+        if self.has_attribute_points and attribute.can_level_up:
             attribute.level_up()
             self._points_remaining -= 1
 
@@ -179,7 +179,7 @@ class AttributeManager:
         return self._points_remaining > 0
 
     def to_server(self) -> List[dict]:
-        return [AttributesResource(attribute.name, attribute.level)._asdict()
+        return [AttributeResource(attribute.name, attribute.level)._asdict()
                 for attribute in self.attributes]
 
     def _reset_stat_bonuses(self):
