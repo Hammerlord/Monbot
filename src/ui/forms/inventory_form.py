@@ -7,6 +7,7 @@ from discord.ext.commands import Bot
 from src.character.inventory import Item, ItemSlot
 from src.character.player import Player
 from src.core.constants import BACK
+from src.data.data_manager import DataManager
 from src.elemental.elemental import Elemental
 from src.ui.forms.form import ValueForm, FormOptions, Form
 from src.ui.health_bar import HealthBarView
@@ -137,5 +138,10 @@ class UseItemView(ValueForm):
         if elemental is not None:
             if self.player.use_item(self.item, elemental):
                 self.recently_affected_elemental = elemental
+                self._save()
                 await self.render()
 
+    def _save(self) -> None:
+        data_manager = DataManager()
+        data_manager.update_inventory(self.player)
+        data_manager.update_elemental(self.recently_affected_elemental)

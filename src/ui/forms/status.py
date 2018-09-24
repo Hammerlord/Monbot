@@ -4,6 +4,7 @@ import discord
 from discord.ext.commands import Bot
 
 from src.core.constants import *
+from src.data.data_manager import DataManager
 from src.elemental.ability.abilities.defend import Defend
 from src.elemental.ability.ability import Ability
 from src.elemental.attribute.attribute import Attribute
@@ -84,6 +85,7 @@ class StatusView(ValueForm):
     async def _select_leader(self) -> None:
         elemental = self._selected_value
         self.player.team.set_leader(elemental)
+        DataManager().update_player(self.player)  # TODO patch
         self._selecting_leader_mode = False
         await self.render()
 
@@ -162,10 +164,15 @@ class StatusDetailView(Form):
                 self.elemental.nickname = content
             elif self.is_setting_note:
                 self.elemental.note = content
+            self._save()
             await self.bot.add_reaction(message, OK_HAND)
         self.is_setting_nickname = False
         self.is_setting_note = False
         await self.render()
+
+    def _save(self) -> None:
+        # TODO patch
+        DataManager().update_elemental(self.elemental)
 
     @property
     def _view(self) -> str:
@@ -359,12 +366,14 @@ class SwitchAbilityView(ValueForm):
         if reaction == OK and self._is_selection_complete:
             abilities = self._selected_values
             self._elemental.set_abilities(abilities)
+            self._save()
             await self._back()
             return
         await super().pick_option(reaction)
         if self._selected_ability:
             eligible_ability = self._selected_value
             self._elemental.swap_ability(self._selected_ability, eligible_ability)
+            self._save()
             await self._back()
         else:
             await self._display(self._view)
@@ -382,6 +391,10 @@ class SwitchAbilityView(ValueForm):
     @property
     def _is_selection_complete(self) -> bool:
         return self._num_selections == self._elemental.max_active_abilities
+
+    def _save(self) -> None:
+        data_manager = DataManager()
+        data_manager.update_elemental(self._elemental)
 
 
 class AttributesView(ValueForm):
@@ -431,7 +444,12 @@ class AttributesView(ValueForm):
         elif reaction == UP:
             for i in range(self.elemental.attribute_points):
                 self.elemental.raise_attribute(selected_attribute)
+        self._save()
         await self.render()
+
+    def _save(self) -> None:
+        data_manager = DataManager()
+        data_manager.update_elemental(self.elemental)
 
     @property
     def _view(self) -> str:

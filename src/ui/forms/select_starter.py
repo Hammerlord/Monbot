@@ -2,6 +2,7 @@ from typing import List
 
 from src.core.constants import OK
 from src.core.elements import Elements
+from src.data.data_manager import DataManager
 from src.elemental.elemental_factory import ElementalInitializer
 from src.elemental.species.mithus import Mithus
 from src.elemental.species.rainatu import Rainatu
@@ -82,5 +83,9 @@ class SelectStarterView(ValueForm):
         if self.player.num_elementals > 0 or self._selected_value is None:
             return
         starter = self._selected_value
-        self.player.add_elemental(ElementalInitializer.make(starter, level=self.player.level))
+        elemental = ElementalInitializer.make(starter, level=self.player.level)
+        self.player.add_elemental(elemental)
+        data_manager = DataManager()
+        data_manager.update_player(self.player)
+        data_manager.update_elementals(self.player)
         await Form.from_form(self, StatusView)

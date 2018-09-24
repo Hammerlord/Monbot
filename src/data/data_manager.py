@@ -49,6 +49,9 @@ class DataManager:
             for elemental in player.team.elementals:
                 batch.put_item(Item=elemental.to_server())
 
+    def update_elemental(self, elemental: Elemental) -> None:
+        self.elemental_table.put_item(Item=elemental.to_server())
+
     def _fetch_player(self, user) -> Player or None:
         response = self.player_table.get_item(Key={'id': user.id})
         try:

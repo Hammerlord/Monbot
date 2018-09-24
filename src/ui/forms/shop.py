@@ -4,6 +4,7 @@ import discord
 from discord.ext.commands import Bot
 
 from src.core.constants import BUY
+from src.data.data_manager import DataManager
 from src.shop.shop import Shop, ShopItemSlot
 from src.ui.forms.form import ValueForm, FormOptions, Form
 
@@ -77,15 +78,21 @@ class ShopView(ValueForm):
     def _can_checkout(self) -> bool:
         return self.player.gold >= self._total_cost
 
+    async def _finish_purchase(self) -> None:
+        for selected_item in self._selected_values:
+            self.shop.buy(selected_item, self.player)
+        self.toggled = []
+        data_manager = DataManager()
+        data_manager.update_player(self.player)
+        data_manager.update_inventory(self.player)
+        await self.render()
+
     async def pick_option(self, reaction: str):
         await super().pick_option(reaction)
         if self._selected_value:
             await self._add_reaction(BUY)
         if reaction == BUY and self._selected_value and self._can_checkout:
-            for selected_item in self._selected_values:
-                self.shop.buy(selected_item, self.player)
-            self.toggled = []
-            await self.render()
+            await self._finish_purchase()
         await self._display(self._view)
 
     async def remove_option(self, reaction: str):
