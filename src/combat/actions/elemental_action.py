@@ -1,9 +1,7 @@
-from src.combat.actions.action import ActionType, Action, EventLog
-from src.core.targetable_interface import Targetable
-from src.elemental.ability.ability import TurnPriority, Ability, Target
+from src.combat.actions.action import ActionType, Action
+from src.elemental.ability.ability import TurnPriority, Ability
 from src.elemental.ability.damage_calculator import DamageCalculator
-from src.elemental.ability.queueable import Channelable
-from src.elemental.combat_elemental import CombatElemental, CombatElementalLog
+from src.elemental.combat_elemental import CombatElemental
 
 
 class ElementalAction(Action):

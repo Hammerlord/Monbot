@@ -6,9 +6,9 @@ from discord.ext.commands import Bot
 
 from src.character.inventory import ItemSlot, Item
 from src.character.player import Player
-from src.combat.actions.action import EventLog
 from src.combat.battle_manager import BattleManager
 from src.combat.combat import Combat
+from src.combat.event import EventLog
 from src.core.constants import *
 from src.elemental.combat_elemental import CombatElemental
 from src.team.combat_team import CombatTeam

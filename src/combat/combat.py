@@ -3,9 +3,10 @@ from random import random
 from typing import List
 
 from src.character.character import Character
-from src.combat.actions.action import EventLogger, ActionLogger
+from src.combat.actions.action import ActionLogger
 from src.combat.actions.combat_actions import Action, Switch
 from src.combat.combat_ai import CombatAI
+from src.combat.event import EventLogger
 from src.core.targetable_interface import Targetable
 from src.data.data_manager import DataManager
 from src.elemental.ability.ability import Ability, Target
@@ -177,8 +178,7 @@ class Combat:
         for team in self.teams:
             team.end_round()
             self._check_kos(kos)
-        if not self._check_combat_end():
-            self._prepare_new_round()
+        self._prepare_new_round()
 
     @staticmethod
     def _sort_fastest(actions: List[Action]) -> List[Action]:
@@ -225,7 +225,6 @@ class Combat:
         self.action_logger.prepare_new_round()
         self.action_requests = []
         self.turn_logger.prepare_new_round()
-        print([log for log in self.turn_logger.logs[-2]])
         if not self.in_progress:
             return
         for team in self.teams:

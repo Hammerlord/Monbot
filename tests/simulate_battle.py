@@ -1,3 +1,5 @@
+from unittest.mock import Mock
+
 from src.character.npc_initializer import NPCInitializer
 from src.combat.combat import Combat
 from src.team.combat_team import CombatTeam
@@ -16,7 +18,7 @@ class SimulatedBattle:
         self.npc_two.generate_equal_team(self.npc_one)
 
     def fight(self):
-        combat = Combat()
+        combat = Combat(Mock())
         team_one = CombatTeam(self.npc_one.team)
         team_two = CombatTeam(self.npc_two.team)
         combat.join_battle(team_one)
