@@ -119,7 +119,7 @@ class Combat:
             if len(self.action_requests) == len(self.teams):
                 self._resolve_requests()
 
-    def get_target(self, ability: Ability, actor: CombatElemental) -> Targetable:
+    def get_target(self, ability: Ability, actor: CombatElemental) -> Targetable or None:
         """
         :return: The Targetable the Ability should affect, based on the Ability's targeting enum.
         """
@@ -138,6 +138,8 @@ class Combat:
             return self.get_active_enemy(actor.team)
         elif target == Target.ENEMY_TEAM:
             return self.get_enemy_side(actor.team)[0]
+        elif target == Target.NONE:
+            return None
         raise ValueError(f"{ability.name} has no valid targeting.")
 
     def get_enemy_side(self, team):

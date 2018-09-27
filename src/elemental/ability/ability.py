@@ -6,6 +6,7 @@ from src.elemental.status_effect.status_effect import StatusEffect
 
 
 class Target(Enum):
+    NONE = -1
     SELF = 0
     ENEMY = 1
     ENEMY_CLEAVE = 2

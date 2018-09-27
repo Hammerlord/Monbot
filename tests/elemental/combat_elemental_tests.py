@@ -1,5 +1,6 @@
 import unittest
 
+from src.elemental.ability.abilities.bide import Bide
 from src.elemental.ability.ability import Ability
 from src.elemental.combat_elemental import CombatElemental
 from src.elemental.elemental import Elemental
@@ -64,6 +65,17 @@ class CombatElementalTests(unittest.TestCase):
         abilities = self.combat_elemental.abilities
         self.assertGreater(len(abilities), 0, error)
         self.assertIsInstance(abilities[0], Ability, error)
+
+    def test_bide_available(self):
+        error = "Bide wasn't available when there were no other usable abilities"
+        self.combat_elemental._abilities = []
+        self.assertIsInstance(self.combat_elemental.available_abilities[0], Bide, error)
+
+    def test_bide_unavailable(self):
+        error = "Bide shouldn't be available if anything else is available"
+        is_bide_available = any([ability for ability in self.combat_elemental.available_abilities
+                                 if ability.name == Bide().name])
+        self.assertFalse(is_bide_available, error)
 
     def test_take_damage(self):
         error = "Reference Elemental didn't take damage when CombatElemental took damage"
