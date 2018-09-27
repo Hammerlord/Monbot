@@ -115,7 +115,7 @@ class Species(Stats):
         """
         :return: List[LearnableAbility]
         """
-        return self._learnable_abilities.copy()
+        return list(self._learnable_abilities)
 
     @property
     def starting_mana(self) -> int:

@@ -98,6 +98,7 @@ class CombatTeamTests(unittest.TestCase):
         smurggle = ElementalBuilder().with_current_hp(0).build()
         team.add_elemental(smurggle)
         combat_team = CombatTeam(team)
+        print(smurggle.current_hp)
         self.assertIs(combat_team.is_all_knocked_out, True, error)
 
     def test_mana_per_turn(self):

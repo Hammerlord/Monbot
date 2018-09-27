@@ -46,6 +46,19 @@ class CombatElementalTests(unittest.TestCase):
         min_charges = 2  # All Elementals have at least two Defend charges
         self.assertGreaterEqual(combat_elemental_charges, min_charges, error)
 
+    def test_defend_available(self):
+        error = "CombatElemental didn't have defend available as an ability"
+        abilities = self.combat_elemental.abilities
+        has_defend = any([ability for ability in abilities if ability.name == "Defend"])
+        self.assertTrue(has_defend, error)
+
+    def test_defend_unavailable(self):
+        error = "Defend was available even though there were no defend charges"
+        self.combat_elemental.update_defend_charges(-self.combat_elemental.defend_charges)
+        abilities = self.combat_elemental.available_abilities
+        has_defend = any([ability for ability in abilities if ability.name == "Defend"])
+        self.assertFalse(has_defend, error)
+
     def test_has_abilities(self):
         error = "CombatElemental doesn't have Abilities"
         abilities = self.combat_elemental.abilities
@@ -54,16 +67,18 @@ class CombatElementalTests(unittest.TestCase):
 
     def test_take_damage(self):
         error = "Reference Elemental didn't take damage when CombatElemental took damage"
+        prev_hp = self.elemental.current_hp
         self.combat_elemental.receive_damage(2, self.get_combat_elemental())
         current_hp = self.elemental.current_hp
-        expected_hp = 3
+        expected_hp = prev_hp - 2
         self.assertEqual(current_hp, expected_hp, error)
 
     def test_heal(self):
         error = "Reference Elemental didn't heal when CombatElemental healed"
+        prev_hp = self.elemental.current_hp
         self.combat_elemental.heal(5)
         current_hp = self.elemental.current_hp
-        expected_hp = 10
+        expected_hp = prev_hp + 5
         self.assertEqual(current_hp, expected_hp, error)
 
     def test_stat_change(self):

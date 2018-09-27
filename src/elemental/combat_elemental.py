@@ -4,6 +4,7 @@ from copy import deepcopy, copy
 
 from src.core.elements import Elements
 from src.core.targetable_interface import Targetable
+from src.elemental.ability.abilities.defend import Defend
 from src.elemental.ability.ability import Ability
 from src.elemental.ability.queueable import Castable, Channelable, Queueable
 from src.elemental.elemental import Elemental
@@ -34,6 +35,7 @@ class CombatElemental(Targetable):
         self._status_manager = StatusManager(self)
         self._actions = []  # List[ElementalAction]  A record of the actions taken by this CombatElemental.
         self._abilities = elemental.active_abilities
+        self._abilities.append(Defend()) # All elementals know Defend.
         # Queueable; wrapper for an Ability that takes time to activate or executes over multiple turns:
         self.action_queued = None
 
@@ -166,7 +168,7 @@ class CombatElemental(Targetable):
 
     @property
     def abilities(self) -> List[Ability]:
-        return list(self._abilities)
+        return self._abilities
 
     @property
     def status_effects(self) -> List[StatusEffect]:
@@ -183,10 +185,6 @@ class CombatElemental(Targetable):
     @property
     def is_knocked_out(self) -> bool:
         return self._elemental.is_knocked_out
-
-    @property
-    def id(self) -> int:
-        return self._elemental.id
 
     def is_elemental(self, other: 'CombatElemental') -> bool:
         return self.id == other.id

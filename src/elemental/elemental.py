@@ -229,7 +229,7 @@ class Elemental:
 
     @property
     def max_active_abilities(self) -> int:
-        return self._ability_manager.max_active_abilities
+        return AbilityManager.MAX_ACTIVE_ABILITIES
 
     @property
     def active_abilities(self) -> List[Ability]:

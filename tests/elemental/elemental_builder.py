@@ -15,12 +15,12 @@ class ElementalBuilder:
         self._species = SpeciesBuilder().build()
         self._level = 1
         self._nickname = None
-        self._current_hp = 50
-        self._max_hp = 50
+        self._current_hp = None
+        self._max_hp = None
         self._rank = 1
-        self._starting_mana = 15
-        self._physical_def = 5
-        self._speed = 5
+        self._starting_mana = None
+        self._physical_def = None
+        self._speed = None
         user = UserBuilder().build()
         self._owner = Player(user.id, user.name)
         self._owner._level = 60  # Max level, as Elemental levels are restricted by owner level
@@ -77,21 +77,19 @@ class ElementalBuilder:
     def build(self) -> 'Elemental':
         elemental = Elemental(self._species,
                               self._attribute_manager)
-        elemental._current_hp = self._current_hp
-        elemental._max_hp = self._max_hp
-        elemental._physical_def = self._physical_def
-        elemental._speed = self._speed
+        elemental.level_to(self._level)
+        if self._current_hp is not None:
+            elemental._current_hp = self._current_hp
+        if self._max_hp is not None:
+            elemental._max_hp = self._max_hp
+        if self._physical_def is not None:
+            elemental._physical_def = self._physical_def
+        if self._speed is not None:
+            elemental._speed = self._speed
         elemental.owner = self._owner
         if self._nickname:
             elemental.nickname = self._nickname
-        self._level_elemental(elemental)
         return elemental
-
-    def _level_elemental(self, elemental: Elemental) -> None:
-        # Because the Elemental actually levels up, this method adds stats to its profile.
-        while elemental.level < self._level:
-            exp = elemental.exp_to_level
-            elemental.add_exp(exp)
 
 
 class CombatElementalBuilder:

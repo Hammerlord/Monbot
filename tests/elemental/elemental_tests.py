@@ -157,11 +157,6 @@ class ElementalTests(unittest.TestCase):
         self.assertEqual(species._speed, 5, error)
         self.assertEqual(species._max_hp, 50, error)
 
-    def test_has_ability(self):
-        error = "Elemental didn't get Abilities on instantiation"
-        elemental = ElementalBuilder().build()
-        self.assertIsInstance(elemental.active_abilities[0], Ability, error)
-
     def test_owner_restricts_level(self):
         error = "Elemental shouldn't be able to level past its owner"
         player = PlayerBuilder().with_level(15).build()
@@ -209,20 +204,14 @@ class ElementalTests(unittest.TestCase):
     def test_attribute_gives_stats(self):
         error = "No stats gained from raising an attribute"
         manager = self.get_preset_manager()  # Physical attack Attribute is guaranteed in the first slot
-        elemental = ElementalBuilder() \
-            .with_attribute_manager(manager) \
-            .with_level(10) \
-            .build()
+        elemental = (ElementalBuilder()
+            .with_attribute_manager(manager)
+            .with_level(10)
+            .build())
         p_att_before = elemental.physical_att
         elemental.raise_attribute(elemental.attributes[0])
         p_att_after = elemental.physical_att
         self.assertGreater(p_att_after, p_att_before, error)
-
-    def test_initial_abilities(self):
-        error = "Elemental didn't learn abilities on creation"
-        elemental = ElementalBuilder().build()
-        num_abilities = len(elemental.active_abilities)
-        self.assertGreater(num_abilities, 0, error)
 
     def test_learn_abilities_by_level(self):
         error = "Elemental couldn't learn an ability by leveling"
@@ -236,37 +225,28 @@ class ElementalTests(unittest.TestCase):
         leveled_num_abilities = len(elemental.active_abilities)
         self.assertGreater(leveled_num_abilities, initial_num_abilities, error)
 
-    def test_learn_defend(self):
-        error = "Elemental must learn Defend as a basic ability"
-        elemental = ElementalBuilder().build()
-        has_defend = False
-        for ability in elemental.active_abilities:
-            if ability.name == 'Defend':
-                has_defend = True
-        self.assertIs(has_defend, True, error)
-
     def test_duplicate_abilities(self):
         error = "Elemental can incorrectly learn the same ability"
-        species = SpeciesBuilder().with_abilities([self.get_learnable_ability(level=1)]).build()
+        species = SpeciesBuilder().with_abilities([self.get_learnable_ability(1)]).build()
         elemental = ElementalBuilder().with_level(5).with_species(species).build()
-        num_abilities = len(elemental.active_abilities)  # Should be 2 because of the default ability Defend
-        self.assertEqual(num_abilities, 2, error)
+        print(elemental.active_abilities)
+        num_abilities = len(elemental.active_abilities)
+        self.assertEqual(num_abilities, 1, error)
 
     def test_num_active_abilities(self):
-        error = "Elemental can incorrectly have more than 5 abilities active"
+        error = "Elemental can incorrectly have more than 4 abilities active"
         species = self.get_species()
-        # Level until we learn all abilities, 6 in total including Defend
         elemental = ElementalBuilder().with_level(5).with_species(species).build()
         num_abilities = len(elemental.active_abilities)
-        self.assertEqual(num_abilities, 5, error)
+        self.assertEqual(num_abilities, 4, error)
 
     def test_available_abilities(self):
         error = "Abilities weren't listed as available when learned"
         species = self.get_species()
-        # Level until we learn all abilities, 6 in total including Defend
+        # Level until we learn all abilities
         elemental = ElementalBuilder().with_level(5).with_species(species).build()
         num_abilities = len(elemental.available_abilities)
-        self.assertEqual(num_abilities, 6, error)
+        self.assertEqual(num_abilities, 5, error)
 
     def test_eligible_abilities(self):
         error = "Eligible abilities didn't separate active from available abilities correctly"
@@ -285,15 +265,6 @@ class ElementalTests(unittest.TestCase):
         eligible_ability = elemental.eligible_abilities[0]
         elemental.swap_ability(active_ability, eligible_ability)
         self.assertIn(eligible_ability, elemental.active_abilities, error)
-
-    def test_swap_defend(self):
-        error = "Elemental can incorrectly swap out Defend for another ability"
-        species = self.get_species()
-        elemental = ElementalBuilder().with_level(5).with_species(species).build()
-        defend = next(ability for ability in elemental.active_abilities if ability.name == 'Defend')
-        other_ability = elemental.eligible_abilities[0]
-        elemental.swap_ability(defend, other_ability)
-        self.assertIn(defend, elemental.active_abilities, error)
 
     def test_set_abilities(self):
         error = "Elemental abilities couldn't be replaced"
@@ -316,13 +287,4 @@ class ElementalTests(unittest.TestCase):
         elemental.set_abilities(abilities)
         ability_names = [ability.name for ability in elemental.active_abilities]
         self.assertNotIn(Claw().name, ability_names, error)
-        self.assertEqual(5, len(elemental.active_abilities))
-
-    def test_set_abilities_readd_defend(self):
-        error = "Defend wasn't re-added when replacing an elemental's abilities"
-        species = self.get_species()
-        elemental = ElementalBuilder().with_level(5).with_species(species).build()
-        abilities = [Slam(), RollingThunder(), Rend(), Fireball()]
-        elemental.set_abilities(abilities)
-        ability_names = [ability.name for ability in elemental.active_abilities]
-        self.assertIn(Defend().name, ability_names, error)
+        self.assertEqual(4, len(elemental.active_abilities))
