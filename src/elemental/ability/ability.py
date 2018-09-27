@@ -40,6 +40,7 @@ class Ability(Technique):
 
     def __init__(self):
         super().__init__()
+        self.name = "Generic Ability"
         self.mana_cost = 0
         self.defend_cost = 0
         # Who goes first in the round is determined by turn_priority.

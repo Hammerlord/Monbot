@@ -36,7 +36,7 @@ class CombatElemental(Targetable):
         self._status_manager = StatusManager(self)
         self._actions = []  # List[ElementalAction]  A record of the actions taken by this CombatElemental.
         self._abilities = elemental.active_abilities
-        self._abilities.append(Defend()) # All elementals know Defend.
+        self._abilities.append(Defend())  # All elementals know Defend.
         # Queueable; wrapper for an Ability that takes time to activate or executes over multiple turns:
         self.action_queued = None
 
@@ -48,7 +48,7 @@ class CombatElemental(Targetable):
         return self._elemental.nickname
 
     @property
-    def id(self) -> int:
+    def id(self) -> str:
         return self._elemental.id
 
     @property
@@ -349,7 +349,6 @@ class CombatElemental(Targetable):
     def heal(self, amount: float) -> None:
         # TODO block ability healing when knocked out.
         if self.current_hp == self.max_hp:
-            # Regular healing effects don't work when the elemental is KOed.
             return
         self._elemental.heal(amount)
         self.log(f'{self.nickname} recovered health!')

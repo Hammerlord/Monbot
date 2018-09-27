@@ -23,7 +23,7 @@ class AbilityManager:
         """
         :return: Abilities usable in combat by the Elemental.
         """
-        return self._active_abilities
+        return list(self._active_abilities)
 
     @property
     def available_abilities(self) -> List[Ability]:
