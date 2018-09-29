@@ -49,7 +49,6 @@ class BattleView(Form):
         self.log_index = self.logger.most_recent_index
 
     async def render(self) -> None:
-        # TODO it is possible to have no available options, in which case, we need a skip.
         await self._clear_reactions()
         await self._check_waiting()
         await self._render_main()

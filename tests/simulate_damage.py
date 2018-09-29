@@ -1,12 +1,8 @@
 from unittest.mock import Mock
 
-from src.elemental.ability.abilities.claw import Claw
 from src.elemental.ability.damage_calculator import DamageCalculator
 from src.elemental.combat_elemental import CombatElemental
 from src.elemental.elemental_factory import ElementalInitializer
-from src.elemental.species.manapher import Manapher
-from src.elemental.species.sithel import Sithel
-from src.elemental.status_effect.status_effects.enrage import EnrageEffect
 
 
 def sim_damage(elemental, opponent, level):

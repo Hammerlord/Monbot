@@ -324,7 +324,7 @@ class Combat:
         :param team: CombatTeam
         :return: True if we're waiting on this team to make a move.
         """
-        team_in_request = next((request.team for request in self.action_requests if request == team), None)
+        team_in_request = any(request.team for request in self.action_requests if request == team)
         if self.is_awaiting_knockout_replacements():
             return team.active_elemental and team.active_elemental.is_knocked_out and team_in_request is None
         return team_in_request is None

@@ -4,7 +4,7 @@ from copy import deepcopy, copy
 
 from src.core.elements import Elements
 from src.core.targetable_interface import Targetable
-from src.elemental.ability.abilities.bide import Bide
+from src.elemental.ability.abilities.wait import Wait
 from src.elemental.ability.abilities.defend import Defend
 from src.elemental.ability.ability import Ability
 from src.elemental.ability.queueable import Castable, Channelable, Queueable
@@ -168,7 +168,7 @@ class CombatElemental(Targetable):
         usable_abilities = [ability for ability in self._abilities if self.can_use_ability(ability)]
         if usable_abilities:
             return usable_abilities
-        return [Bide()]
+        return [Wait()]
 
     @property
     def abilities(self) -> List[Ability]:

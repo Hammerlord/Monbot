@@ -1,13 +1,12 @@
 import random
-from collections import namedtuple
 
 from src.character.npc_initializer import NPCInitializer
 from src.character.player import Player
 from src.combat.combat import Combat
 from src.data.data_manager import DataManager
 from src.elemental.elemental_factory import ElementalInitializer
-from src.elemental.species.manapher import Manapher
-from src.elemental.species.tophu import Tophu
+from src.elemental.species.npc_monsters.manapher import Manapher
+from src.elemental.species.npc_monsters.tophu import Tophu
 from src.team.combat_team import CombatTeam
 
 

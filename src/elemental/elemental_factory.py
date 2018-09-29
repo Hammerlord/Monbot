@@ -5,16 +5,16 @@ from src.data.resources import ElementalResource, AttributeResource
 from src.elemental.attribute.attribute_factory import AttributeFactory
 from src.elemental.elemental import Elemental
 from src.elemental.species.felix import Felix
-from src.elemental.species.manapher import Manapher
 from src.elemental.species.mithus import Mithus
 from src.elemental.species.nepharus import Nepharus
 from src.elemental.species.noel import Noel
+from src.elemental.species.npc_monsters.manapher import Manapher
+from src.elemental.species.npc_monsters.tophu import Tophu
 from src.elemental.species.rainatu import Rainatu
 from src.elemental.species.rex import Rex
 from src.elemental.species.roaus import Roaus
 from src.elemental.species.sithel import Sithel
 from src.elemental.species.slyfe import Slyfe
-from src.elemental.species.tophu import Tophu
 
 
 class ElementalInitializer:

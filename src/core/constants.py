@@ -65,6 +65,7 @@ SHELL = '🐚'
 FREEZE = '⏹'
 STUN = '💫'
 PROVOKE = '👎'
+TIME = '⏱'
 
 CYCLONE = '🌪'
 DELUGE = '⚓'

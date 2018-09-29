@@ -2,7 +2,7 @@ from typing import List
 
 from src.core.elements import Elements
 from src.elemental.ability.ability import LearnableAbility, Ability
-from src.elemental.species.manapher import Manapher
+from src.elemental.species.npc_monsters.manapher import Manapher
 from src.elemental.species.species import Species, Stats
 
 
