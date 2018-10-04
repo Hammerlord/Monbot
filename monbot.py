@@ -7,12 +7,12 @@ from src.discord_token import TOKEN
 from src.elemental.elemental_factory import ElementalInitializer
 from src.shop.general_shop import GeneralShop
 from src.team.combat_team import CombatTeam
-from src.ui.view_manager import ViewCommandManager
+from src.ui.view_router import ViewRouter
 
 description = "Collect elementals and battle them!"
 bot = commands.Bot(command_prefix=';', description=description)
 client = discord.Client()
-view_manager: ViewCommandManager = None
+view_manager: ViewRouter = None
 battle_manager: BattleManager = BattleManager()
 data_manager: DataManager = DataManager()
 
@@ -20,7 +20,7 @@ data_manager: DataManager = DataManager()
 @bot.event
 async def on_ready():
     global view_manager
-    view_manager = ViewCommandManager(bot)
+    view_manager = ViewRouter(bot)
     print("Monbot is ready!")
 
 

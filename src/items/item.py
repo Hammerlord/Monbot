@@ -10,6 +10,11 @@ class ItemTypes(Enum):
     MATERIAL = 1
 
 
+class ItemSubcategories(Enum):
+    NONE = 0
+    SHARD = 1
+
+
 class Item:
     def __init__(self):
         self.healing_percentage = 0
@@ -20,6 +25,7 @@ class Item:
         # Item icons are used as reactions, and must be unicode or custom. See Discord add_reaction().
         self.icon = MEAT
         self.item_type = ItemTypes.CONSUMABLE
+        self.subcategory = ItemSubcategories.NONE
         self.sell_price = 0
 
     @property

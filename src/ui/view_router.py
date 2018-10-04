@@ -12,7 +12,7 @@ from src.ui.forms.status import StatusView
 from src.ui.forms.versus import VersusViewOptions, VersusForm
 
 
-class ViewCommandManager:
+class ViewRouter:
     """
     Routes user commands to the appropriate view.
     """

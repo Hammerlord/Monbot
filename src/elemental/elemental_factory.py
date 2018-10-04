@@ -1,6 +1,7 @@
 import random
 from typing import List
 
+from src.core.elements import Elements
 from src.data.resources import ElementalResource, AttributeResource
 from src.elemental.attribute.attribute_factory import AttributeFactory
 from src.elemental.elemental import Elemental
@@ -64,18 +65,24 @@ class ElementalInitializer:
         return elemental
 
     @staticmethod
-    def make_random(level=1, excluding: List[Elemental] = None) -> Elemental:
+    def make_random(level=1, excluding: List[Elemental] = None, element: Elements = None) -> Elemental:
         """
         :param level: The desired level of the Elemental.
         :param excluding: A List[Species] of elementals to exclude.
-        :return:
+        :param element: Filter elementals by a specific element.
+        :return: The summoned elemental.
         """
+
+        summonable_species = list(ElementalInitializer.SUMMONABLE_SPECIES)
+        if element:
+            summonable_species = [species for species in summonable_species if species.element == element]
+        potential_species = None
         if excluding:
             excluded_species = [elemental.species.name for elemental in excluding]
-            potential_species = [species for species in ElementalInitializer.SUMMONABLE_SPECIES
+            potential_species = [species for species in summonable_species
                                  if species.name not in excluded_species]
-        else:
-            potential_species = ElementalInitializer.SUMMONABLE_SPECIES
+        if not potential_species or not excluding:
+            potential_species = summonable_species
         pick = random.randint(0, len(potential_species) - 1)
         return ElementalInitializer.make(potential_species[pick], level)
 
