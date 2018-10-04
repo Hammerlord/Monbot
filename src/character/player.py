@@ -1,4 +1,5 @@
 from src.character.character import Character
+from src.core.config import PLAYER_START_LEVEL
 from src.data.resources import PlayerResource, InventoryResource
 from src.items.consumables import Peach, Revive
 from src.ui.forms.form import Form
@@ -8,7 +9,7 @@ class Player(Character):
     def __init__(self,
                  id: str,
                  name: str,
-                 level=1,
+                 level=PLAYER_START_LEVEL,
                  current_exp=0,
                  gold=5,
                  battles_fought=0,
