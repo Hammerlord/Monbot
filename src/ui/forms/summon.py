@@ -5,6 +5,7 @@ from discord.ext.commands import Bot
 
 from src.core.config import SHARDS_TO_SUMMON
 from src.core.constants import BACK, OK, SUMMON, STATUS
+from src.data.data_manager import DataManager
 from src.elemental.elemental import Elemental
 from src.elemental.elemental_factory import ElementalInitializer
 from src.items.materials import ManaShard
@@ -13,9 +14,24 @@ from src.ui.health_bar import HealthBarView
 from src.ui.stats import StatsView
 
 
+class SummonMenuOptions(FormOptions):
+    def __init__(self,
+                 bot: Bot,
+                 player,
+                 data_manager: DataManager,
+                 discord_message: discord.Message = None,
+                 previous_form: 'Form' = None):
+        super().__init__(bot, player, discord_message, previous_form)
+        self.data_manager = data_manager
+
+
 class SummonMenu(ValueForm):
-    def __init__(self, options: FormOptions):
+    def __init__(self, options):
+        """
+        :param options: SaveableDataViewOptions
+        """
         super().__init__(options)
+        self.data_manager = options.data_manager
 
     async def render(self) -> None:
         await self._clear_reactions()
@@ -73,6 +89,8 @@ class SummonMenu(ValueForm):
         player.inventory.remove_item(ManaShard(), SHARDS_TO_SUMMON)
         elemental = ElementalInitializer.make_random(player.level, player.elementals, self._selected_value)
         player.add_elemental(elemental)
+        self.data_manager.update_player(self.player)
+        self.data_manager.update_elemental(elemental)
 
     def _can_summon(self) -> bool:
         return self.player.inventory.amount_left(ManaShard()) >= SHARDS_TO_SUMMON

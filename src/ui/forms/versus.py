@@ -13,7 +13,7 @@ from src.ui.forms.battle import BattleViewOptions, BattleView
 from src.ui.forms.form import ValueForm, FormOptions, Form
 
 
-class VersusViewOptions(FormOptions):
+class VersusFormOptions(FormOptions):
     def __init__(self,
                  bot: Bot,
                  player,
@@ -31,7 +31,7 @@ class VersusForm(ValueForm):
     A form to challenge a user to PVP and wait for a response.
     """
 
-    def __init__(self, options: VersusViewOptions):
+    def __init__(self, options: VersusFormOptions):
         super().__init__(options)
         self.server = options.server
         self.data_manager = options.data_manager

@@ -9,7 +9,8 @@ from src.ui.forms.form import Form, FormOptions
 from src.ui.forms.select_starter import SelectStarterView
 from src.ui.forms.shop import ShopViewOptions, ShopView
 from src.ui.forms.status import StatusView
-from src.ui.forms.versus import VersusViewOptions, VersusForm
+from src.ui.forms.summon import SummonMenu, SummonMenuOptions
+from src.ui.forms.versus import VersusFormOptions, VersusForm
 
 
 class ViewRouter:
@@ -39,11 +40,17 @@ class ViewRouter:
         await self._set_view(player, BattleView(view_options))
 
     async def show_versus(self, player, data_manager, server) -> None:
-        view_options = VersusViewOptions(self.bot,
+        view_options = VersusFormOptions(self.bot,
                                          player,
                                          data_manager,
                                          server)
         await self._set_view(player, VersusForm(view_options))
+
+    async def show_summon(self, player, data_manager) -> None:
+        view_options = SummonMenuOptions(self.bot,
+                                         player,
+                                         data_manager)
+        await self._set_view(player, SummonMenu(view_options))
 
     async def delete_message(self, message: discord.Message) -> None:
         try:

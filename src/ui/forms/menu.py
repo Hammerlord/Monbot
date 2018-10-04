@@ -1,5 +1,6 @@
 from src.combat.battle_manager import BattleManager
 from src.core.constants import STATUS, BAG, FIGHT, MAP, SHOP, VS, SUMMON, CRAFT
+from src.data.data_manager import DataManager
 from src.shop.general_shop import GeneralShop
 from src.ui.forms.battle import BattleViewOptions, BattleView
 from src.ui.forms.form import Form, FormOptions, ValueForm
@@ -48,11 +49,10 @@ class MainMenu(Form):
         elif reaction == CRAFT:
             pass
         elif reaction == SUMMON:
-            pass
+            await self.router.show_summon(self.player, DataManager())
         elif reaction == SHOP:
             await self.router.show_shop(GeneralShop(), self.player)
-        elif reaction == VS:
-            # And message is on a server
-            pass
+        elif reaction == VS and self.discord_message.server:
+            await self.router.show_versus(self.player, DataManager(), self.discord_message.server)
 
 
