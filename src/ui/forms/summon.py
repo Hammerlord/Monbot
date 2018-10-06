@@ -35,15 +35,18 @@ class SummonMenu(ValueForm):
 
     async def render(self) -> None:
         await self._clear_reactions()
+        await self._display(self._view)
         if self._can_summon():
             await self._add_reaction(SUMMON)
             for button in self.buttons:
                 await self._add_reaction(button.reaction)
         await self._add_reaction(BACK)
 
+    @property
     def _view(self) -> str:
         view = [f"```Summon an elemental```",
-                f"Reagents needed: `Mana Shard` x3   Owned: {self.player.inventory.amount_left(ManaShard())}",
+                f"Reagents needed: {ManaShard().icon} `Mana Shard` x3   ",
+                f"Owned: {self.player.inventory.amount_left(ManaShard())}",
                 f"Optional: Adding an elemental shard guarantees the element of your summon.",
                 self._shards_owned,
                 self._selected_element_view]
@@ -51,14 +54,16 @@ class SummonMenu(ValueForm):
 
     @property
     def _selected_element_view(self) -> str:
+        if not self._can_summon():
+            return ''
         if self._selected_value:
             return f'\nSelected element: {self._selected_value.name} - Click {SUMMON} to summon.'
-        return '\nClick {SUMMON} to summon.'
+        return f'\nClick {SUMMON} to summon.'
 
     @property
     def _shards_owned(self) -> str:
         shards = self._shards_view
-        return f'Owned: {shards}' if shards else '(You have no elemental shards)'
+        return f'Owned: {shards}' if shards else '*(You have no elemental shards)*'
 
     @property
     def _shards_view(self) -> str:
@@ -77,7 +82,7 @@ class SummonMenu(ValueForm):
         return [shard for shard in self.player.inventory.shards if shard.name != ManaShard().name]
 
     async def pick_option(self, reaction: str) -> None:
-        super().pick_option(reaction)
+        await super().pick_option(reaction)
         if reaction == BACK:
             # Go back to main menu, not summon results
             pass

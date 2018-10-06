@@ -1,11 +1,11 @@
 import discord
 from discord.ext.commands import Bot
 
-
 from src.character.player import Player
 from src.shop.shop import Shop
 from src.ui.forms.battle import BattleView, BattleViewOptions
 from src.ui.forms.form import Form, FormOptions
+from src.ui.forms.main_menu import MainMenu
 from src.ui.forms.select_starter import SelectStarterView
 from src.ui.forms.shop import ShopViewOptions, ShopView
 from src.ui.forms.status import StatusView
@@ -34,23 +34,27 @@ class ViewRouter:
         await self._set_view(player, ShopView(options))
 
     async def show_battle(self, player, combat_team) -> None:
-        view_options = BattleViewOptions(self.bot,
-                                         player,
-                                         combat_team)
-        await self._set_view(player, BattleView(view_options))
+        options = BattleViewOptions(self.bot,
+                                    player,
+                                    combat_team)
+        await self._set_view(player, BattleView(options))
 
     async def show_versus(self, player, data_manager, server) -> None:
-        view_options = VersusFormOptions(self.bot,
-                                         player,
-                                         data_manager,
-                                         server)
-        await self._set_view(player, VersusForm(view_options))
+        options = VersusFormOptions(self.bot,
+                                    player,
+                                    data_manager,
+                                    server)
+        await self._set_view(player, VersusForm(options))
 
     async def show_summon(self, player, data_manager) -> None:
-        view_options = SummonMenuOptions(self.bot,
-                                         player,
-                                         data_manager)
-        await self._set_view(player, SummonMenu(view_options))
+        options = SummonMenuOptions(self.bot,
+                                    player,
+                                    data_manager)
+        await self._set_view(player, SummonMenu(options))
+
+    async def show_main_menu(self, player, message) -> None:
+        options = FormOptions(self.bot, player)
+        await self._set_view(player, MainMenu(options))
 
     async def delete_message(self, message: discord.Message) -> None:
         try:

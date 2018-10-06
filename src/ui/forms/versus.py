@@ -74,7 +74,7 @@ class VersusForm(ValueForm):
     def _is_valid_opponent(self, opponent: Player) -> bool:
         return (opponent is not None and
                 opponent.can_battle and
-                opponent is not self.player)
+                opponent.id != self.player.id)
 
     async def pick_option(self, reaction: str) -> None:
         await super().pick_option(reaction)

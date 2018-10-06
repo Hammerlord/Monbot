@@ -4,9 +4,7 @@ from discord.ext import commands
 from src.combat.battle_manager import BattleManager
 from src.data.data_manager import DataManager
 from src.discord_token import TOKEN
-from src.elemental.elemental_factory import ElementalInitializer
 from src.shop.general_shop import GeneralShop
-from src.team.combat_team import CombatTeam
 from src.ui.view_router import ViewRouter
 
 description = "Collect elementals and battle them!"
@@ -22,6 +20,19 @@ async def on_ready():
     global view_manager
     view_manager = ViewRouter(bot)
     print("Monbot is ready!")
+
+
+@bot.command(pass_context=True)
+async def menu(ctx):
+    user = ctx.message.author
+    await view_manager.delete_message(ctx.message)
+    if user.bot:
+        return
+    player = data_manager.get_created_player(user)
+    if player.has_elemental:
+        await view_manager.show_main_menu(player, ctx.message)
+    else:
+        await view_manager.show_starter_selection(player)
 
 
 @bot.command(pass_context=True)
@@ -68,7 +79,9 @@ async def versus(ctx):
 
 @bot.command(pass_context=True)
 async def battle(ctx):
-    # Create or resume a battle
+    """
+    Create or resume a battle.
+    """
     user = ctx.message.author
     await view_manager.delete_message(ctx.message)
     if user.bot:
@@ -77,7 +90,7 @@ async def battle(ctx):
     if not player.has_elemental:
         await view_manager.show_starter_selection(player)
     elif player.is_busy:
-        await player.primary_view.render()
+        await view_manager.show_battle(player, player.combat_team)
     elif player.can_battle:
         combat_team = battle_manager.create_pve_combat(player)
         await view_manager.show_battle(player, combat_team)
@@ -87,7 +100,9 @@ async def battle(ctx):
 
 @bot.command(pass_context=True)
 async def summon(ctx):
-    # Add a random Elemental to your team.
+    """
+    Show the view that allows players to summon an elemental.
+    """
     user = ctx.message.author
     await view_manager.delete_message(ctx.message)
     if user.bot:
@@ -96,9 +111,7 @@ async def summon(ctx):
     if player.is_busy:
         return
     if player.has_elemental:
-        elemental = ElementalInitializer.make_random(player.level, player.team.elementals)
-        player.add_elemental(elemental)
-        await view_manager.show_status(player)
+        await view_manager.show_summon(player, data_manager)
     else:
         await view_manager.show_starter_selection(player)
 
