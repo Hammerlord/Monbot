@@ -5,6 +5,7 @@ from discord.ext.commands import Bot
 
 from src.core.config import SHARDS_TO_SUMMON
 from src.core.constants import BACK, OK, SUMMON, STATUS
+from src.core.elements import Elements
 from src.data.data_manager import DataManager
 from src.elemental.elemental import Elemental
 from src.elemental.elemental_factory import ElementalInitializer
@@ -44,7 +45,7 @@ class SummonMenu(ValueForm):
 
     @property
     def _view(self) -> str:
-        view = [f"```Summon an elemental```",
+        view = [f"```Summon an elemental.```",
                 f"Reagents needed: {ManaShard().icon} `Mana Shard` x3   ",
                 f"Owned: {self.player.inventory.amount_left(ManaShard())}",
                 f"Optional: Adding an elemental shard guarantees the element of your summon.",
@@ -92,10 +93,15 @@ class SummonMenu(ValueForm):
     def _summon(self) -> None:
         player = self.player
         player.inventory.remove_item(ManaShard(), SHARDS_TO_SUMMON)
-        elemental = ElementalInitializer.make_random(player.level, player.elementals, self._selected_value)
+        elemental = ElementalInitializer.make_random(player.level, player.elementals, self._selected_element)
         player.add_elemental(elemental)
         self.data_manager.update_player(self.player)
         self.data_manager.update_elemental(elemental)
+
+    @property
+    def _selected_element(self) -> Elements:
+        if self._selected_value:  # Type Shard
+            return self._selected_value.element
 
     def _can_summon(self) -> bool:
         return self.player.inventory.amount_left(ManaShard()) >= SHARDS_TO_SUMMON
@@ -143,14 +149,13 @@ class SummonResultsView(Form):
             view.append(f"{SUMMON} `summon again`")
         return "   ".join(view)
 
-    async def pick_option(self, reaction: str) -> bool:
+    async def pick_option(self, reaction: str) -> None:
         if reaction == STATUS:
             # Elementals, not team
-            return True
-        if reaction == SUMMON:
+            pass
+        elif reaction == SUMMON:
             self.previous_form.discord_message = self.discord_message
             await self.previous_form.show()
-            return True
 
     def _can_summon(self) -> bool:
         return self.player.inventory.amount_left(ManaShard()) >= SHARDS_TO_SUMMON

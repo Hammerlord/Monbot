@@ -72,7 +72,6 @@ class ElementalInitializer:
         :param element: Filter elementals by a specific element.
         :return: The summoned elemental.
         """
-
         summonable_species = list(ElementalInitializer.SUMMONABLE_SPECIES)
         if element:
             summonable_species = [species for species in summonable_species if species.element == element]
