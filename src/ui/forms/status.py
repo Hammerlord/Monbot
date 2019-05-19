@@ -188,7 +188,7 @@ class StatusDetailView(Form):
                 f"Lv. {elemental.level}  (EXP: {elemental.current_exp} / {elemental.exp_to_level})\n"
                 f"`{HealthBarView.from_elemental(elemental)} {elemental.current_hp} / {elemental.max_hp} HP`\n"
                 f"{note}"
-                f"Type: {elemental.element}"
+                f"Type: {Elements.get_icon(elemental.element)}"
                 f"{StatsView(elemental).get_view()}")
 
     @property

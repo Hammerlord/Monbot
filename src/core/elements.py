@@ -1,11 +1,13 @@
 from enum import Enum
 from typing import List
+from src.core.constants import DARK, LIGHT, WIND, EARTH, FIRE, WATER, LIGHTNING, CHAOS
 
 
 class Elements(Enum):
     """
     Element typing for Elementals and Abilities.
     """
+
     NONE = 0
     LIGHTNING = 1
     WATER = 2
@@ -19,14 +21,14 @@ class Elements(Enum):
     @staticmethod
     def get_icon(element) -> str:
         icon_map = {
-            Elements.LIGHTNING: ':zap:',
-            Elements.WATER: ':droplet:',
-            Elements.FIRE: ':fire:',
-            Elements.EARTH: ':mountain_snow:',
-            Elements.WIND: ':cloud_tornado:',
-            Elements.LIGHT: ':star2:',
-            Elements.DARK: ':dark_sunglasses:',
-            Elements.CHAOS: ':radioactive:'
+            Elements.LIGHTNING: LIGHTNING,
+            Elements.WATER: WATER,
+            Elements.FIRE: FIRE,
+            Elements.EARTH: EARTH,
+            Elements.WIND: WIND,
+            Elements.LIGHT: LIGHT,
+            Elements.DARK: DARK,
+            Elements.CHAOS: CHAOS
         }
         if element in icon_map:
             return icon_map[element]
