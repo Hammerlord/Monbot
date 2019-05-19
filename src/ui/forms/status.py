@@ -472,6 +472,6 @@ class AttributesView(ValueForm):
             stat_gained = f"[+{attribute.total_stat_gain()} {attribute.description}]" if attribute.level > 0 else ""
             header = f"{index} **{attribute.name}** Lv. {attribute.level} / {Attribute.MAX_LEVEL}  {stat_gained}\n"
             view.append(header)
-            if attribute.can_level_up():
+            if attribute.can_level_up:
                 view.append(f"Next rank: +{attribute.base_stat_gain} {attribute.description} \n")
         return ''.join(view)

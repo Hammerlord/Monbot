@@ -100,8 +100,8 @@ class SummonMenu(ValueForm):
 
     @property
     def _selected_element(self) -> Elements:
-        if self._selected_value:  # Type Shard
-            return self._selected_value.element
+        if self._selected_value:  # Type ItemSlot
+            return self._selected_value.item.element
 
     def _can_summon(self) -> bool:
         return self.player.inventory.amount_left(ManaShard()) >= SHARDS_TO_SUMMON
