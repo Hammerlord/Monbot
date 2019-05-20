@@ -20,36 +20,34 @@ class BattleManager:
         """
         Start a fight between two players.
         """
-        combat = Combat(data_manager=DataManager(),
-                        allow_flee=False,
-                        allow_items=False)
-        player_team = CombatTeam(player.team)
-        other_player_team = CombatTeam(other_player.team)
-        combat.join_battle(player_team)
-        combat.join_battle(other_player_team)
+        Combat([CombatTeam(player.team)],
+               [CombatTeam(other_player.team)],
+               data_manager=DataManager(),
+               allow_flee=False,
+               allow_items=False)
 
-    def create_pve_combat(self, player: Player) -> CombatTeam:
+    @staticmethod
+    def create_pve_combat(player: Player) -> CombatTeam:
         if player.battles_fought < 2:
-            combat = self._tutorial_fight(player)
+            opponent = BattleManager._tutorial_opponent(player)
         else:
-            combat = self._get_random_fight(player)
+            opponent = BattleManager._get_random_opponent(player)
         player_team = CombatTeam(player.team)
-        combat.join_battle(player_team)
+        Combat([player_team],
+               [opponent],
+               data_manager=DataManager())
         return player_team
 
     @staticmethod
-    def _tutorial_fight(player: Player) -> Combat:
+    def _tutorial_opponent(player: Player) -> CombatTeam:
         if player.battles_fought == 0:
             tutorial_elemental = Tophu()
         else:
             tutorial_elemental = Manapher()
-        combat = Combat(data_manager=DataManager())
-        opponent = CombatTeam.from_elementals([ElementalInitializer.make(tutorial_elemental)])
-        combat.join_battle(opponent)
-        return combat
+        return CombatTeam.from_elementals([ElementalInitializer.make(tutorial_elemental)])
 
     @staticmethod
-    def _get_random_fight(player: Player) -> Combat:
+    def _get_random_opponent(player: Player) -> CombatTeam:
         """
         A random encounter with an Elemental or NPC.
         """
@@ -57,12 +55,8 @@ class BattleManager:
         if coin_flip:
             opponent = NPCInitializer().get_random_opponent()
             opponent.generate_team(player)
-            opponent_team = CombatTeam(opponent.team)
-        else:
-            opponent_team = BattleManager._get_wild_elemental(player)
-        combat = Combat(data_manager=DataManager())
-        combat.join_battle(opponent_team)
-        return combat
+            return CombatTeam(opponent.team)
+        return BattleManager._get_wild_elemental(player)
 
     @staticmethod
     def _get_wild_elemental(player: Player) -> CombatTeam:

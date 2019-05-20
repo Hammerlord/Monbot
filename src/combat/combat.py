@@ -16,21 +16,21 @@ from src.elemental.combat_elemental import CombatElemental
 class Combat:
     """
     How CombatTeams communicate.
-    Two opposing sides to a battlefield are distinguished, internally, by "side_a" and "side_b".
     TODO for now we only have 1v1, even though each side allows multiple CombatTeams to join.
     """
     SIDE_A = 'a'  # Note: 'a' and 'b' are arbitrary.
     SIDE_B = 'b'
 
     def __init__(self,
+                 side_a,
+                 side_b,
                  data_manager: DataManager,
                  allow_items=True,
                  allow_flee=True,
                  allow_exp_gain=True):
-        self.side_a = []  # List[CombatTeam] One side of the battlefield.
-        self.side_b = []  # List[CombatTeam] Another side of the battlefield.
+        self.side_a = side_a  # List[CombatTeam] One side of the battlefield.
+        self.side_b = side_b  # List[CombatTeam] Another side of the battlefield.
         self.max_teams_per_side = 3
-        self.in_progress = False
         self.allow_items = allow_items
         self.allow_flee = allow_flee
         self.allow_exp_gain = allow_exp_gain
@@ -41,6 +41,16 @@ class Combat:
         self.winning_side = []  # List[CombatTeam] The teams who won, for rendering purposes.
         self.losing_side = []
         self.data_manager = data_manager
+
+        self.in_progress = True
+        for team in self.side_a:
+            team.set_side(Combat.SIDE_A)
+            team.set_combat(self)
+            team.on_combat_start()
+        for team in self.side_b:
+            team.set_side(Combat.SIDE_B)
+            team.set_combat(self)
+            team.on_combat_start()
 
     @property
     def teams(self):
@@ -72,30 +82,6 @@ class Combat:
 
     def awaiting_team_owners(self) -> List[Character]:
         return [team.owner for team in self.teams if team.owner is not None and self._is_request_needed(team)]
-
-    def join_battle(self, combat_team) -> bool:
-        """
-        :param combat_team: CombatTeam
-        :return bool: True if we were able to join the battle.
-        """
-        if not self.__can_join_battle(combat_team):
-            return False
-        # Automatically join the side that has fewer teams, or side_a if both are equal.
-        side_to_join = self.side_a if len(self.side_a) <= len(self.side_b) else self.side_b
-        side_to_join.append(combat_team)
-        combat_team.set_combat(self)
-        self.check_combat_start()
-        return True
-
-    def check_combat_start(self) -> None:
-        if len(self.teams) >= 2 and not self.in_progress:  # TODO 1v1 only right now
-            self.in_progress = True
-            for team in self.side_a:
-                team.set_side(Combat.SIDE_A)
-                team.on_combat_start()
-            for team in self.side_b:
-                team.set_side(Combat.SIDE_B)
-                team.on_combat_start()
 
     def is_awaiting_knockout_replacements(self) -> bool:
         """
@@ -312,15 +298,3 @@ class Combat:
         if self.is_awaiting_knockout_replacements():
             return team.active_elemental and team.active_elemental.is_knocked_out and team_in_request is None
         return team_in_request is None
-
-    def __can_join_battle(self, combat_team) -> bool:
-        """
-        :param combat_team: CombatTeam trying to join.
-        :return: False if:
-        1) Neither side has space
-        2) The CombatTeam is already in the battle
-        3) The battle has already started.
-        """
-        return (len(self.teams) < self.max_teams_per_side * 2 and
-                combat_team not in self.teams and
-                not self.in_progress)
