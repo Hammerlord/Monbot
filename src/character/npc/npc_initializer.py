@@ -1,6 +1,8 @@
 import random
+from enum import Enum
 
-from src.character.npc import NPC
+from src.character.npc.name_generator import NameGenerator
+from src.character.npc.npc import NPC
 from src.elemental.species.felix import Felix
 from src.elemental.species.mithus import Mithus
 from src.elemental.species.nepharus import Nepharus
@@ -13,36 +15,45 @@ from src.elemental.species.sithel import Sithel
 from src.elemental.species.slyfe import Slyfe
 
 
-class NPCInitializer:
+class Professions(Enum):
+    ADVENTURER = 'Adventurer'
+    COLLECTOR = 'Collector'
+    RESEARCHER = 'Researcher'
+    ARCHAEOLOGIST = 'Archaeologist'
+    PALADIN = 'Paladin'
+    ENFORCER = 'Enforcer'
+    CULTIST = 'Cultist'
+    SCHOLAR = 'Scholar'
+    MERCHANT = 'Merchant'
+    MAGISTER = 'Magister'
+    OVERSEER = 'Overseer'
+    WARRIOR = 'Warrior'
+    DANCER = 'Dancer'
 
-    def create_opponent(self, character) -> NPC:
-        """
-        Creates a level-appropriate opponent for the character.
-        :param character: The character to match against.
-        :return:
-        """
-        opponent = self.get_random_opponent()
-        opponent.generate_team(character)
-        return opponent
+
+class NPCInitializer:
 
     def get_random_opponent(self) -> NPC:
         opponents = [self.adventurer,
-                     self.researcher,
-                     self.explorer]
+                     self.collector]
         pick = random.randint(0, len(opponents) - 1)
         return opponents[pick]()
 
     @staticmethod
+    def make_name_with_title(profession: Professions) -> str:
+        return f'{profession} {NameGenerator.generate_name()}'
+
+    @staticmethod
     def adventurer() -> NPC:
         potential_species = [Mithus(), Roaus(), Rainatu(), Sithel()]
-        return NPC('Adventurer',
+        return NPC(NPCInitializer.make_name_with_title(Professions.ADVENTURER),
                    potential_species)
 
     @staticmethod
     def collector() -> NPC:
         potential_species = [Mithus(), Roaus(), Rainatu(), Sithel(),
                              Felix(), Manapher(), Nepharus(), Slyfe(), Noel(), Rex()]
-        return NPC('Collector',
+        return NPC(NPCInitializer.make_name_with_title(Professions.COLLECTOR),
                    potential_species)
 
     @staticmethod

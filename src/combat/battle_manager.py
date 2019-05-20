@@ -1,6 +1,6 @@
 import random
 
-from src.character.npc_initializer import NPCInitializer
+from src.character.npc.npc_initializer import NPCInitializer
 from src.character.player import Player
 from src.combat.combat import Combat
 from src.data.data_manager import DataManager
@@ -54,13 +54,13 @@ class BattleManager:
         A random encounter with an Elemental or NPC.
         """
         coin_flip = random.randint(0, 1)
-        combat = Combat(data_manager=DataManager())
         if coin_flip:
-            opponent = NPCInitializer().collector()
+            opponent = NPCInitializer().get_random_opponent()
             opponent.generate_team(player)
             opponent_team = CombatTeam(opponent.team)
         else:
             opponent_team = BattleManager._get_wild_elemental(player)
+        combat = Combat(data_manager=DataManager())
         combat.join_battle(opponent_team)
         return combat
 

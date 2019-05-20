@@ -1,6 +1,6 @@
 from unittest.mock import Mock
 
-from src.character.npc_initializer import NPCInitializer
+from src.character.npc.npc_initializer import NPCInitializer
 from src.combat.combat import Combat
 from src.team.combat_team import CombatTeam
 
