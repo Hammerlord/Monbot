@@ -19,11 +19,10 @@ class CombatTeamTests(unittest.TestCase):
 
     @staticmethod
     def get_team() -> Team:
-        team = TeamBuilder().build()
-        smurggle = ElementalBuilder().with_nickname('smurggle').build()
-        loksy = ElementalBuilder().with_nickname('loksy').build()
-        team.add_elemental(smurggle)
-        team.add_elemental(loksy)
+        team = TeamBuilder().with_elementals([
+            ElementalBuilder().with_nickname('smurggle').build(),
+            ElementalBuilder().with_nickname('loksy').build()
+        ]).build()
         return team
 
     def get_combat_team(self, team=None) -> CombatTeam:
@@ -43,11 +42,10 @@ class CombatTeamTests(unittest.TestCase):
 
     def test_skip_ko_active(self):
         error = "CombatTeam incorrectly set a 0 HP Elemental as the active Elemental"
-        team = TeamBuilder().build()
-        smurggle = ElementalBuilder().with_current_hp(0).build()
-        loksy = ElementalBuilder().build()
-        team.add_elemental(smurggle)
-        team.add_elemental(loksy)
+        team = TeamBuilder().with_elementals([
+            ElementalBuilder().with_current_hp(0).build(),
+            ElementalBuilder().build()
+        ]).build()
         combat_team = self.get_combat_team(team)
         self.assertGreater(combat_team.active_elemental.current_hp, 0, error)
 
@@ -60,43 +58,40 @@ class CombatTeamTests(unittest.TestCase):
 
     def test_bench(self):
         error = "CombatTeam incorrectly included the active CombatElemental in bench"
-        team = TeamBuilder().build()
-        smurggle = ElementalBuilder().build()
-        loksy = ElementalBuilder().build()
-        team.add_elemental(smurggle)
-        team.add_elemental(loksy)
+        team = TeamBuilder().with_elementals([
+            ElementalBuilder().build(),
+            ElementalBuilder().build()
+        ]).build()
         combat_team = self.get_combat_team(team)
         bench = combat_team.bench
         self.assertEqual(len(bench), 1, error)
-        self.assertEqual(bench[0].id, loksy.id, error)
+        self.assertEqual(bench[0].id, team.elementals[0].id, error)
 
     def test_eligible_bench(self):
         error = "CombatTeam incorrectly included knocked out CombatElementals in the eligible bench"
-        team = TeamBuilder().build()
-        smurggle = ElementalBuilder().with_current_hp(0).build()
-        loksy = ElementalBuilder().build()
-        team.add_elemental(smurggle)
-        team.add_elemental(loksy)  # Loksy should be considered active
+        team = TeamBuilder().with_elementals([
+            ElementalBuilder().with_current_hp(0).build(),
+            ElementalBuilder().build()
+        ]).build()
         combat_team = self.get_combat_team(team)
         bench = combat_team.eligible_bench
         self.assertEqual(len(bench), 0, error)
 
     def test_switch_ko(self):
         error = "CombatTeam incorrectly allowed a knocked out CombatElemental to be switched in"
-        team = TeamBuilder().build()
-        smurggle = ElementalBuilder().with_current_hp(0).build()
-        loksy = ElementalBuilder().build()
-        team.add_elemental(smurggle)
-        team.add_elemental(loksy)
+        team = TeamBuilder().with_elementals([
+            ElementalBuilder().with_current_hp(0).build(),
+            ElementalBuilder().build()
+        ]).build()
         combat_team = self.get_combat_team(team)
         is_switched = combat_team.attempt_switch(combat_team.elementals[0])
         self.assertFalse(is_switched, error)
 
     def test_all_knocked_out(self):
         error = "CombatTeam.is_all_knocked_out didn't resolve correctly"
-        team = TeamBuilder().build()
-        smurggle = ElementalBuilder().with_current_hp(0).build()
-        team.add_elemental(smurggle)
+        team = TeamBuilder().with_elementals([
+            ElementalBuilder().with_current_hp(0).build()
+        ]).build()
         combat_team = CombatTeam(team)
         self.assertIs(combat_team.is_all_knocked_out, True, error)
 
@@ -113,8 +108,6 @@ class CombatTeamTests(unittest.TestCase):
         error = "Changing the member of a Team incorrectly affected the CombatTeam"
         # Not that it should be possible to change your elementals when you're in combat.
         team = TeamBuilder().build()
-        smurggle = ElementalBuilder().build()
-        team.add_elemental(smurggle)
         combat_team = CombatTeam(team)
         team.remove_elemental(0)
         self.assertEqual(len(combat_team.elementals), 1, error)

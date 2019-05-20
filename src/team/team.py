@@ -6,8 +6,10 @@ from src.elemental.elemental import Elemental
 class Team:
     MAX_SIZE = 4
 
-    def __init__(self, owner):
-        self.__elementals = []  # List[Elemental]
+    def __init__(self,
+                 owner,
+                 elementals: List[Elemental] = None):
+        self.__elementals = elementals or []
         self._nickname = None
         self._note = None
         self._owner = owner

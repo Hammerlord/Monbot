@@ -2,9 +2,7 @@
 from src.core.constants import WHALE
 from src.core.elements import Elements
 from src.elemental.ability.ability_factory import LearnableAbilities
-from src.elemental.species.species import Species, Stats, Loot
-from src.items.consumables import Meat
-from src.items.materials import WaterShard, ManaShard
+from src.elemental.species.species import Species, Stats
 
 
 class Mithus(Species):
@@ -16,9 +14,6 @@ class Mithus(Species):
         self._left_icon = WHALE
         self._right_icon = WHALE
         self._portrait = None
-        self._loot = [Loot(WaterShard(), 0.75),
-                      Loot(Meat(), 0.5),
-                      Loot(ManaShard(), 0.2)]
         self._learnable_abilities = [LearnableAbilities.razor_fangs(),
                                      LearnableAbilities.claw(),
                                      LearnableAbilities.geyser(4),

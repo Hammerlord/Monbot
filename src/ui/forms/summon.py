@@ -9,7 +9,7 @@ from src.core.elements import Elements
 from src.data.data_manager import DataManager
 from src.elemental.elemental import Elemental
 from src.elemental.elemental_factory import ElementalInitializer
-from src.items.materials import ManaShard
+from src.items.shards import ManaShard
 from src.ui.forms.form import ValueForm, FormOptions, Form
 from src.ui.health_bar import HealthBarView
 from src.ui.stats import StatsView
@@ -88,9 +88,9 @@ class SummonMenu(ValueForm):
             # Go back to main menu, not summon results
             pass
         if reaction == SUMMON and self._can_summon():
-            self._summon()
+            await self._summon()
 
-    def _summon(self) -> None:
+    async def _summon(self) -> None:
         player = self.player
         player.inventory.remove_item(ManaShard(), SHARDS_TO_SUMMON)
         elemental = ElementalInitializer.make_random(player.level, player.elementals, self._selected_element)

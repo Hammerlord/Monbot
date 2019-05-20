@@ -3,9 +3,7 @@
 from src.core.constants import PINEAPPLE
 from src.core.elements import Elements
 from src.elemental.ability.ability_factory import LearnableAbilities
-from src.elemental.species.species import Species, Stats, Loot
-from src.items.consumables import Peach, Cake
-from src.items.materials import LightningShard, ManaShard
+from src.elemental.species.species import Species, Stats
 
 
 class Rainatu(Species):
@@ -18,10 +16,6 @@ class Rainatu(Species):
         self._right_icon = PINEAPPLE
         self._portrait = None
         self._growth_rate = GrowthRate()
-        self._loot = [Loot(LightningShard(), 0.75),
-                      Loot(Peach(), 0.8),
-                      Loot(ManaShard(), 0.2),
-                      Loot(Cake(), 0.3)]
         self._learnable_abilities = [LearnableAbilities.slam(),
                                      LearnableAbilities.rolling_thunder(),
                                      LearnableAbilities.stormbolt(4),

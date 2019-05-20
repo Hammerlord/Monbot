@@ -2,9 +2,7 @@
 from src.core.constants import OX
 from src.core.elements import Elements
 from src.elemental.ability.ability_factory import LearnableAbilities
-from src.elemental.species.species import Species, Stats, Loot
-from src.items.consumables import Peach
-from src.items.materials import EarthShard, ManaShard
+from src.elemental.species.species import Species, Stats
 
 
 class Roaus(Species):
@@ -16,9 +14,6 @@ class Roaus(Species):
         self._left_icon = OX
         self._right_icon = OX
         self._portrait = None
-        self._loot = [Loot(EarthShard(), 0.75),
-                      Loot(Peach(), 0.8),
-                      Loot(ManaShard(), 0.2)]
         self._learnable_abilities = [LearnableAbilities.charge(),
                                      LearnableAbilities.slam(),
                                      LearnableAbilities.windrush(4),

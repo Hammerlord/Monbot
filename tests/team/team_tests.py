@@ -6,7 +6,7 @@ from tests.team.team_builder import TeamBuilder
 
 class TeamTests(unittest.TestCase):
     def setUp(self):
-        self.team = TeamBuilder().build()  # Empty Team
+        self.team = TeamBuilder().build()  # Team with 1 Elemental
 
     def tearDown(self):
         self.team = None
@@ -42,7 +42,7 @@ class TeamTests(unittest.TestCase):
         monze = ElementalBuilder().build()
         self.team.swap(slot=-1, elemental=monze)
         self.team.swap(slot=5, elemental=monze)
-        self.assertEqual(self.team.size, 0, error)
+        self.assertEqual(self.team.size, 1, error)
 
     def test_reorder_empty(self):
         error = "Incorrectly reordered an Elemental into an empty slot"

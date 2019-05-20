@@ -1,5 +1,5 @@
 import src.items.consumables
-import src.items.materials
+import src.items.shards
 from src.items.item import Item
 
 

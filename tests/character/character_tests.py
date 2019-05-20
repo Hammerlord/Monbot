@@ -8,7 +8,7 @@ from tests.character.character_builder import CharacterBuilder
 class CharacterTests(unittest.TestCase):
 
     """
-    Test the base Character class, which is the parent of NPC and character.
+    Test the base Character class, which is the parent of NPC and player.
     """
 
     def setUp(self):

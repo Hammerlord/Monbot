@@ -1,15 +1,13 @@
 import unittest
 
 from src.elemental.ability.abilities.claw import Claw
-from src.elemental.ability.abilities.defend import Defend
 from src.elemental.ability.abilities.fireball import Fireball
 from src.elemental.ability.abilities.rend import Rend
 from src.elemental.ability.abilities.rolling_thunder import RollingThunder
 from src.elemental.ability.abilities.slam import Slam
-from src.elemental.ability.ability import Ability, LearnableAbility
+from src.elemental.ability.ability import LearnableAbility
 from src.elemental.attribute.attribute_factory import AttributeFactory
 from src.elemental.attribute.attribute_manager import AttributeManager
-from tests.character.character_builder import PlayerBuilder
 from tests.elemental.elemental_builder import ElementalBuilder
 from tests.elemental.species_builder import StatsBuilder, SpeciesBuilder
 
@@ -156,14 +154,6 @@ class ElementalTests(unittest.TestCase):
         self.assertEqual(species._magic_def, 10, error)
         self.assertEqual(species._speed, 5, error)
         self.assertEqual(species._max_hp, 50, error)
-
-    def test_owner_restricts_level(self):
-        error = "Elemental shouldn't be able to level past its owner"
-        player = PlayerBuilder().with_level(15).build()
-        elemental = ElementalBuilder().with_level(14).with_owner(player).build()
-        exp = elemental.exp_to_level * 15  # Arbitrary large amount of exp
-        elemental.add_exp(exp)
-        self.assertEqual(player.level, elemental.level, error)
 
     def test_exp_gain_rank_restriction(self):
         error = "Elemental should be allowed to overflow experience even when it is under-ranked"

@@ -1,9 +1,7 @@
 
 from src.core.elements import Elements
 from src.elemental.ability.ability_factory import LearnableAbilities
-from src.elemental.species.species import Stats, Species, Loot
-from src.items.consumables import Peach
-from src.items.materials import WindShard, ManaShard
+from src.elemental.species.species import Stats, Species
 
 
 class Slyfe(Species):
@@ -15,9 +13,6 @@ class Slyfe(Species):
         self._left_icon = ':dove:'
         self._right_icon = ':dove:'
         self._portrait = None
-        self._loot = [Loot(WindShard(), 0.75),
-                      Loot(Peach(), 0.8),
-                      Loot(ManaShard(), 0.2)]
         self._learnable_abilities = [LearnableAbilities.slam(),
                                      LearnableAbilities.cyclone(),
                                      LearnableAbilities.windrush(4),

@@ -1,9 +1,9 @@
 from typing import List
 
-from src.data.resources import ItemResource, InventoryResource
+from src.data.resources import ItemResource
 from src.elemental.combat_elemental import CombatElemental
 from src.elemental.elemental import Elemental
-from src.items.item import ItemTypes, Item, ItemSubcategories
+from src.items.item import ItemTypes, Item
 
 
 class ItemSlot:
@@ -23,10 +23,6 @@ class ItemSlot:
         return self.item.item_type
 
     @property
-    def subcategory(self) -> 'ItemSubcategories':
-        return self.item.subcategory
-
-    @property
     def name(self) -> str:
         return self.item.name
 
@@ -36,7 +32,6 @@ class ItemSlot:
 
 
 class Inventory:
-
     def __init__(self):
         self._bag = {}  # {item_name: ItemSlot}
 
@@ -46,27 +41,25 @@ class Inventory:
 
     @property
     def consumables(self) -> List[ItemSlot]:
-        return [item_slot for item_slot in self._bag.values()
-                if item_slot.item_type == ItemTypes.CONSUMABLE and item_slot.amount > 0]
+        return self._filter_item_by_type(ItemTypes.CONSUMABLE)
 
     @property
     def materials(self) -> List[ItemSlot]:
-        return [item_slot for item_slot in self._bag.values()
-                if item_slot.item_type == ItemTypes.MATERIAL and item_slot.amount > 0]
+        return self._filter_item_by_type(ItemTypes.MATERIAL)
 
     @property
     def shards(self) -> List[ItemSlot]:
-        return [item_slot for item_slot in self._bag.values()
-                if item_slot.subcategory == ItemSubcategories.SHARD and item_slot.amount > 0]
+        return self._filter_item_by_type(ItemTypes.SHARD)
 
     def use_item(self, item: 'Item', target: Elemental or CombatElemental) -> bool:
-        if self.has_item(item) and item.use_on(target):
-            self._bag[item.name].update_amount(-1)
+        if self.has_item(item) and item.is_usable_on(target):
+            item.use_on(target)
+            self.remove_item(item)
             return True
         return False
 
     def add_item(self, item: 'Item', amount=1) -> None:
-        if self.has_item(item):
+        if item.name in self._bag:
             self._bag[item.name].update_amount(amount)
         else:
             self._bag[item.name] = ItemSlot(item, amount)
@@ -86,3 +79,6 @@ class Inventory:
     def to_server(self) -> List[dict]:
         return [ItemResource(item.name, item.amount)._asdict() for item in self._bag.values()]
 
+    def _filter_item_by_type(self, item_type: ItemTypes) -> List[ItemSlot]:
+        return [item_slot for item_slot in self._bag.values()
+                if item_slot.item_type == item_type and item_slot.amount > 0]

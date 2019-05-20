@@ -1,5 +1,4 @@
 from itertools import groupby
-from random import random
 from typing import List
 
 from src.character.character import Character
@@ -7,6 +6,7 @@ from src.combat.actions.action import ActionLogger
 from src.combat.actions.combat_actions import Action, Switch
 from src.combat.combat_ai import CombatAI
 from src.combat.event import EventLogger
+from src.combat.loot_generator import LootGenerator
 from src.core.targetable_interface import Targetable
 from src.data.data_manager import DataManager
 from src.elemental.ability.ability import Ability, Target
@@ -38,7 +38,7 @@ class Combat:
         self.action_logger = ActionLogger()
         self.turn_logger = EventLogger(self)
         self.num_rounds = 0
-        self.winning_side = None  # List[CombatTeam] The teams who won.
+        self.winning_side = None  # List[CombatTeam] The teams who won, for rendering purposes.
         self.losing_side = None
         self.data_manager = data_manager
 
@@ -211,8 +211,7 @@ class Combat:
         if not self.allow_exp_gain:
             return
         enemy_side = self.get_enemy_side(from_elemental.team)
-        raw_exp = from_elemental.level * 6 + 10
-        exp_gained = int(raw_exp // len(enemy_side) + raw_exp * len(enemy_side) * 0.25)
+        exp_gained = from_elemental.level * 6 + 10  # Yes, fairly arbitrary amount...
         for enemy_team in enemy_side:
             if not enemy_team.is_npc:
                 enemy_team.add_exp(exp_gained)
@@ -251,23 +250,26 @@ class Combat:
         return action_groups
 
     def _check_combat_end(self) -> bool:
-        did_side_a_lose = all([team.is_all_knocked_out for team in self.side_a])
-        did_side_b_lose = all([team.is_all_knocked_out for team in self.side_b])
-        if did_side_a_lose and did_side_b_lose:
-            pass  # Tie
-        elif did_side_a_lose:
+        side_a_lose = all([team.is_all_knocked_out for team in self.side_a])
+        side_b_lose = all([team.is_all_knocked_out for team in self.side_b])
+        if side_a_lose and not side_b_lose:
             self.winning_side = self.side_b
             self.losing_side = self.side_a
-        elif did_side_b_lose:
+            self._generate_loot()
+        elif side_b_lose and not side_a_lose:
             self.winning_side = self.side_a
             self.losing_side = self.side_b
-        if did_side_a_lose or did_side_b_lose:
+            self._generate_loot()
+        if side_a_lose or side_b_lose:
             self._end_combat()
             return True
 
+    def _generate_loot(self) -> None:
+        LootGenerator(winning_side=self.winning_side,
+                      losing_side=self.losing_side).generate_loot()
+
     def _end_combat(self) -> None:
         self.in_progress = False
-        self._grant_loot()
         for team in self.teams:
             team.end_combat()
         self._save_results()
@@ -277,40 +279,6 @@ class Combat:
         for team in self.teams:
             if team.owner and not team.owner.is_npc:
                 self.data_manager.save_all(team.owner)
-
-    def _grant_loot(self) -> None:
-        if self.losing_side is None:
-            return
-        gold_earned = self._calculate_gold_earned()
-        items_dropped = self._roll_items_dropped()
-        for team in self.winning_side:
-            team.add_gold(gold_earned)
-            team.add_items(items_dropped)
-
-    def _roll_items_dropped(self):
-        """
-        Only wild Elementals drop loot.
-        :return: List[Item]
-        """
-        items = []
-        for team in self.losing_side:
-            if team.owner is not None:
-                continue
-            for loot in team.loot:
-                if random() <= loot.drop_rate:
-                    items.append(loot.item)
-        return items
-
-    def _calculate_gold_earned(self) -> int:
-        """
-        Calculate gold based on the losing side, if their teams have an owner (and therefore money).
-        Note this doesn't actually deduct any gold.
-        """
-        gold = 0
-        for team in self.losing_side:
-            if team.owner:
-                gold += team.owner.level
-        return gold
 
     def _get_knockouts(self):
         """

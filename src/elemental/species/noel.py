@@ -1,9 +1,7 @@
 
 from src.core.elements import Elements
 from src.elemental.ability.ability_factory import LearnableAbilities
-from src.elemental.species.species import Stats, Species, Loot
-from src.items.consumables import Meat, Pudding
-from src.items.materials import WaterShard, ManaShard
+from src.elemental.species.species import Stats, Species
 
 
 class Noel(Species):
@@ -16,10 +14,6 @@ class Noel(Species):
         self._left_icon = ':wolf:'
         self._right_icon = ':wolf:'
         self._portrait = None
-        self._loot = [Loot(WaterShard(), 0.75),
-                      Loot(Meat(), 0.5),
-                      Loot(ManaShard(), 0.2),
-                      Loot(Pudding(), 0.1)]
         self._learnable_abilities = [LearnableAbilities.reap(),
                                      LearnableAbilities.razor_fangs(),
                                      LearnableAbilities.geyser(4),

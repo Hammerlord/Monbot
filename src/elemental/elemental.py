@@ -8,10 +8,12 @@ from src.elemental.ability.ability import Ability
 from src.elemental.ability.ability_manager import AbilityManager
 from src.elemental.attribute.attribute import Attribute
 from src.elemental.attribute.attribute_manager import AttributeManager
-from src.elemental.species.species import Species, Loot
+from src.elemental.species.species import Species
 
 
 class Elemental:
+    MAX_LEVEL = 50
+
     def __init__(self,
                  species: Species,
                  attribute_manager: AttributeManager,
@@ -116,6 +118,9 @@ class Elemental:
 
     @property
     def name(self) -> str:
+        """
+        The original name of this Elemental. Doubles as an ID.
+        """
         return self._species.name
 
     @property
@@ -154,10 +159,6 @@ class Elemental:
     def is_knocked_out(self) -> bool:
         return self.current_hp == 0
 
-    @property
-    def loot(self) -> List[Loot]:
-        return self.species.loot
-
     def load_from_resource(self, resource: ElementalResource) -> 'Elemental':
         self.level_to(resource.level)
         self._current_exp = int(resource.current_exp)
@@ -171,11 +172,15 @@ class Elemental:
         self._attribute_manager.raise_attribute(attribute)
 
     def heal(self, amount: float) -> None:
-        # Cast percentage-based healing to int.
+        # Cast any percentage-based healing to int.
         amount = int(amount)
         self._current_hp += amount
         if self._current_hp > self.max_hp:
             self._current_hp = self.max_hp
+
+    def heal_by_percentage(self, percentage: float) -> None:
+        heal_amount = self.max_hp * percentage
+        self.heal(heal_amount)
 
     def heal_to_full(self) -> None:
         self._current_hp = self.max_hp
@@ -315,11 +320,11 @@ class Elemental:
         )._asdict()
 
     def _can_gain_exp(self) -> bool:
-        return self.level <= self._owner.level
+        return self.level <= Elemental.MAX_LEVEL
 
     def _check_level_up(self) -> None:
         while self._current_exp >= self._exp_to_level:
-            if self._is_level_cap():
+            if not self._can_gain_exp():
                 return
             self._level_up()
             self._check_raise_rank()
@@ -359,13 +364,6 @@ class Elemental:
         if self._level % 5 == 0:
             self._attribute_manager.raise_rank()
             self._ability_manager.check_learnable_abilities()
-
-    def _is_level_cap(self) -> bool:
-        """
-        Elemental can't grow to a higher level than its owner.
-        """
-        if self._owner:
-            return self._level == self._owner.level
 
     def _increase_exp_to_level(self) -> None:
         self._exp_to_level += math.floor(self._exp_to_level / 10) + 5

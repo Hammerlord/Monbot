@@ -144,7 +144,7 @@ class CombatTests(unittest.TestCase):
         elemental_a = team_a.elementals[0]
         team_a.handle_cast_time(Castable(ShiningLaser()))
         team_b.make_move(Claw())
-        self.assertIn('Thefaketofu is shining mightily!!', elemental_a.last_action.recap, error)
+        self.assertIn(f'{team_a.active_elemental.name} is shining mightily!!', elemental_a.last_action.recap, error)
 
     def test_cast_time_resolution(self):
         error = "Casted spell didn't resolve when ready"
@@ -186,9 +186,10 @@ class CombatTests(unittest.TestCase):
 
     def test_elemental_action(self):
         error = "ElementalAction could incorrectly trigger when the elemental is KOed."
-        team = TeamBuilder().build()
         elemental = ElementalBuilder().build()
-        team.add_elemental(elemental)
+        team = TeamBuilder().with_elementals([
+            elemental
+        ]).build()
         team = CombatTeam(team)
         elemental.receive_damage(10000)
         action = ElementalAction(

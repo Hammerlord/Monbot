@@ -2,9 +2,7 @@
 
 from src.core.elements import Elements
 from src.elemental.ability.ability_factory import LearnableAbilities
-from src.elemental.species.species import Stats, Species, Loot
-from src.items.consumables import Peach, Cake
-from src.items.materials import ManaShard
+from src.elemental.species.species import Stats, Species
 
 
 class Nepharus(Species):
@@ -17,9 +15,6 @@ class Nepharus(Species):
         self._left_icon = ':tophat:'
         self._right_icon = ':tophat:'
         self._portrait = None
-        self._loot = [Loot(Peach(), 0.8),
-                      Loot(Cake(), 0.3),
-                      Loot(ManaShard(), 0.3)]
         self._learnable_abilities = [LearnableAbilities.razor_fangs(),
                                      LearnableAbilities.reap(),
                                      LearnableAbilities.blood_fangs(5),

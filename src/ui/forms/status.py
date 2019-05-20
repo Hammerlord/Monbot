@@ -4,12 +4,14 @@ import discord
 from discord.ext.commands import Bot
 
 from src.core.constants import *
+from src.core.elements import Elements
 from src.data.data_manager import DataManager
 from src.elemental.ability.abilities.defend import Defend
 from src.elemental.ability.ability import Ability
 from src.elemental.attribute.attribute import Attribute
 from src.elemental.elemental import Elemental
 from src.ui.ability_option import AbilityOptionView
+from src.ui.elemental_list_view import ElementalListView
 from src.ui.forms.form import Form, FormOptions, ValueForm
 from src.ui.forms.inventory_form import ItemsView
 from src.ui.health_bar import HealthBarView

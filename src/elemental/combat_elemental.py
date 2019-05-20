@@ -1,15 +1,12 @@
 from typing import List
 
-from copy import deepcopy, copy
-
 from src.core.elements import Elements
 from src.core.targetable_interface import Targetable
-from src.elemental.ability.abilities.wait import Wait
 from src.elemental.ability.abilities.defend import Defend
+from src.elemental.ability.abilities.wait import Wait
 from src.elemental.ability.ability import Ability
-from src.elemental.ability.queueable import Castable, Channelable, Queueable
+from src.elemental.ability.queueable import Channelable, Queueable
 from src.elemental.elemental import Elemental
-from src.elemental.species.species import Loot
 from src.elemental.status_effect.status_effect import StatusEffect
 from src.elemental.status_effect.status_manager import StatusManager
 
@@ -46,6 +43,10 @@ class CombatElemental(Targetable):
     @property
     def nickname(self) -> str:
         return self._elemental.nickname
+
+    @property
+    def name(self) -> str:
+        return self._elemental.name
 
     @property
     def id(self) -> str:
@@ -155,10 +156,6 @@ class CombatElemental(Targetable):
     @property
     def can_switch(self) -> bool:
         return self._status_manager.can_switch
-
-    @property
-    def loot(self) -> List[Loot]:
-        return self._elemental.loot
 
     @property
     def available_abilities(self) -> List[Ability]:
@@ -352,6 +349,10 @@ class CombatElemental(Targetable):
             return
         self._elemental.heal(amount)
         self.log(f'{self.nickname} recovered health!')
+
+    def heal_by_percentage(self, percentage: float) -> None:
+        healing = self.max_hp * percentage
+        self.heal(healing)
 
     def is_enemy(self, other_team) -> bool:
         return other_team.side != self.team.side
