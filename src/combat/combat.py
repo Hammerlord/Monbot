@@ -38,8 +38,8 @@ class Combat:
         self.action_logger = ActionLogger()
         self.turn_logger = EventLogger(self)
         self.num_rounds = 0
-        self.winning_side = None  # List[CombatTeam] The teams who won, for rendering purposes.
-        self.losing_side = None
+        self.winning_side = []  # List[CombatTeam] The teams who won, for rendering purposes.
+        self.losing_side = []
         self.data_manager = data_manager
 
     @property
@@ -160,6 +160,19 @@ class Combat:
         """
         return self.get_enemy_side(team)[0].active_elemental
 
+    def forfeit(self, team) -> None:
+        """
+        When a user selects Flee during battle. This can potentially end the match.
+        :param team: CombatTeam
+        """
+        assert team.side is not None
+        if team.side == Combat.SIDE_A:
+            self.side_a.remove(team)
+        elif team.side == Combat.SIDE_B:
+            self.side_b.remove(team)
+        team.end_combat()
+        self._check_combat_end()
+
     def _add_knockout_replacement(self, request: Action) -> None:
         if isinstance(request, Switch) and request.team in self._get_knockouts():
             self.action_requests.append(request)
@@ -250,8 +263,11 @@ class Combat:
         return action_groups
 
     def _check_combat_end(self) -> bool:
-        side_a_lose = all([team.is_all_knocked_out for team in self.side_a])
-        side_b_lose = all([team.is_all_knocked_out for team in self.side_b])
+        def is_all_knocked_out(side):
+            return all([team.is_all_knocked_out for team in side])
+
+        side_a_lose = is_all_knocked_out(self.side_a) or len(self.side_a) == 0
+        side_b_lose = is_all_knocked_out(self.side_b) or len(self.side_b) == 0
         if side_a_lose and not side_b_lose:
             self.winning_side = self.side_b
             self.losing_side = self.side_a

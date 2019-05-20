@@ -252,6 +252,30 @@ class CombatTests(unittest.TestCase):
         combat.request_action(switch)
         self.assertEqual(team_a.active_elemental, new_active, error)
 
+    def test_forfeit_combat_end(self):
+        error = "Battle didn't end when there were no teams on a side"
+        combat = self.get_mocked_combat()
+        team_a = self.get_combat_team(combat)
+        self.get_combat_team(combat)
+        combat.forfeit(team_a)
+        self.assertFalse(combat.in_progress, error)
+
+    def test_forfeit_combat_leave(self):
+        error = "Team wasn't removed from the battlefield upon forfeiting"
+        combat = self.get_mocked_combat()
+        team_a = self.get_combat_team(combat)
+        self.get_combat_team(combat)
+        combat.forfeit(team_a)
+        self.assertNotIn(team_a, combat.side_a, error)
+
+    def test_forfeit_clear_combat(self):
+        error = "Combat wasn't cleared for the player who left the battle"
+        combat = self.get_mocked_combat()
+        team_a = self.get_combat_team(combat)
+        self.get_combat_team(combat)
+        combat.forfeit(team_a)
+        self.assertFalse(team_a.owner.is_busy, error)
+
     @staticmethod
     def get_combat_team(combat=None):
         """

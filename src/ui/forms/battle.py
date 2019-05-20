@@ -168,7 +168,7 @@ class BattleView(Form):
         elif reaction == MEAT and self.combat.allow_items and self.player.consumables:
             await Form.from_form(self, SelectConsumableView)
         elif reaction == FLEE and self.combat.allow_flee:
-            pass
+            self.combat.forfeit(self.combat_team)
 
 
 class SelectElementalView(ValueForm):
@@ -438,8 +438,10 @@ class BattleResults(Form):
             view.append('```--- Tie ---```')
         elif self.combat_team in self.combat.winning_side:
             self._render_victory(view)
-        else:
+        elif self.combat_team in self.combat.losing_side:
             self._render_defeat(view)
+        else:
+            view.append('```You ran away from the battle.```')
         view.append(f'Earned {self.combat_team.exp_earned} EXP.')
         self._render_loot(view)
         view.append(f"\n {self._display_options}")
