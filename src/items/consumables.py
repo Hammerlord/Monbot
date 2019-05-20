@@ -9,21 +9,6 @@ class Consumable(Item):
     resurrects_target: bool
 
     @staticmethod
-    def generate_properties(consumable: 'Consumable') -> str:
-        """
-        TODO this shouldn't really be here
-        :return: A string displaying the various properties of a consumable for rendering purposes.
-        """
-        properties = []
-        if consumable.resurrects_target:
-            properties.append("[Revives KO]")
-        if consumable.healing_percentage > 0:
-            properties.append(f"[+{int(consumable.healing_percentage * 100)}% HP]")
-        if consumable.exp_gained_on_use > 0:
-            properties.append(f"[+{consumable.exp_gained_on_use} EXP]")
-        return ' '.join(properties)
-
-    @staticmethod
     def is_usable_on(target) -> bool:
         """
         :param target: Elemental or CombatElemental

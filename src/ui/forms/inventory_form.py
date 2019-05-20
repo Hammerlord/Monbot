@@ -9,6 +9,8 @@ from src.character.player import Player
 from src.core.constants import BACK
 from src.data.data_manager import DataManager
 from src.elemental.elemental import Elemental
+from src.items.consumables import Consumable
+from src.items.item import ItemTypes
 from src.ui.forms.form import ValueForm, FormOptions, Form
 from src.ui.health_bar import HealthBarView
 
@@ -107,7 +109,21 @@ class UseItemView(ValueForm):
     def _view(self) -> str:
         items_left = self.player.inventory.amount_left(self.item)
         return (f"Selected **{self.item.icon} {self.item.name} ({items_left} left)** \n"
-                f"{self.item.properties} \n {self._eligible_elementals}")
+                f"{self._display_item_properties(self.item)} \n {self._eligible_elementals}")
+
+    @staticmethod
+    def _display_item_properties(consumable: 'Consumable' or 'Item') -> str:
+        """
+        :return: A string displaying the various properties of a consumable for rendering purposes.
+        """
+        properties = []
+        if consumable.resurrects_target:
+            properties.append("[Revives KO]")
+        if consumable.healing_percentage:
+            properties.append(f"[+{int(consumable.healing_percentage * 100)}% HP]")
+        if consumable.exp_gained_on_use:
+            properties.append(f"[+{consumable.exp_gained_on_use} EXP]")
+        return ' '.join(properties)
 
     @property
     def _eligible_elementals(self) -> str:
