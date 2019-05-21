@@ -204,27 +204,6 @@ class CombatElemental(Targetable):
     def add_exp(self, amount: int) -> None:
         self._elemental.add_exp(amount)
 
-    def update_p_att_stages(self, amount: int) -> None:
-        self._status_manager.update_p_att_stages(amount)
-
-    def update_m_att_stages(self, amount: int) -> None:
-        self._status_manager.update_m_att_stages(amount)
-
-    def update_p_def_stages(self, amount: int) -> None:
-        self._status_manager.update_p_def_stages(amount)
-
-    def update_m_def_stages(self, amount: int) -> None:
-        self._status_manager.update_m_def_stages(amount)
-
-    def update_speed_stages(self, amount: int) -> None:
-        self._status_manager.update_speed_stages(amount)
-
-    def update_mana_per_turn(self, amount: int) -> None:
-        self._status_manager.update_mana_per_turn(amount)
-
-    def update_damage_reduction(self, amount: int) -> None:
-        self._status_manager.update_damage_reduction(amount)
-
     def can_use_ability(self, ability: Ability) -> bool:
         return (self.current_mana >= ability.mana_cost and
                 self.defend_charges >= ability.defend_cost and

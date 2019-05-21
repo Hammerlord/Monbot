@@ -50,6 +50,37 @@ class StatusEffect(Technique):
         self.active = True  # Effect may be disabled for a reason besides duration ending.
 
     @property
+    def p_att_stages(self) -> int:
+        return 0
+
+    @property
+    def m_att_stages(self) -> int:
+        return 0
+
+    @property
+    def p_def_stages(self) -> int:
+        return 0
+
+    @property
+    def m_def_stages(self) -> int:
+        return 0
+
+    @property
+    def speed_stages(self) -> int:
+        return 0
+
+    @property
+    def mana_per_turn(self) -> int:
+        return 0
+
+    @property
+    def damage_reduction(self) -> float:
+        """
+        :return: Percentage of damage reduced on incoming attacks.
+        """
+        return 0
+
+    @property
     def is_debuff(self) -> bool:
         """
         TODO there are probably buff categories
@@ -203,19 +234,6 @@ class StatusEffect(Technique):
         pass
 
     def on_effect_start(self) -> None:
-        """
-        Apply any stat changes immediately even though they are recalculated at the end of the turn.
-        Eg. this allows Defend to block end-of-turn debuff damage.
-        """
-        self.apply_stat_changes()
-
-    def apply_stat_changes(self) -> None:
-        """
-        Alter the stages on the StatusManager, if applicable.
-        Call self.add_<stat>_stages to make the stat changes so that we don't have to keep constant track
-        of the target structure.
-        See update_p_att_stages.
-        """
         pass
 
     def on_effect_end(self) -> True:
@@ -236,21 +254,6 @@ class StatusEffect(Technique):
         :return True if this triggered.
         """
         pass
-
-    def _update_p_att_stages(self, amount: int) -> None:
-        self.target.update_p_att_stages(amount)
-
-    def _update_m_att_stages(self, amount: int) -> None:
-        self.target.update_m_att_stages(amount)
-
-    def _update_p_def_stages(self, amount: int) -> None:
-        self.target.update_p_def_stages(amount)
-
-    def _update_m_def_stages(self, amount: int) -> None:
-        self.target.update_m_def_stages(amount)
-
-    def _update_speed_stages(self, amount: int) -> None:
-        self.target.update_speed_stages(amount)
 
     @property
     def trigger_recap(self) -> str:

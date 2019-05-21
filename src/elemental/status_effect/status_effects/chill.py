@@ -14,6 +14,14 @@ class Chill(StatusEffect):
         self.max_stacks = 5
 
     @property
+    def p_att_stages(self) -> int:
+        return -1
+
+    @property
+    def speed_stages(self) -> int:
+        return -1
+
+    @property
     def turn_duration(self):
         return -1
 
@@ -22,10 +30,6 @@ class Chill(StatusEffect):
         if self.current_stacks == 1:
             return f"{self.target.nickname} has been chilled!"
         return f"{self.target.nickname} is growing numb from cold. ({self.current_stacks})"
-
-    def apply_stat_changes(self) -> None:
-        self._update_p_att_stages(-1)
-        self._update_speed_stages(-1)
 
     def _on_add_stack(self) -> None:
         if self.current_stacks == self.max_stacks:

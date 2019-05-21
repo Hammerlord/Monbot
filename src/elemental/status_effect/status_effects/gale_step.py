@@ -11,12 +11,13 @@ class GaleStepEffect(StatusEffect):
         self.max_stacks = 3
 
     @property
+    def speed_stages(self) -> int:
+        return 2
+
+    @property
     def turn_duration(self):
         return 5
 
     @property
     def application_recap(self) -> str:
         return f"{self.target.nickname}'s speed rose greatly!"
-
-    def apply_stat_changes(self) -> None:
-        self._update_speed_stages(2)

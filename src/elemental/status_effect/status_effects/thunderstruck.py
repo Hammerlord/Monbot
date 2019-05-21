@@ -14,6 +14,10 @@ class Thunderstruck(StatusEffect):
         self.can_add_instances = True
 
     @property
+    def m_def_stages(self) -> int:
+        return -1
+
+    @property
     def turn_duration(self) -> int:
         return -1
 
@@ -24,6 +28,3 @@ class Thunderstruck(StatusEffect):
     @property
     def application_recap(self) -> str:
         return f"{self.target.nickname}'s magic defence fell."
-
-    def apply_stat_changes(self) -> None:
-        self._update_m_def_stages(-1)

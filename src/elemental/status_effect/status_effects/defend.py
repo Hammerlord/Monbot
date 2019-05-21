@@ -13,6 +13,10 @@ class DefendEffect(StatusEffect):
         self.effect_type = EffectType.DEFEND
 
     @property
+    def damage_reduction(self) -> float:
+        return self.target.defend_potency
+
+    @property
     def turn_duration(self) -> int:
         """
         This ability should last until the end of the round, hence it is unaffected by turns.
@@ -25,10 +29,3 @@ class DefendEffect(StatusEffect):
         Lasts until the end of the round.
         """
         return 1
-
-    def on_effect_start(self) -> None:
-        # Block damage against any end of turn debuffs as well.
-        self.apply_stat_changes()
-
-    def apply_stat_changes(self) -> None:
-        self.target.update_damage_reduction(self.target.defend_potency)

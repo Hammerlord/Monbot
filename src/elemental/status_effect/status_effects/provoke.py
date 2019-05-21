@@ -11,12 +11,13 @@ class ProvokeEffect(StatusEffect):
         self.ends_on_applier_changed = True
 
     @property
+    def p_def_stages(self) -> int:
+        return -1
+
+    @property
     def turn_duration(self):
         return 5
 
     @property
     def application_recap(self) -> str:
         return f"{self.target.nickname} has been taunted."
-
-    def apply_stat_changes(self) -> None:
-        self._update_p_def_stages(-1)

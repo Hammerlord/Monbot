@@ -7,10 +7,13 @@ class FrostBarrierEffect(StatusEffect):
     def __init__(self):
         super().__init__()
         self.name = "Frost Barrier"
-        self.damage_reduction = 0.1
         self._description = (f"Reduces damage taken by {int(self.damage_reduction * 10)}%, "
                              f"and attackers are Chilled.")
         self.icon = FROST_BARRIER
+
+    @property
+    def damage_reduction(self) -> float:
+        return 0.1
 
     @property
     def turn_duration(self):
@@ -19,9 +22,6 @@ class FrostBarrierEffect(StatusEffect):
     @property
     def application_recap(self) -> str:
         return f"{self.target.nickname} raises a protective layer of frost!"
-
-    def apply_stat_changes(self):
-        self.target.update_damage_reduction(self.damage_reduction)
 
     def on_receive_ability(self, ability, actor) -> True:
         """

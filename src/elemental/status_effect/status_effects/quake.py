@@ -10,12 +10,13 @@ class QuakeEffect(StatusEffect):
         self.max_stacks = 6
 
     @property
+    def speed_stages(self) -> int:
+        return -1
+
+    @property
     def turn_duration(self):
         return 3
 
     @property
     def application_recap(self) -> str:
         return f"{self.target.nickname}'s speed fell."
-
-    def apply_stat_changes(self) -> None:
-        self._update_speed_stages(-1)

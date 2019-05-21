@@ -9,15 +9,16 @@ class GenericBuff(StatusEffect):
         self._description = "Increases physical attack."
 
     @property
+    def p_att_stages(self) -> int:
+        return 2
+
+    @property
     def turn_duration(self) -> int:
         return 7
 
     def on_effect_start(self):
         super().on_effect_start()
         return f"{self.target.nickname}'s physical attack has greatly increased!"
-
-    def apply_stat_changes(self) -> None:
-        self._update_p_att_stages(2)
 
 
 class PermaBuff(StatusEffect):
@@ -30,12 +31,13 @@ class PermaBuff(StatusEffect):
         self.ends_on_switch = False
 
     @property
+    def m_def_stages(self) -> int:
+        return 1
+
+    @property
     def turn_duration(self) -> int:
         return -1
 
     def on_effect_start(self) -> str:
         super().on_effect_start()
         return f"{self.target.nickname}'s magic defence has increased."
-
-    def apply_stat_changes(self) -> None:
-        self._update_m_def_stages(1)

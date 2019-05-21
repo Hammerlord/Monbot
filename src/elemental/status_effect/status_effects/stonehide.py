@@ -6,10 +6,13 @@ class StonehideEffect(StatusEffect):
     def __init__(self):
         super().__init__()
         self.name = "Stonehide"
-        self.damage_reduction = 0.3
         self._description = f"Reduces damage taken by {int(self.damage_reduction * 10)}%."
         self.icon = SHELL
         self.charges = 4
+
+    @property
+    def damage_reduction(self) -> float:
+        return 0.3
 
     @property
     def turn_duration(self):
@@ -18,9 +21,6 @@ class StonehideEffect(StatusEffect):
     @property
     def application_recap(self) -> str:
         return f"{self.target.nickname}'s hide becomes stone, fending oncoming attacks!"
-
-    def apply_stat_changes(self):
-        self.target.update_damage_reduction(self.damage_reduction)
 
     def on_receive_damage(self, amount: int, actor) -> True:
         if amount > 0:

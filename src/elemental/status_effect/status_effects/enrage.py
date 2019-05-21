@@ -12,6 +12,14 @@ class EnrageEffect(StatusEffect):
         self.uptime = 0  # The number of turns this effect has been up.
 
     @property
+    def p_att_stages(self) -> int:
+        return self.uptime
+
+    @property
+    def m_att_stages(self) -> int:
+        return self.uptime
+
+    @property
     def turn_duration(self):
         return 3
 
@@ -21,13 +29,7 @@ class EnrageEffect(StatusEffect):
 
     def on_effect_start(self):
         self.uptime = 0
-        super().on_effect_start()
 
     @property
     def fade_recap(self) -> str:
         return f"{self.target.nickname}'s rage fades."
-
-    def apply_stat_changes(self) -> None:
-        stages = self.uptime
-        self._update_p_att_stages(stages)
-        self._update_m_att_stages(stages)

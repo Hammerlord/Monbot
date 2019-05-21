@@ -18,11 +18,9 @@ class SimulatedBattle:
         self.npc_two.generate_equal_team(self.npc_one)
 
     def fight(self):
-        combat = Combat(Mock())
-        team_one = CombatTeam(self.npc_one.team)
-        team_two = CombatTeam(self.npc_two.team)
-        combat.join_battle(team_one)
-        combat.join_battle(team_two)
+        Combat([CombatTeam(self.npc_one.team)],
+               [CombatTeam(self.npc_two.team)],
+               Mock())
 
 
 SimulatedBattle().fight()

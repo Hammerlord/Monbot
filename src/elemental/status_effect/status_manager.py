@@ -10,14 +10,7 @@ class StatusManager:
         :param combat_elemental: CombatElemental
         """
         self.combat_elemental = combat_elemental
-        self.p_att_stages = 0
-        self.p_def_stages = 0
-        self.m_att_stages = 0
-        self.m_def_stages = 0
-        self.speed_stages = 0
-        self._mana_per_turn = 0
         self._max_stages = 6
-        self._damage_reduction = 0  # Float. Percentage of damage reduced on incoming attacks.
         self._status_effects = []  # List[StatusEffect]
 
     @property
@@ -46,7 +39,7 @@ class StatusManager:
 
     @property
     def is_blocking(self) -> bool:
-        return self._damage_reduction > 0
+        return self.damage_reduction > 0
 
     @property
     def status_effects(self) -> List[StatusEffect]:
@@ -65,73 +58,56 @@ class StatusManager:
 
     @property
     def bonus_physical_att(self) -> int:
-        return self.__calculate_stages(self.p_att_stages,
-                                       self.combat_elemental.base_physical_att)
+        stages = sum([effect.p_att_stages for effect in self.status_effects])
+        return self.__calculate_stats_from_stages(self.__validate_stages(stages),
+                                                  self.combat_elemental.base_physical_att)
 
     @property
     def bonus_magic_att(self) -> int:
-        return self.__calculate_stages(self.m_att_stages,
-                                       self.combat_elemental.base_magic_att)
+        stages = sum([effect.m_att_stages for effect in self.status_effects])
+        return self.__calculate_stats_from_stages(self.__validate_stages(stages),
+                                                  self.combat_elemental.base_magic_att)
 
     @property
     def bonus_physical_def(self) -> int:
-        return self.__calculate_stages(self.p_def_stages,
-                                       self.combat_elemental.base_physical_def)
+        stages = sum([effect.p_def_stages for effect in self.status_effects])
+        return self.__calculate_stats_from_stages(self.__validate_stages(stages),
+                                                  self.combat_elemental.base_physical_def)
 
     @property
     def bonus_magic_def(self) -> int:
-        return self.__calculate_stages(self.m_def_stages,
-                                       self.combat_elemental.base_magic_def)
+        stages = sum([effect.m_def_stages for effect in self.status_effects])
+        return self.__calculate_stats_from_stages(self.__validate_stages(stages),
+                                                  self.combat_elemental.base_magic_def)
 
     @property
     def bonus_speed(self) -> int:
-        return self.__calculate_stages(self.speed_stages,
-                                       self.combat_elemental.base_speed)
+        stages = sum([effect.speed_stages for effect in self.status_effects])
+        return self.__calculate_stats_from_stages(self.__validate_stages(stages),
+                                                  self.combat_elemental.base_speed)
 
     @property
     def bonus_mana_per_turn(self) -> int:
-        return self._mana_per_turn
+        return sum([effect.mana_per_turn for effect in self.status_effects])
 
     @property
     def damage_reduction(self) -> float:
-        return self._damage_reduction
+        return sum([effect.damage_reduction for effect in self.status_effects])
 
     def clear_status_effects(self) -> None:
         # TODO some effects may ought to linger after knockout
         self._status_effects = []
 
-    def update_p_att_stages(self, amount: int) -> None:
-        self.p_att_stages = self.__validate_stages(self.p_att_stages, amount)
-
-    def update_m_att_stages(self, amount: int) -> None:
-        self.m_att_stages = self.__validate_stages(self.m_att_stages, amount)
-
-    def update_p_def_stages(self, amount: int) -> None:
-        self.p_def_stages = self.__validate_stages(self.p_def_stages, amount)
-
-    def update_m_def_stages(self, amount: int) -> None:
-        self.m_def_stages = self.__validate_stages(self.m_def_stages, amount)
-
-    def update_speed_stages(self, amount: int) -> None:
-        self.speed_stages = self.__validate_stages(self.speed_stages, amount)
-
-    def update_mana_per_turn(self, amount: int) -> None:
-        self._mana_per_turn += amount
-
-    def update_damage_reduction(self, amount: int) -> None:
-        self._damage_reduction += amount
-
-    def __validate_stages(self, stages: int, amount: int) -> int:
+    def __validate_stages(self, stages: int) -> int:
         """
         A CombatElemental's stat stages are capped by a maximum number.
-        :return: The capped number of stages if it exceeds the range, otherwise return the addition.
+        :return: The capped number of stages if it exceeds the range.
         """
-        added = stages + amount
-        if added > self._max_stages:
+        if stages > self._max_stages:
             return self._max_stages
-        if added < -self._max_stages:
+        if stages < -self._max_stages:
             return -self._max_stages
-        return added
+        return stages
 
     def add_status_effect(self, effect: StatusEffect) -> None:
         equivalent_effect = self.__effect_exists(effect)
@@ -143,7 +119,6 @@ class StatusManager:
         if effect.applier == self.combat_elemental:
             effect.boost_turn_duration()
         effect.on_effect_start()
-        self.__recalculate_effects()
 
     def dispel_all(self, dispeller) -> None:
         """
@@ -187,7 +162,6 @@ class StatusManager:
         for effect in self._status_effects:
             effect.reduce_turn_duration()
             self.__check_effect_end(effect)
-        self.__recalculate_effects()
 
     def on_round_end(self) -> None:
         for effect in self._status_effects:
@@ -197,7 +171,6 @@ class StatusManager:
         for effect in self._status_effects:
             effect.reduce_round_duration()
             self.__check_effect_end(effect)
-        self.__recalculate_effects()
 
     def on_opponent_changed(self, old_opponent) -> None:
         """
@@ -228,7 +201,7 @@ class StatusManager:
         return next((effect for effect in self._status_effects if type(effect) is type(to_check)), None)
 
     @staticmethod
-    def __calculate_stages(stages: int, stats: int) -> int:
+    def __calculate_stats_from_stages(stages: int, stats: int) -> int:
         """
         :param stages: The number of stages a particular stat has.
         :param stats: How much of a particular stat the CombatElemental has. Eg. CombatElemental.physical_att
@@ -249,24 +222,6 @@ class StatusManager:
         if effect.duration_ended or not effect.active:
             self._status_effects.remove(effect)
             self.combat_elemental.log(effect.fade_recap)
-
-    def __recalculate_effects(self) -> None:
-        """
-        Reset stat bonuses/penalties and recalculate them from changes in StatusEffects.
-        Eg. when a buff or debuff falls off.
-        """
-        self.__reset_status()
-        for effect in self._status_effects:
-            effect.apply_stat_changes()
-
-    def __reset_status(self):
-        self.p_att_stages = 0
-        self.p_def_stages = 0
-        self.m_att_stages = 0
-        self.m_def_stages = 0
-        self.speed_stages = 0
-        self._mana_per_turn = 0
-        self._damage_reduction = 0
 
     def __has_effect(self, effect_type: EffectType) -> bool:
         """
