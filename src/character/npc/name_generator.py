@@ -47,6 +47,7 @@ class NameGenerator:
 
     @staticmethod
     def _construct_name(syllables: List[str]) -> str:
+        syllables = list(syllables)  # Defensive copy due to popping
         name = []
         num_components = pick_random([1, 2, 2, 3])
         for i in range(num_components):
