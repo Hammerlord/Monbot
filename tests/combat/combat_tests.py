@@ -18,23 +18,28 @@ from tests.team.team_builder import TeamBuilder
 
 def get_mocked_combat(team_a=None, team_b=None) -> Combat:
     return Combat(
-        [team_a or CombatTeam(TeamBuilder().build())],
-        [team_b or CombatTeam(TeamBuilder().build())],
+        [team_a or make_combat_team()],
+        [team_b or make_combat_team()],
         data_manager=Mock()
     )
+
+
+def make_combat_team() -> CombatTeam:
+    return CombatTeam([ElementalBuilder().build()], PlayerBuilder().build())
+
 
 class CombatTests(unittest.TestCase):
 
     def test_combat_set(self):
         error = "CombatTeam's combat property wasn't set on joining the battle"
-        team = CombatTeam(TeamBuilder().build())
+        team = make_combat_team()
         combat = get_mocked_combat(team)
         self.assertEqual(team.combat, combat, error)
 
     def test_action_switch_priority(self):
         error = "Switch wasn't faster than a regular ability"
-        team_a = CombatTeam(TeamBuilder().build())
-        team_b = CombatTeam(TeamBuilder().build())
+        team_a = make_combat_team()
+        team_b = make_combat_team()
         combat = get_mocked_combat(team_a, team_b)
         combat_elemental = CombatElemental(ElementalBuilder().build(), team_b)
         combat.request_action(ElementalAction(combat_elemental, Claw(), combat))
@@ -43,8 +48,8 @@ class CombatTests(unittest.TestCase):
 
     def test_switch_target(self):
         error = "Attacks didn't retarget after a switch"
-        team_a = CombatTeam(TeamBuilder().build())
-        team_b = CombatTeam(TeamBuilder().build())
+        team_a = make_combat_team()
+        team_b = make_combat_team()
         combat = get_mocked_combat(team_a, team_b)
         old_target = team_b.active_elemental
         target = CombatElementalBuilder().build()
@@ -56,8 +61,8 @@ class CombatTests(unittest.TestCase):
 
     def test_defend_priority(self):
         error = "Defend wasn't faster than other abilities"
-        team_a = CombatTeam(TeamBuilder().build())
-        team_b = CombatTeam(TeamBuilder().build())
+        team_a = make_combat_team()
+        team_b = make_combat_team()
         combat = get_mocked_combat(team_a, team_b)
         faster = CombatElemental(ElementalBuilder().with_speed(10).build(), team_b)
         team_b.change_active_elemental(faster)
@@ -69,8 +74,8 @@ class CombatTests(unittest.TestCase):
 
     def test_action_speed_priority(self):
         error = "Faster elemental didn't attack first"
-        team_a = CombatTeam(TeamBuilder().build())
-        team_b = CombatTeam(TeamBuilder().build())
+        team_a = make_combat_team()
+        team_b = make_combat_team()
         combat = get_mocked_combat(team_a, team_b)
         slower = CombatElemental(ElementalBuilder().with_level(1).build(), team_a)
         team_a.change_active_elemental(slower)
@@ -85,12 +90,8 @@ class CombatTests(unittest.TestCase):
     def test_elemental_exp_gain(self):
         error = "Knocking out an elemental didn't grant exp to player's elementals"
         elemental = ElementalBuilder().with_level(5).build()
-        player_team = (TeamBuilder()
-                       .with_elementals([elemental])
-                       .with_owner(PlayerBuilder().build())
-                       .build())
-        team_a = CombatTeam(player_team)
-        team_b = CombatTeam(TeamBuilder().build())
+        team_a = CombatTeam([elemental], PlayerBuilder().build())
+        team_b = make_combat_team()
         get_mocked_combat(team_a, team_b)
         # Nearly fatal damage
         damage = team_b.active_elemental.max_hp - 1
@@ -104,10 +105,8 @@ class CombatTests(unittest.TestCase):
     def test_player_exp_gain(self):
         error = "Knocking out an elemental didn't grant exp to player"
         player = PlayerBuilder().build()
-        player_team = TeamBuilder().with_owner(player).build()
-        player_team.add_elemental(ElementalBuilder().build())
-        team_a = CombatTeam(player_team)
-        team_b = CombatTeam(TeamBuilder().build())
+        team_a = CombatTeam([ElementalBuilder().build()], player)
+        team_b = make_combat_team()
         get_mocked_combat(team_a, team_b)
         # Nearly fatal damage
         damage = team_b.active_elemental.max_hp - 1
@@ -120,8 +119,8 @@ class CombatTests(unittest.TestCase):
 
     def test_cast_time_wait(self):
         error = "A spell that requires one turn charge time resolved immediately"
-        team_a = CombatTeam(TeamBuilder().build())
-        team_b = CombatTeam(TeamBuilder().build())
+        team_a = make_combat_team()
+        team_b = make_combat_team()
         get_mocked_combat(team_a, team_b)
         elemental_b = team_b.elementals[0]
         health_before = elemental_b.current_hp
@@ -131,8 +130,8 @@ class CombatTests(unittest.TestCase):
 
     def test_cast_recap(self):
         error = "Recap message was incorrect for a cast time spell"
-        team_a = CombatTeam(TeamBuilder().build())
-        team_b = CombatTeam(TeamBuilder().build())
+        team_a = make_combat_team()
+        team_b = make_combat_team()
         get_mocked_combat(team_a, team_b)
         elemental_a = team_a.elementals[0]
         team_a.handle_cast_time(Castable(ShiningLaser()))
@@ -141,8 +140,8 @@ class CombatTests(unittest.TestCase):
 
     def test_cast_time_resolution(self):
         error = "Casted spell didn't resolve when ready"
-        team_a = CombatTeam(TeamBuilder().build())
-        team_b = CombatTeam(TeamBuilder().build())
+        team_a = make_combat_team()
+        team_b = make_combat_team()
         get_mocked_combat(team_a, team_b)
         elemental_b = team_b.elementals[0]
         health_before = elemental_b.current_hp
@@ -153,8 +152,8 @@ class CombatTests(unittest.TestCase):
 
     def test_cast_resources(self):
         error = "A casted ability incorrectly consumed mana multiple times"
-        team_a = CombatTeam(TeamBuilder().build())
-        team_b = CombatTeam(TeamBuilder().build())
+        team_a = make_combat_team()
+        team_b = make_combat_team()
         get_mocked_combat(team_a, team_b)
         team_b.make_move(Defend())
         team_a.handle_cast_time(Castable(ShiningLaser()))
@@ -166,8 +165,8 @@ class CombatTests(unittest.TestCase):
 
     def test_channeling_resources(self):
         error = "A channeled ability incorrectly consumed mana across its duration"
-        team_a = CombatTeam(TeamBuilder().build())
-        team_b = CombatTeam(TeamBuilder().build())
+        team_a = make_combat_team()
+        team_b = make_combat_team()
         get_mocked_combat(team_a, team_b)
         team_b.make_move(Defend())
         team_a.make_move(Rampage())
@@ -180,10 +179,7 @@ class CombatTests(unittest.TestCase):
     def test_elemental_action(self):
         error = "ElementalAction could incorrectly trigger when the elemental is KOed."
         elemental = ElementalBuilder().build()
-        team = TeamBuilder().with_elementals([
-            elemental
-        ]).build()
-        team = CombatTeam(team)
+        team = CombatTeam([elemental], PlayerBuilder().build())
         elemental.receive_damage(10000)
         action = ElementalAction(
             actor=team.elementals[0],
@@ -194,8 +190,8 @@ class CombatTests(unittest.TestCase):
 
     def test_attack_knocked_out(self):
         error = "Attack attempted to resolve even though the opponent was KOed"
-        team_a = CombatTeam(TeamBuilder().build())
-        team_b = CombatTeam(TeamBuilder().build())
+        team_a = make_combat_team()
+        team_b = make_combat_team()
         combat = get_mocked_combat(team_a, team_b)
         team_b.active_elemental.receive_damage(10000, team_a.active_elemental)
         action = ElementalAction(
@@ -207,10 +203,7 @@ class CombatTests(unittest.TestCase):
 
     def test_active_elemental_action(self):
         error = "ElementalAction could incorrectly trigger when the elemental forcibly switched."
-        team = TeamBuilder().build()
-        elemental = ElementalBuilder().build()
-        team.add_elemental(elemental)
-        team = CombatTeam(team)
+        team = make_combat_team()
         old_active = team.elementals[0]
         team.change_active_elemental(old_active)
         team.change_active_elemental(CombatElementalBuilder().build())
@@ -223,8 +216,8 @@ class CombatTests(unittest.TestCase):
 
     def test_knockout_grace_turn(self):
         error = "An attack could incorrectly be queued while waiting for a knockout replacement"
-        team_a = CombatTeam(TeamBuilder().build())
-        team_b = CombatTeam(TeamBuilder().build())
+        team_a = make_combat_team()
+        team_b = make_combat_team()
         combat = get_mocked_combat(team_a, team_b)
         team_a.active_elemental.receive_damage(10000, team_b.active_elemental)
         team_b.make_move(Claw())
@@ -232,7 +225,7 @@ class CombatTests(unittest.TestCase):
 
     def test_knockout_replacement(self):
         error = "A team whose elemental was knocked out couldn't select a replacement"
-        team_a = CombatTeam(TeamBuilder().build())
+        team_a = make_combat_team()
         combat = get_mocked_combat(team_a)
         team_a.active_elemental.receive_damage(10000, Mock())
         new_active = CombatElementalBuilder().build()
@@ -246,21 +239,21 @@ class CombatTests(unittest.TestCase):
 
     def test_forfeit_combat_end(self):
         error = "Battle didn't end when there were no teams on a side"
-        team_a = CombatTeam(TeamBuilder().build())
+        team_a = make_combat_team()
         combat = get_mocked_combat(team_a)
         combat.forfeit(team_a)
         self.assertFalse(combat.in_progress, error)  # TODO
 
     def test_forfeit_combat_leave(self):
         error = "Team wasn't removed from the battlefield upon forfeiting"
-        team_a = CombatTeam(TeamBuilder().build())
+        team_a = make_combat_team()
         combat = get_mocked_combat(team_a)
         combat.forfeit(team_a)
         self.assertNotIn(team_a, combat.side_a, error)
 
     def test_forfeit_clear_combat(self):
         error = "Combat wasn't cleared for the player who left the battle"
-        team_a = CombatTeam(TeamBuilder().build())
+        team_a = make_combat_team()
         combat = get_mocked_combat(team_a)
         combat.forfeit(team_a)
         self.assertFalse(team_a.owner.is_busy, error)

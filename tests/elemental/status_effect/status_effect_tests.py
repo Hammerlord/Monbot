@@ -18,6 +18,7 @@ from src.elemental.status_effect.status_effects.stonehide import StonehideEffect
 from src.elemental.status_effect.status_effects.wind_rush import WindrushEffect
 from src.team.combat_team import CombatTeam
 from src.team.team import Team
+from tests.character.character_builder import PlayerBuilder
 from tests.elemental.elemental_builder import CombatElementalBuilder, ElementalBuilder
 from tests.elemental.status_effect.fake_effects import GenericBuff, PermaBuff
 from tests.team.team_builder import TeamBuilder
@@ -25,10 +26,14 @@ from tests.team.team_builder import TeamBuilder
 
 def get_mocked_combat(team_a=None, team_b=None) -> Combat:
     return Combat(
-        [team_a or CombatTeam(TeamBuilder().build())],
-        [team_b or CombatTeam(TeamBuilder().build())],
+        [team_a or make_combat_team()],
+        [team_b or make_combat_team()],
         data_manager=Mock()
     )
+
+
+def make_combat_team() -> CombatTeam:
+    return CombatTeam([ElementalBuilder().build()], PlayerBuilder().build())
 
 
 class StatusEffectTests(unittest.TestCase):
@@ -55,7 +60,7 @@ class StatusEffectTests(unittest.TestCase):
         error = "StatusEffect duration wasn't boosted by 1 when applied to own team"
         # The duration decrements on turn end, so it loses 1 duration when applied to self.
         effect = WindrushEffect()
-        team = CombatTeam(TeamBuilder().build())
+        team = make_combat_team()
         get_mocked_combat(team)
         effect.applier = team.active_elemental
         duration_before = effect.turns_remaining
@@ -201,9 +206,9 @@ class StatusEffectTests(unittest.TestCase):
     def test_rolling_thunder_duration(self):
         error = "Rolling Thunder turn duration didn't decrement"
         effect = RollingThunderEffect()
-        team = CombatTeam(TeamBuilder().build())
+        team = CombatTeam([ElementalBuilder().build()], PlayerBuilder().build())
         effect.applier = team.elementals[0]
-        enemy_team = CombatTeam(TeamBuilder().build())
+        enemy_team = CombatTeam([ElementalBuilder().build()], PlayerBuilder().build())
         get_mocked_combat(team, enemy_team)
         enemy_team.add_status_effect(effect)
         duration_before = effect.rounds_remaining
@@ -213,9 +218,9 @@ class StatusEffectTests(unittest.TestCase):
     def test_rolling_thunder(self):
         error = "Rolling Thunder did no damage on resolution"
         effect = RollingThunderEffect()
-        team = CombatTeam(TeamBuilder().build())
+        team = make_combat_team()
         effect.applier = team.elementals[0]
-        enemy_team = CombatTeam(TeamBuilder().build())
+        enemy_team = make_combat_team()
         get_mocked_combat(team, enemy_team)
         enemy = enemy_team.active_elemental
         enemy_team.add_status_effect(effect)
@@ -227,16 +232,15 @@ class StatusEffectTests(unittest.TestCase):
 
     def test_blessed_rain(self):
         error = "Blessed Rain didn't heal on turn end"
-        elemental = ElementalBuilder().build()
-        team = TeamBuilder().with_elementals([elemental]).build()
-        combat_team = CombatTeam(team)
-        get_mocked_combat(combat_team)
+        team = make_combat_team()
+        get_mocked_combat(team)
         effect = BlessedRainEffect()
         effect.applier = CombatElementalBuilder().build()
-        elemental.receive_damage(10)
-        combat_team.add_status_effect(effect)
+        elemental = team.active_elemental
+        elemental.receive_damage(10, Mock())
+        team.add_status_effect(effect)
         health_before = elemental.current_hp
-        combat_team.end_turn()
+        team.end_turn()
         self.assertGreater(elemental.current_hp, health_before, error)
 
     def test_stonehide_duration(self):

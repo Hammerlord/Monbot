@@ -20,8 +20,8 @@ class BattleManager:
         """
         Start a fight between two players.
         """
-        Combat([CombatTeam(player.team)],
-               [CombatTeam(other_player.team)],
+        Combat([CombatTeam.from_team(player.team)],
+               [CombatTeam.from_team(other_player.team)],
                data_manager=DataManager(),
                allow_flee=False,
                allow_items=False)
@@ -32,7 +32,7 @@ class BattleManager:
             opponent = BattleManager._tutorial_opponent(player)
         else:
             opponent = BattleManager._get_random_opponent(player)
-        player_team = CombatTeam(player.team)
+        player_team = CombatTeam.from_team(player.team)
         Combat([player_team],
                [opponent],
                data_manager=DataManager())
@@ -44,7 +44,7 @@ class BattleManager:
             tutorial_elemental = Tophu()
         else:
             tutorial_elemental = Manapher()
-        return CombatTeam.from_elementals([ElementalInitializer.make(tutorial_elemental)])
+        return CombatTeam([ElementalInitializer.make(tutorial_elemental)])
 
     @staticmethod
     def _get_random_opponent(player: Player) -> CombatTeam:
@@ -55,7 +55,7 @@ class BattleManager:
         if coin_flip:
             opponent = NPCInitializer().get_random_opponent()
             opponent.generate_team(player)
-            return CombatTeam(opponent.team)
+            return CombatTeam.from_team(opponent.team)
         return BattleManager._get_wild_elemental(player)
 
     @staticmethod
@@ -64,4 +64,4 @@ class BattleManager:
         min_level = team_average - 1
         max_level = team_average + player.team.size
         level = random.randint(min_level, max_level)
-        return CombatTeam.from_elementals([ElementalInitializer.make_random(level)])
+        return CombatTeam([ElementalInitializer.make_random(level)])

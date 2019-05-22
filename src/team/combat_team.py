@@ -22,13 +22,14 @@ class CombatTeam(Targetable):
     """
 
     def __init__(self,
-                 team: Team):
+                 elementals: List[Elemental],
+                 owner=None):
         """
-        :param team: The non-combat Team.
+        :param owner: NPC or None
         """
         self.combat = None
-        self.__elementals = [CombatElemental(elemental, self) for elemental in team.elementals]
-        self.owner = team.owner  # Character or None
+        self.__elementals = [CombatElemental(elemental, self) for elemental in elementals]
+        self.owner = owner
         self.__active_elemental = None
         self._status_effects = []  # Team-wide status effects, eg. weather.
         self._actions = []  # list[Action] taken by this team.
@@ -39,14 +40,11 @@ class CombatTeam(Targetable):
         self._items_earned = {}  # {item_name: ItemSlot}
 
     @staticmethod
-    def from_elementals(elementals: List[Elemental]) -> 'CombatTeam':
+    def from_team(team: Team) -> 'CombatTeam':
         """
-        Wild Elementals don't have a formal team, so this function makes a dummy one for them.
+        Convert a Team containing Elementals to a CombatTeam with CombatElementals.
         """
-        team = Team(owner=None)
-        for elemental in elementals:
-            team.add_elemental(elemental)
-        return CombatTeam(team)
+        return CombatTeam(team.elementals, team.owner)
 
     def set_combat(self, combat) -> None:
         """
